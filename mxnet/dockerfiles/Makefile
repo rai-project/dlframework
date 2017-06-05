@@ -1,6 +1,8 @@
 buildlocalppc:
-	docker build . -f Dockerfile.ppc64le -t raiproject/carml-mxnet-ppc64le
-buildlocalx64:
-	docker build . -f Dockerfile.amd64 -t raiproject/carml-mxnet-amd64
+	docker build . -f Dockerfile.ppc64le -t raiproject/carml-mxnet:ppc64le-gpu
+buildlocalamd64gpu:
+	docker build . -f Dockerfile.amd64_gpu -t raiproject/carml-mxnet:amd64-gpu
+buildlocalamd64cpu:
+	docker build . -f Dockerfile.amd64_cpu -t raiproject/carml-mxnet:amd64-cpu
 
-buildlocal: buildlocalppc buildlocalx64
+buildlocalamd64: buildlocalamd64cpu buildlocalamd64gpu

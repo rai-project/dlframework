@@ -2,7 +2,14 @@ FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 MAINTAINER Carl Pearson <pearson@illinois.edu>
 
 # install the core library
-RUN apt-get update && apt-get install -y build-essential git libopenblas-dev libopencv-dev
+RUN apt-get update \
+    && apt-get install -y \
+    build-essential \
+    git \
+    libopenblas-dev \
+    libopencv-dev \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /
 
@@ -17,14 +24,12 @@ RUN ln -s /mxnet/lib/libmxnet.so /usr/lib/libmxnet.so
 
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
-RUN apt-get update && apt-get install -y wget
-
 #Install Go
 RUN VERSION=1.8.3 \
     && OS=linux \
     && ARCH=amd64 \
     && NAME=go$VERSION.${OS}-$ARCH.tar.gz \
-    && wget https://storage.googleapis.com/golang/$NAME \
+    && curl -fsS https://storage.googleapis.com/golang/$NAME -o $NAME\
     && tar -C /usr/local -xf $NAME \
     && rm $NAME
 
