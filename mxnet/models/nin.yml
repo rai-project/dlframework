@@ -1,0 +1,8 @@
+name: Network in Network (NiN)
+version: 1.0
+type: cnn
+dataset: ImageNet
+model: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json
+weights: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params
+references:
+  - https://arxiv.org/pdf/1312.4400v3.pdf

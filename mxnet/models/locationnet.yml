@@ -1,0 +1,8 @@
+name: LocationNet
+version: 1.0
+type: cnn
+dataset: MultimediaCommons
+model: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-symbol.json
+weights: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-0012.params
+references:
+  - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf

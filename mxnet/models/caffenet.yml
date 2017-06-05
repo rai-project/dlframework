@@ -1,0 +1,8 @@
+name: CaffeNet
+version: 1.0
+type: cnn
+dataset: ImageNet
+model: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/caffenet-symbol.json
+weights: http://data.dmlc.ml/models/imagenet/caffenet/caffenet-0000.params
+references:
+  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
