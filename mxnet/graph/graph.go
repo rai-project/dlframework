@@ -126,7 +126,7 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 	case "vertical":
 		dg.AddAttr(graphName, "rankdir", "TB")
 	case "horizontal":
-		dg.AddAttr(graphName, "rankdir", "LR")
+		dg.AddAttr(graphName, "rankdir", "RL")
 	default:
 	}
 
