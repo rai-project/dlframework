@@ -15,6 +15,10 @@ import:
   - utils
 - package: gopkg.in/fatih/set.v0
   version: ~0.1.0
+- package: github.com/dave/jennifer
+  version: ~0.14.0
+  subpackages:
+  - jen
 testImport:
 - package: github.com/GeertJohan/go.rice
 - package: github.com/stretchr/testify
