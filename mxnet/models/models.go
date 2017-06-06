@@ -16,11 +16,11 @@ import (
 
 type r struct {
 	sync.RWMutex
-	data map[string]mxnet.Model
+	data map[string]mxnet.ModelInformation
 }
 
 var registry = r{
-	data: map[string]mxnet.Model{},
+	data: map[string]mxnet.ModelInformation{},
 }
 
 func Names() []string {
@@ -37,7 +37,7 @@ func Names() []string {
 	return names
 }
 
-func Get(name string) (mxnet.Model, error) {
+func Get(name string) (mxnet.ModelInformation, error) {
 	registry.RLock()
 	defer registry.RUnlock()
 
@@ -46,10 +46,10 @@ func Get(name string) (mxnet.Model, error) {
 		return model, nil
 	}
 
-	return mxnet.Model{}, errors.Errorf("cannot find model %s in registry", name)
+	return mxnet.ModelInformation{}, errors.Errorf("cannot find model %s in registry", name)
 }
 
-func Register(model mxnet.Model) {
+func Register(model mxnet.ModelInformation) {
 	registry.Lock()
 	defer registry.Unlock()
 
@@ -78,7 +78,7 @@ func init() {
 				return err
 			}
 
-			var model mxnet.Model
+			var model mxnet.ModelInformation
 			if err := yaml.Unmarshal(bts, &model); err != nil {
 				return err
 			}

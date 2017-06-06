@@ -13,10 +13,10 @@ const (
 )
 
 type generator struct {
-	model mxnet.Model
+	model mxnet.ModelInformation
 }
 
-func New(model mxnet.Model) (*generator, error) {
+func New(model mxnet.ModelInformation) (*generator, error) {
 	return &generator{model: model}, nil
 }
 

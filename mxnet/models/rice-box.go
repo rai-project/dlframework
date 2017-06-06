@@ -15,28 +15,28 @@ func init() {
 	}
 	file3 := &embedded.EmbeddedFile{
 		Filename:    `caffenet.yml`,
-		FileModTime: time.Unix(1496767236, 0),
-		Content:     string("name: CaffeNet\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset: ImageNet\nmodel: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/caffenet-symbol.json\nweights: http://data.dmlc.ml/models/imagenet/caffenet/caffenet-0000.params\nreferences:\n  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks\n"),
+		FileModTime: time.Unix(1496772509, 0),
+		Content:     string("name: CaffeNet\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset_url: ImageNet\ngraph_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/caffenet-symbol.json\nweights_url: http://data.dmlc.ml/models/imagenet/caffenet/caffenet-0000.params\nreferences:\n  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks\n"),
 	}
 	file4 := &embedded.EmbeddedFile{
 		Filename:    `locationnet.yml`,
-		FileModTime: time.Unix(1496767238, 0),
-		Content:     string("name: LocationNet\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset: MultimediaCommons\nmodel: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-symbol.json\nweights: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-0012.params\nreferences:\n  - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf\n"),
+		FileModTime: time.Unix(1496772516, 0),
+		Content:     string("name: LocationNet\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset_url: MultimediaCommons\ngraph_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-symbol.json\nweights_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-0012.params\nreferences:\n  - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf\n"),
 	}
 	file5 := &embedded.EmbeddedFile{
 		Filename:    `nin.yml`,
-		FileModTime: time.Unix(1496767244, 0),
-		Content:     string("name: Network in Network (NiN)\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset: ImageNet\nmodel: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json\nweights: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params\nreferences:\n  - https://arxiv.org/pdf/1312.4400v3.pdf\n"),
+		FileModTime: time.Unix(1496772523, 0),
+		Content:     string("name: Network in Network (NiN)\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset_url: ImageNet\ngraph_url: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json\nweights_url: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params\nreferences:\n  - https://arxiv.org/pdf/1312.4400v3.pdf\n"),
 	}
 	file6 := &embedded.EmbeddedFile{
 		Filename:    `squeeznet.yml`,
-		FileModTime: time.Unix(1496767247, 0),
-		Content:     string("name: SqueezeNet\nframework: mxnet\nversion: 1.1\ntype: cnn\ndataset: ImageNet\nmodel: http://data.dmlc.ml/models/imagenet/squeezenet/squeezenet_v1.1-symbol.json\nweights: http://data.dmlc.ml/models/imagenet/squeezenet/squeezenet_v1.1-0000.params\nreferences:\n  - https://arxiv.org/pdf/1602.07360v4.pdf\n"),
+		FileModTime: time.Unix(1496772531, 0),
+		Content:     string("name: SqueezeNet\nframework: mxnet\nversion: 1.1\ntype: cnn\ndataset_url: ImageNet\ngraph_url: http://data.dmlc.ml/models/imagenet/squeezenet/squeezenet_v1.1-symbol.json\nweights_url: http://data.dmlc.ml/models/imagenet/squeezenet/squeezenet_v1.1-0000.params\nreferences:\n  - https://arxiv.org/pdf/1602.07360v4.pdf\n"),
 	}
 	file7 := &embedded.EmbeddedFile{
 		Filename:    `vgg19.yml`,
-		FileModTime: time.Unix(1496767250, 0),
-		Content:     string("name: VGG19\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset: ImageNet\nmodel: http://data.dmlc.ml/models/imagenet/vgg/vgg19-symbol.json\nweights: http://data.dmlc.ml/models/imagenet/vgg/vgg19-0000.params\nreferences:\n  - https://arxiv.org/pdf/1409.1556v6.pdf\n"),
+		FileModTime: time.Unix(1496772538, 0),
+		Content:     string("name: VGG19\nframework: mxnet\nversion: 1.0\ntype: cnn\ndataset_url: ImageNet\ngraph_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-symbol.json\nweights_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-0000.params\nreferences:\n  - https://arxiv.org/pdf/1409.1556v6.pdf\n"),
 	}
 
 	// define dirs
