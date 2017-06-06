@@ -2,8 +2,8 @@ name: VGG19
 framework: mxnet
 version: 1.0
 type: cnn
-dataset: ImageNet
-model: http://data.dmlc.ml/models/imagenet/vgg/vgg19-symbol.json
-weights: http://data.dmlc.ml/models/imagenet/vgg/vgg19-0000.params
+dataset_url: ImageNet
+graph_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-symbol.json
+weights_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-0000.params
 references:
   - https://arxiv.org/pdf/1409.1556v6.pdf

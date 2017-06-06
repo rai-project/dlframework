@@ -2,8 +2,8 @@ name: Network in Network (NiN)
 framework: mxnet
 version: 1.0
 type: cnn
-dataset: ImageNet
-model: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json
-weights: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params
+dataset_url: ImageNet
+graph_url: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json
+weights_url: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params
 references:
   - https://arxiv.org/pdf/1312.4400v3.pdf
