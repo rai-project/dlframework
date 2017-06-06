@@ -29,3 +29,6 @@ message ModelInformation {
 }
 
 message ModelInformations { repeated ModelInformation info = 1; }
+
+// generated using
+// https://github.com/kubernetes/gengo/tree/master/examples/go-to-protobuf

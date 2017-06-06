@@ -1,15 +1,12 @@
 package models
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
 	yaml "gopkg.in/yaml.v1"
 
-	rice "github.com/GeertJohan/go.rice"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/mxnet"
 )
@@ -58,36 +55,32 @@ func Register(model mxnet.ModelInformation) {
 }
 
 func init() {
+	assets, err := AssetDir("")
+	if err != nil {
+		return
+	}
 	var wg sync.WaitGroup
-	var builtinBox = rice.MustFindBox("builtin")
-	builtinBox.Walk(".", filepath.WalkFunc(func(path string, info os.FileInfo, err error) error {
-		wg.Add(1)
-		go func() error {
+	wg.Add(len(assets))
+	for _, asset := range assets {
+		go func(asset string) {
 			defer wg.Done()
-			if err != nil {
-				return fmt.Errorf("error walking box: %s\n", err)
-			}
-
-			ext := filepath.Ext(path)
+			ext := filepath.Ext(asset)
 			if ext != ".yml" && ext != ".yaml" {
-				return nil
+				return
 			}
 
-			bts, err := builtinBox.Bytes(path)
+			bts, err := Asset(asset)
 			if err != nil {
-				return err
+				return
 			}
 
 			var model mxnet.ModelInformation
 			if err := yaml.Unmarshal(bts, &model); err != nil {
-				return err
+				return
 			}
 
 			Register(model)
-
-			return nil
-		}()
-		wg.Wait()
-		return nil
-	}))
+		}(asset)
+	}
+	wg.Wait()
 }

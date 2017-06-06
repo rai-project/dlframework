@@ -1,4 +1,3 @@
-//go:generate rice -i ./models embed-go
 //go:generate protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go --proto_path=../../../..:../../../../github.com:. --gogoslick_out=plugins=grpc:. model.proto
-
+//go:generate go-bindata -nomemcopy -prefix models/builtin/ -pkg models -o models/static_resources.go -ignore=.DS_Store ./models/builtin/...
 package mxnet
