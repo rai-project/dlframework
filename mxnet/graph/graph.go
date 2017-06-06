@@ -60,28 +60,29 @@ func (e *NodeEntry) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s)
 }
 
-func (g *Graph) ToDotGraph() (*gographviz.Graph, error) {
-	// color map
-	var fillcolors = []string{
-		"#8dd3c7",
-		"#fb8072",
-		"#ffffb3",
-		"#bebada",
-		"#80b1d3",
-		"#fdb462",
-		"#b3de69",
-		"#fccde5",
-	}
-	var edgecolors = []string{
-		"#245b51",
-		"#941305",
-		"#999900",
-		"#3b3564",
-		"#275372",
-		"#975102",
-		"#597d1c",
-		"#90094e",
-	}
+// color map
+var fillcolors = []string{
+	"#8dd3c7",
+	"#fb8072",
+	"#ffffb3",
+	"#bebada",
+	"#80b1d3",
+	"#fdb462",
+	"#b3de69",
+	"#fccde5",
+}
+var edgecolors = []string{
+	"#245b51",
+	"#941305",
+	"#999900",
+	"#3b3564",
+	"#275372",
+	"#975102",
+	"#597d1c",
+	"#90094e",
+}
+
+func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 
 	makeDefaultAttributes := func() map[string]string {
 		return map[string]string{
@@ -109,10 +110,25 @@ func (g *Graph) ToDotGraph() (*gographviz.Graph, error) {
 		return false
 	}
 
-	hideWeights := true // TODO: should be an option
-	drawShape := true   // TODO: should be an option
+	hideWeights := true    // TODO: should be an option
+	drawShape := true      // TODO: should be an option
+	graphName := "mxnet"   // TODO: should be an option
+	layout := "horizontal" // TODO: should be an option
 
-	dg := gographviz.NewGraph()
+	dg := gographviz.NewEscape()
+	dg.SetName(graphName)
+	dg.SetDir(true)
+
+	dg.AddAttr(graphName, "nodesep", "1")
+	dg.AddAttr(graphName, "ranksep", "1.5 equally")
+
+	switch layout {
+	case "vertical":
+		dg.AddAttr(graphName, "rankdir", "TB")
+	case "horizontal":
+		dg.AddAttr(graphName, "rankdir", "LR")
+	default:
+	}
 
 	hiddenNodes := set.NewNonTS()
 
@@ -128,6 +144,7 @@ func (g *Graph) ToDotGraph() (*gographviz.Graph, error) {
 			if isLikeWeight(name) {
 				if hideWeights {
 					hiddenNodes.Add(name)
+					continue
 				}
 			}
 			attrs["shape"] = "oval"
@@ -171,5 +188,5 @@ func (g *Graph) ToDotGraph() (*gographviz.Graph, error) {
 
 	}
 
-	return nil, errors.New("not implemented")
+	return dg, nil
 }

@@ -24,4 +24,12 @@ func TestUnmarshalGraph(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, s)
 	t.Log(string(s))
+
+	dg, err := g.ToDotGraph()
+	assert.NoError(t, err)
+	assert.NotNil(t, dg)
+	assert.NotEmpty(t, dg)
+
+	// t.Log(dg.String())
+
 }
