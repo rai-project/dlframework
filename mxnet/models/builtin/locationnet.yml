@@ -1,4 +1,5 @@
 name: LocationNet
+framework: mxnet
 version: 1.0
 type: cnn
 dataset: MultimediaCommons

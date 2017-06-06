@@ -1,4 +1,5 @@
 name: CaffeNet
+framework: mxnet
 version: 1.0
 type: cnn
 dataset: ImageNet

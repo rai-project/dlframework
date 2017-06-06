@@ -1,4 +1,5 @@
 name: VGG19
+framework: mxnet
 version: 1.0
 type: cnn
 dataset: ImageNet
