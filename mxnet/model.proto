@@ -30,5 +30,25 @@ message ModelInformation {
 
 message ModelInformations { repeated ModelInformation info = 1; }
 
-// generated using
-// https://github.com/kubernetes/gengo/tree/master/examples/go-to-protobuf
+message Graph {
+  message NodeEntry {
+    int32 node_id = 1;
+    int32 index = 2;
+    int32 version = 3;
+  }
+
+  message Node {
+    string op = 1;
+    map<string, string> param = 2;
+    string name = 3;
+    repeated NodeEntry inputs = 4;
+    int32 backward_source_id = 5;
+    repeated int32 control_deps = 6;
+  }
+
+  repeated Node nodes = 1;
+  repeated int32 arg_nodes = 2;
+  repeated int32 node_row_ptr = 3;
+  repeated NodeEntry heads = 4;
+  map<string, string> attrs = 5;
+}

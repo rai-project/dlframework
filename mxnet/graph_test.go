@@ -1,4 +1,4 @@
-package graph
+package mxnet
 
 import (
 	"encoding/json"

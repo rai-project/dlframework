@@ -1,67 +1,14 @@
-package graph
+package mxnet
 
 import (
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/awalterschulze/gographviz"
-	"github.com/pkg/errors"
 	"gopkg.in/fatih/set.v0"
 )
-
-type NodeEntry struct {
-	NodeId  int  `json:"node_id"`
-	Index   int  `json:"index"`
-	Version *int `json:"version,omitempty"`
-}
-
-type Node struct {
-	Op                  string            `json:"op"`
-	Param               map[string]string `json:"param"`
-	Name                string            `json:"name"`
-	Inputs              []NodeEntry       `json:"inputs"`
-	BackwardSourceID    int               `json:"backward_source_id"`
-	ControlDependencies []int             `json:"control_deps,omitempty"`
-}
-
-type Graph struct {
-	Nodes          []Node                 `json:"nodes"`
-	ArgNodes       []int                  `json:"arg_nodes"`
-	NodeRowPointer []int                  `json:"node_row_ptr,omitempty"`
-	Heads          []NodeEntry            `json:"heads"`
-	Attributes     map[string]interface{} `json:"attrs,omitempty"`
-}
-
-func (e *NodeEntry) UnmarshalJSON(b []byte) error {
-	var s []int
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-	if len(s) < 2 {
-		return errors.New("expecting a node entry length >= 2")
-	}
-	e.NodeId = s[0]
-	e.Index = s[1]
-	if len(s) == 3 {
-		*e.Version = s[2]
-	}
-	return nil
-}
-
-func (e *NodeEntry) MarshalJSON() ([]byte, error) {
-	s := []int{
-		e.NodeId,
-		e.Index,
-	}
-	if e.Version != nil {
-		s = append(s, *e.Version)
-	}
-
-	return json.Marshal(s)
-}
 
 // color map
 var fillcolors = []string{
