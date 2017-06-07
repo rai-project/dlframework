@@ -9,9 +9,13 @@
 		model.proto
 
 	It has these top-level messages:
-		ModelInformation
+		ErrorStatus
+		Model
 		ModelInformations
-		Graph
+		MXNetInferenceRequest
+		MXNetInferenceResponse
+		MXNetModelInformationRequest
+		Null
 */
 package mxnet
 
@@ -23,6 +27,11 @@ import _ "github.com/gogo/protobuf/gogoproto"
 import strings "strings"
 import reflect "reflect"
 import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
+
+import (
+	context "golang.org/x/net/context"
+	grpc "google.golang.org/grpc"
+)
 
 import io "io"
 
@@ -37,7 +46,37 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
-type ModelInformation struct {
+type ErrorStatus struct {
+	Ok      bool   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
+	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+}
+
+func (m *ErrorStatus) Reset()                    { *m = ErrorStatus{} }
+func (*ErrorStatus) ProtoMessage()               {}
+func (*ErrorStatus) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{0} }
+
+func (m *ErrorStatus) GetOk() bool {
+	if m != nil {
+		return m.Ok
+	}
+	return false
+}
+
+func (m *ErrorStatus) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
+type Model struct {
+}
+
+func (m *Model) Reset()                    { *m = Model{} }
+func (*Model) ProtoMessage()               {}
+func (*Model) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1} }
+
+type Model_Information struct {
 	Name       string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Framework  string   `protobuf:"bytes,2,opt,name=framework,proto3" json:"framework,omitempty"`
 	Version    string   `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
@@ -48,222 +87,354 @@ type ModelInformation struct {
 	References []string `protobuf:"bytes,8,rep,name=references" json:"references,omitempty"`
 }
 
-func (m *ModelInformation) Reset()                    { *m = ModelInformation{} }
-func (*ModelInformation) ProtoMessage()               {}
-func (*ModelInformation) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{0} }
+func (m *Model_Information) Reset()                    { *m = Model_Information{} }
+func (*Model_Information) ProtoMessage()               {}
+func (*Model_Information) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 0} }
 
-func (m *ModelInformation) GetName() string {
+func (m *Model_Information) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetFramework() string {
+func (m *Model_Information) GetFramework() string {
 	if m != nil {
 		return m.Framework
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetVersion() string {
+func (m *Model_Information) GetVersion() string {
 	if m != nil {
 		return m.Version
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetType() string {
+func (m *Model_Information) GetType() string {
 	if m != nil {
 		return m.Type
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetDataset() string {
+func (m *Model_Information) GetDataset() string {
 	if m != nil {
 		return m.Dataset
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetGraphUrl() string {
+func (m *Model_Information) GetGraphUrl() string {
 	if m != nil {
 		return m.GraphUrl
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetWeightsUrl() string {
+func (m *Model_Information) GetWeightsUrl() string {
 	if m != nil {
 		return m.WeightsUrl
 	}
 	return ""
 }
 
-func (m *ModelInformation) GetReferences() []string {
+func (m *Model_Information) GetReferences() []string {
 	if m != nil {
 		return m.References
 	}
 	return nil
 }
 
-type ModelInformations struct {
-	Info []*ModelInformation `protobuf:"bytes,1,rep,name=info" json:"info,omitempty"`
+type Model_Graph struct {
+	Nodes      []*Model_Graph_Node      `protobuf:"bytes,1,rep,name=nodes" json:"nodes,omitempty"`
+	ArgNodes   []int64                  `protobuf:"varint,2,rep,packed,name=arg_nodes,json=argNodes" json:"arg_nodes,omitempty"`
+	NodeRowPtr []int64                  `protobuf:"varint,3,rep,packed,name=node_row_ptr,json=nodeRowPtr" json:"node_row_ptr,omitempty"`
+	Heads      []*Model_Graph_NodeEntry `protobuf:"bytes,4,rep,name=heads" json:"heads,omitempty"`
+	Attrs      map[string]string        `protobuf:"bytes,5,rep,name=attrs" json:"attrs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *ModelInformations) Reset()                    { *m = ModelInformations{} }
-func (*ModelInformations) ProtoMessage()               {}
-func (*ModelInformations) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1} }
+func (m *Model_Graph) Reset()                    { *m = Model_Graph{} }
+func (*Model_Graph) ProtoMessage()               {}
+func (*Model_Graph) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1} }
 
-func (m *ModelInformations) GetInfo() []*ModelInformation {
-	if m != nil {
-		return m.Info
-	}
-	return nil
-}
-
-type Graph struct {
-	Nodes      []*Graph_Node      `protobuf:"bytes,1,rep,name=nodes" json:"nodes,omitempty"`
-	ArgNodes   []int32            `protobuf:"varint,2,rep,packed,name=arg_nodes,json=argNodes" json:"arg_nodes,omitempty"`
-	NodeRowPtr []int32            `protobuf:"varint,3,rep,packed,name=node_row_ptr,json=nodeRowPtr" json:"node_row_ptr,omitempty"`
-	Heads      []*Graph_NodeEntry `protobuf:"bytes,4,rep,name=heads" json:"heads,omitempty"`
-	Attrs      map[string]string  `protobuf:"bytes,5,rep,name=attrs" json:"attrs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-}
-
-func (m *Graph) Reset()                    { *m = Graph{} }
-func (*Graph) ProtoMessage()               {}
-func (*Graph) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2} }
-
-func (m *Graph) GetNodes() []*Graph_Node {
+func (m *Model_Graph) GetNodes() []*Model_Graph_Node {
 	if m != nil {
 		return m.Nodes
 	}
 	return nil
 }
 
-func (m *Graph) GetArgNodes() []int32 {
+func (m *Model_Graph) GetArgNodes() []int64 {
 	if m != nil {
 		return m.ArgNodes
 	}
 	return nil
 }
 
-func (m *Graph) GetNodeRowPtr() []int32 {
+func (m *Model_Graph) GetNodeRowPtr() []int64 {
 	if m != nil {
 		return m.NodeRowPtr
 	}
 	return nil
 }
 
-func (m *Graph) GetHeads() []*Graph_NodeEntry {
+func (m *Model_Graph) GetHeads() []*Model_Graph_NodeEntry {
 	if m != nil {
 		return m.Heads
 	}
 	return nil
 }
 
-func (m *Graph) GetAttrs() map[string]string {
+func (m *Model_Graph) GetAttrs() map[string]string {
 	if m != nil {
 		return m.Attrs
 	}
 	return nil
 }
 
-type Graph_NodeEntry struct {
-	NodeId  int32 `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	Index   int32 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
-	Version int32 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
+type Model_Graph_NodeEntry struct {
+	NodeId  int64 `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	Index   int64 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
+	Version int64 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
 }
 
-func (m *Graph_NodeEntry) Reset()                    { *m = Graph_NodeEntry{} }
-func (*Graph_NodeEntry) ProtoMessage()               {}
-func (*Graph_NodeEntry) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 0} }
+func (m *Model_Graph_NodeEntry) Reset()                    { *m = Model_Graph_NodeEntry{} }
+func (*Model_Graph_NodeEntry) ProtoMessage()               {}
+func (*Model_Graph_NodeEntry) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1, 0} }
 
-func (m *Graph_NodeEntry) GetNodeId() int32 {
+func (m *Model_Graph_NodeEntry) GetNodeId() int64 {
 	if m != nil {
 		return m.NodeId
 	}
 	return 0
 }
 
-func (m *Graph_NodeEntry) GetIndex() int32 {
+func (m *Model_Graph_NodeEntry) GetIndex() int64 {
 	if m != nil {
 		return m.Index
 	}
 	return 0
 }
 
-func (m *Graph_NodeEntry) GetVersion() int32 {
+func (m *Model_Graph_NodeEntry) GetVersion() int64 {
 	if m != nil {
 		return m.Version
 	}
 	return 0
 }
 
-type Graph_Node struct {
-	Op               string             `protobuf:"bytes,1,opt,name=op,proto3" json:"op,omitempty"`
-	Param            map[string]string  `protobuf:"bytes,2,rep,name=param" json:"param,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Name             string             `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
-	Inputs           []*Graph_NodeEntry `protobuf:"bytes,4,rep,name=inputs" json:"inputs,omitempty"`
-	BackwardSourceId int32              `protobuf:"varint,5,opt,name=backward_source_id,json=backwardSourceId,proto3" json:"backward_source_id,omitempty"`
-	ControlDeps      []int32            `protobuf:"varint,6,rep,packed,name=control_deps,json=controlDeps" json:"control_deps,omitempty"`
+type Model_Graph_Node struct {
+	Op               string                   `protobuf:"bytes,1,opt,name=op,proto3" json:"op,omitempty"`
+	Param            map[string]string        `protobuf:"bytes,2,rep,name=param" json:"param,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Name             string                   `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Inputs           []*Model_Graph_NodeEntry `protobuf:"bytes,4,rep,name=inputs" json:"inputs,omitempty"`
+	BackwardSourceId int64                    `protobuf:"varint,5,opt,name=backward_source_id,json=backwardSourceId,proto3" json:"backward_source_id,omitempty"`
+	ControlDeps      []int64                  `protobuf:"varint,6,rep,packed,name=control_deps,json=controlDeps" json:"control_deps,omitempty"`
 }
 
-func (m *Graph_Node) Reset()                    { *m = Graph_Node{} }
-func (*Graph_Node) ProtoMessage()               {}
-func (*Graph_Node) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 1} }
+func (m *Model_Graph_Node) Reset()                    { *m = Model_Graph_Node{} }
+func (*Model_Graph_Node) ProtoMessage()               {}
+func (*Model_Graph_Node) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1, 1} }
 
-func (m *Graph_Node) GetOp() string {
+func (m *Model_Graph_Node) GetOp() string {
 	if m != nil {
 		return m.Op
 	}
 	return ""
 }
 
-func (m *Graph_Node) GetParam() map[string]string {
+func (m *Model_Graph_Node) GetParam() map[string]string {
 	if m != nil {
 		return m.Param
 	}
 	return nil
 }
 
-func (m *Graph_Node) GetName() string {
+func (m *Model_Graph_Node) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
 }
 
-func (m *Graph_Node) GetInputs() []*Graph_NodeEntry {
+func (m *Model_Graph_Node) GetInputs() []*Model_Graph_NodeEntry {
 	if m != nil {
 		return m.Inputs
 	}
 	return nil
 }
 
-func (m *Graph_Node) GetBackwardSourceId() int32 {
+func (m *Model_Graph_Node) GetBackwardSourceId() int64 {
 	if m != nil {
 		return m.BackwardSourceId
 	}
 	return 0
 }
 
-func (m *Graph_Node) GetControlDeps() []int32 {
+func (m *Model_Graph_Node) GetControlDeps() []int64 {
 	if m != nil {
 		return m.ControlDeps
 	}
 	return nil
 }
 
-func init() {
-	proto.RegisterType((*ModelInformation)(nil), "carml.org.mxnet.ModelInformation")
-	proto.RegisterType((*ModelInformations)(nil), "carml.org.mxnet.ModelInformations")
-	proto.RegisterType((*Graph)(nil), "carml.org.mxnet.Graph")
-	proto.RegisterType((*Graph_NodeEntry)(nil), "carml.org.mxnet.Graph.NodeEntry")
-	proto.RegisterType((*Graph_Node)(nil), "carml.org.mxnet.Graph.Node")
+type Model_Input struct {
+	Type       string  `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Dimensions []int64 `protobuf:"varint,2,rep,packed,name=dimensions" json:"dimensions,omitempty"`
 }
-func (this *ModelInformation) VerboseEqual(that interface{}) error {
+
+func (m *Model_Input) Reset()                    { *m = Model_Input{} }
+func (*Model_Input) ProtoMessage()               {}
+func (*Model_Input) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 2} }
+
+func (m *Model_Input) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *Model_Input) GetDimensions() []int64 {
+	if m != nil {
+		return m.Dimensions
+	}
+	return nil
+}
+
+type Model_Output struct {
+	Labels []string `protobuf:"bytes,1,rep,name=labels" json:"labels,omitempty"`
+}
+
+func (m *Model_Output) Reset()                    { *m = Model_Output{} }
+func (*Model_Output) ProtoMessage()               {}
+func (*Model_Output) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 3} }
+
+func (m *Model_Output) GetLabels() []string {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+type ModelInformations struct {
+	Info []*Model_Information `protobuf:"bytes,1,rep,name=info" json:"info,omitempty"`
+}
+
+func (m *ModelInformations) Reset()                    { *m = ModelInformations{} }
+func (*ModelInformations) ProtoMessage()               {}
+func (*ModelInformations) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2} }
+
+func (m *ModelInformations) GetInfo() []*Model_Information {
+	if m != nil {
+		return m.Info
+	}
+	return nil
+}
+
+type MXNetInferenceRequest struct {
+	Id        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ModelName string `protobuf:"bytes,2,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`
+	DataUrl   string `protobuf:"bytes,3,opt,name=data_url,json=dataUrl,proto3" json:"data_url,omitempty"`
+}
+
+func (m *MXNetInferenceRequest) Reset()                    { *m = MXNetInferenceRequest{} }
+func (*MXNetInferenceRequest) ProtoMessage()               {}
+func (*MXNetInferenceRequest) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{3} }
+
+func (m *MXNetInferenceRequest) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *MXNetInferenceRequest) GetModelName() string {
+	if m != nil {
+		return m.ModelName
+	}
+	return ""
+}
+
+func (m *MXNetInferenceRequest) GetDataUrl() string {
+	if m != nil {
+		return m.DataUrl
+	}
+	return ""
+}
+
+type MXNetInferenceResponse struct {
+	Id       string       `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Features []float32    `protobuf:"fixed32,2,rep,packed,name=features" json:"features,omitempty"`
+	Error    *ErrorStatus `protobuf:"bytes,3,opt,name=error" json:"error,omitempty"`
+}
+
+func (m *MXNetInferenceResponse) Reset()                    { *m = MXNetInferenceResponse{} }
+func (*MXNetInferenceResponse) ProtoMessage()               {}
+func (*MXNetInferenceResponse) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{4} }
+
+func (m *MXNetInferenceResponse) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *MXNetInferenceResponse) GetFeatures() []float32 {
+	if m != nil {
+		return m.Features
+	}
+	return nil
+}
+
+func (m *MXNetInferenceResponse) GetError() *ErrorStatus {
+	if m != nil {
+		return m.Error
+	}
+	return nil
+}
+
+type MXNetModelInformationRequest struct {
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (m *MXNetModelInformationRequest) Reset()      { *m = MXNetModelInformationRequest{} }
+func (*MXNetModelInformationRequest) ProtoMessage() {}
+func (*MXNetModelInformationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptorModel, []int{5}
+}
+
+func (m *MXNetModelInformationRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+type Null struct {
+}
+
+func (m *Null) Reset()                    { *m = Null{} }
+func (*Null) ProtoMessage()               {}
+func (*Null) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{6} }
+
+func init() {
+	proto.RegisterType((*ErrorStatus)(nil), "carml.org.mxnet.ErrorStatus")
+	proto.RegisterType((*Model)(nil), "carml.org.mxnet.Model")
+	proto.RegisterType((*Model_Information)(nil), "carml.org.mxnet.Model.Information")
+	proto.RegisterType((*Model_Graph)(nil), "carml.org.mxnet.Model.Graph")
+	proto.RegisterType((*Model_Graph_NodeEntry)(nil), "carml.org.mxnet.Model.Graph.NodeEntry")
+	proto.RegisterType((*Model_Graph_Node)(nil), "carml.org.mxnet.Model.Graph.Node")
+	proto.RegisterType((*Model_Input)(nil), "carml.org.mxnet.Model.Input")
+	proto.RegisterType((*Model_Output)(nil), "carml.org.mxnet.Model.Output")
+	proto.RegisterType((*ModelInformations)(nil), "carml.org.mxnet.ModelInformations")
+	proto.RegisterType((*MXNetInferenceRequest)(nil), "carml.org.mxnet.MXNetInferenceRequest")
+	proto.RegisterType((*MXNetInferenceResponse)(nil), "carml.org.mxnet.MXNetInferenceResponse")
+	proto.RegisterType((*MXNetModelInformationRequest)(nil), "carml.org.mxnet.MXNetModelInformationRequest")
+	proto.RegisterType((*Null)(nil), "carml.org.mxnet.Null")
+}
+func (this *ErrorStatus) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
 			return nil
@@ -271,22 +442,142 @@ func (this *ModelInformation) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that == nil && this != nil")
 	}
 
-	that1, ok := that.(*ModelInformation)
+	that1, ok := that.(*ErrorStatus)
 	if !ok {
-		that2, ok := that.(ModelInformation)
+		that2, ok := that.(ErrorStatus)
 		if ok {
 			that1 = &that2
 		} else {
-			return fmt.Errorf("that is not of type *ModelInformation")
+			return fmt.Errorf("that is not of type *ErrorStatus")
 		}
 	}
 	if that1 == nil {
 		if this == nil {
 			return nil
 		}
-		return fmt.Errorf("that is type *ModelInformation but is nil && this != nil")
+		return fmt.Errorf("that is type *ErrorStatus but is nil && this != nil")
 	} else if this == nil {
-		return fmt.Errorf("that is type *ModelInformation but is not nil && this == nil")
+		return fmt.Errorf("that is type *ErrorStatus but is not nil && this == nil")
+	}
+	if this.Ok != that1.Ok {
+		return fmt.Errorf("Ok this(%v) Not Equal that(%v)", this.Ok, that1.Ok)
+	}
+	if this.Message != that1.Message {
+		return fmt.Errorf("Message this(%v) Not Equal that(%v)", this.Message, that1.Message)
+	}
+	return nil
+}
+func (this *ErrorStatus) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*ErrorStatus)
+	if !ok {
+		that2, ok := that.(ErrorStatus)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Ok != that1.Ok {
+		return false
+	}
+	if this.Message != that1.Message {
+		return false
+	}
+	return true
+}
+func (this *Model) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model)
+	if !ok {
+		that2, ok := that.(Model)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model but is not nil && this == nil")
+	}
+	return nil
+}
+func (this *Model) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model)
+	if !ok {
+		that2, ok := that.(Model)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	return true
+}
+func (this *Model_Information) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Information)
+	if !ok {
+		that2, ok := that.(Model_Information)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Information")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Information but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Information but is not nil && this == nil")
 	}
 	if this.Name != that1.Name {
 		return fmt.Errorf("Name this(%v) Not Equal that(%v)", this.Name, that1.Name)
@@ -319,7 +610,7 @@ func (this *ModelInformation) VerboseEqual(that interface{}) error {
 	}
 	return nil
 }
-func (this *ModelInformation) Equal(that interface{}) bool {
+func (this *Model_Information) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
 			return true
@@ -327,9 +618,9 @@ func (this *ModelInformation) Equal(that interface{}) bool {
 		return false
 	}
 
-	that1, ok := that.(*ModelInformation)
+	that1, ok := that.(*Model_Information)
 	if !ok {
-		that2, ok := that.(ModelInformation)
+		that2, ok := that.(Model_Information)
 		if ok {
 			that1 = &that2
 		} else {
@@ -370,6 +661,478 @@ func (this *ModelInformation) Equal(that interface{}) bool {
 	}
 	for i := range this.References {
 		if this.References[i] != that1.References[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Model_Graph) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Graph)
+	if !ok {
+		that2, ok := that.(Model_Graph)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Graph")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Graph but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Graph but is not nil && this == nil")
+	}
+	if len(this.Nodes) != len(that1.Nodes) {
+		return fmt.Errorf("Nodes this(%v) Not Equal that(%v)", len(this.Nodes), len(that1.Nodes))
+	}
+	for i := range this.Nodes {
+		if !this.Nodes[i].Equal(that1.Nodes[i]) {
+			return fmt.Errorf("Nodes this[%v](%v) Not Equal that[%v](%v)", i, this.Nodes[i], i, that1.Nodes[i])
+		}
+	}
+	if len(this.ArgNodes) != len(that1.ArgNodes) {
+		return fmt.Errorf("ArgNodes this(%v) Not Equal that(%v)", len(this.ArgNodes), len(that1.ArgNodes))
+	}
+	for i := range this.ArgNodes {
+		if this.ArgNodes[i] != that1.ArgNodes[i] {
+			return fmt.Errorf("ArgNodes this[%v](%v) Not Equal that[%v](%v)", i, this.ArgNodes[i], i, that1.ArgNodes[i])
+		}
+	}
+	if len(this.NodeRowPtr) != len(that1.NodeRowPtr) {
+		return fmt.Errorf("NodeRowPtr this(%v) Not Equal that(%v)", len(this.NodeRowPtr), len(that1.NodeRowPtr))
+	}
+	for i := range this.NodeRowPtr {
+		if this.NodeRowPtr[i] != that1.NodeRowPtr[i] {
+			return fmt.Errorf("NodeRowPtr this[%v](%v) Not Equal that[%v](%v)", i, this.NodeRowPtr[i], i, that1.NodeRowPtr[i])
+		}
+	}
+	if len(this.Heads) != len(that1.Heads) {
+		return fmt.Errorf("Heads this(%v) Not Equal that(%v)", len(this.Heads), len(that1.Heads))
+	}
+	for i := range this.Heads {
+		if !this.Heads[i].Equal(that1.Heads[i]) {
+			return fmt.Errorf("Heads this[%v](%v) Not Equal that[%v](%v)", i, this.Heads[i], i, that1.Heads[i])
+		}
+	}
+	if len(this.Attrs) != len(that1.Attrs) {
+		return fmt.Errorf("Attrs this(%v) Not Equal that(%v)", len(this.Attrs), len(that1.Attrs))
+	}
+	for i := range this.Attrs {
+		if this.Attrs[i] != that1.Attrs[i] {
+			return fmt.Errorf("Attrs this[%v](%v) Not Equal that[%v](%v)", i, this.Attrs[i], i, that1.Attrs[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Graph) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Graph)
+	if !ok {
+		that2, ok := that.(Model_Graph)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if len(this.Nodes) != len(that1.Nodes) {
+		return false
+	}
+	for i := range this.Nodes {
+		if !this.Nodes[i].Equal(that1.Nodes[i]) {
+			return false
+		}
+	}
+	if len(this.ArgNodes) != len(that1.ArgNodes) {
+		return false
+	}
+	for i := range this.ArgNodes {
+		if this.ArgNodes[i] != that1.ArgNodes[i] {
+			return false
+		}
+	}
+	if len(this.NodeRowPtr) != len(that1.NodeRowPtr) {
+		return false
+	}
+	for i := range this.NodeRowPtr {
+		if this.NodeRowPtr[i] != that1.NodeRowPtr[i] {
+			return false
+		}
+	}
+	if len(this.Heads) != len(that1.Heads) {
+		return false
+	}
+	for i := range this.Heads {
+		if !this.Heads[i].Equal(that1.Heads[i]) {
+			return false
+		}
+	}
+	if len(this.Attrs) != len(that1.Attrs) {
+		return false
+	}
+	for i := range this.Attrs {
+		if this.Attrs[i] != that1.Attrs[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Model_Graph_NodeEntry) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Graph_NodeEntry)
+	if !ok {
+		that2, ok := that.(Model_Graph_NodeEntry)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Graph_NodeEntry")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Graph_NodeEntry but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Graph_NodeEntry but is not nil && this == nil")
+	}
+	if this.NodeId != that1.NodeId {
+		return fmt.Errorf("NodeId this(%v) Not Equal that(%v)", this.NodeId, that1.NodeId)
+	}
+	if this.Index != that1.Index {
+		return fmt.Errorf("Index this(%v) Not Equal that(%v)", this.Index, that1.Index)
+	}
+	if this.Version != that1.Version {
+		return fmt.Errorf("Version this(%v) Not Equal that(%v)", this.Version, that1.Version)
+	}
+	return nil
+}
+func (this *Model_Graph_NodeEntry) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Graph_NodeEntry)
+	if !ok {
+		that2, ok := that.(Model_Graph_NodeEntry)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.NodeId != that1.NodeId {
+		return false
+	}
+	if this.Index != that1.Index {
+		return false
+	}
+	if this.Version != that1.Version {
+		return false
+	}
+	return true
+}
+func (this *Model_Graph_Node) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Graph_Node)
+	if !ok {
+		that2, ok := that.(Model_Graph_Node)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Graph_Node")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Graph_Node but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Graph_Node but is not nil && this == nil")
+	}
+	if this.Op != that1.Op {
+		return fmt.Errorf("Op this(%v) Not Equal that(%v)", this.Op, that1.Op)
+	}
+	if len(this.Param) != len(that1.Param) {
+		return fmt.Errorf("Param this(%v) Not Equal that(%v)", len(this.Param), len(that1.Param))
+	}
+	for i := range this.Param {
+		if this.Param[i] != that1.Param[i] {
+			return fmt.Errorf("Param this[%v](%v) Not Equal that[%v](%v)", i, this.Param[i], i, that1.Param[i])
+		}
+	}
+	if this.Name != that1.Name {
+		return fmt.Errorf("Name this(%v) Not Equal that(%v)", this.Name, that1.Name)
+	}
+	if len(this.Inputs) != len(that1.Inputs) {
+		return fmt.Errorf("Inputs this(%v) Not Equal that(%v)", len(this.Inputs), len(that1.Inputs))
+	}
+	for i := range this.Inputs {
+		if !this.Inputs[i].Equal(that1.Inputs[i]) {
+			return fmt.Errorf("Inputs this[%v](%v) Not Equal that[%v](%v)", i, this.Inputs[i], i, that1.Inputs[i])
+		}
+	}
+	if this.BackwardSourceId != that1.BackwardSourceId {
+		return fmt.Errorf("BackwardSourceId this(%v) Not Equal that(%v)", this.BackwardSourceId, that1.BackwardSourceId)
+	}
+	if len(this.ControlDeps) != len(that1.ControlDeps) {
+		return fmt.Errorf("ControlDeps this(%v) Not Equal that(%v)", len(this.ControlDeps), len(that1.ControlDeps))
+	}
+	for i := range this.ControlDeps {
+		if this.ControlDeps[i] != that1.ControlDeps[i] {
+			return fmt.Errorf("ControlDeps this[%v](%v) Not Equal that[%v](%v)", i, this.ControlDeps[i], i, that1.ControlDeps[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Graph_Node) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Graph_Node)
+	if !ok {
+		that2, ok := that.(Model_Graph_Node)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Op != that1.Op {
+		return false
+	}
+	if len(this.Param) != len(that1.Param) {
+		return false
+	}
+	for i := range this.Param {
+		if this.Param[i] != that1.Param[i] {
+			return false
+		}
+	}
+	if this.Name != that1.Name {
+		return false
+	}
+	if len(this.Inputs) != len(that1.Inputs) {
+		return false
+	}
+	for i := range this.Inputs {
+		if !this.Inputs[i].Equal(that1.Inputs[i]) {
+			return false
+		}
+	}
+	if this.BackwardSourceId != that1.BackwardSourceId {
+		return false
+	}
+	if len(this.ControlDeps) != len(that1.ControlDeps) {
+		return false
+	}
+	for i := range this.ControlDeps {
+		if this.ControlDeps[i] != that1.ControlDeps[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Model_Input) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Input)
+	if !ok {
+		that2, ok := that.(Model_Input)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Input")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Input but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Input but is not nil && this == nil")
+	}
+	if this.Type != that1.Type {
+		return fmt.Errorf("Type this(%v) Not Equal that(%v)", this.Type, that1.Type)
+	}
+	if len(this.Dimensions) != len(that1.Dimensions) {
+		return fmt.Errorf("Dimensions this(%v) Not Equal that(%v)", len(this.Dimensions), len(that1.Dimensions))
+	}
+	for i := range this.Dimensions {
+		if this.Dimensions[i] != that1.Dimensions[i] {
+			return fmt.Errorf("Dimensions this[%v](%v) Not Equal that[%v](%v)", i, this.Dimensions[i], i, that1.Dimensions[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Input) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Input)
+	if !ok {
+		that2, ok := that.(Model_Input)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if len(this.Dimensions) != len(that1.Dimensions) {
+		return false
+	}
+	for i := range this.Dimensions {
+		if this.Dimensions[i] != that1.Dimensions[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Model_Output) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Output)
+	if !ok {
+		that2, ok := that.(Model_Output)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Output")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Output but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Output but is not nil && this == nil")
+	}
+	if len(this.Labels) != len(that1.Labels) {
+		return fmt.Errorf("Labels this(%v) Not Equal that(%v)", len(this.Labels), len(that1.Labels))
+	}
+	for i := range this.Labels {
+		if this.Labels[i] != that1.Labels[i] {
+			return fmt.Errorf("Labels this[%v](%v) Not Equal that[%v](%v)", i, this.Labels[i], i, that1.Labels[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Output) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Output)
+	if !ok {
+		that2, ok := that.(Model_Output)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if len(this.Labels) != len(that1.Labels) {
+		return false
+	}
+	for i := range this.Labels {
+		if this.Labels[i] != that1.Labels[i] {
 			return false
 		}
 	}
@@ -445,7 +1208,7 @@ func (this *ModelInformations) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Graph) VerboseEqual(that interface{}) error {
+func (this *MXNetInferenceRequest) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
 			return nil
@@ -453,66 +1216,35 @@ func (this *Graph) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that == nil && this != nil")
 	}
 
-	that1, ok := that.(*Graph)
+	that1, ok := that.(*MXNetInferenceRequest)
 	if !ok {
-		that2, ok := that.(Graph)
+		that2, ok := that.(MXNetInferenceRequest)
 		if ok {
 			that1 = &that2
 		} else {
-			return fmt.Errorf("that is not of type *Graph")
+			return fmt.Errorf("that is not of type *MXNetInferenceRequest")
 		}
 	}
 	if that1 == nil {
 		if this == nil {
 			return nil
 		}
-		return fmt.Errorf("that is type *Graph but is nil && this != nil")
+		return fmt.Errorf("that is type *MXNetInferenceRequest but is nil && this != nil")
 	} else if this == nil {
-		return fmt.Errorf("that is type *Graph but is not nil && this == nil")
+		return fmt.Errorf("that is type *MXNetInferenceRequest but is not nil && this == nil")
 	}
-	if len(this.Nodes) != len(that1.Nodes) {
-		return fmt.Errorf("Nodes this(%v) Not Equal that(%v)", len(this.Nodes), len(that1.Nodes))
+	if this.Id != that1.Id {
+		return fmt.Errorf("Id this(%v) Not Equal that(%v)", this.Id, that1.Id)
 	}
-	for i := range this.Nodes {
-		if !this.Nodes[i].Equal(that1.Nodes[i]) {
-			return fmt.Errorf("Nodes this[%v](%v) Not Equal that[%v](%v)", i, this.Nodes[i], i, that1.Nodes[i])
-		}
+	if this.ModelName != that1.ModelName {
+		return fmt.Errorf("ModelName this(%v) Not Equal that(%v)", this.ModelName, that1.ModelName)
 	}
-	if len(this.ArgNodes) != len(that1.ArgNodes) {
-		return fmt.Errorf("ArgNodes this(%v) Not Equal that(%v)", len(this.ArgNodes), len(that1.ArgNodes))
-	}
-	for i := range this.ArgNodes {
-		if this.ArgNodes[i] != that1.ArgNodes[i] {
-			return fmt.Errorf("ArgNodes this[%v](%v) Not Equal that[%v](%v)", i, this.ArgNodes[i], i, that1.ArgNodes[i])
-		}
-	}
-	if len(this.NodeRowPtr) != len(that1.NodeRowPtr) {
-		return fmt.Errorf("NodeRowPtr this(%v) Not Equal that(%v)", len(this.NodeRowPtr), len(that1.NodeRowPtr))
-	}
-	for i := range this.NodeRowPtr {
-		if this.NodeRowPtr[i] != that1.NodeRowPtr[i] {
-			return fmt.Errorf("NodeRowPtr this[%v](%v) Not Equal that[%v](%v)", i, this.NodeRowPtr[i], i, that1.NodeRowPtr[i])
-		}
-	}
-	if len(this.Heads) != len(that1.Heads) {
-		return fmt.Errorf("Heads this(%v) Not Equal that(%v)", len(this.Heads), len(that1.Heads))
-	}
-	for i := range this.Heads {
-		if !this.Heads[i].Equal(that1.Heads[i]) {
-			return fmt.Errorf("Heads this[%v](%v) Not Equal that[%v](%v)", i, this.Heads[i], i, that1.Heads[i])
-		}
-	}
-	if len(this.Attrs) != len(that1.Attrs) {
-		return fmt.Errorf("Attrs this(%v) Not Equal that(%v)", len(this.Attrs), len(that1.Attrs))
-	}
-	for i := range this.Attrs {
-		if this.Attrs[i] != that1.Attrs[i] {
-			return fmt.Errorf("Attrs this[%v](%v) Not Equal that[%v](%v)", i, this.Attrs[i], i, that1.Attrs[i])
-		}
+	if this.DataUrl != that1.DataUrl {
+		return fmt.Errorf("DataUrl this(%v) Not Equal that(%v)", this.DataUrl, that1.DataUrl)
 	}
 	return nil
 }
-func (this *Graph) Equal(that interface{}) bool {
+func (this *MXNetInferenceRequest) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
 			return true
@@ -520,9 +1252,9 @@ func (this *Graph) Equal(that interface{}) bool {
 		return false
 	}
 
-	that1, ok := that.(*Graph)
+	that1, ok := that.(*MXNetInferenceRequest)
 	if !ok {
-		that2, ok := that.(Graph)
+		that2, ok := that.(MXNetInferenceRequest)
 		if ok {
 			that1 = &that2
 		} else {
@@ -537,121 +1269,18 @@ func (this *Graph) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if len(this.Nodes) != len(that1.Nodes) {
+	if this.Id != that1.Id {
 		return false
 	}
-	for i := range this.Nodes {
-		if !this.Nodes[i].Equal(that1.Nodes[i]) {
-			return false
-		}
-	}
-	if len(this.ArgNodes) != len(that1.ArgNodes) {
+	if this.ModelName != that1.ModelName {
 		return false
 	}
-	for i := range this.ArgNodes {
-		if this.ArgNodes[i] != that1.ArgNodes[i] {
-			return false
-		}
-	}
-	if len(this.NodeRowPtr) != len(that1.NodeRowPtr) {
-		return false
-	}
-	for i := range this.NodeRowPtr {
-		if this.NodeRowPtr[i] != that1.NodeRowPtr[i] {
-			return false
-		}
-	}
-	if len(this.Heads) != len(that1.Heads) {
-		return false
-	}
-	for i := range this.Heads {
-		if !this.Heads[i].Equal(that1.Heads[i]) {
-			return false
-		}
-	}
-	if len(this.Attrs) != len(that1.Attrs) {
-		return false
-	}
-	for i := range this.Attrs {
-		if this.Attrs[i] != that1.Attrs[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *Graph_NodeEntry) VerboseEqual(that interface{}) error {
-	if that == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that == nil && this != nil")
-	}
-
-	that1, ok := that.(*Graph_NodeEntry)
-	if !ok {
-		that2, ok := that.(Graph_NodeEntry)
-		if ok {
-			that1 = &that2
-		} else {
-			return fmt.Errorf("that is not of type *Graph_NodeEntry")
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that is type *Graph_NodeEntry but is nil && this != nil")
-	} else if this == nil {
-		return fmt.Errorf("that is type *Graph_NodeEntry but is not nil && this == nil")
-	}
-	if this.NodeId != that1.NodeId {
-		return fmt.Errorf("NodeId this(%v) Not Equal that(%v)", this.NodeId, that1.NodeId)
-	}
-	if this.Index != that1.Index {
-		return fmt.Errorf("Index this(%v) Not Equal that(%v)", this.Index, that1.Index)
-	}
-	if this.Version != that1.Version {
-		return fmt.Errorf("Version this(%v) Not Equal that(%v)", this.Version, that1.Version)
-	}
-	return nil
-}
-func (this *Graph_NodeEntry) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Graph_NodeEntry)
-	if !ok {
-		that2, ok := that.(Graph_NodeEntry)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.NodeId != that1.NodeId {
-		return false
-	}
-	if this.Index != that1.Index {
-		return false
-	}
-	if this.Version != that1.Version {
+	if this.DataUrl != that1.DataUrl {
 		return false
 	}
 	return true
 }
-func (this *Graph_Node) VerboseEqual(that interface{}) error {
+func (this *MXNetInferenceResponse) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
 			return nil
@@ -659,59 +1288,111 @@ func (this *Graph_Node) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that == nil && this != nil")
 	}
 
-	that1, ok := that.(*Graph_Node)
+	that1, ok := that.(*MXNetInferenceResponse)
 	if !ok {
-		that2, ok := that.(Graph_Node)
+		that2, ok := that.(MXNetInferenceResponse)
 		if ok {
 			that1 = &that2
 		} else {
-			return fmt.Errorf("that is not of type *Graph_Node")
+			return fmt.Errorf("that is not of type *MXNetInferenceResponse")
 		}
 	}
 	if that1 == nil {
 		if this == nil {
 			return nil
 		}
-		return fmt.Errorf("that is type *Graph_Node but is nil && this != nil")
+		return fmt.Errorf("that is type *MXNetInferenceResponse but is nil && this != nil")
 	} else if this == nil {
-		return fmt.Errorf("that is type *Graph_Node but is not nil && this == nil")
+		return fmt.Errorf("that is type *MXNetInferenceResponse but is not nil && this == nil")
 	}
-	if this.Op != that1.Op {
-		return fmt.Errorf("Op this(%v) Not Equal that(%v)", this.Op, that1.Op)
+	if this.Id != that1.Id {
+		return fmt.Errorf("Id this(%v) Not Equal that(%v)", this.Id, that1.Id)
 	}
-	if len(this.Param) != len(that1.Param) {
-		return fmt.Errorf("Param this(%v) Not Equal that(%v)", len(this.Param), len(that1.Param))
+	if len(this.Features) != len(that1.Features) {
+		return fmt.Errorf("Features this(%v) Not Equal that(%v)", len(this.Features), len(that1.Features))
 	}
-	for i := range this.Param {
-		if this.Param[i] != that1.Param[i] {
-			return fmt.Errorf("Param this[%v](%v) Not Equal that[%v](%v)", i, this.Param[i], i, that1.Param[i])
+	for i := range this.Features {
+		if this.Features[i] != that1.Features[i] {
+			return fmt.Errorf("Features this[%v](%v) Not Equal that[%v](%v)", i, this.Features[i], i, that1.Features[i])
 		}
+	}
+	if !this.Error.Equal(that1.Error) {
+		return fmt.Errorf("Error this(%v) Not Equal that(%v)", this.Error, that1.Error)
+	}
+	return nil
+}
+func (this *MXNetInferenceResponse) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*MXNetInferenceResponse)
+	if !ok {
+		that2, ok := that.(MXNetInferenceResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Id != that1.Id {
+		return false
+	}
+	if len(this.Features) != len(that1.Features) {
+		return false
+	}
+	for i := range this.Features {
+		if this.Features[i] != that1.Features[i] {
+			return false
+		}
+	}
+	if !this.Error.Equal(that1.Error) {
+		return false
+	}
+	return true
+}
+func (this *MXNetModelInformationRequest) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*MXNetModelInformationRequest)
+	if !ok {
+		that2, ok := that.(MXNetModelInformationRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *MXNetModelInformationRequest")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *MXNetModelInformationRequest but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *MXNetModelInformationRequest but is not nil && this == nil")
 	}
 	if this.Name != that1.Name {
 		return fmt.Errorf("Name this(%v) Not Equal that(%v)", this.Name, that1.Name)
 	}
-	if len(this.Inputs) != len(that1.Inputs) {
-		return fmt.Errorf("Inputs this(%v) Not Equal that(%v)", len(this.Inputs), len(that1.Inputs))
-	}
-	for i := range this.Inputs {
-		if !this.Inputs[i].Equal(that1.Inputs[i]) {
-			return fmt.Errorf("Inputs this[%v](%v) Not Equal that[%v](%v)", i, this.Inputs[i], i, that1.Inputs[i])
-		}
-	}
-	if this.BackwardSourceId != that1.BackwardSourceId {
-		return fmt.Errorf("BackwardSourceId this(%v) Not Equal that(%v)", this.BackwardSourceId, that1.BackwardSourceId)
-	}
-	if len(this.ControlDeps) != len(that1.ControlDeps) {
-		return fmt.Errorf("ControlDeps this(%v) Not Equal that(%v)", len(this.ControlDeps), len(that1.ControlDeps))
-	}
-	for i := range this.ControlDeps {
-		if this.ControlDeps[i] != that1.ControlDeps[i] {
-			return fmt.Errorf("ControlDeps this[%v](%v) Not Equal that[%v](%v)", i, this.ControlDeps[i], i, that1.ControlDeps[i])
-		}
-	}
 	return nil
 }
-func (this *Graph_Node) Equal(that interface{}) bool {
+func (this *MXNetModelInformationRequest) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
 			return true
@@ -719,9 +1400,9 @@ func (this *Graph_Node) Equal(that interface{}) bool {
 		return false
 	}
 
-	that1, ok := that.(*Graph_Node)
+	that1, ok := that.(*MXNetModelInformationRequest)
 	if !ok {
-		that2, ok := that.(Graph_Node)
+		that2, ok := that.(MXNetModelInformationRequest)
 		if ok {
 			that1 = &that2
 		} else {
@@ -736,47 +1417,91 @@ func (this *Graph_Node) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if this.Op != that1.Op {
-		return false
-	}
-	if len(this.Param) != len(that1.Param) {
-		return false
-	}
-	for i := range this.Param {
-		if this.Param[i] != that1.Param[i] {
-			return false
-		}
-	}
 	if this.Name != that1.Name {
 		return false
 	}
-	if len(this.Inputs) != len(that1.Inputs) {
+	return true
+}
+func (this *Null) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Null)
+	if !ok {
+		that2, ok := that.(Null)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Null")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Null but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Null but is not nil && this == nil")
+	}
+	return nil
+}
+func (this *Null) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
 		return false
 	}
-	for i := range this.Inputs {
-		if !this.Inputs[i].Equal(that1.Inputs[i]) {
+
+	that1, ok := that.(*Null)
+	if !ok {
+		that2, ok := that.(Null)
+		if ok {
+			that1 = &that2
+		} else {
 			return false
 		}
 	}
-	if this.BackwardSourceId != that1.BackwardSourceId {
-		return false
-	}
-	if len(this.ControlDeps) != len(that1.ControlDeps) {
-		return false
-	}
-	for i := range this.ControlDeps {
-		if this.ControlDeps[i] != that1.ControlDeps[i] {
-			return false
+	if that1 == nil {
+		if this == nil {
+			return true
 		}
+		return false
+	} else if this == nil {
+		return false
 	}
 	return true
 }
-func (this *ModelInformation) GoString() string {
+func (this *ErrorStatus) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&mxnet.ErrorStatus{")
+	s = append(s, "Ok: "+fmt.Sprintf("%#v", this.Ok)+",\n")
+	s = append(s, "Message: "+fmt.Sprintf("%#v", this.Message)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Model) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&mxnet.Model{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Model_Information) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 12)
-	s = append(s, "&mxnet.ModelInformation{")
+	s = append(s, "&mxnet.Model_Information{")
 	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
 	s = append(s, "Framework: "+fmt.Sprintf("%#v", this.Framework)+",\n")
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
@@ -788,24 +1513,12 @@ func (this *ModelInformation) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *ModelInformations) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&mxnet.ModelInformations{")
-	if this.Info != nil {
-		s = append(s, "Info: "+fmt.Sprintf("%#v", this.Info)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Graph) GoString() string {
+func (this *Model_Graph) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 9)
-	s = append(s, "&mxnet.Graph{")
+	s = append(s, "&mxnet.Model_Graph{")
 	if this.Nodes != nil {
 		s = append(s, "Nodes: "+fmt.Sprintf("%#v", this.Nodes)+",\n")
 	}
@@ -830,24 +1543,24 @@ func (this *Graph) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *Graph_NodeEntry) GoString() string {
+func (this *Model_Graph_NodeEntry) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 7)
-	s = append(s, "&mxnet.Graph_NodeEntry{")
+	s = append(s, "&mxnet.Model_Graph_NodeEntry{")
 	s = append(s, "NodeId: "+fmt.Sprintf("%#v", this.NodeId)+",\n")
 	s = append(s, "Index: "+fmt.Sprintf("%#v", this.Index)+",\n")
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *Graph_Node) GoString() string {
+func (this *Model_Graph_Node) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 10)
-	s = append(s, "&mxnet.Graph_Node{")
+	s = append(s, "&mxnet.Model_Graph_Node{")
 	s = append(s, "Op: "+fmt.Sprintf("%#v", this.Op)+",\n")
 	keysForParam := make([]string, 0, len(this.Param))
 	for k, _ := range this.Param {
@@ -871,6 +1584,84 @@ func (this *Graph_Node) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *Model_Input) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&mxnet.Model_Input{")
+	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
+	s = append(s, "Dimensions: "+fmt.Sprintf("%#v", this.Dimensions)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Model_Output) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&mxnet.Model_Output{")
+	s = append(s, "Labels: "+fmt.Sprintf("%#v", this.Labels)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ModelInformations) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&mxnet.ModelInformations{")
+	if this.Info != nil {
+		s = append(s, "Info: "+fmt.Sprintf("%#v", this.Info)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MXNetInferenceRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&mxnet.MXNetInferenceRequest{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "ModelName: "+fmt.Sprintf("%#v", this.ModelName)+",\n")
+	s = append(s, "DataUrl: "+fmt.Sprintf("%#v", this.DataUrl)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MXNetInferenceResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 7)
+	s = append(s, "&mxnet.MXNetInferenceResponse{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "Features: "+fmt.Sprintf("%#v", this.Features)+",\n")
+	if this.Error != nil {
+		s = append(s, "Error: "+fmt.Sprintf("%#v", this.Error)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MXNetModelInformationRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&mxnet.MXNetModelInformationRequest{")
+	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Null) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&mxnet.Null{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func valueToGoStringModel(v interface{}, typ string) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
@@ -879,7 +1670,240 @@ func valueToGoStringModel(v interface{}, typ string) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
 }
-func (m *ModelInformation) Marshal() (dAtA []byte, err error) {
+
+// Reference imports to suppress errors if they are not otherwise used.
+var _ context.Context
+var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion4
+
+// Client API for MXNet service
+
+type MXNetClient interface {
+	Infer(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferClient, error)
+	Models(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error)
+	GetModel(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model, error)
+	GetModelInformation(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Information, error)
+	GetModelGraph(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Graph, error)
+}
+
+type mXNetClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewMXNetClient(cc *grpc.ClientConn) MXNetClient {
+	return &mXNetClient{cc}
+}
+
+func (c *mXNetClient) Infer(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_MXNet_serviceDesc.Streams[0], c.cc, "/carml.org.mxnet.MXNet/Infer", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &mXNetInferClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type MXNet_InferClient interface {
+	Recv() (*MXNetInferenceResponse, error)
+	grpc.ClientStream
+}
+
+type mXNetInferClient struct {
+	grpc.ClientStream
+}
+
+func (x *mXNetInferClient) Recv() (*MXNetInferenceResponse, error) {
+	m := new(MXNetInferenceResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *mXNetClient) Models(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error) {
+	out := new(ModelInformations)
+	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/Models", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mXNetClient) GetModel(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model, error) {
+	out := new(Model)
+	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/GetModel", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mXNetClient) GetModelInformation(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Information, error) {
+	out := new(Model_Information)
+	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/GetModelInformation", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mXNetClient) GetModelGraph(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Graph, error) {
+	out := new(Model_Graph)
+	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/GetModelGraph", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for MXNet service
+
+type MXNetServer interface {
+	Infer(*MXNetInferenceRequest, MXNet_InferServer) error
+	Models(context.Context, *Null) (*ModelInformations, error)
+	GetModel(context.Context, *MXNetModelInformationRequest) (*Model, error)
+	GetModelInformation(context.Context, *MXNetModelInformationRequest) (*Model_Information, error)
+	GetModelGraph(context.Context, *MXNetModelInformationRequest) (*Model_Graph, error)
+}
+
+func RegisterMXNetServer(s *grpc.Server, srv MXNetServer) {
+	s.RegisterService(&_MXNet_serviceDesc, srv)
+}
+
+func _MXNet_Infer_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(MXNetInferenceRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(MXNetServer).Infer(m, &mXNetInferServer{stream})
+}
+
+type MXNet_InferServer interface {
+	Send(*MXNetInferenceResponse) error
+	grpc.ServerStream
+}
+
+type mXNetInferServer struct {
+	grpc.ServerStream
+}
+
+func (x *mXNetInferServer) Send(m *MXNetInferenceResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _MXNet_Models_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Null)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MXNetServer).Models(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.mxnet.MXNet/Models",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MXNetServer).Models(ctx, req.(*Null))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MXNet_GetModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MXNetModelInformationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MXNetServer).GetModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.mxnet.MXNet/GetModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MXNetServer).GetModel(ctx, req.(*MXNetModelInformationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MXNet_GetModelInformation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MXNetModelInformationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MXNetServer).GetModelInformation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.mxnet.MXNet/GetModelInformation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MXNetServer).GetModelInformation(ctx, req.(*MXNetModelInformationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MXNet_GetModelGraph_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MXNetModelInformationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MXNetServer).GetModelGraph(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.mxnet.MXNet/GetModelGraph",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MXNetServer).GetModelGraph(ctx, req.(*MXNetModelInformationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _MXNet_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "carml.org.mxnet.MXNet",
+	HandlerType: (*MXNetServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Models",
+			Handler:    _MXNet_Models_Handler,
+		},
+		{
+			MethodName: "GetModel",
+			Handler:    _MXNet_GetModel_Handler,
+		},
+		{
+			MethodName: "GetModelInformation",
+			Handler:    _MXNet_GetModelInformation_Handler,
+		},
+		{
+			MethodName: "GetModelGraph",
+			Handler:    _MXNet_GetModelGraph_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Infer",
+			Handler:       _MXNet_Infer_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "model.proto",
+}
+
+func (m *ErrorStatus) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -889,7 +1913,59 @@ func (m *ModelInformation) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ModelInformation) MarshalTo(dAtA []byte) (int, error) {
+func (m *ErrorStatus) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Ok {
+		dAtA[i] = 0x8
+		i++
+		if m.Ok {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if len(m.Message) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Message)))
+		i += copy(dAtA[i:], m.Message)
+	}
+	return i, nil
+}
+
+func (m *Model) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
+func (m *Model_Information) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model_Information) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -954,7 +2030,7 @@ func (m *ModelInformation) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *ModelInformations) Marshal() (dAtA []byte, err error) {
+func (m *Model_Graph) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -964,37 +2040,7 @@ func (m *ModelInformations) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ModelInformations) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Info) > 0 {
-		for _, msg := range m.Info {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintModel(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *Graph) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Graph) MarshalTo(dAtA []byte) (int, error) {
+func (m *Model_Graph) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -1079,7 +2125,7 @@ func (m *Graph) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *Graph_NodeEntry) Marshal() (dAtA []byte, err error) {
+func (m *Model_Graph_NodeEntry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -1089,7 +2135,7 @@ func (m *Graph_NodeEntry) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Graph_NodeEntry) MarshalTo(dAtA []byte) (int, error) {
+func (m *Model_Graph_NodeEntry) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -1112,7 +2158,7 @@ func (m *Graph_NodeEntry) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *Graph_Node) Marshal() (dAtA []byte, err error) {
+func (m *Model_Graph_Node) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -1122,7 +2168,7 @@ func (m *Graph_Node) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *Graph_Node) MarshalTo(dAtA []byte) (int, error) {
+func (m *Model_Graph_Node) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
@@ -1194,6 +2240,239 @@ func (m *Graph_Node) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *Model_Input) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model_Input) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Type) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Type)))
+		i += copy(dAtA[i:], m.Type)
+	}
+	if len(m.Dimensions) > 0 {
+		dAtA8 := make([]byte, len(m.Dimensions)*10)
+		var j7 int
+		for _, num1 := range m.Dimensions {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j7++
+			}
+			dAtA8[j7] = uint8(num)
+			j7++
+		}
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(j7))
+		i += copy(dAtA[i:], dAtA8[:j7])
+	}
+	return i, nil
+}
+
+func (m *Model_Output) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model_Output) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			dAtA[i] = 0xa
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	return i, nil
+}
+
+func (m *ModelInformations) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ModelInformations) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Info) > 0 {
+		for _, msg := range m.Info {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintModel(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *MXNetInferenceRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MXNetInferenceRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	if len(m.ModelName) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.ModelName)))
+		i += copy(dAtA[i:], m.ModelName)
+	}
+	if len(m.DataUrl) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.DataUrl)))
+		i += copy(dAtA[i:], m.DataUrl)
+	}
+	return i, nil
+}
+
+func (m *MXNetInferenceResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MXNetInferenceResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	if len(m.Features) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Features)*4))
+		for _, num := range m.Features {
+			f9 := math.Float32bits(float32(num))
+			dAtA[i] = uint8(f9)
+			i++
+			dAtA[i] = uint8(f9 >> 8)
+			i++
+			dAtA[i] = uint8(f9 >> 16)
+			i++
+			dAtA[i] = uint8(f9 >> 24)
+			i++
+		}
+	}
+	if m.Error != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(m.Error.Size()))
+		n10, err := m.Error.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n10
+	}
+	return i, nil
+}
+
+func (m *MXNetModelInformationRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MXNetModelInformationRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Name) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
+	return i, nil
+}
+
+func (m *Null) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Null) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
 func encodeFixed64Model(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	dAtA[offset+1] = uint8(v >> 8)
@@ -1221,8 +2500,24 @@ func encodeVarintModel(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
-func NewPopulatedModelInformation(r randyModel, easy bool) *ModelInformation {
-	this := &ModelInformation{}
+func NewPopulatedErrorStatus(r randyModel, easy bool) *ErrorStatus {
+	this := &ErrorStatus{}
+	this.Ok = bool(bool(r.Intn(2) == 0))
+	this.Message = string(randStringModel(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel(r randyModel, easy bool) *Model {
+	this := &Model{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel_Information(r randyModel, easy bool) *Model_Information {
+	this := &Model_Information{}
 	this.Name = string(randStringModel(r))
 	this.Framework = string(randStringModel(r))
 	this.Version = string(randStringModel(r))
@@ -1240,56 +2535,42 @@ func NewPopulatedModelInformation(r randyModel, easy bool) *ModelInformation {
 	return this
 }
 
-func NewPopulatedModelInformations(r randyModel, easy bool) *ModelInformations {
-	this := &ModelInformations{}
+func NewPopulatedModel_Graph(r randyModel, easy bool) *Model_Graph {
+	this := &Model_Graph{}
 	if r.Intn(10) != 0 {
 		v2 := r.Intn(5)
-		this.Info = make([]*ModelInformation, v2)
+		this.Nodes = make([]*Model_Graph_Node, v2)
 		for i := 0; i < v2; i++ {
-			this.Info[i] = NewPopulatedModelInformation(r, easy)
+			this.Nodes[i] = NewPopulatedModel_Graph_Node(r, easy)
 		}
 	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedGraph(r randyModel, easy bool) *Graph {
-	this := &Graph{}
-	if r.Intn(10) != 0 {
-		v3 := r.Intn(5)
-		this.Nodes = make([]*Graph_Node, v3)
-		for i := 0; i < v3; i++ {
-			this.Nodes[i] = NewPopulatedGraph_Node(r, easy)
-		}
-	}
-	v4 := r.Intn(10)
-	this.ArgNodes = make([]int32, v4)
-	for i := 0; i < v4; i++ {
-		this.ArgNodes[i] = int32(r.Int31())
+	v3 := r.Intn(10)
+	this.ArgNodes = make([]int64, v3)
+	for i := 0; i < v3; i++ {
+		this.ArgNodes[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.ArgNodes[i] *= -1
 		}
 	}
-	v5 := r.Intn(10)
-	this.NodeRowPtr = make([]int32, v5)
-	for i := 0; i < v5; i++ {
-		this.NodeRowPtr[i] = int32(r.Int31())
+	v4 := r.Intn(10)
+	this.NodeRowPtr = make([]int64, v4)
+	for i := 0; i < v4; i++ {
+		this.NodeRowPtr[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.NodeRowPtr[i] *= -1
 		}
 	}
 	if r.Intn(10) != 0 {
-		v6 := r.Intn(5)
-		this.Heads = make([]*Graph_NodeEntry, v6)
-		for i := 0; i < v6; i++ {
-			this.Heads[i] = NewPopulatedGraph_NodeEntry(r, easy)
+		v5 := r.Intn(5)
+		this.Heads = make([]*Model_Graph_NodeEntry, v5)
+		for i := 0; i < v5; i++ {
+			this.Heads[i] = NewPopulatedModel_Graph_NodeEntry(r, easy)
 		}
 	}
 	if r.Intn(10) != 0 {
-		v7 := r.Intn(10)
+		v6 := r.Intn(10)
 		this.Attrs = make(map[string]string)
-		for i := 0; i < v7; i++ {
+		for i := 0; i < v6; i++ {
 			this.Attrs[randStringModel(r)] = randStringModel(r)
 		}
 	}
@@ -1298,17 +2579,17 @@ func NewPopulatedGraph(r randyModel, easy bool) *Graph {
 	return this
 }
 
-func NewPopulatedGraph_NodeEntry(r randyModel, easy bool) *Graph_NodeEntry {
-	this := &Graph_NodeEntry{}
-	this.NodeId = int32(r.Int31())
+func NewPopulatedModel_Graph_NodeEntry(r randyModel, easy bool) *Model_Graph_NodeEntry {
+	this := &Model_Graph_NodeEntry{}
+	this.NodeId = int64(r.Int63())
 	if r.Intn(2) == 0 {
 		this.NodeId *= -1
 	}
-	this.Index = int32(r.Int31())
+	this.Index = int64(r.Int63())
 	if r.Intn(2) == 0 {
 		this.Index *= -1
 	}
-	this.Version = int32(r.Int31())
+	this.Version = int64(r.Int63())
 	if r.Intn(2) == 0 {
 		this.Version *= -1
 	}
@@ -1317,36 +2598,122 @@ func NewPopulatedGraph_NodeEntry(r randyModel, easy bool) *Graph_NodeEntry {
 	return this
 }
 
-func NewPopulatedGraph_Node(r randyModel, easy bool) *Graph_Node {
-	this := &Graph_Node{}
+func NewPopulatedModel_Graph_Node(r randyModel, easy bool) *Model_Graph_Node {
+	this := &Model_Graph_Node{}
 	this.Op = string(randStringModel(r))
 	if r.Intn(10) != 0 {
-		v8 := r.Intn(10)
+		v7 := r.Intn(10)
 		this.Param = make(map[string]string)
-		for i := 0; i < v8; i++ {
+		for i := 0; i < v7; i++ {
 			this.Param[randStringModel(r)] = randStringModel(r)
 		}
 	}
 	this.Name = string(randStringModel(r))
 	if r.Intn(10) != 0 {
-		v9 := r.Intn(5)
-		this.Inputs = make([]*Graph_NodeEntry, v9)
-		for i := 0; i < v9; i++ {
-			this.Inputs[i] = NewPopulatedGraph_NodeEntry(r, easy)
+		v8 := r.Intn(5)
+		this.Inputs = make([]*Model_Graph_NodeEntry, v8)
+		for i := 0; i < v8; i++ {
+			this.Inputs[i] = NewPopulatedModel_Graph_NodeEntry(r, easy)
 		}
 	}
-	this.BackwardSourceId = int32(r.Int31())
+	this.BackwardSourceId = int64(r.Int63())
 	if r.Intn(2) == 0 {
 		this.BackwardSourceId *= -1
 	}
-	v10 := r.Intn(10)
-	this.ControlDeps = make([]int32, v10)
-	for i := 0; i < v10; i++ {
-		this.ControlDeps[i] = int32(r.Int31())
+	v9 := r.Intn(10)
+	this.ControlDeps = make([]int64, v9)
+	for i := 0; i < v9; i++ {
+		this.ControlDeps[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.ControlDeps[i] *= -1
 		}
 	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel_Input(r randyModel, easy bool) *Model_Input {
+	this := &Model_Input{}
+	this.Type = string(randStringModel(r))
+	v10 := r.Intn(10)
+	this.Dimensions = make([]int64, v10)
+	for i := 0; i < v10; i++ {
+		this.Dimensions[i] = int64(r.Int63())
+		if r.Intn(2) == 0 {
+			this.Dimensions[i] *= -1
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel_Output(r randyModel, easy bool) *Model_Output {
+	this := &Model_Output{}
+	v11 := r.Intn(10)
+	this.Labels = make([]string, v11)
+	for i := 0; i < v11; i++ {
+		this.Labels[i] = string(randStringModel(r))
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModelInformations(r randyModel, easy bool) *ModelInformations {
+	this := &ModelInformations{}
+	if r.Intn(10) != 0 {
+		v12 := r.Intn(5)
+		this.Info = make([]*Model_Information, v12)
+		for i := 0; i < v12; i++ {
+			this.Info[i] = NewPopulatedModel_Information(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedMXNetInferenceRequest(r randyModel, easy bool) *MXNetInferenceRequest {
+	this := &MXNetInferenceRequest{}
+	this.Id = string(randStringModel(r))
+	this.ModelName = string(randStringModel(r))
+	this.DataUrl = string(randStringModel(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedMXNetInferenceResponse(r randyModel, easy bool) *MXNetInferenceResponse {
+	this := &MXNetInferenceResponse{}
+	this.Id = string(randStringModel(r))
+	v13 := r.Intn(10)
+	this.Features = make([]float32, v13)
+	for i := 0; i < v13; i++ {
+		this.Features[i] = float32(r.Float32())
+		if r.Intn(2) == 0 {
+			this.Features[i] *= -1
+		}
+	}
+	if r.Intn(10) != 0 {
+		this.Error = NewPopulatedErrorStatus(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedMXNetModelInformationRequest(r randyModel, easy bool) *MXNetModelInformationRequest {
+	this := &MXNetModelInformationRequest{}
+	this.Name = string(randStringModel(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedNull(r randyModel, easy bool) *Null {
+	this := &Null{}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -1371,9 +2738,9 @@ func randUTF8RuneModel(r randyModel) rune {
 	return rune(ru + 61)
 }
 func randStringModel(r randyModel) string {
-	v11 := r.Intn(100)
-	tmps := make([]rune, v11)
-	for i := 0; i < v11; i++ {
+	v14 := r.Intn(100)
+	tmps := make([]rune, v14)
+	for i := 0; i < v14; i++ {
 		tmps[i] = randUTF8RuneModel(r)
 	}
 	return string(tmps)
@@ -1395,11 +2762,11 @@ func randFieldModel(dAtA []byte, r randyModel, fieldNumber int, wire int) []byte
 	switch wire {
 	case 0:
 		dAtA = encodeVarintPopulateModel(dAtA, uint64(key))
-		v12 := r.Int63()
+		v15 := r.Int63()
 		if r.Intn(2) == 0 {
-			v12 *= -1
+			v15 *= -1
 		}
-		dAtA = encodeVarintPopulateModel(dAtA, uint64(v12))
+		dAtA = encodeVarintPopulateModel(dAtA, uint64(v15))
 	case 1:
 		dAtA = encodeVarintPopulateModel(dAtA, uint64(key))
 		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
@@ -1424,7 +2791,26 @@ func encodeVarintPopulateModel(dAtA []byte, v uint64) []byte {
 	dAtA = append(dAtA, uint8(v))
 	return dAtA
 }
-func (m *ModelInformation) Size() (n int) {
+func (m *ErrorStatus) Size() (n int) {
+	var l int
+	_ = l
+	if m.Ok {
+		n += 2
+	}
+	l = len(m.Message)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+
+func (m *Model) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *Model_Information) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -1464,19 +2850,7 @@ func (m *ModelInformation) Size() (n int) {
 	return n
 }
 
-func (m *ModelInformations) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Info) > 0 {
-		for _, e := range m.Info {
-			l = e.Size()
-			n += 1 + l + sovModel(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *Graph) Size() (n int) {
+func (m *Model_Graph) Size() (n int) {
 	var l int
 	_ = l
 	if len(m.Nodes) > 0 {
@@ -1516,7 +2890,7 @@ func (m *Graph) Size() (n int) {
 	return n
 }
 
-func (m *Graph_NodeEntry) Size() (n int) {
+func (m *Model_Graph_NodeEntry) Size() (n int) {
 	var l int
 	_ = l
 	if m.NodeId != 0 {
@@ -1531,7 +2905,7 @@ func (m *Graph_NodeEntry) Size() (n int) {
 	return n
 }
 
-func (m *Graph_Node) Size() (n int) {
+func (m *Model_Graph_Node) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.Op)
@@ -1569,6 +2943,98 @@ func (m *Graph_Node) Size() (n int) {
 	return n
 }
 
+func (m *Model_Input) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	if len(m.Dimensions) > 0 {
+		l = 0
+		for _, e := range m.Dimensions {
+			l += sovModel(uint64(e))
+		}
+		n += 1 + sovModel(uint64(l)) + l
+	}
+	return n
+}
+
+func (m *Model_Output) Size() (n int) {
+	var l int
+	_ = l
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			l = len(s)
+			n += 1 + l + sovModel(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *ModelInformations) Size() (n int) {
+	var l int
+	_ = l
+	if len(m.Info) > 0 {
+		for _, e := range m.Info {
+			l = e.Size()
+			n += 1 + l + sovModel(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *MXNetInferenceRequest) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	l = len(m.ModelName)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	l = len(m.DataUrl)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+
+func (m *MXNetInferenceResponse) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	if len(m.Features) > 0 {
+		n += 1 + sovModel(uint64(len(m.Features)*4)) + len(m.Features)*4
+	}
+	if m.Error != nil {
+		l = m.Error.Size()
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+
+func (m *MXNetModelInformationRequest) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+
+func (m *Null) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
 func sovModel(x uint64) (n int) {
 	for {
 		n++
@@ -1582,11 +3048,31 @@ func sovModel(x uint64) (n int) {
 func sozModel(x uint64) (n int) {
 	return sovModel(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (this *ModelInformation) String() string {
+func (this *ErrorStatus) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&ModelInformation{`,
+	s := strings.Join([]string{`&ErrorStatus{`,
+		`Ok:` + fmt.Sprintf("%v", this.Ok) + `,`,
+		`Message:` + fmt.Sprintf("%v", this.Message) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Model) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model{`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Model_Information) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model_Information{`,
 		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
 		`Framework:` + fmt.Sprintf("%v", this.Framework) + `,`,
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
@@ -1599,17 +3085,7 @@ func (this *ModelInformation) String() string {
 	}, "")
 	return s
 }
-func (this *ModelInformations) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ModelInformations{`,
-		`Info:` + strings.Replace(fmt.Sprintf("%v", this.Info), "ModelInformation", "ModelInformation", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Graph) String() string {
+func (this *Model_Graph) String() string {
 	if this == nil {
 		return "nil"
 	}
@@ -1623,21 +3099,21 @@ func (this *Graph) String() string {
 		mapStringForAttrs += fmt.Sprintf("%v: %v,", k, this.Attrs[k])
 	}
 	mapStringForAttrs += "}"
-	s := strings.Join([]string{`&Graph{`,
-		`Nodes:` + strings.Replace(fmt.Sprintf("%v", this.Nodes), "Graph_Node", "Graph_Node", 1) + `,`,
+	s := strings.Join([]string{`&Model_Graph{`,
+		`Nodes:` + strings.Replace(fmt.Sprintf("%v", this.Nodes), "Model_Graph_Node", "Model_Graph_Node", 1) + `,`,
 		`ArgNodes:` + fmt.Sprintf("%v", this.ArgNodes) + `,`,
 		`NodeRowPtr:` + fmt.Sprintf("%v", this.NodeRowPtr) + `,`,
-		`Heads:` + strings.Replace(fmt.Sprintf("%v", this.Heads), "Graph_NodeEntry", "Graph_NodeEntry", 1) + `,`,
+		`Heads:` + strings.Replace(fmt.Sprintf("%v", this.Heads), "Model_Graph_NodeEntry", "Model_Graph_NodeEntry", 1) + `,`,
 		`Attrs:` + mapStringForAttrs + `,`,
 		`}`,
 	}, "")
 	return s
 }
-func (this *Graph_NodeEntry) String() string {
+func (this *Model_Graph_NodeEntry) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&Graph_NodeEntry{`,
+	s := strings.Join([]string{`&Model_Graph_NodeEntry{`,
 		`NodeId:` + fmt.Sprintf("%v", this.NodeId) + `,`,
 		`Index:` + fmt.Sprintf("%v", this.Index) + `,`,
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
@@ -1645,7 +3121,7 @@ func (this *Graph_NodeEntry) String() string {
 	}, "")
 	return s
 }
-func (this *Graph_Node) String() string {
+func (this *Model_Graph_Node) String() string {
 	if this == nil {
 		return "nil"
 	}
@@ -1659,13 +3135,87 @@ func (this *Graph_Node) String() string {
 		mapStringForParam += fmt.Sprintf("%v: %v,", k, this.Param[k])
 	}
 	mapStringForParam += "}"
-	s := strings.Join([]string{`&Graph_Node{`,
+	s := strings.Join([]string{`&Model_Graph_Node{`,
 		`Op:` + fmt.Sprintf("%v", this.Op) + `,`,
 		`Param:` + mapStringForParam + `,`,
 		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
-		`Inputs:` + strings.Replace(fmt.Sprintf("%v", this.Inputs), "Graph_NodeEntry", "Graph_NodeEntry", 1) + `,`,
+		`Inputs:` + strings.Replace(fmt.Sprintf("%v", this.Inputs), "Model_Graph_NodeEntry", "Model_Graph_NodeEntry", 1) + `,`,
 		`BackwardSourceId:` + fmt.Sprintf("%v", this.BackwardSourceId) + `,`,
 		`ControlDeps:` + fmt.Sprintf("%v", this.ControlDeps) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Model_Input) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model_Input{`,
+		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
+		`Dimensions:` + fmt.Sprintf("%v", this.Dimensions) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Model_Output) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model_Output{`,
+		`Labels:` + fmt.Sprintf("%v", this.Labels) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ModelInformations) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ModelInformations{`,
+		`Info:` + strings.Replace(fmt.Sprintf("%v", this.Info), "Model_Information", "Model_Information", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MXNetInferenceRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MXNetInferenceRequest{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`ModelName:` + fmt.Sprintf("%v", this.ModelName) + `,`,
+		`DataUrl:` + fmt.Sprintf("%v", this.DataUrl) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MXNetInferenceResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MXNetInferenceResponse{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`Features:` + fmt.Sprintf("%v", this.Features) + `,`,
+		`Error:` + strings.Replace(fmt.Sprintf("%v", this.Error), "ErrorStatus", "ErrorStatus", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MXNetModelInformationRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MXNetModelInformationRequest{`,
+		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Null) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Null{`,
 		`}`,
 	}, "")
 	return s
@@ -1678,7 +3228,7 @@ func valueToStringModel(v interface{}) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
 }
-func (m *ModelInformation) Unmarshal(dAtA []byte) error {
+func (m *ErrorStatus) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1701,10 +3251,159 @@ func (m *ModelInformation) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ModelInformation: wiretype end group for non-group")
+			return fmt.Errorf("proto: ErrorStatus: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ModelInformation: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ErrorStatus: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Ok", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Ok = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Message", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Message = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Model: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Model: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model_Information) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Information: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Information: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1960,88 +3659,7 @@ func (m *ModelInformation) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ModelInformations) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowModel
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ModelInformations: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ModelInformations: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModel
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthModel
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Info = append(m.Info, &ModelInformation{})
-			if err := m.Info[len(m.Info)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipModel(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthModel
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Graph) Unmarshal(dAtA []byte) error {
+func (m *Model_Graph) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2096,14 +3714,14 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Nodes = append(m.Nodes, &Graph_Node{})
+			m.Nodes = append(m.Nodes, &Model_Graph_Node{})
 			if err := m.Nodes[len(m.Nodes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType == 0 {
-				var v int32
+				var v int64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowModel
@@ -2113,7 +3731,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= (int64(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2143,7 +3761,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v int32
+					var v int64
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowModel
@@ -2153,7 +3771,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= (int64(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2165,7 +3783,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 			}
 		case 3:
 			if wireType == 0 {
-				var v int32
+				var v int64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowModel
@@ -2175,7 +3793,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= (int64(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2205,7 +3823,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v int32
+					var v int64
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowModel
@@ -2215,7 +3833,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= (int64(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2251,7 +3869,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Heads = append(m.Heads, &Graph_NodeEntry{})
+			m.Heads = append(m.Heads, &Model_Graph_NodeEntry{})
 			if err := m.Heads[len(m.Heads)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2393,7 +4011,7 @@ func (m *Graph) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Graph_NodeEntry) Unmarshal(dAtA []byte) error {
+func (m *Model_Graph_NodeEntry) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2436,7 +4054,7 @@ func (m *Graph_NodeEntry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2455,7 +4073,7 @@ func (m *Graph_NodeEntry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Index |= (int32(b) & 0x7F) << shift
+				m.Index |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2474,7 +4092,7 @@ func (m *Graph_NodeEntry) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Version |= (int32(b) & 0x7F) << shift
+				m.Version |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2500,7 +4118,7 @@ func (m *Graph_NodeEntry) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Graph_Node) Unmarshal(dAtA []byte) error {
+func (m *Model_Graph_Node) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2729,7 +4347,7 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Inputs = append(m.Inputs, &Graph_NodeEntry{})
+			m.Inputs = append(m.Inputs, &Model_Graph_NodeEntry{})
 			if err := m.Inputs[len(m.Inputs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2748,14 +4366,14 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.BackwardSourceId |= (int32(b) & 0x7F) << shift
+				m.BackwardSourceId |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 6:
 			if wireType == 0 {
-				var v int32
+				var v int64
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowModel
@@ -2765,7 +4383,7 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= (int64(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2795,7 +4413,7 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v int32
+					var v int64
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowModel
@@ -2805,7 +4423,7 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= (int64(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2815,6 +4433,737 @@ func (m *Graph_Node) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field ControlDeps", wireType)
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model_Input) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Input: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Input: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Dimensions = append(m.Dimensions, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthModel
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowModel
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Dimensions = append(m.Dimensions, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dimensions", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model_Output) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Output: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Output: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Labels = append(m.Labels, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ModelInformations) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ModelInformations: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ModelInformations: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = append(m.Info, &Model_Information{})
+			if err := m.Info[len(m.Info)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MXNetInferenceRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MXNetInferenceRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MXNetInferenceRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ModelName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ModelName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DataUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MXNetInferenceResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MXNetInferenceResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MXNetInferenceResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType == 5 {
+				var v uint32
+				if (iNdEx + 4) > l {
+					return io.ErrUnexpectedEOF
+				}
+				iNdEx += 4
+				v = uint32(dAtA[iNdEx-4])
+				v |= uint32(dAtA[iNdEx-3]) << 8
+				v |= uint32(dAtA[iNdEx-2]) << 16
+				v |= uint32(dAtA[iNdEx-1]) << 24
+				v2 := float32(math.Float32frombits(v))
+				m.Features = append(m.Features, v2)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthModel
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v uint32
+					if (iNdEx + 4) > l {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += 4
+					v = uint32(dAtA[iNdEx-4])
+					v |= uint32(dAtA[iNdEx-3]) << 8
+					v |= uint32(dAtA[iNdEx-2]) << 16
+					v |= uint32(dAtA[iNdEx-1]) << 24
+					v2 := float32(math.Float32frombits(v))
+					m.Features = append(m.Features, v2)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Features", wireType)
+			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Error == nil {
+				m.Error = &ErrorStatus{}
+			}
+			if err := m.Error.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MXNetModelInformationRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MXNetModelInformationRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MXNetModelInformationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Null) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Null: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Null: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipModel(dAtA[iNdEx:])
@@ -2944,45 +5293,64 @@ var (
 func init() { proto.RegisterFile("model.proto", fileDescriptorModel) }
 
 var fileDescriptorModel = []byte{
-	// 627 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0x3d, 0x6f, 0x13, 0x41,
-	0x10, 0xf5, 0xda, 0x5e, 0x27, 0x1e, 0x47, 0x10, 0x56, 0x48, 0xac, 0x1c, 0xb4, 0x38, 0x29, 0x50,
-	0x0a, 0xb8, 0x88, 0x20, 0x20, 0x42, 0x34, 0x7c, 0x09, 0x05, 0x89, 0x28, 0x3a, 0xa0, 0xa1, 0xb1,
-	0xd6, 0xbe, 0xf5, 0xf9, 0x14, 0xdf, 0xed, 0x69, 0x6f, 0x1d, 0x27, 0x1d, 0x3f, 0x81, 0x9f, 0x81,
-	0x90, 0xe8, 0x29, 0x29, 0x29, 0x53, 0x52, 0xc6, 0x47, 0x83, 0xa8, 0x52, 0x52, 0xa2, 0x9d, 0xbb,
-	0xc4, 0xc8, 0x88, 0x08, 0xba, 0x99, 0x79, 0xef, 0xcd, 0xcd, 0xcc, 0x3e, 0x1b, 0x5a, 0xb1, 0x0e,
-	0xd4, 0xc8, 0x4b, 0x8d, 0xb6, 0x9a, 0x5d, 0xec, 0x4b, 0x13, 0x8f, 0x3c, 0x6d, 0x42, 0x2f, 0x3e,
-	0x48, 0x94, 0x6d, 0xdf, 0x0c, 0x23, 0x3b, 0x1c, 0xf7, 0xbc, 0xbe, 0x8e, 0x37, 0x42, 0x1d, 0xea,
-	0x0d, 0xe4, 0xf5, 0xc6, 0x03, 0xcc, 0x30, 0xc1, 0xa8, 0xd0, 0xaf, 0xfd, 0x20, 0xb0, 0xfc, 0xc2,
-	0xf5, 0xdb, 0x4e, 0x06, 0xda, 0xc4, 0xd2, 0x46, 0x3a, 0x61, 0x0c, 0xea, 0x89, 0x8c, 0x15, 0x27,
-	0x1d, 0xb2, 0xde, 0xf4, 0x31, 0x66, 0x57, 0xa1, 0x39, 0x30, 0x32, 0x56, 0x13, 0x6d, 0xf6, 0x78,
-	0x15, 0x81, 0x59, 0x81, 0x71, 0x58, 0xd8, 0x57, 0x26, 0x8b, 0x74, 0xc2, 0x6b, 0x88, 0x9d, 0xa6,
-	0xae, 0x97, 0x3d, 0x4c, 0x15, 0xaf, 0x17, 0xbd, 0x5c, 0xec, 0xd8, 0x81, 0xb4, 0x32, 0x53, 0x96,
-	0xd3, 0x82, 0x5d, 0xa6, 0x6c, 0x05, 0x9a, 0xa1, 0x91, 0xe9, 0xb0, 0x3b, 0x36, 0x23, 0xde, 0x40,
-	0x6c, 0x11, 0x0b, 0xaf, 0xcd, 0x88, 0x5d, 0x83, 0xd6, 0x44, 0x45, 0xe1, 0xd0, 0x66, 0x08, 0x2f,
-	0x20, 0x0c, 0x65, 0xc9, 0x11, 0x04, 0x80, 0x51, 0x03, 0x65, 0x54, 0xd2, 0x57, 0x19, 0x5f, 0xec,
-	0xd4, 0x1c, 0x3e, 0xab, 0xac, 0x3d, 0x87, 0x4b, 0xf3, 0xbb, 0x66, 0xec, 0x0e, 0xd4, 0xa3, 0x64,
-	0xa0, 0x39, 0xe9, 0xd4, 0xd6, 0x5b, 0x9b, 0xab, 0xde, 0xdc, 0x41, 0xbd, 0x79, 0x85, 0x8f, 0xf4,
-	0xb5, 0x0f, 0x14, 0xe8, 0x33, 0x37, 0x19, 0xbb, 0x05, 0x34, 0xd1, 0x81, 0xca, 0xca, 0x0e, 0x2b,
-	0x7f, 0x74, 0x40, 0x9a, 0xb7, 0xa3, 0x03, 0xe5, 0x17, 0x4c, 0xb7, 0xa6, 0x34, 0x61, 0xb7, 0x90,
-	0x55, 0x3b, 0xb5, 0x75, 0xea, 0x2f, 0x4a, 0x13, 0xee, 0x20, 0xd8, 0x81, 0x25, 0x07, 0x74, 0x8d,
-	0x9e, 0x74, 0x53, 0x6b, 0x78, 0x0d, 0x71, 0x70, 0x35, 0x5f, 0x4f, 0x76, 0xad, 0x61, 0x77, 0x81,
-	0x0e, 0x95, 0x0c, 0x32, 0x5e, 0xc7, 0x2f, 0x76, 0xce, 0xf9, 0xe2, 0xd3, 0xc4, 0x9a, 0x43, 0xbf,
-	0xa0, 0xb3, 0x7b, 0x40, 0xa5, 0xb5, 0x26, 0xe3, 0xf4, 0x2f, 0xbb, 0x16, 0xba, 0x87, 0x8e, 0x53,
-	0x0a, 0x91, 0xdf, 0x7e, 0x05, 0xcd, 0xb3, 0x66, 0xec, 0x0a, 0x2c, 0xe0, 0x7c, 0x51, 0x80, 0x06,
-	0xa1, 0x7e, 0xc3, 0xa5, 0xdb, 0x01, 0xbb, 0x0c, 0x34, 0x4a, 0x02, 0x75, 0x80, 0xf6, 0xa0, 0x7e,
-	0x91, 0xcc, 0x5b, 0x83, 0x9e, 0x59, 0xa3, 0xfd, 0xb1, 0x0a, 0x75, 0xd7, 0x96, 0x5d, 0x80, 0xaa,
-	0x4e, 0x4b, 0xb7, 0x55, 0x75, 0xca, 0x1e, 0x00, 0x4d, 0xa5, 0x91, 0x31, 0x9e, 0xa6, 0xb5, 0x79,
-	0xfd, 0x9c, 0xfd, 0xbc, 0x5d, 0x47, 0x2c, 0x87, 0x45, 0xd1, 0x99, 0x7b, 0x6b, 0xbf, 0xb9, 0x77,
-	0x0b, 0x1a, 0x51, 0x92, 0x8e, 0xed, 0xbf, 0x9f, 0xac, 0xe4, 0xb3, 0x1b, 0xc0, 0x7a, 0xb2, 0xbf,
-	0x37, 0x91, 0x26, 0xe8, 0x66, 0x7a, 0x6c, 0xfa, 0xb8, 0x38, 0xc5, 0x4d, 0x96, 0x4f, 0x91, 0x97,
-	0x08, 0x6c, 0x07, 0x6c, 0x15, 0x96, 0xfa, 0x3a, 0xb1, 0x46, 0x8f, 0xba, 0x81, 0x4a, 0x33, 0xde,
-	0xc0, 0xb7, 0x6b, 0x95, 0xb5, 0x27, 0x2a, 0xcd, 0xda, 0x5b, 0x00, 0xb3, 0x99, 0xd9, 0x32, 0xd4,
-	0xf6, 0xd4, 0x61, 0xb9, 0xbb, 0x0b, 0xdd, 0x15, 0xf7, 0xe5, 0x68, 0xac, 0xca, 0x1f, 0x59, 0x91,
-	0xdc, 0xaf, 0x6e, 0x11, 0xa7, 0x9c, 0x3d, 0xcd, 0xff, 0x28, 0x1f, 0x3d, 0x3e, 0x9a, 0x8a, 0xca,
-	0xd7, 0xa9, 0xa8, 0x1c, 0x4f, 0x05, 0x39, 0x99, 0x0a, 0xf2, 0x73, 0x2a, 0xc8, 0xdb, 0x5c, 0x90,
-	0xf7, 0xb9, 0x20, 0x9f, 0x72, 0x41, 0x3e, 0xe7, 0x82, 0x7c, 0xc9, 0x05, 0x39, 0xca, 0x05, 0x39,
-	0xce, 0x05, 0xf9, 0x9e, 0x8b, 0xca, 0x49, 0x2e, 0xc8, 0xbb, 0x6f, 0xa2, 0xf2, 0x86, 0xe2, 0x85,
-	0x7a, 0x0d, 0xfc, 0xc7, 0xb8, 0xfd, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x78, 0x01, 0x65, 0xdc, 0x80,
-	0x04, 0x00, 0x00,
+	// 934 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0x4f, 0x8f, 0xdb, 0x44,
+	0x14, 0xcf, 0xc4, 0x71, 0x36, 0x79, 0x29, 0x50, 0x06, 0xba, 0x18, 0xb3, 0x98, 0xd4, 0x07, 0xba,
+	0x87, 0x36, 0x45, 0x41, 0xa2, 0x15, 0xff, 0x24, 0x0a, 0xab, 0xd5, 0x0a, 0x35, 0x54, 0x5e, 0x2a,
+	0x21, 0x84, 0x88, 0x26, 0xf1, 0x24, 0x6b, 0x62, 0x7b, 0xcc, 0xcc, 0xb8, 0xd9, 0xbd, 0xf1, 0x11,
+	0xb8, 0xf2, 0x0d, 0xf8, 0x08, 0x70, 0xe3, 0xd8, 0x0b, 0x52, 0x8f, 0x1c, 0x9b, 0x20, 0x24, 0x8e,
+	0x3d, 0x72, 0x44, 0xf3, 0xec, 0xfc, 0xd1, 0x6e, 0xb6, 0xdb, 0xbd, 0xf9, 0xfd, 0xf9, 0xbd, 0x37,
+	0xef, 0xfd, 0xde, 0x7b, 0x86, 0x56, 0x22, 0x42, 0x1e, 0x77, 0x32, 0x29, 0xb4, 0xa0, 0xaf, 0x0c,
+	0x99, 0x4c, 0xe2, 0x8e, 0x90, 0xe3, 0x4e, 0x72, 0x9c, 0x72, 0xed, 0xde, 0x1a, 0x47, 0xfa, 0x28,
+	0x1f, 0x74, 0x86, 0x22, 0xb9, 0x3d, 0x16, 0x63, 0x71, 0x1b, 0xfd, 0x06, 0xf9, 0x08, 0x25, 0x14,
+	0xf0, 0xab, 0xc0, 0xfb, 0x77, 0xa0, 0xb5, 0x27, 0xa5, 0x90, 0x87, 0x9a, 0xe9, 0x5c, 0xd1, 0x97,
+	0xa1, 0x2a, 0x26, 0x0e, 0x69, 0x93, 0xdd, 0x46, 0x50, 0x15, 0x13, 0xea, 0xc0, 0x56, 0xc2, 0x95,
+	0x62, 0x63, 0xee, 0x54, 0xdb, 0x64, 0xb7, 0x19, 0x2c, 0x44, 0xff, 0x97, 0x06, 0xd8, 0xf7, 0xcd,
+	0x43, 0xdc, 0x7f, 0x08, 0xb4, 0x0e, 0xd2, 0x91, 0x90, 0x09, 0xd3, 0x91, 0x48, 0x29, 0x85, 0x5a,
+	0xca, 0x12, 0x8e, 0x51, 0x9a, 0x01, 0x7e, 0xd3, 0x1d, 0x68, 0x8e, 0x24, 0x4b, 0xf8, 0x54, 0xc8,
+	0x49, 0x19, 0x69, 0xa5, 0x30, 0x59, 0x1e, 0x71, 0xa9, 0x22, 0x91, 0x3a, 0x56, 0x91, 0xa5, 0x14,
+	0x4d, 0x2c, 0x7d, 0x92, 0x71, 0xa7, 0x56, 0xc4, 0x32, 0xdf, 0xc6, 0x3b, 0x64, 0x9a, 0x29, 0xae,
+	0x1d, 0xbb, 0xf0, 0x2e, 0x45, 0xfa, 0x16, 0x34, 0xc7, 0x92, 0x65, 0x47, 0xfd, 0x5c, 0xc6, 0x4e,
+	0x1d, 0x6d, 0x0d, 0x54, 0x3c, 0x94, 0x31, 0x7d, 0x07, 0x5a, 0x53, 0x1e, 0x8d, 0x8f, 0xb4, 0x42,
+	0xf3, 0x16, 0x9a, 0xa1, 0x54, 0x19, 0x07, 0x0f, 0x40, 0xf2, 0x11, 0x97, 0x3c, 0x1d, 0x72, 0xe5,
+	0x34, 0xda, 0x96, 0xb1, 0xaf, 0x34, 0xee, 0x63, 0x1b, 0xec, 0x7d, 0x13, 0x8d, 0xde, 0x01, 0x3b,
+	0x15, 0x21, 0x57, 0x0e, 0x69, 0x5b, 0xbb, 0xad, 0xee, 0xf5, 0xce, 0x29, 0x12, 0x3a, 0xd8, 0x98,
+	0x0e, 0x3a, 0x77, 0x7a, 0x22, 0xe4, 0x41, 0xe1, 0x6f, 0x1e, 0xc8, 0xe4, 0xb8, 0x5f, 0x80, 0xab,
+	0x6d, 0x6b, 0xd7, 0x0a, 0x1a, 0x4c, 0x8e, 0x7b, 0x68, 0x6c, 0xc3, 0x15, 0x63, 0xe8, 0x4b, 0x31,
+	0xed, 0x67, 0x5a, 0x3a, 0x16, 0xda, 0xc1, 0xe8, 0x02, 0x31, 0x7d, 0xa0, 0x25, 0xfd, 0x18, 0xec,
+	0x23, 0xce, 0x42, 0xe5, 0xd4, 0x30, 0xef, 0xbb, 0x17, 0xe6, 0xdd, 0x4b, 0xb5, 0x3c, 0x09, 0x0a,
+	0x10, 0xfd, 0x04, 0x6c, 0xa6, 0xb5, 0x54, 0x8e, 0x8d, 0xe8, 0x1b, 0xcf, 0x45, 0x7f, 0x66, 0x3c,
+	0x4b, 0x38, 0xa2, 0xdc, 0xaf, 0xa1, 0xb9, 0x0c, 0x49, 0xdf, 0x80, 0x2d, 0x7c, 0x6b, 0x14, 0x22,
+	0xcd, 0x56, 0x50, 0x37, 0xe2, 0x41, 0x48, 0x5f, 0x07, 0x3b, 0x4a, 0x43, 0x7e, 0x8c, 0x24, 0x5b,
+	0x41, 0x21, 0x9c, 0x26, 0xd8, 0x5a, 0x12, 0xec, 0xfe, 0x5e, 0x85, 0x9a, 0x09, 0x8b, 0x93, 0x97,
+	0x95, 0x33, 0x53, 0x15, 0x19, 0xbd, 0x07, 0x76, 0xc6, 0x24, 0x4b, 0xb0, 0x4d, 0xad, 0xee, 0xcd,
+	0x0b, 0x6b, 0xed, 0x3c, 0x30, 0xee, 0xe5, 0x93, 0x11, 0xba, 0x9c, 0x44, 0x6b, 0x6d, 0x12, 0x3f,
+	0x85, 0x7a, 0x94, 0x66, 0xb9, 0xbe, 0x6c, 0x13, 0x4b, 0x14, 0xbd, 0x09, 0x74, 0xc0, 0x86, 0x93,
+	0x29, 0x93, 0x61, 0x5f, 0x89, 0x5c, 0x0e, 0xb1, 0x09, 0x36, 0x56, 0x75, 0x75, 0x61, 0x39, 0x44,
+	0xc3, 0x41, 0x48, 0xaf, 0xc3, 0x95, 0xa1, 0x48, 0xb5, 0x14, 0x71, 0x3f, 0xe4, 0x99, 0x72, 0xea,
+	0xc8, 0x69, 0xab, 0xd4, 0x7d, 0xc1, 0x33, 0xe5, 0xde, 0x05, 0x58, 0xbd, 0x9c, 0x5e, 0x05, 0x6b,
+	0xc2, 0x4f, 0xca, 0x3e, 0x98, 0x4f, 0xd3, 0xd1, 0x47, 0x2c, 0xce, 0x17, 0x0b, 0x58, 0x08, 0x1f,
+	0x56, 0xef, 0x12, 0x83, 0x5c, 0xd1, 0x74, 0x29, 0xe4, 0x47, 0x60, 0x1f, 0x98, 0x72, 0x96, 0xfb,
+	0x45, 0xd6, 0xf6, 0xcb, 0x03, 0x08, 0xa3, 0x84, 0xa7, 0x86, 0x9f, 0xc5, 0x94, 0xae, 0x69, 0xdc,
+	0x36, 0xd4, 0xbf, 0xca, 0xb5, 0x41, 0x6f, 0x43, 0x3d, 0x66, 0x03, 0x1e, 0x17, 0x8b, 0xd0, 0x0c,
+	0x4a, 0xc9, 0xff, 0x12, 0x5e, 0xc5, 0x26, 0xae, 0x5d, 0x05, 0x45, 0x3f, 0x80, 0x5a, 0x94, 0x8e,
+	0x44, 0xb9, 0x33, 0xfe, 0x39, 0x6d, 0x5f, 0x83, 0x04, 0xe8, 0xef, 0x33, 0xb8, 0x76, 0xff, 0x9b,
+	0x1e, 0xd7, 0x07, 0x69, 0xb9, 0x89, 0x01, 0xff, 0x31, 0xe7, 0x4a, 0x9b, 0x89, 0x29, 0xc7, 0xaf,
+	0x19, 0x54, 0xa3, 0x90, 0xbe, 0x0d, 0x80, 0x97, 0xb1, 0x8f, 0x9c, 0x97, 0x47, 0x06, 0x35, 0x3d,
+	0x43, 0xfc, 0x9b, 0xd0, 0x30, 0x77, 0x02, 0x97, 0xdf, 0x5a, 0xdd, 0x8d, 0x87, 0x32, 0xf6, 0x8f,
+	0x61, 0xfb, 0x74, 0x0a, 0x95, 0x89, 0x54, 0xf1, 0x33, 0x39, 0x5c, 0x68, 0x8c, 0x38, 0xd3, 0xb9,
+	0x2c, 0xf7, 0xb7, 0x1a, 0x2c, 0x65, 0xda, 0x05, 0x9b, 0x9b, 0x53, 0x8a, 0xd1, 0x5b, 0xdd, 0x9d,
+	0x33, 0x15, 0xae, 0x1d, 0xda, 0xa0, 0x70, 0xf5, 0xbb, 0xb0, 0x83, 0x99, 0x4f, 0xb7, 0x6b, 0x51,
+	0xe3, 0x86, 0x5b, 0xea, 0xd7, 0xa1, 0xd6, 0xcb, 0xe3, 0xb8, 0xfb, 0xa7, 0x05, 0x36, 0x82, 0xe9,
+	0x77, 0x86, 0xce, 0x11, 0x97, 0x74, 0xc3, 0x30, 0x6f, 0x6a, 0x9d, 0x7b, 0xe3, 0x42, 0xbf, 0xa2,
+	0x7e, 0xbf, 0xf2, 0x1e, 0xa1, 0x7b, 0x50, 0xc7, 0xe7, 0x29, 0x7a, 0xed, 0x0c, 0xcc, 0x3c, 0xc4,
+	0x3d, 0x87, 0xcb, 0x75, 0xf6, 0xfd, 0x0a, 0x3d, 0x84, 0xc6, 0x7e, 0x59, 0x28, 0xbd, 0xb5, 0x39,
+	0xff, 0x39, 0x5d, 0x70, 0xb7, 0x37, 0x27, 0xf0, 0x2b, 0xf4, 0x07, 0x78, 0x6d, 0xff, 0x2c, 0xee,
+	0xb2, 0xf1, 0x5f, 0x60, 0x18, 0xfd, 0x0a, 0xfd, 0x1e, 0x5e, 0x5a, 0xe4, 0x2a, 0x7e, 0x03, 0x97,
+	0xcc, 0xb2, 0xf3, 0xbc, 0x4b, 0xe3, 0x57, 0xee, 0x7d, 0xfe, 0x64, 0xe6, 0x55, 0xfe, 0x9a, 0x79,
+	0x95, 0xa7, 0x33, 0x8f, 0x3c, 0x9b, 0x79, 0xe4, 0xbf, 0x99, 0x47, 0x7e, 0x9a, 0x7b, 0xe4, 0xd7,
+	0xb9, 0x47, 0x7e, 0x9b, 0x7b, 0xe4, 0x8f, 0xb9, 0x47, 0x1e, 0xcf, 0x3d, 0xf2, 0x64, 0xee, 0x91,
+	0xa7, 0x73, 0x8f, 0xfc, 0x3b, 0xf7, 0x2a, 0xcf, 0xe6, 0x1e, 0xf9, 0xf9, 0x6f, 0xaf, 0xf2, 0xad,
+	0x8d, 0x21, 0x07, 0x75, 0xfc, 0xad, 0xbf, 0xff, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xea, 0x1c,
+	0x28, 0xf2, 0x25, 0x08, 0x00, 0x00,
 }

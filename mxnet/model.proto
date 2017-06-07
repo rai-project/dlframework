@@ -17,38 +17,75 @@ option (gogoproto.unmarshaler_all) = true;
 
 package carml.org.mxnet;
 
-message ModelInformation {
-  string name = 1;
-  string framework = 2;
-  string version = 3;
-  string type = 4;
-  string dataset = 5;
-  string graph_url = 6;
-  string weights_url = 7;
-  repeated string references = 8;
+message ErrorStatus {
+  bool ok = 1;
+  string message = 2;
 }
 
-message ModelInformations { repeated ModelInformation info = 1; }
+message Model {
+  message Information {
+    string name = 1;
+    string framework = 2;
+    string version = 3;
+    string type = 4;
+    string dataset = 5;
+    string graph_url = 6;
+    string weights_url = 7;
+    repeated string references = 8;
+  }
+  message Graph {
+    message NodeEntry {
+      int64 node_id = 1;
+      int64 index = 2;
+      int64 version = 3;
+    }
 
-message Graph {
-  message NodeEntry {
-    int32 node_id = 1;
-    int32 index = 2;
-    int32 version = 3;
+    message Node {
+      string op = 1;
+      map<string, string> param = 2;
+      string name = 3;
+      repeated NodeEntry inputs = 4;
+      int64 backward_source_id = 5;
+      repeated int64 control_deps = 6;
+    }
+
+    repeated Node nodes = 1;
+    repeated int64 arg_nodes = 2;
+    repeated int64 node_row_ptr = 3;
+    repeated NodeEntry heads = 4;
+    map<string, string> attrs = 5;
+  }
+  message Input {
+    string type = 1;
+    repeated int64 dimensions = 2;
   }
 
-  message Node {
-    string op = 1;
-    map<string, string> param = 2;
-    string name = 3;
-    repeated NodeEntry inputs = 4;
-    int32 backward_source_id = 5;
-    repeated int32 control_deps = 6;
-  }
+  message Output { repeated string labels = 1; }
+}
 
-  repeated Node nodes = 1;
-  repeated int32 arg_nodes = 2;
-  repeated int32 node_row_ptr = 3;
-  repeated NodeEntry heads = 4;
-  map<string, string> attrs = 5;
+message ModelInformations { repeated Model.Information info = 1; }
+
+message MXNetInferenceRequest {
+  string id = 1;
+  string model_name = 2;
+  string data_url = 3;
+}
+
+message MXNetInferenceResponse {
+  string id = 1;
+  repeated float features = 2;
+  ErrorStatus error = 3;
+}
+
+message MXNetModelInformationRequest { string name = 1; }
+
+message Null {}
+
+service MXNet {
+  rpc Infer(MXNetInferenceRequest) returns (stream MXNetInferenceResponse) {}
+  rpc Models(Null) returns (ModelInformations) {}
+  rpc GetModel(MXNetModelInformationRequest) returns (Model) {}
+  rpc GetModelInformation(MXNetModelInformationRequest)
+      returns (Model.Information) {}
+  rpc GetModelGraph(MXNetModelInformationRequest) returns (Model.Graph) {}
 }

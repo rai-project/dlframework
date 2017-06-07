@@ -3,10 +3,11 @@ package mxnet
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
-func (e *Graph_NodeEntry) UnmarshalJSON(b []byte) error {
-	var s []int32
+func (e *Model_Graph_NodeEntry) UnmarshalJSON(b []byte) error {
+	var s []int64
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
 	}
@@ -21,14 +22,12 @@ func (e *Graph_NodeEntry) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (e *Graph_NodeEntry) MarshalJSON() ([]byte, error) {
-	s := []int32{
-		e.NodeId,
-		e.Index,
-	}
-	if e.GetVersion() != 0 {
-		s = append(s, e.Version)
+func (e *Model_Graph_NodeEntry) MarshalJSON() ([]byte, error) {
+	if e.GetVersion() == 0 {
+		s := fmt.Sprintf("[\"%d\",\"%d\"]", e.NodeId, e.Index)
+		return []byte(s), nil
 	}
 
-	return json.Marshal(s)
+	s := fmt.Sprintf("[\"%d\",\"%d\",\"%d\"]", e.NodeId, e.Index, e.Version)
+	return []byte(s), nil
 }

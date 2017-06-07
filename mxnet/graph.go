@@ -32,8 +32,8 @@ var edgecolors = []string{
 	"#90094e",
 }
 
-func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
-	str2tuple := func(s string) []string {
+func (g *Model_Graph) ToDotGraph() (*gographviz.Escape, error) {
+	tuples := func(s string) []string {
 		re := regexp.MustCompile(`\d+`)
 		return re.FindAllString(s, -1)
 	}
@@ -105,10 +105,18 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 			label = name
 		case "Convolution":
 			if val, ok := node.Param["stride"]; ok {
-				strideInfo := str2tuple(val)
-				label = fmt.Sprintf("Convolution\n%s/%s, %s", strings.Join(str2tuple(node.Param["kernel"]), "x"), strings.Join(strideInfo, "x"), node.Param["num_filter"])
+				strideInfo := tuples(val)
+				label = fmt.Sprintf("Convolution\n%s/%s, %s",
+					strings.Join(tuples(node.Param["kernel"]), "x"),
+					strings.Join(strideInfo, "x"),
+					node.Param["num_filter"],
+				)
 			} else {
-				label = fmt.Sprintf("Convolution\n%s/%s, %s", strings.Join(str2tuple(node.Param["kernel"]), "x"), "1", node.Param["num_filter"])
+				label = fmt.Sprintf("Convolution\n%s/%s, %s",
+					strings.Join(tuples(node.Param["kernel"]), "x"),
+					"1",
+					node.Param["num_filter"],
+				)
 			}
 			attrs["fillcolor"] = fillcolors[1]
 		case "FullyConnected":
@@ -121,10 +129,18 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 			attrs["fillcolor"] = fillcolors[2]
 		case "Pooling":
 			if val, ok := node.Param["stride"]; ok {
-				strideInfo := str2tuple(val)
-				label = fmt.Sprintf("Pooling\n%s, %s/%s", node.Param["pool_type"], strings.Join(str2tuple(node.Param["kernel"]), "x"), strings.Join(strideInfo, "x"))
+				strideInfo := tuples(val)
+				label = fmt.Sprintf("Pooling\n%s, %s/%s",
+					node.Param["pool_type"],
+					strings.Join(tuples(node.Param["kernel"]), "x"),
+					strings.Join(strideInfo, "x"),
+				)
 			} else {
-				label = fmt.Sprintf("Pooling\n%s, %s/%s", node.Param["pool_type"], strings.Join(str2tuple(node.Param["kernel"]), "x"), "1")
+				label = fmt.Sprintf("Pooling\n%s, %s/%s",
+					node.Param["pool_type"],
+					strings.Join(tuples(node.Param["kernel"]), "x"),
+					"1",
+				)
 			}
 			attrs["fillcolor"] = fillcolors[4]
 		case "Concat", "Flatten", "Reshape":
