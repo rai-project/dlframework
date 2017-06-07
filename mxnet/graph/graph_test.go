@@ -23,13 +23,13 @@ func TestUnmarshalGraph(t *testing.T) {
 	s, err := json.MarshalIndent(g, "", "  ")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, s)
-	t.Log(string(s))
+	// t.Log(string(s))
 
 	dg, err := g.ToDotGraph()
 	assert.NoError(t, err)
 	assert.NotNil(t, dg)
 	assert.NotEmpty(t, dg)
 
-	// t.Log(dg.String())
+	t.Log(dg.String())
 
 }

@@ -2,6 +2,9 @@ package graph
 
 import (
 	"encoding/json"
+	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/awalterschulze/gographviz"
@@ -83,7 +86,10 @@ var edgecolors = []string{
 }
 
 func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
-
+	str2tuple := func(s string) []string {
+		re := regexp.MustCompile(`\d+`)
+		return re.FindAllString(s, -1)
+	}
 	makeDefaultAttributes := func() map[string]string {
 		return map[string]string{
 			"shape":     "box",
@@ -151,13 +157,41 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 			attrs["fillcolor"] = fillcolors[0]
 			label = name
 		case "Convolution":
-		//...
+			if val, ok := node.Param["stride"]; ok {
+				strideInfo := str2tuple(val)
+				label = fmt.Sprintf("Convolution\n%s/%s, %s", strings.Join(str2tuple(node.Param["kernel"]), "x"), strings.Join(strideInfo, "x"), node.Param["num_filter"])
+			} else {
+				label = fmt.Sprintf("Convolution\n%s/%s, %s", strings.Join(str2tuple(node.Param["kernel"]), "x"), "1", node.Param["num_filter"])
+			}
+			attrs["fillcolor"] = fillcolors[1]
 		case "FullyConnected":
-			//...
+			label = fmt.Sprintf("FullyConnected\n%s", node.Param["num_hidden"])
+			attrs["fillcolor"] = fillcolors[1]
+		case "BatchNorm":
+			attrs["fillcolor"] = fillcolors[3]
+		case "Activation", "LeakyReLU":
+			label = fmt.Sprintf("%s\n%s", op, node.Param["act_type"])
+			attrs["fillcolor"] = fillcolors[2]
+		case "Pooling":
+			if val, ok := node.Param["stride"]; ok {
+				strideInfo := str2tuple(val)
+				label = fmt.Sprintf("Pooling\n%s, %s/%s", node.Param["pool_type"], strings.Join(str2tuple(node.Param["kernel"]), "x"), strings.Join(strideInfo, "x"))
+			} else {
+				label = fmt.Sprintf("Pooling\n%s, %s/%s", node.Param["pool_type"], strings.Join(str2tuple(node.Param["kernel"]), "x"), "1")
+			}
+			attrs["fillcolor"] = fillcolors[4]
+		case "Concat", "Flatten", "Reshape":
+			attrs["fillcolor"] = fillcolors[5]
+		case "Softmax":
+			attrs["fillcolor"] = fillcolors[6]
+		default:
+			attrs["fillcolor"] = fillcolors[7]
+			if op == "Custom" {
+				label = node.Param["op_type"]
+			}
+			attrs["label"] = label
 		}
-
-		attrs["label"] = label
-		dg.AddNode("G", name, attrs)
+		dg.AddNode(graphName, name, attrs)
 	}
 
 	// make edges
@@ -179,9 +213,22 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 				"arrowtail": "open",
 			}
 			if drawShape {
-				// ...
-				_ = inputNode
-				_ = attrs
+				key := inputName
+				if inputNode.Op != "null" {
+					key = "_output"
+					if val, ok := inputNode.Param["num_outputs"]; ok {
+						numOutputs, err := strconv.Atoi(val)
+						if err != nil {
+							continue
+						}
+						key += strconv.Itoa(numOutputs - 1)
+						inputNode.Param["num_outputs"] = strconv.Itoa(numOutputs - 1)
+					}
+
+				}
+				//shape = shape_dict[key][1:]
+				//label = "x".join([str(x) for x in shape])
+				//attrs["label"] = label
 			}
 			dg.AddEdge(name, inputName, true, attrs)
 		}
