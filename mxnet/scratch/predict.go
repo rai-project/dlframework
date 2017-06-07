@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"image"
 	"io/ioutil"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
@@ -30,6 +31,15 @@ import (
 )
 
 const path = "/Users/chengli/Downloads"
+
+func distance(p1 []float64, p2 []float64) float64 {
+	R := 6371.0
+	lat1, lng1, lat2, lng2 := p1[0], p1[1], p2[0], p2[1]
+	dlat := lat2 - lat1
+	dlng := lng2 - lng1
+	a := math.Pow(math.Sin(dlat*0.5), 2) + math.Cos(lat1)*math.Cos(lat2)*math.Pow(math.Sin(dlng*0.5), 2)
+	return 2 * R * math.Asin(math.Sqrt(a))
+}
 
 // convert go Image to 1-dim array
 func imageTo1DArray(src image.Image) ([]float32, error) {
@@ -54,24 +64,41 @@ func imageTo1DArray(src image.Image) ([]float32, error) {
 	return res, nil
 }
 
+func imageTo1DArraySubMean(src image.Image) ([]float32, error) {
+
+	if src == nil {
+		return nil, fmt.Errorf("src image nil")
+	}
+
+	b := src.Bounds()
+	h := b.Max.Y - b.Min.Y // image height
+	w := b.Max.X - b.Min.X // image width
+
+	res := make([]float32, 3*h*w)
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			r, g, b, _ := src.At(x+b.Min.X, y+b.Min.Y).RGBA()
+			res[y*w+x] = float32(r>>8) - 123.68
+			res[w*h+y*w+x] = float32(g>>8) - 116.779
+			res[2*w*h+y*w+x] = float32(b>>8) - 103.939
+		}
+	}
+	return res, nil
+}
 func main() {
 	// load model
-	//symbol, err := ioutil.ReadFile(filepath.Join(path, "RN101-5k500-symbol.json"))
-	symbol, err := ioutil.ReadFile(filepath.Join(path, "caffenet-symbol.json"))
+	symbol, err := ioutil.ReadFile(filepath.Join(path, "RN101-5k500-symbol.json"))
 	if err != nil {
 		panic(err)
 	}
-	params, err := ioutil.ReadFile(filepath.Join(path, "caffenet-0000.params"))
+	params, err := ioutil.ReadFile(filepath.Join(path, "RN101-5k500-0012.params"))
 	if err != nil {
 		panic(err)
 	}
 
 	var labels []string
-	// Open the file.
-	f, _ := os.Open(filepath.Join(path, "synset.txt"))
-	// Create a new Scanner for the file.
+	f, _ := os.Open(filepath.Join(path, "grids.txt"))
 	scanner := bufio.NewScanner(f)
-	// Loop over all lines in the file and print them.
 	for scanner.Scan() {
 		line := scanner.Text()
 		labels = append(labels, line)
@@ -89,13 +116,13 @@ func main() {
 	defer p.Free()
 
 	// load test image for predction
-	img, err := imgio.Open(filepath.Join(path, "tiger.jpg"))
+	img, err := imgio.Open(filepath.Join(path, "tokyo-tower.jpg"))
 	if err != nil {
 		panic(err)
 	}
 	// preprocess
 	resized := transform.Resize(img, 224, 224, transform.Linear)
-	res, err := imageTo1DArray(resized)
+	res, err := imageTo1DArraySubMean(resized)
 	if err != nil {
 		panic(err)
 	}
