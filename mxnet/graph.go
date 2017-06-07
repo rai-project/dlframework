@@ -162,7 +162,7 @@ func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 			if drawShape {
 				key := inputName
 				if inputNode.Op != "null" {
-					key = "_output"
+					key += "_output"
 					if val, ok := inputNode.Param["num_outputs"]; ok {
 						numOutputs, err := strconv.Atoi(val)
 						if err != nil {
