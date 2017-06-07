@@ -16,10 +16,14 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"image"
+	"io"
 	"io/ioutil"
+	"log"
 	"math"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -31,6 +35,13 @@ import (
 )
 
 const path = "/Users/chengli/Downloads"
+
+var (
+	caffenet    = []uint32{1, 3, 224, 224}
+	rn1015k500  = []uint32{1, 3, 224, 224}
+	vgg19       = []uint32{1, 1, 224, 224}
+	inceptionbn = []uint32{1, 1, 299, 299}
+)
 
 func distance(p1 []float64, p2 []float64) float64 {
 	R := 6371.0
@@ -64,7 +75,7 @@ func imageTo1DArray(src image.Image) ([]float32, error) {
 	return res, nil
 }
 
-func imageTo1DArraySubMean(src image.Image) ([]float32, error) {
+func preprocessImage(src image.Image) ([]float32, error) {
 
 	if src == nil {
 		return nil, fmt.Errorf("src image nil")
@@ -85,68 +96,116 @@ func imageTo1DArraySubMean(src image.Image) ([]float32, error) {
 	}
 	return res, nil
 }
-func main() {
-	// load model
-	symbol, err := ioutil.ReadFile(filepath.Join(path, "RN101-5k500-symbol.json"))
-	if err != nil {
-		panic(err)
+
+func getImageWithURL(url string) (err error) {
+	response, e := http.Get(url)
+	if e != nil {
+		return err
 	}
-	params, err := ioutil.ReadFile(filepath.Join(path, "RN101-5k500-0012.params"))
+	defer response.Body.Close()
+
+	file, err := os.Create("/tmp/tmp.jpg")
 	if err != nil {
-		panic(err)
+		return err
+	}
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
+
+	return nil
+}
+
+func getModelShape(prefix string) []uint32 {
+	switch prefix {
+	case "caffenet":
+		return caffenet
+	case "RN101-5k500":
+		return rn1015k500
+	case "vgg19":
+		return vgg19
+	case "Inception-BN":
+		return inceptionbn
+	default:
+		return rn1015k500
+	}
+}
+
+func Predict(dirpath string, prefix string, epoch string, labelfile string, image string) (prob float32, output string, err error) {
+	symbol, err := ioutil.ReadFile(filepath.Join(dirpath, prefix+"-symbol.json"))
+	if err != nil {
+		return 0, "", err
+	}
+	params, err := ioutil.ReadFile(filepath.Join(dirpath, prefix+"-"+epoch+".params"))
+	if err != nil {
+		return 0, "", err
 	}
 
 	var labels []string
-	f, _ := os.Open(filepath.Join(path, "grids.txt"))
+	f, _ := os.Open(filepath.Join(path, labelfile))
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
 		labels = append(labels, line)
 	}
 
-	// create predictor
+	inputShape := getModelShape(prefix)
 	p, err := mxnet.CreatePredictor(symbol,
 		params,
 		mxnet.Device{mxnet.CPU_DEVICE, 0},
-		[]mxnet.InputNode{{Key: "data", Shape: []uint32{1, 3, 224, 224}}},
+		[]mxnet.InputNode{{Key: "data", Shape: inputShape}},
 	)
 	if err != nil {
-		panic(err)
+		return 0, "", err
 	}
 	defer p.Free()
 
-	// load test image for predction
-	img, err := imgio.Open(filepath.Join(path, "tokyo-tower.jpg"))
-	if err != nil {
-		panic(err)
-	}
-	// preprocess
-	resized := transform.Resize(img, 224, 224, transform.Linear)
-	res, err := imageTo1DArraySubMean(resized)
+	img, err := imgio.Open(filepath.Join(path, image))
 	if err != nil {
 		panic(err)
 	}
 
-	// set input
+	resized := transform.Resize(img, int(inputShape[2]), int(inputShape[3]), transform.Linear)
+	res, err := preprocessImage(resized)
+	if err != nil {
+		return 0, "", err
+	}
+
 	if err := p.SetInput("data", res); err != nil {
-		panic(err)
+		return 0, "", err
 	}
-	// do predict
+
 	if err := p.Forward(); err != nil {
-		panic(err)
+		return 0, "", err
 	}
-	// get predict result
-	data, err := p.GetOutput(0)
+
+	probs, err := p.GetOutput(0)
 	if err != nil {
 		panic(err)
 	}
-	idxs := make([]int, len(data))
-	for i := range data {
+	idxs := make([]int, len(probs))
+	for i := range probs {
 		idxs[i] = i
 	}
-	as := utils.ArgSort{Args: data, Idxs: idxs}
-	sort.Sort(as)
+
+	out := utils.ArgSort{Args: probs, Idxs: idxs}
+	sort.Sort(out)
+
 	fmt.Println("result:")
-	fmt.Println(as.Args[0])
-	fmt.Println(labels[as.Idxs[0]])
+	fmt.Println(out.Args[0])
+	fmt.Println(labels[out.Idxs[0]])
+
+	return out.Args[0], labels[out.Idxs[0]], nil
+}
+
+func main() {
+	flag.Parse()
+	args := flag.Args()
+	if len(args) < 4 {
+		fmt.Println("Input error")
+		os.Exit(1)
+	}
+	// example RN101-5k500 0012 grids.txt tokyo-tower.jpg
+	Predict(path, args[0], args[1], args[2], args[3])
 }
