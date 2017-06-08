@@ -2,8 +2,8 @@ package predict
 
 import (
 	"bufio"
-	"errors"
 	"image"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,6 +11,7 @@ import (
 
 	"github.com/anthonynsimon/bild/imgio"
 	"github.com/anthonynsimon/bild/transform"
+	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/mxnet"
 	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
 	"github.com/songtianyi/go-mxnet-predictor/utils"
@@ -23,11 +24,15 @@ type Predictor interface {
 	Preprocess(data interface{}) (interface{}, error)
 	// Returns the features
 	Predict(data interface{}) ([]float32, error)
+
+	io.Closer
 }
 
 type ImagePredictor struct {
-	model    mxnet.Model_Information
-	modelDir string
+	model     mxnet.Model_Information
+	modelDir  string
+	features  []string
+	predictor *gomxnet.Predictor
 }
 
 type Feature struct {
@@ -45,10 +50,6 @@ func NewImagePredictor(model mxnet.Model_Information, targetDir string) (Predict
 
 func (p *ImagePredictor) GetGraphPath() string {
 	return filepath.Join(p.modelDir, p.model.GetName()+"-graph.json")
-}
-
-func (p *ImagePredictor) GetSymbolPath() string {
-	return filepath.Join(p.modelDir, p.model.GetName()+"-symbol.json")
 }
 
 func (p *ImagePredictor) GetWeightsPath() string {
@@ -87,40 +88,68 @@ func (p *ImagePredictor) Preprocess(input interface{}) (interface{}, error) {
 	return res, nil
 }
 
-func (p *ImagePredictor) Predict(input string) ([]Feature, error) {
-	img, err := imgio.Open(input)
+func (p *ImagePredictor) getPredictor() error {
+	model := p.model
+
+	symbol, err := ioutil.ReadFile(p.GetGraphPath())
 	if err != nil {
-		return nil, err
+		return errors.Wrapf(err, "cannot read %s", p.GetGraphPath())
 	}
-
-	_, ok := img.([]float32)
-	if !ok {
-		return nil, errors.New("expecting an flattened float32 array input")
+	params, err := ioutil.ReadFile(p.GetWeightsPath())
+	if err != nil {
+		return errors.Wrapf(err, "cannot read %s", p.GetWeightsPath())
 	}
-
-	symbol := ioutil.ReadFile(model.GetSymbolPath())
-	params := ioutil.ReadFile(model.GetWeightsPath())
-
-	modelInput := model.GetInput()
-	modelInputShape := modelInput.GetDimensions()
 
 	var features []string
-	f, _ := os.Open(model.GetFeaturesPath)
+	f, err := os.Open(p.GetFeaturesPath())
+	if err != nil {
+		return errors.Wrapf(err, "cannot read %s", model.GetFeaturesPath())
+	}
+	defer f.Close()
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
 		features = append(features, line)
 	}
 
-	p, err := gomxnet.CreatePredictor(symbol,
+	p.features = features
+
+	modelInput := model.GetInput()
+	modelInputShape := modelInput.GetDimensions()
+
+	pred, err := gomxnet.CreatePredictor(symbol,
 		params,
-		gomxnet.Device{mxnet.CPU_DEVICE, 0},
-		[]mxnet.InputNode{{Key: "data", Shape: modelInputShape}},
+		gomxnet.Device{gomxnet.CPU_DEVICE, 0},
+		[]gomxnet.InputNode{{Key: "data", Shape: modelInputShape}},
 	)
+	if err != nil {
+		return err
+	}
+	p.predictor = pred
+
+	return nil
+}
+
+func (p *ImagePredictor) Predict(input interface{}) ([]Feature, error) {
+	path, ok := input.(string)
+	if !ok {
+		return nil, errors.New("expecting a path to predict")
+	}
+	img, err := imgio.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	defer p.Free()
+
+	_, ok = img.([]float32)
+	if !ok {
+		return nil, errors.New("expecting an flattened float32 array input")
+	}
+
+	if p.predictor == nil {
+		if err := p.getPredictor(); err != nil {
+			return nil, err
+		}
+	}
 
 	resized := transform.Resize(img, int(modelInputShape[2]), int(modelInputShape[3]), transform.Linear)
 	res, err := Preprocess(resized)
@@ -156,4 +185,10 @@ func (p *ImagePredictor) Predict(input string) ([]Feature, error) {
 	}
 
 	return ret, nil
+}
+
+func (p *ImagePredictor) Close() error {
+	if p.predictor != nil {
+		p.predictor.Free()
+	}
 }
