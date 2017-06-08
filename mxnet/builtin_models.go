@@ -224,11 +224,11 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"caffenet.yml": caffenetYml,
+	"caffenet.yml":    caffenetYml,
 	"locationnet.yml": locationnetYml,
-	"nin.yml": ninYml,
-	"squeeznet.yml": squeeznetYml,
-	"vgg19.yml": vgg19Yml,
+	"nin.yml":         ninYml,
+	"squeeznet.yml":   squeeznetYml,
+	"vgg19.yml":       vgg19Yml,
 }
 
 // AssetDir returns the file names below a certain
@@ -270,12 +270,13 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
-	"caffenet.yml": &bintree{caffenetYml, map[string]*bintree{}},
-	"locationnet.yml": &bintree{locationnetYml, map[string]*bintree{}},
-	"nin.yml": &bintree{ninYml, map[string]*bintree{}},
-	"squeeznet.yml": &bintree{squeeznetYml, map[string]*bintree{}},
-	"vgg19.yml": &bintree{vgg19Yml, map[string]*bintree{}},
+	"caffenet.yml":    {caffenetYml, map[string]*bintree{}},
+	"locationnet.yml": {locationnetYml, map[string]*bintree{}},
+	"nin.yml":         {ninYml, map[string]*bintree{}},
+	"squeeznet.yml":   {squeeznetYml, map[string]*bintree{}},
+	"vgg19.yml":       {vgg19Yml, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -324,4 +325,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

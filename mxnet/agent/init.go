@@ -1,9 +1,9 @@
 package agent
 
 import (
-	"github.com/sirupsen/logrus"
 	"github.com/rai-project/config"
 	"github.com/rai-project/logger"
+	"github.com/sirupsen/logrus"
 )
 
 var (

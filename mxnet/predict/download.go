@@ -1,30 +1,16 @@
 package predict
 
 import (
-	"io"
-	"log"
-	"net/http"
-	"os"
+	"github.com/levigross/grequests"
 )
 
 func downloadURL(url, targetPath string) error {
-	response, err := http.Get(url)
+	resp, err := grequests.Get(url, nil)
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
-
-	file, err := os.Create(targetPath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	file.Close()
-
-	return nil
+	defer resp.Close()
+	return resp.DownloadToFile(targetPath)
 }
 
 func (p *ImagePredictor) Download() error {

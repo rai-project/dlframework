@@ -23,6 +23,7 @@ func (s *server) InferURL(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferUR
 	if err != nil {
 		return err
 	}
+	defer resp.Close()
 	m.Data = resp.Bytes()
 	return s.InferBytes(m, m1)
 }
@@ -96,6 +97,7 @@ func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_Infer
 }
 
 func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Graph, error) {
+	log.Panic("GetModelGraph")
 	model, err := mxnet.GetModelInformation(m.GetModelName())
 	if err != nil {
 		return nil, err
@@ -137,7 +139,12 @@ func (s *server) GetModelInformations(ctx context.Context, n *mxnet.Null) (*mxne
 }
 
 func Register() *grpc.Server {
-	grpcServer := rgrpc.NewServer(mxnet.ServiceDescription)
+	var grpcServer *grpc.Server
+	if true {
+		grpcServer = rgrpc.NewServer(mxnet.ServiceDescription)
+	} else {
+		grpcServer = grpc.NewServer()
+	}
 	mxnet.RegisterMXNetServer(grpcServer, &server{})
 	return grpcServer
 }
