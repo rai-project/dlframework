@@ -1,0 +1,4 @@
+FROM raiproject/powerai:base
+MAINTAINER Carl Pearson <pearson@illinois.edu>
+
+RUN apt-get install -y caffe-bvlc 
