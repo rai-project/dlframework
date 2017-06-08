@@ -1,21 +1,45 @@
 package agent
 
 import (
+	"encoding/json"
 	"errors"
 
+	"github.com/levigross/grequests"
 	"github.com/rai-project/dlframework/mxnet"
+	"github.com/rai-project/grpc"
 	context "golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 type server struct{}
+
+func (s *server) InferURL(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferURLServer) error {
+	panic(errors.New("*server.InferURL not implemented"))
+}
+
+func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferBytesServer) error {
+	panic(errors.New("*server.InferBytes not implemented"))
+}
 
 func (s *server) GetModel(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model, error) {
 	panic(errors.New("*server.GetModel not implemented"))
 }
 
 func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Graph, error) {
-	panic(errors.New("*server.GetModelGraph not implemented"))
+	model, err := mxnet.GetModelInformation(m.GetName())
+	if err != nil {
+		return nil, err
+	}
+	graphURL := model.GetGraphUrl()
+	if graphURL == "" {
+		return nil, errors.New("empty graph url")
+	}
+	resp, err := grequests.Get(graphURL)
+	if err != nil {
+		return nil, err
+	}
+	g := new(mxnet.Model_Graph)
+	err := json.Unmarshal(resp.String(), g)
+	return g, err
 }
 
 func (s *server) GetModelInformation(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Information, error) {
@@ -24,14 +48,6 @@ func (s *server) GetModelInformation(ctx context.Context, m *mxnet.MXNetModelInf
 		return nil, err
 	}
 	return &model, nil
-}
-
-func (s *server) InferURL(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferURLServer) error {
-	panic(errors.New("*server.InferURL not implemented"))
-}
-
-func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferBytesServer) error {
-	panic(errors.New("*server.InferBytes not implemented"))
 }
 
 func (s *server) GetModels(ctx context.Context, n *mxnet.Null) (*mxnet.ModelInformations, error) {

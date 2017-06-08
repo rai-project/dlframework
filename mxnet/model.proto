@@ -97,7 +97,6 @@ service MXNet {
   rpc InferBytes(MXNetInferenceRequest)
       returns (stream MXNetInferenceResponse) {}
   rpc GetModels(Null) returns (ModelInformations) {}
-  rpc GetModel(MXNetModelInformationRequest) returns (Model) {}
   rpc GetModelInformation(MXNetModelInformationRequest)
       returns (Model.Information) {}
   rpc GetModelGraph(MXNetModelInformationRequest) returns (Model.Graph) {}
