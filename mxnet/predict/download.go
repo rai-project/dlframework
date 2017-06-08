@@ -1,11 +1,30 @@
 package predict
 
 import (
-	"github.com/pkg/errors"
+	"io"
+	"log"
+	"net/http"
+	"os"
 )
 
 func downloadURL(url, targetPath string) error {
-	return errors.Errorf("implement me %s", url)
+	response, e := http.Get(url)
+	if e != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	file, err := os.Create(targetPath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	file.Close()
+
+	return nil
 }
 
 func (p *ImagePredictor) Download() error {

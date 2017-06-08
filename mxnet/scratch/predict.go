@@ -27,6 +27,7 @@ var (
 	rn1015k500  = []uint32{1, 3, 224, 224}
 	vgg19       = []uint32{1, 3, 224, 224}
 	inceptionbn = []uint32{1, 3, 224, 224}
+	nin         = []uint32{1, 3, 224, 224}
 )
 
 func distance(p1 []float64, p2 []float64) float64 {
@@ -113,6 +114,8 @@ func getModelShape(prefix string) []uint32 {
 		return vgg19
 	case "Inception-BN":
 		return inceptionbn
+	case "NiN":
+		return nin
 	default:
 		return rn1015k500
 	}

@@ -1,11 +1,19 @@
 package predict
 
 import (
+	"bufio"
 	"errors"
 	"image"
+	"io/ioutil"
+	"os"
 	"path/filepath"
+	"sort"
 
+	"github.com/anthonynsimon/bild/imgio"
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/rai-project/dlframework/mxnet"
+	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
+	"github.com/songtianyi/go-mxnet-predictor/utils"
 )
 
 type Predictor interface {
@@ -22,6 +30,12 @@ type ImagePredictor struct {
 	modelDir string
 }
 
+type Feature struct {
+	idx  int
+	name string
+	prob float32
+}
+
 func NewImagePredictor(model mxnet.Model_Information, targetDir string) (Predictor, error) {
 	return &ImagePredictor{
 		model:    model,
@@ -31,6 +45,10 @@ func NewImagePredictor(model mxnet.Model_Information, targetDir string) (Predict
 
 func (p *ImagePredictor) GetGraphPath() string {
 	return filepath.Join(p.modelDir, p.model.GetName()+"-graph.json")
+}
+
+func (p *ImagePredictor) GetSymbolPath() string {
+	return filepath.Join(p.modelDir, p.model.GetName()+"-symbol.json")
 }
 
 func (p *ImagePredictor) GetWeightsPath() string {
@@ -69,25 +87,73 @@ func (p *ImagePredictor) Preprocess(input interface{}) (interface{}, error) {
 	return res, nil
 }
 
-func (p *ImagePredictor) Predict(input interface{}) ([]float32, error) {
-	data, ok := input.([]float32)
+func (p *ImagePredictor) Predict(input string) ([]Feature, error) {
+	img, err := imgio.Open(input)
+	if err != nil {
+		return nil, err
+	}
+
+	_, ok := img.([]float32)
 	if !ok {
 		return nil, errors.New("expecting an flattened float32 array input")
 	}
 
-	_ = data
-	// model := p.model
-	// modelInput := model.GetInput()
-	// modelInputShape := modelInput.GetDimensions()
-	// p, err := mxnet.CreatePredictor(symbol,
-	// 	params,
-	// 	mxnet.Device{mxnet.CPU_DEVICE, 0},
-	// 	[]mxnet.InputNode{{Key: "data", Shape: inputShape}},
-	// )
-	// if err != nil {
-	// 	return 0, "", err
-	// }
-	// defer p.Free()
-	// // etc...
-	return nil, nil
+	symbol := ioutil.ReadFile(model.GetSymbolPath())
+	params := ioutil.ReadFile(model.GetWeightsPath())
+
+	modelInput := model.GetInput()
+	modelInputShape := modelInput.GetDimensions()
+
+	var features []string
+	f, _ := os.Open(model.GetFeaturesPath)
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		features = append(features, line)
+	}
+
+	p, err := gomxnet.CreatePredictor(symbol,
+		params,
+		gomxnet.Device{mxnet.CPU_DEVICE, 0},
+		[]mxnet.InputNode{{Key: "data", Shape: modelInputShape}},
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer p.Free()
+
+	resized := transform.Resize(img, int(modelInputShape[2]), int(modelInputShape[3]), transform.Linear)
+	res, err := Preprocess(resized)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := p.SetInput("data", res); err != nil {
+		return nil, err
+	}
+
+	if err := p.Forward(); err != nil {
+		return nil, err
+	}
+
+	probs, err := p.GetOutput(0)
+	if err != nil {
+		return nil, err
+	}
+
+	idxs := make([]int, len(probs))
+	for i := range probs {
+		idxs[i] = i
+	}
+	out := utils.ArgSort{Args: probs, Idxs: idxs}
+	sort.Sort(out)
+
+	ret := make([]Feature, len(probs))
+	for i := range probs {
+		ret[i].prob = out.Args[i]
+		ret[i].idx = out.Idxs[i]
+		ret[i].name = features[out.Idxs[i]]
+	}
+
+	return ret, nil
 }
