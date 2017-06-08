@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework/mxnet"
@@ -101,6 +102,7 @@ func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformati
 	if err != nil {
 		return nil, err
 	}
+	pp.Println(model)
 	graphURL := model.GetGraphUrl()
 	if graphURL == "" {
 		return nil, errors.New("empty graph url")
