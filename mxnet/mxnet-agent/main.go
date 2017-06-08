@@ -28,7 +28,7 @@ const (
 )
 
 func getAddress(port string) string {
-	return "localhost:9999"
+	return "localhost:" + port
 }
 
 // RootCmd represents the base command when called without any subcommands
