@@ -2,7 +2,11 @@ name: LocationNet
 framework: mxnet
 version: 1.0
 type: cnn
-dataset_url: MultimediaCommons
+input:
+  type: image
+  dimensions: [1, 3, 224, 224]
+dataset_name: MultimediaCommons
+features_url: https://github.com/multimedia-berkeley/tutorials/blob/master/grids.txt
 graph_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-symbol.json
 weights_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-0012.params
 mean_image: [123.68, 116.779, 103.939]
