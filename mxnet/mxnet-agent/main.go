@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/Unknwon/com"
-	"github.com/apex/log"
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
