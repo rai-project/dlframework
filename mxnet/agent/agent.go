@@ -53,3 +53,9 @@ func Register() {
 	grpcServer := grpc.NewServer()
 	mxnet.RegisterMXNetServer(grpcServer, &server{})
 }
+
+func NewServer() *grpc.Server {
+	grpcServer := grpc.NewServer()
+	mxnet.RegisterMXNetServer(grpcServer, &server{})
+	return grpcServer
+}
