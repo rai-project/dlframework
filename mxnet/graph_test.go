@@ -16,7 +16,7 @@ var (
 
 func TestUnmarshalGraph(t *testing.T) {
 	var g Model_Graph
-	err := json.Unmarshal(caffenetSymbolJSON, &g)
+	err := json.Unmarshal(inceptionSymbolJSON, &g)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, g)
 

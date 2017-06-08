@@ -5,5 +5,6 @@ type: cnn
 dataset_url: MultimediaCommons
 graph_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-symbol.json
 weights_url: https://s3.amazonaws.com/mmcommons-tutorial/models/RN101-5k500-0012.params
+mean_image: [123.68, 116.779, 103.939]
 references:
   - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf

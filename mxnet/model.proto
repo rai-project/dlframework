@@ -22,16 +22,32 @@ message ErrorStatus {
   string message = 2;
 }
 
+message ContainerArchicture {
+  string gpu = 1;
+  string cpu = 2;
+}
+
 message Model {
+  message Input {
+    string type = 1;
+    repeated int64 dimensions = 2;
+  }
+
+  message Output { repeated string labels = 1; }
+
   message Information {
     string name = 1;
-    string framework = 2;
-    string version = 3;
-    string type = 4;
-    string dataset = 5;
-    string graph_url = 6;
-    string weights_url = 7;
-    repeated string references = 8;
+    map<string, ContainerArchicture> container = 2;
+    string framework = 3;
+    string version = 4;
+    string type = 5;
+    string dataset = 6;
+    string graph_url = 7;
+    string weights_url = 8;
+    string features_url = 9;
+    Input input = 10;
+    repeated float mean_image = 11;
+    repeated string references = 12;
   }
   message Graph {
     message NodeEntry {
@@ -55,12 +71,6 @@ message Model {
     repeated NodeEntry heads = 4;
     map<string, string> attrs = 5;
   }
-  message Input {
-    string type = 1;
-    repeated int64 dimensions = 2;
-  }
-
-  message Output { repeated string labels = 1; }
 }
 
 message ModelInformations { repeated Model.Information info = 1; }
@@ -68,7 +78,8 @@ message ModelInformations { repeated Model.Information info = 1; }
 message MXNetInferenceRequest {
   string id = 1;
   string model_name = 2;
-  string data_url = 3;
+  string url = 3;
+  bytes data = 4;
 }
 
 message MXNetInferenceResponse {
@@ -82,8 +93,10 @@ message MXNetModelInformationRequest { string name = 1; }
 message Null {}
 
 service MXNet {
-  rpc Infer(MXNetInferenceRequest) returns (stream MXNetInferenceResponse) {}
-  rpc Models(Null) returns (ModelInformations) {}
+  rpc InferURL(MXNetInferenceRequest) returns (stream MXNetInferenceResponse) {}
+  rpc InferBytes(MXNetInferenceRequest)
+      returns (stream MXNetInferenceResponse) {}
+  rpc GetModels(Null) returns (ModelInformations) {}
   rpc GetModel(MXNetModelInformationRequest) returns (Model) {}
   rpc GetModelInformation(MXNetModelInformationRequest)
       returns (Model.Information) {}

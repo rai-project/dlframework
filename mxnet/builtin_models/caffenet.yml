@@ -1,12 +1,18 @@
 name: CaffeNet
+container:
+  amd64:
+    gpu: raiproject/...
+    cpu: raiproject/...
+  ppc64le:
+    gpu: ...
 framework: mxnet
 version: 1.0
 type: cnn
-dataset_url: ImageNet
-features_url: ...
 input:
   type: image
-  dimensions: [224, 224]
+  dimensions: [1, 3, 224, 224]
+dataset_name: ImageNet
+features_url: ...
 graph_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/caffenet-symbol.json
 weights_url: http://data.dmlc.ml/models/imagenet/caffenet/caffenet-0000.params
 references:

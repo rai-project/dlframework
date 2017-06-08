@@ -10,6 +10,7 @@
 
 	It has these top-level messages:
 		ErrorStatus
+		ContainerArchicture
 		Model
 		ModelInformations
 		MXNetInferenceRequest
@@ -23,6 +24,8 @@ import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/gogo/protobuf/gogoproto"
+
+import bytes "bytes"
 
 import strings "strings"
 import reflect "reflect"
@@ -69,33 +72,105 @@ func (m *ErrorStatus) GetMessage() string {
 	return ""
 }
 
+type ContainerArchicture struct {
+	Gpu string `protobuf:"bytes,1,opt,name=gpu,proto3" json:"gpu,omitempty"`
+	Cpu string `protobuf:"bytes,2,opt,name=cpu,proto3" json:"cpu,omitempty"`
+}
+
+func (m *ContainerArchicture) Reset()                    { *m = ContainerArchicture{} }
+func (*ContainerArchicture) ProtoMessage()               {}
+func (*ContainerArchicture) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1} }
+
+func (m *ContainerArchicture) GetGpu() string {
+	if m != nil {
+		return m.Gpu
+	}
+	return ""
+}
+
+func (m *ContainerArchicture) GetCpu() string {
+	if m != nil {
+		return m.Cpu
+	}
+	return ""
+}
+
 type Model struct {
 }
 
 func (m *Model) Reset()                    { *m = Model{} }
 func (*Model) ProtoMessage()               {}
-func (*Model) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1} }
+func (*Model) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2} }
+
+type Model_Input struct {
+	Type       string  `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Dimensions []int64 `protobuf:"varint,2,rep,packed,name=dimensions" json:"dimensions,omitempty"`
+}
+
+func (m *Model_Input) Reset()                    { *m = Model_Input{} }
+func (*Model_Input) ProtoMessage()               {}
+func (*Model_Input) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 0} }
+
+func (m *Model_Input) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *Model_Input) GetDimensions() []int64 {
+	if m != nil {
+		return m.Dimensions
+	}
+	return nil
+}
+
+type Model_Output struct {
+	Labels []string `protobuf:"bytes,1,rep,name=labels" json:"labels,omitempty"`
+}
+
+func (m *Model_Output) Reset()                    { *m = Model_Output{} }
+func (*Model_Output) ProtoMessage()               {}
+func (*Model_Output) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 1} }
+
+func (m *Model_Output) GetLabels() []string {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
 
 type Model_Information struct {
-	Name       string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Framework  string   `protobuf:"bytes,2,opt,name=framework,proto3" json:"framework,omitempty"`
-	Version    string   `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
-	Type       string   `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`
-	Dataset    string   `protobuf:"bytes,5,opt,name=dataset,proto3" json:"dataset,omitempty"`
-	GraphUrl   string   `protobuf:"bytes,6,opt,name=graph_url,json=graphUrl,proto3" json:"graph_url,omitempty"`
-	WeightsUrl string   `protobuf:"bytes,7,opt,name=weights_url,json=weightsUrl,proto3" json:"weights_url,omitempty"`
-	References []string `protobuf:"bytes,8,rep,name=references" json:"references,omitempty"`
+	Name        string                          `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Container   map[string]*ContainerArchicture `protobuf:"bytes,2,rep,name=container" json:"container,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Framework   string                          `protobuf:"bytes,3,opt,name=framework,proto3" json:"framework,omitempty"`
+	Version     string                          `protobuf:"bytes,4,opt,name=version,proto3" json:"version,omitempty"`
+	Type        string                          `protobuf:"bytes,5,opt,name=type,proto3" json:"type,omitempty"`
+	Dataset     string                          `protobuf:"bytes,6,opt,name=dataset,proto3" json:"dataset,omitempty"`
+	GraphUrl    string                          `protobuf:"bytes,7,opt,name=graph_url,json=graphUrl,proto3" json:"graph_url,omitempty"`
+	WeightsUrl  string                          `protobuf:"bytes,8,opt,name=weights_url,json=weightsUrl,proto3" json:"weights_url,omitempty"`
+	FeaturesUrl string                          `protobuf:"bytes,9,opt,name=features_url,json=featuresUrl,proto3" json:"features_url,omitempty"`
+	Input       *Model_Input                    `protobuf:"bytes,10,opt,name=input" json:"input,omitempty"`
+	MeanImage   []float32                       `protobuf:"fixed32,11,rep,packed,name=mean_image,json=meanImage" json:"mean_image,omitempty"`
+	References  []string                        `protobuf:"bytes,12,rep,name=references" json:"references,omitempty"`
 }
 
 func (m *Model_Information) Reset()                    { *m = Model_Information{} }
 func (*Model_Information) ProtoMessage()               {}
-func (*Model_Information) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 0} }
+func (*Model_Information) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 2} }
 
 func (m *Model_Information) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
+}
+
+func (m *Model_Information) GetContainer() map[string]*ContainerArchicture {
+	if m != nil {
+		return m.Container
+	}
+	return nil
 }
 
 func (m *Model_Information) GetFramework() string {
@@ -140,6 +215,27 @@ func (m *Model_Information) GetWeightsUrl() string {
 	return ""
 }
 
+func (m *Model_Information) GetFeaturesUrl() string {
+	if m != nil {
+		return m.FeaturesUrl
+	}
+	return ""
+}
+
+func (m *Model_Information) GetInput() *Model_Input {
+	if m != nil {
+		return m.Input
+	}
+	return nil
+}
+
+func (m *Model_Information) GetMeanImage() []float32 {
+	if m != nil {
+		return m.MeanImage
+	}
+	return nil
+}
+
 func (m *Model_Information) GetReferences() []string {
 	if m != nil {
 		return m.References
@@ -157,7 +253,7 @@ type Model_Graph struct {
 
 func (m *Model_Graph) Reset()                    { *m = Model_Graph{} }
 func (*Model_Graph) ProtoMessage()               {}
-func (*Model_Graph) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1} }
+func (*Model_Graph) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 3} }
 
 func (m *Model_Graph) GetNodes() []*Model_Graph_Node {
 	if m != nil {
@@ -202,7 +298,7 @@ type Model_Graph_NodeEntry struct {
 
 func (m *Model_Graph_NodeEntry) Reset()                    { *m = Model_Graph_NodeEntry{} }
 func (*Model_Graph_NodeEntry) ProtoMessage()               {}
-func (*Model_Graph_NodeEntry) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1, 0} }
+func (*Model_Graph_NodeEntry) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 3, 0} }
 
 func (m *Model_Graph_NodeEntry) GetNodeId() int64 {
 	if m != nil {
@@ -236,7 +332,7 @@ type Model_Graph_Node struct {
 
 func (m *Model_Graph_Node) Reset()                    { *m = Model_Graph_Node{} }
 func (*Model_Graph_Node) ProtoMessage()               {}
-func (*Model_Graph_Node) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 1, 1} }
+func (*Model_Graph_Node) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2, 3, 1} }
 
 func (m *Model_Graph_Node) GetOp() string {
 	if m != nil {
@@ -280,51 +376,13 @@ func (m *Model_Graph_Node) GetControlDeps() []int64 {
 	return nil
 }
 
-type Model_Input struct {
-	Type       string  `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Dimensions []int64 `protobuf:"varint,2,rep,packed,name=dimensions" json:"dimensions,omitempty"`
-}
-
-func (m *Model_Input) Reset()                    { *m = Model_Input{} }
-func (*Model_Input) ProtoMessage()               {}
-func (*Model_Input) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 2} }
-
-func (m *Model_Input) GetType() string {
-	if m != nil {
-		return m.Type
-	}
-	return ""
-}
-
-func (m *Model_Input) GetDimensions() []int64 {
-	if m != nil {
-		return m.Dimensions
-	}
-	return nil
-}
-
-type Model_Output struct {
-	Labels []string `protobuf:"bytes,1,rep,name=labels" json:"labels,omitempty"`
-}
-
-func (m *Model_Output) Reset()                    { *m = Model_Output{} }
-func (*Model_Output) ProtoMessage()               {}
-func (*Model_Output) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{1, 3} }
-
-func (m *Model_Output) GetLabels() []string {
-	if m != nil {
-		return m.Labels
-	}
-	return nil
-}
-
 type ModelInformations struct {
 	Info []*Model_Information `protobuf:"bytes,1,rep,name=info" json:"info,omitempty"`
 }
 
 func (m *ModelInformations) Reset()                    { *m = ModelInformations{} }
 func (*ModelInformations) ProtoMessage()               {}
-func (*ModelInformations) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{2} }
+func (*ModelInformations) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{3} }
 
 func (m *ModelInformations) GetInfo() []*Model_Information {
 	if m != nil {
@@ -336,12 +394,13 @@ func (m *ModelInformations) GetInfo() []*Model_Information {
 type MXNetInferenceRequest struct {
 	Id        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	ModelName string `protobuf:"bytes,2,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`
-	DataUrl   string `protobuf:"bytes,3,opt,name=data_url,json=dataUrl,proto3" json:"data_url,omitempty"`
+	Url       string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	Data      []byte `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (m *MXNetInferenceRequest) Reset()                    { *m = MXNetInferenceRequest{} }
 func (*MXNetInferenceRequest) ProtoMessage()               {}
-func (*MXNetInferenceRequest) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{3} }
+func (*MXNetInferenceRequest) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{4} }
 
 func (m *MXNetInferenceRequest) GetId() string {
 	if m != nil {
@@ -357,11 +416,18 @@ func (m *MXNetInferenceRequest) GetModelName() string {
 	return ""
 }
 
-func (m *MXNetInferenceRequest) GetDataUrl() string {
+func (m *MXNetInferenceRequest) GetUrl() string {
 	if m != nil {
-		return m.DataUrl
+		return m.Url
 	}
 	return ""
+}
+
+func (m *MXNetInferenceRequest) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
 }
 
 type MXNetInferenceResponse struct {
@@ -372,7 +438,7 @@ type MXNetInferenceResponse struct {
 
 func (m *MXNetInferenceResponse) Reset()                    { *m = MXNetInferenceResponse{} }
 func (*MXNetInferenceResponse) ProtoMessage()               {}
-func (*MXNetInferenceResponse) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{4} }
+func (*MXNetInferenceResponse) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{5} }
 
 func (m *MXNetInferenceResponse) GetId() string {
 	if m != nil {
@@ -402,7 +468,7 @@ type MXNetModelInformationRequest struct {
 func (m *MXNetModelInformationRequest) Reset()      { *m = MXNetModelInformationRequest{} }
 func (*MXNetModelInformationRequest) ProtoMessage() {}
 func (*MXNetModelInformationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorModel, []int{5}
+	return fileDescriptorModel, []int{6}
 }
 
 func (m *MXNetModelInformationRequest) GetName() string {
@@ -417,17 +483,18 @@ type Null struct {
 
 func (m *Null) Reset()                    { *m = Null{} }
 func (*Null) ProtoMessage()               {}
-func (*Null) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{6} }
+func (*Null) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{7} }
 
 func init() {
 	proto.RegisterType((*ErrorStatus)(nil), "carml.org.mxnet.ErrorStatus")
+	proto.RegisterType((*ContainerArchicture)(nil), "carml.org.mxnet.ContainerArchicture")
 	proto.RegisterType((*Model)(nil), "carml.org.mxnet.Model")
+	proto.RegisterType((*Model_Input)(nil), "carml.org.mxnet.Model.Input")
+	proto.RegisterType((*Model_Output)(nil), "carml.org.mxnet.Model.Output")
 	proto.RegisterType((*Model_Information)(nil), "carml.org.mxnet.Model.Information")
 	proto.RegisterType((*Model_Graph)(nil), "carml.org.mxnet.Model.Graph")
 	proto.RegisterType((*Model_Graph_NodeEntry)(nil), "carml.org.mxnet.Model.Graph.NodeEntry")
 	proto.RegisterType((*Model_Graph_Node)(nil), "carml.org.mxnet.Model.Graph.Node")
-	proto.RegisterType((*Model_Input)(nil), "carml.org.mxnet.Model.Input")
-	proto.RegisterType((*Model_Output)(nil), "carml.org.mxnet.Model.Output")
 	proto.RegisterType((*ModelInformations)(nil), "carml.org.mxnet.ModelInformations")
 	proto.RegisterType((*MXNetInferenceRequest)(nil), "carml.org.mxnet.MXNetInferenceRequest")
 	proto.RegisterType((*MXNetInferenceResponse)(nil), "carml.org.mxnet.MXNetInferenceResponse")
@@ -500,6 +567,72 @@ func (this *ErrorStatus) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ContainerArchicture) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*ContainerArchicture)
+	if !ok {
+		that2, ok := that.(ContainerArchicture)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *ContainerArchicture")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *ContainerArchicture but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *ContainerArchicture but is not nil && this == nil")
+	}
+	if this.Gpu != that1.Gpu {
+		return fmt.Errorf("Gpu this(%v) Not Equal that(%v)", this.Gpu, that1.Gpu)
+	}
+	if this.Cpu != that1.Cpu {
+		return fmt.Errorf("Cpu this(%v) Not Equal that(%v)", this.Cpu, that1.Cpu)
+	}
+	return nil
+}
+func (this *ContainerArchicture) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*ContainerArchicture)
+	if !ok {
+		that2, ok := that.(ContainerArchicture)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Gpu != that1.Gpu {
+		return false
+	}
+	if this.Cpu != that1.Cpu {
+		return false
+	}
+	return true
+}
 func (this *Model) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
@@ -554,6 +687,152 @@ func (this *Model) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *Model_Input) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Input)
+	if !ok {
+		that2, ok := that.(Model_Input)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Input")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Input but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Input but is not nil && this == nil")
+	}
+	if this.Type != that1.Type {
+		return fmt.Errorf("Type this(%v) Not Equal that(%v)", this.Type, that1.Type)
+	}
+	if len(this.Dimensions) != len(that1.Dimensions) {
+		return fmt.Errorf("Dimensions this(%v) Not Equal that(%v)", len(this.Dimensions), len(that1.Dimensions))
+	}
+	for i := range this.Dimensions {
+		if this.Dimensions[i] != that1.Dimensions[i] {
+			return fmt.Errorf("Dimensions this[%v](%v) Not Equal that[%v](%v)", i, this.Dimensions[i], i, that1.Dimensions[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Input) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Input)
+	if !ok {
+		that2, ok := that.(Model_Input)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Type != that1.Type {
+		return false
+	}
+	if len(this.Dimensions) != len(that1.Dimensions) {
+		return false
+	}
+	for i := range this.Dimensions {
+		if this.Dimensions[i] != that1.Dimensions[i] {
+			return false
+		}
+	}
+	return true
+}
+func (this *Model_Output) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Model_Output)
+	if !ok {
+		that2, ok := that.(Model_Output)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Model_Output")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Model_Output but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Model_Output but is not nil && this == nil")
+	}
+	if len(this.Labels) != len(that1.Labels) {
+		return fmt.Errorf("Labels this(%v) Not Equal that(%v)", len(this.Labels), len(that1.Labels))
+	}
+	for i := range this.Labels {
+		if this.Labels[i] != that1.Labels[i] {
+			return fmt.Errorf("Labels this[%v](%v) Not Equal that[%v](%v)", i, this.Labels[i], i, that1.Labels[i])
+		}
+	}
+	return nil
+}
+func (this *Model_Output) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Model_Output)
+	if !ok {
+		that2, ok := that.(Model_Output)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if len(this.Labels) != len(that1.Labels) {
+		return false
+	}
+	for i := range this.Labels {
+		if this.Labels[i] != that1.Labels[i] {
+			return false
+		}
+	}
+	return true
+}
 func (this *Model_Information) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
@@ -582,6 +861,14 @@ func (this *Model_Information) VerboseEqual(that interface{}) error {
 	if this.Name != that1.Name {
 		return fmt.Errorf("Name this(%v) Not Equal that(%v)", this.Name, that1.Name)
 	}
+	if len(this.Container) != len(that1.Container) {
+		return fmt.Errorf("Container this(%v) Not Equal that(%v)", len(this.Container), len(that1.Container))
+	}
+	for i := range this.Container {
+		if !this.Container[i].Equal(that1.Container[i]) {
+			return fmt.Errorf("Container this[%v](%v) Not Equal that[%v](%v)", i, this.Container[i], i, that1.Container[i])
+		}
+	}
 	if this.Framework != that1.Framework {
 		return fmt.Errorf("Framework this(%v) Not Equal that(%v)", this.Framework, that1.Framework)
 	}
@@ -599,6 +886,20 @@ func (this *Model_Information) VerboseEqual(that interface{}) error {
 	}
 	if this.WeightsUrl != that1.WeightsUrl {
 		return fmt.Errorf("WeightsUrl this(%v) Not Equal that(%v)", this.WeightsUrl, that1.WeightsUrl)
+	}
+	if this.FeaturesUrl != that1.FeaturesUrl {
+		return fmt.Errorf("FeaturesUrl this(%v) Not Equal that(%v)", this.FeaturesUrl, that1.FeaturesUrl)
+	}
+	if !this.Input.Equal(that1.Input) {
+		return fmt.Errorf("Input this(%v) Not Equal that(%v)", this.Input, that1.Input)
+	}
+	if len(this.MeanImage) != len(that1.MeanImage) {
+		return fmt.Errorf("MeanImage this(%v) Not Equal that(%v)", len(this.MeanImage), len(that1.MeanImage))
+	}
+	for i := range this.MeanImage {
+		if this.MeanImage[i] != that1.MeanImage[i] {
+			return fmt.Errorf("MeanImage this[%v](%v) Not Equal that[%v](%v)", i, this.MeanImage[i], i, that1.MeanImage[i])
+		}
 	}
 	if len(this.References) != len(that1.References) {
 		return fmt.Errorf("References this(%v) Not Equal that(%v)", len(this.References), len(that1.References))
@@ -638,6 +939,14 @@ func (this *Model_Information) Equal(that interface{}) bool {
 	if this.Name != that1.Name {
 		return false
 	}
+	if len(this.Container) != len(that1.Container) {
+		return false
+	}
+	for i := range this.Container {
+		if !this.Container[i].Equal(that1.Container[i]) {
+			return false
+		}
+	}
 	if this.Framework != that1.Framework {
 		return false
 	}
@@ -655,6 +964,20 @@ func (this *Model_Information) Equal(that interface{}) bool {
 	}
 	if this.WeightsUrl != that1.WeightsUrl {
 		return false
+	}
+	if this.FeaturesUrl != that1.FeaturesUrl {
+		return false
+	}
+	if !this.Input.Equal(that1.Input) {
+		return false
+	}
+	if len(this.MeanImage) != len(that1.MeanImage) {
+		return false
+	}
+	for i := range this.MeanImage {
+		if this.MeanImage[i] != that1.MeanImage[i] {
+			return false
+		}
 	}
 	if len(this.References) != len(that1.References) {
 		return false
@@ -992,152 +1315,6 @@ func (this *Model_Graph_Node) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *Model_Input) VerboseEqual(that interface{}) error {
-	if that == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that == nil && this != nil")
-	}
-
-	that1, ok := that.(*Model_Input)
-	if !ok {
-		that2, ok := that.(Model_Input)
-		if ok {
-			that1 = &that2
-		} else {
-			return fmt.Errorf("that is not of type *Model_Input")
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that is type *Model_Input but is nil && this != nil")
-	} else if this == nil {
-		return fmt.Errorf("that is type *Model_Input but is not nil && this == nil")
-	}
-	if this.Type != that1.Type {
-		return fmt.Errorf("Type this(%v) Not Equal that(%v)", this.Type, that1.Type)
-	}
-	if len(this.Dimensions) != len(that1.Dimensions) {
-		return fmt.Errorf("Dimensions this(%v) Not Equal that(%v)", len(this.Dimensions), len(that1.Dimensions))
-	}
-	for i := range this.Dimensions {
-		if this.Dimensions[i] != that1.Dimensions[i] {
-			return fmt.Errorf("Dimensions this[%v](%v) Not Equal that[%v](%v)", i, this.Dimensions[i], i, that1.Dimensions[i])
-		}
-	}
-	return nil
-}
-func (this *Model_Input) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Model_Input)
-	if !ok {
-		that2, ok := that.(Model_Input)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if this.Type != that1.Type {
-		return false
-	}
-	if len(this.Dimensions) != len(that1.Dimensions) {
-		return false
-	}
-	for i := range this.Dimensions {
-		if this.Dimensions[i] != that1.Dimensions[i] {
-			return false
-		}
-	}
-	return true
-}
-func (this *Model_Output) VerboseEqual(that interface{}) error {
-	if that == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that == nil && this != nil")
-	}
-
-	that1, ok := that.(*Model_Output)
-	if !ok {
-		that2, ok := that.(Model_Output)
-		if ok {
-			that1 = &that2
-		} else {
-			return fmt.Errorf("that is not of type *Model_Output")
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return nil
-		}
-		return fmt.Errorf("that is type *Model_Output but is nil && this != nil")
-	} else if this == nil {
-		return fmt.Errorf("that is type *Model_Output but is not nil && this == nil")
-	}
-	if len(this.Labels) != len(that1.Labels) {
-		return fmt.Errorf("Labels this(%v) Not Equal that(%v)", len(this.Labels), len(that1.Labels))
-	}
-	for i := range this.Labels {
-		if this.Labels[i] != that1.Labels[i] {
-			return fmt.Errorf("Labels this[%v](%v) Not Equal that[%v](%v)", i, this.Labels[i], i, that1.Labels[i])
-		}
-	}
-	return nil
-}
-func (this *Model_Output) Equal(that interface{}) bool {
-	if that == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	}
-
-	that1, ok := that.(*Model_Output)
-	if !ok {
-		that2, ok := that.(Model_Output)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return true
-		}
-		return false
-	} else if this == nil {
-		return false
-	}
-	if len(this.Labels) != len(that1.Labels) {
-		return false
-	}
-	for i := range this.Labels {
-		if this.Labels[i] != that1.Labels[i] {
-			return false
-		}
-	}
-	return true
-}
 func (this *ModelInformations) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
@@ -1239,8 +1416,11 @@ func (this *MXNetInferenceRequest) VerboseEqual(that interface{}) error {
 	if this.ModelName != that1.ModelName {
 		return fmt.Errorf("ModelName this(%v) Not Equal that(%v)", this.ModelName, that1.ModelName)
 	}
-	if this.DataUrl != that1.DataUrl {
-		return fmt.Errorf("DataUrl this(%v) Not Equal that(%v)", this.DataUrl, that1.DataUrl)
+	if this.Url != that1.Url {
+		return fmt.Errorf("Url this(%v) Not Equal that(%v)", this.Url, that1.Url)
+	}
+	if !bytes.Equal(this.Data, that1.Data) {
+		return fmt.Errorf("Data this(%v) Not Equal that(%v)", this.Data, that1.Data)
 	}
 	return nil
 }
@@ -1275,7 +1455,10 @@ func (this *MXNetInferenceRequest) Equal(that interface{}) bool {
 	if this.ModelName != that1.ModelName {
 		return false
 	}
-	if this.DataUrl != that1.DataUrl {
+	if this.Url != that1.Url {
+		return false
+	}
+	if !bytes.Equal(this.Data, that1.Data) {
 		return false
 	}
 	return true
@@ -1487,6 +1670,17 @@ func (this *ErrorStatus) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *ContainerArchicture) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&mxnet.ContainerArchicture{")
+	s = append(s, "Gpu: "+fmt.Sprintf("%#v", this.Gpu)+",\n")
+	s = append(s, "Cpu: "+fmt.Sprintf("%#v", this.Cpu)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Model) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1496,19 +1690,58 @@ func (this *Model) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *Model_Input) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&mxnet.Model_Input{")
+	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
+	s = append(s, "Dimensions: "+fmt.Sprintf("%#v", this.Dimensions)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Model_Output) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&mxnet.Model_Output{")
+	s = append(s, "Labels: "+fmt.Sprintf("%#v", this.Labels)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *Model_Information) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 12)
+	s := make([]string, 0, 16)
 	s = append(s, "&mxnet.Model_Information{")
 	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
+	keysForContainer := make([]string, 0, len(this.Container))
+	for k, _ := range this.Container {
+		keysForContainer = append(keysForContainer, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForContainer)
+	mapStringForContainer := "map[string]*ContainerArchicture{"
+	for _, k := range keysForContainer {
+		mapStringForContainer += fmt.Sprintf("%#v: %#v,", k, this.Container[k])
+	}
+	mapStringForContainer += "}"
+	if this.Container != nil {
+		s = append(s, "Container: "+mapStringForContainer+",\n")
+	}
 	s = append(s, "Framework: "+fmt.Sprintf("%#v", this.Framework)+",\n")
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
 	s = append(s, "Dataset: "+fmt.Sprintf("%#v", this.Dataset)+",\n")
 	s = append(s, "GraphUrl: "+fmt.Sprintf("%#v", this.GraphUrl)+",\n")
 	s = append(s, "WeightsUrl: "+fmt.Sprintf("%#v", this.WeightsUrl)+",\n")
+	s = append(s, "FeaturesUrl: "+fmt.Sprintf("%#v", this.FeaturesUrl)+",\n")
+	if this.Input != nil {
+		s = append(s, "Input: "+fmt.Sprintf("%#v", this.Input)+",\n")
+	}
+	s = append(s, "MeanImage: "+fmt.Sprintf("%#v", this.MeanImage)+",\n")
 	s = append(s, "References: "+fmt.Sprintf("%#v", this.References)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -1584,27 +1817,6 @@ func (this *Model_Graph_Node) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *Model_Input) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&mxnet.Model_Input{")
-	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
-	s = append(s, "Dimensions: "+fmt.Sprintf("%#v", this.Dimensions)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Model_Output) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&mxnet.Model_Output{")
-	s = append(s, "Labels: "+fmt.Sprintf("%#v", this.Labels)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
 func (this *ModelInformations) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1621,11 +1833,12 @@ func (this *MXNetInferenceRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 7)
+	s := make([]string, 0, 8)
 	s = append(s, "&mxnet.MXNetInferenceRequest{")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	s = append(s, "ModelName: "+fmt.Sprintf("%#v", this.ModelName)+",\n")
-	s = append(s, "DataUrl: "+fmt.Sprintf("%#v", this.DataUrl)+",\n")
+	s = append(s, "Url: "+fmt.Sprintf("%#v", this.Url)+",\n")
+	s = append(s, "Data: "+fmt.Sprintf("%#v", this.Data)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1682,8 +1895,9 @@ const _ = grpc.SupportPackageIsVersion4
 // Client API for MXNet service
 
 type MXNetClient interface {
-	Infer(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferClient, error)
-	Models(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error)
+	InferURL(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferURLClient, error)
+	InferBytes(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferBytesClient, error)
+	GetModels(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error)
 	GetModel(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model, error)
 	GetModelInformation(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Information, error)
 	GetModelGraph(ctx context.Context, in *MXNetModelInformationRequest, opts ...grpc.CallOption) (*Model_Graph, error)
@@ -1697,12 +1911,12 @@ func NewMXNetClient(cc *grpc.ClientConn) MXNetClient {
 	return &mXNetClient{cc}
 }
 
-func (c *mXNetClient) Infer(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_MXNet_serviceDesc.Streams[0], c.cc, "/carml.org.mxnet.MXNet/Infer", opts...)
+func (c *mXNetClient) InferURL(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferURLClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_MXNet_serviceDesc.Streams[0], c.cc, "/carml.org.mxnet.MXNet/InferURL", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &mXNetInferClient{stream}
+	x := &mXNetInferURLClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -1712,16 +1926,16 @@ func (c *mXNetClient) Infer(ctx context.Context, in *MXNetInferenceRequest, opts
 	return x, nil
 }
 
-type MXNet_InferClient interface {
+type MXNet_InferURLClient interface {
 	Recv() (*MXNetInferenceResponse, error)
 	grpc.ClientStream
 }
 
-type mXNetInferClient struct {
+type mXNetInferURLClient struct {
 	grpc.ClientStream
 }
 
-func (x *mXNetInferClient) Recv() (*MXNetInferenceResponse, error) {
+func (x *mXNetInferURLClient) Recv() (*MXNetInferenceResponse, error) {
 	m := new(MXNetInferenceResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -1729,9 +1943,41 @@ func (x *mXNetInferClient) Recv() (*MXNetInferenceResponse, error) {
 	return m, nil
 }
 
-func (c *mXNetClient) Models(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error) {
+func (c *mXNetClient) InferBytes(ctx context.Context, in *MXNetInferenceRequest, opts ...grpc.CallOption) (MXNet_InferBytesClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_MXNet_serviceDesc.Streams[1], c.cc, "/carml.org.mxnet.MXNet/InferBytes", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &mXNetInferBytesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type MXNet_InferBytesClient interface {
+	Recv() (*MXNetInferenceResponse, error)
+	grpc.ClientStream
+}
+
+type mXNetInferBytesClient struct {
+	grpc.ClientStream
+}
+
+func (x *mXNetInferBytesClient) Recv() (*MXNetInferenceResponse, error) {
+	m := new(MXNetInferenceResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *mXNetClient) GetModels(ctx context.Context, in *Null, opts ...grpc.CallOption) (*ModelInformations, error) {
 	out := new(ModelInformations)
-	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/Models", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/carml.org.mxnet.MXNet/GetModels", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1768,8 +2014,9 @@ func (c *mXNetClient) GetModelGraph(ctx context.Context, in *MXNetModelInformati
 // Server API for MXNet service
 
 type MXNetServer interface {
-	Infer(*MXNetInferenceRequest, MXNet_InferServer) error
-	Models(context.Context, *Null) (*ModelInformations, error)
+	InferURL(*MXNetInferenceRequest, MXNet_InferURLServer) error
+	InferBytes(*MXNetInferenceRequest, MXNet_InferBytesServer) error
+	GetModels(context.Context, *Null) (*ModelInformations, error)
 	GetModel(context.Context, *MXNetModelInformationRequest) (*Model, error)
 	GetModelInformation(context.Context, *MXNetModelInformationRequest) (*Model_Information, error)
 	GetModelGraph(context.Context, *MXNetModelInformationRequest) (*Model_Graph, error)
@@ -1779,41 +2026,62 @@ func RegisterMXNetServer(s *grpc.Server, srv MXNetServer) {
 	s.RegisterService(&_MXNet_serviceDesc, srv)
 }
 
-func _MXNet_Infer_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _MXNet_InferURL_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(MXNetInferenceRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(MXNetServer).Infer(m, &mXNetInferServer{stream})
+	return srv.(MXNetServer).InferURL(m, &mXNetInferURLServer{stream})
 }
 
-type MXNet_InferServer interface {
+type MXNet_InferURLServer interface {
 	Send(*MXNetInferenceResponse) error
 	grpc.ServerStream
 }
 
-type mXNetInferServer struct {
+type mXNetInferURLServer struct {
 	grpc.ServerStream
 }
 
-func (x *mXNetInferServer) Send(m *MXNetInferenceResponse) error {
+func (x *mXNetInferURLServer) Send(m *MXNetInferenceResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _MXNet_Models_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MXNet_InferBytes_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(MXNetInferenceRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(MXNetServer).InferBytes(m, &mXNetInferBytesServer{stream})
+}
+
+type MXNet_InferBytesServer interface {
+	Send(*MXNetInferenceResponse) error
+	grpc.ServerStream
+}
+
+type mXNetInferBytesServer struct {
+	grpc.ServerStream
+}
+
+func (x *mXNetInferBytesServer) Send(m *MXNetInferenceResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _MXNet_GetModels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Null)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MXNetServer).Models(ctx, in)
+		return srv.(MXNetServer).GetModels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/carml.org.mxnet.MXNet/Models",
+		FullMethod: "/carml.org.mxnet.MXNet/GetModels",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MXNetServer).Models(ctx, req.(*Null))
+		return srv.(MXNetServer).GetModels(ctx, req.(*Null))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1877,8 +2145,8 @@ var _MXNet_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MXNetServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Models",
-			Handler:    _MXNet_Models_Handler,
+			MethodName: "GetModels",
+			Handler:    _MXNet_GetModels_Handler,
 		},
 		{
 			MethodName: "GetModel",
@@ -1895,8 +2163,13 @@ var _MXNet_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Infer",
-			Handler:       _MXNet_Infer_Handler,
+			StreamName:    "InferURL",
+			Handler:       _MXNet_InferURL_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "InferBytes",
+			Handler:       _MXNet_InferBytes_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -1937,6 +2210,36 @@ func (m *ErrorStatus) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *ContainerArchicture) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ContainerArchicture) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Gpu) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Gpu)))
+		i += copy(dAtA[i:], m.Gpu)
+	}
+	if len(m.Cpu) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Cpu)))
+		i += copy(dAtA[i:], m.Cpu)
+	}
+	return i, nil
+}
+
 func (m *Model) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1952,6 +2255,81 @@ func (m *Model) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	return i, nil
+}
+
+func (m *Model_Input) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model_Input) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Type) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Type)))
+		i += copy(dAtA[i:], m.Type)
+	}
+	if len(m.Dimensions) > 0 {
+		dAtA2 := make([]byte, len(m.Dimensions)*10)
+		var j1 int
+		for _, num1 := range m.Dimensions {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
+		}
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(j1))
+		i += copy(dAtA[i:], dAtA2[:j1])
+	}
+	return i, nil
+}
+
+func (m *Model_Output) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Model_Output) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			dAtA[i] = 0xa
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
 	return i, nil
 }
 
@@ -1976,45 +2354,105 @@ func (m *Model_Information) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
+	if len(m.Container) > 0 {
+		for k, _ := range m.Container {
+			dAtA[i] = 0x12
+			i++
+			v := m.Container[k]
+			msgSize := 0
+			if v != nil {
+				msgSize = v.Size()
+				msgSize += 1 + sovModel(uint64(msgSize))
+			}
+			mapSize := 1 + len(k) + sovModel(uint64(len(k))) + msgSize
+			i = encodeVarintModel(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintModel(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			if v != nil {
+				dAtA[i] = 0x12
+				i++
+				i = encodeVarintModel(dAtA, i, uint64(v.Size()))
+				n3, err := v.MarshalTo(dAtA[i:])
+				if err != nil {
+					return 0, err
+				}
+				i += n3
+			}
+		}
+	}
 	if len(m.Framework) > 0 {
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Framework)))
 		i += copy(dAtA[i:], m.Framework)
 	}
 	if len(m.Version) > 0 {
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x22
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Version)))
 		i += copy(dAtA[i:], m.Version)
 	}
 	if len(m.Type) > 0 {
-		dAtA[i] = 0x22
+		dAtA[i] = 0x2a
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Type)))
 		i += copy(dAtA[i:], m.Type)
 	}
 	if len(m.Dataset) > 0 {
-		dAtA[i] = 0x2a
+		dAtA[i] = 0x32
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Dataset)))
 		i += copy(dAtA[i:], m.Dataset)
 	}
 	if len(m.GraphUrl) > 0 {
-		dAtA[i] = 0x32
+		dAtA[i] = 0x3a
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.GraphUrl)))
 		i += copy(dAtA[i:], m.GraphUrl)
 	}
 	if len(m.WeightsUrl) > 0 {
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x42
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.WeightsUrl)))
 		i += copy(dAtA[i:], m.WeightsUrl)
 	}
+	if len(m.FeaturesUrl) > 0 {
+		dAtA[i] = 0x4a
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.FeaturesUrl)))
+		i += copy(dAtA[i:], m.FeaturesUrl)
+	}
+	if m.Input != nil {
+		dAtA[i] = 0x52
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(m.Input.Size()))
+		n4, err := m.Input.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
+	if len(m.MeanImage) > 0 {
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.MeanImage)*4))
+		for _, num := range m.MeanImage {
+			f5 := math.Float32bits(float32(num))
+			dAtA[i] = uint8(f5)
+			i++
+			dAtA[i] = uint8(f5 >> 8)
+			i++
+			dAtA[i] = uint8(f5 >> 16)
+			i++
+			dAtA[i] = uint8(f5 >> 24)
+			i++
+		}
+	}
 	if len(m.References) > 0 {
 		for _, s := range m.References {
-			dAtA[i] = 0x42
+			dAtA[i] = 0x62
 			i++
 			l = len(s)
 			for l >= 1<<7 {
@@ -2058,40 +2496,40 @@ func (m *Model_Graph) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.ArgNodes) > 0 {
-		dAtA2 := make([]byte, len(m.ArgNodes)*10)
-		var j1 int
+		dAtA7 := make([]byte, len(m.ArgNodes)*10)
+		var j6 int
 		for _, num1 := range m.ArgNodes {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j1++
+				j6++
 			}
-			dAtA2[j1] = uint8(num)
-			j1++
+			dAtA7[j6] = uint8(num)
+			j6++
 		}
 		dAtA[i] = 0x12
 		i++
-		i = encodeVarintModel(dAtA, i, uint64(j1))
-		i += copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintModel(dAtA, i, uint64(j6))
+		i += copy(dAtA[i:], dAtA7[:j6])
 	}
 	if len(m.NodeRowPtr) > 0 {
-		dAtA4 := make([]byte, len(m.NodeRowPtr)*10)
-		var j3 int
+		dAtA9 := make([]byte, len(m.NodeRowPtr)*10)
+		var j8 int
 		for _, num1 := range m.NodeRowPtr {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j3++
+				j8++
 			}
-			dAtA4[j3] = uint8(num)
-			j3++
+			dAtA9[j8] = uint8(num)
+			j8++
 		}
 		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintModel(dAtA, i, uint64(j3))
-		i += copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintModel(dAtA, i, uint64(j8))
+		i += copy(dAtA[i:], dAtA9[:j8])
 	}
 	if len(m.Heads) > 0 {
 		for _, msg := range m.Heads {
@@ -2220,97 +2658,22 @@ func (m *Model_Graph_Node) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintModel(dAtA, i, uint64(m.BackwardSourceId))
 	}
 	if len(m.ControlDeps) > 0 {
-		dAtA6 := make([]byte, len(m.ControlDeps)*10)
-		var j5 int
+		dAtA11 := make([]byte, len(m.ControlDeps)*10)
+		var j10 int
 		for _, num1 := range m.ControlDeps {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j5++
+				j10++
 			}
-			dAtA6[j5] = uint8(num)
-			j5++
+			dAtA11[j10] = uint8(num)
+			j10++
 		}
 		dAtA[i] = 0x32
 		i++
-		i = encodeVarintModel(dAtA, i, uint64(j5))
-		i += copy(dAtA[i:], dAtA6[:j5])
-	}
-	return i, nil
-}
-
-func (m *Model_Input) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Model_Input) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Type) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintModel(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
-	}
-	if len(m.Dimensions) > 0 {
-		dAtA8 := make([]byte, len(m.Dimensions)*10)
-		var j7 int
-		for _, num1 := range m.Dimensions {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j7++
-			}
-			dAtA8[j7] = uint8(num)
-			j7++
-		}
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintModel(dAtA, i, uint64(j7))
-		i += copy(dAtA[i:], dAtA8[:j7])
-	}
-	return i, nil
-}
-
-func (m *Model_Output) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Model_Output) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Labels) > 0 {
-		for _, s := range m.Labels {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
+		i = encodeVarintModel(dAtA, i, uint64(j10))
+		i += copy(dAtA[i:], dAtA11[:j10])
 	}
 	return i, nil
 }
@@ -2372,11 +2735,17 @@ func (m *MXNetInferenceRequest) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintModel(dAtA, i, uint64(len(m.ModelName)))
 		i += copy(dAtA[i:], m.ModelName)
 	}
-	if len(m.DataUrl) > 0 {
+	if len(m.Url) > 0 {
 		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintModel(dAtA, i, uint64(len(m.DataUrl)))
-		i += copy(dAtA[i:], m.DataUrl)
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Url)))
+		i += copy(dAtA[i:], m.Url)
+	}
+	if len(m.Data) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
 	}
 	return i, nil
 }
@@ -2407,14 +2776,14 @@ func (m *MXNetInferenceResponse) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Features)*4))
 		for _, num := range m.Features {
-			f9 := math.Float32bits(float32(num))
-			dAtA[i] = uint8(f9)
+			f12 := math.Float32bits(float32(num))
+			dAtA[i] = uint8(f12)
 			i++
-			dAtA[i] = uint8(f9 >> 8)
+			dAtA[i] = uint8(f12 >> 8)
 			i++
-			dAtA[i] = uint8(f9 >> 16)
+			dAtA[i] = uint8(f12 >> 16)
 			i++
-			dAtA[i] = uint8(f9 >> 24)
+			dAtA[i] = uint8(f12 >> 24)
 			i++
 		}
 	}
@@ -2422,11 +2791,11 @@ func (m *MXNetInferenceResponse) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintModel(dAtA, i, uint64(m.Error.Size()))
-		n10, err := m.Error.MarshalTo(dAtA[i:])
+		n13, err := m.Error.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n13
 	}
 	return i, nil
 }
@@ -2509,8 +2878,45 @@ func NewPopulatedErrorStatus(r randyModel, easy bool) *ErrorStatus {
 	return this
 }
 
+func NewPopulatedContainerArchicture(r randyModel, easy bool) *ContainerArchicture {
+	this := &ContainerArchicture{}
+	this.Gpu = string(randStringModel(r))
+	this.Cpu = string(randStringModel(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
 func NewPopulatedModel(r randyModel, easy bool) *Model {
 	this := &Model{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel_Input(r randyModel, easy bool) *Model_Input {
+	this := &Model_Input{}
+	this.Type = string(randStringModel(r))
+	v1 := r.Intn(10)
+	this.Dimensions = make([]int64, v1)
+	for i := 0; i < v1; i++ {
+		this.Dimensions[i] = int64(r.Int63())
+		if r.Intn(2) == 0 {
+			this.Dimensions[i] *= -1
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedModel_Output(r randyModel, easy bool) *Model_Output {
+	this := &Model_Output{}
+	v2 := r.Intn(10)
+	this.Labels = make([]string, v2)
+	for i := 0; i < v2; i++ {
+		this.Labels[i] = string(randStringModel(r))
+	}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -2519,15 +2925,34 @@ func NewPopulatedModel(r randyModel, easy bool) *Model {
 func NewPopulatedModel_Information(r randyModel, easy bool) *Model_Information {
 	this := &Model_Information{}
 	this.Name = string(randStringModel(r))
+	if r.Intn(10) != 0 {
+		v3 := r.Intn(10)
+		this.Container = make(map[string]*ContainerArchicture)
+		for i := 0; i < v3; i++ {
+			this.Container[randStringModel(r)] = NewPopulatedContainerArchicture(r, easy)
+		}
+	}
 	this.Framework = string(randStringModel(r))
 	this.Version = string(randStringModel(r))
 	this.Type = string(randStringModel(r))
 	this.Dataset = string(randStringModel(r))
 	this.GraphUrl = string(randStringModel(r))
 	this.WeightsUrl = string(randStringModel(r))
-	v1 := r.Intn(10)
-	this.References = make([]string, v1)
-	for i := 0; i < v1; i++ {
+	this.FeaturesUrl = string(randStringModel(r))
+	if r.Intn(10) != 0 {
+		this.Input = NewPopulatedModel_Input(r, easy)
+	}
+	v4 := r.Intn(10)
+	this.MeanImage = make([]float32, v4)
+	for i := 0; i < v4; i++ {
+		this.MeanImage[i] = float32(r.Float32())
+		if r.Intn(2) == 0 {
+			this.MeanImage[i] *= -1
+		}
+	}
+	v5 := r.Intn(10)
+	this.References = make([]string, v5)
+	for i := 0; i < v5; i++ {
 		this.References[i] = string(randStringModel(r))
 	}
 	if !easy && r.Intn(10) != 0 {
@@ -2538,39 +2963,39 @@ func NewPopulatedModel_Information(r randyModel, easy bool) *Model_Information {
 func NewPopulatedModel_Graph(r randyModel, easy bool) *Model_Graph {
 	this := &Model_Graph{}
 	if r.Intn(10) != 0 {
-		v2 := r.Intn(5)
-		this.Nodes = make([]*Model_Graph_Node, v2)
-		for i := 0; i < v2; i++ {
+		v6 := r.Intn(5)
+		this.Nodes = make([]*Model_Graph_Node, v6)
+		for i := 0; i < v6; i++ {
 			this.Nodes[i] = NewPopulatedModel_Graph_Node(r, easy)
 		}
 	}
-	v3 := r.Intn(10)
-	this.ArgNodes = make([]int64, v3)
-	for i := 0; i < v3; i++ {
+	v7 := r.Intn(10)
+	this.ArgNodes = make([]int64, v7)
+	for i := 0; i < v7; i++ {
 		this.ArgNodes[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.ArgNodes[i] *= -1
 		}
 	}
-	v4 := r.Intn(10)
-	this.NodeRowPtr = make([]int64, v4)
-	for i := 0; i < v4; i++ {
+	v8 := r.Intn(10)
+	this.NodeRowPtr = make([]int64, v8)
+	for i := 0; i < v8; i++ {
 		this.NodeRowPtr[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.NodeRowPtr[i] *= -1
 		}
 	}
 	if r.Intn(10) != 0 {
-		v5 := r.Intn(5)
-		this.Heads = make([]*Model_Graph_NodeEntry, v5)
-		for i := 0; i < v5; i++ {
+		v9 := r.Intn(5)
+		this.Heads = make([]*Model_Graph_NodeEntry, v9)
+		for i := 0; i < v9; i++ {
 			this.Heads[i] = NewPopulatedModel_Graph_NodeEntry(r, easy)
 		}
 	}
 	if r.Intn(10) != 0 {
-		v6 := r.Intn(10)
+		v10 := r.Intn(10)
 		this.Attrs = make(map[string]string)
-		for i := 0; i < v6; i++ {
+		for i := 0; i < v10; i++ {
 			this.Attrs[randStringModel(r)] = randStringModel(r)
 		}
 	}
@@ -2602,17 +3027,17 @@ func NewPopulatedModel_Graph_Node(r randyModel, easy bool) *Model_Graph_Node {
 	this := &Model_Graph_Node{}
 	this.Op = string(randStringModel(r))
 	if r.Intn(10) != 0 {
-		v7 := r.Intn(10)
+		v11 := r.Intn(10)
 		this.Param = make(map[string]string)
-		for i := 0; i < v7; i++ {
+		for i := 0; i < v11; i++ {
 			this.Param[randStringModel(r)] = randStringModel(r)
 		}
 	}
 	this.Name = string(randStringModel(r))
 	if r.Intn(10) != 0 {
-		v8 := r.Intn(5)
-		this.Inputs = make([]*Model_Graph_NodeEntry, v8)
-		for i := 0; i < v8; i++ {
+		v12 := r.Intn(5)
+		this.Inputs = make([]*Model_Graph_NodeEntry, v12)
+		for i := 0; i < v12; i++ {
 			this.Inputs[i] = NewPopulatedModel_Graph_NodeEntry(r, easy)
 		}
 	}
@@ -2620,9 +3045,9 @@ func NewPopulatedModel_Graph_Node(r randyModel, easy bool) *Model_Graph_Node {
 	if r.Intn(2) == 0 {
 		this.BackwardSourceId *= -1
 	}
-	v9 := r.Intn(10)
-	this.ControlDeps = make([]int64, v9)
-	for i := 0; i < v9; i++ {
+	v13 := r.Intn(10)
+	this.ControlDeps = make([]int64, v13)
+	for i := 0; i < v13; i++ {
 		this.ControlDeps[i] = int64(r.Int63())
 		if r.Intn(2) == 0 {
 			this.ControlDeps[i] *= -1
@@ -2633,40 +3058,12 @@ func NewPopulatedModel_Graph_Node(r randyModel, easy bool) *Model_Graph_Node {
 	return this
 }
 
-func NewPopulatedModel_Input(r randyModel, easy bool) *Model_Input {
-	this := &Model_Input{}
-	this.Type = string(randStringModel(r))
-	v10 := r.Intn(10)
-	this.Dimensions = make([]int64, v10)
-	for i := 0; i < v10; i++ {
-		this.Dimensions[i] = int64(r.Int63())
-		if r.Intn(2) == 0 {
-			this.Dimensions[i] *= -1
-		}
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedModel_Output(r randyModel, easy bool) *Model_Output {
-	this := &Model_Output{}
-	v11 := r.Intn(10)
-	this.Labels = make([]string, v11)
-	for i := 0; i < v11; i++ {
-		this.Labels[i] = string(randStringModel(r))
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
 func NewPopulatedModelInformations(r randyModel, easy bool) *ModelInformations {
 	this := &ModelInformations{}
 	if r.Intn(10) != 0 {
-		v12 := r.Intn(5)
-		this.Info = make([]*Model_Information, v12)
-		for i := 0; i < v12; i++ {
+		v14 := r.Intn(5)
+		this.Info = make([]*Model_Information, v14)
+		for i := 0; i < v14; i++ {
 			this.Info[i] = NewPopulatedModel_Information(r, easy)
 		}
 	}
@@ -2679,7 +3076,12 @@ func NewPopulatedMXNetInferenceRequest(r randyModel, easy bool) *MXNetInferenceR
 	this := &MXNetInferenceRequest{}
 	this.Id = string(randStringModel(r))
 	this.ModelName = string(randStringModel(r))
-	this.DataUrl = string(randStringModel(r))
+	this.Url = string(randStringModel(r))
+	v15 := r.Intn(100)
+	this.Data = make([]byte, v15)
+	for i := 0; i < v15; i++ {
+		this.Data[i] = byte(r.Intn(256))
+	}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -2688,9 +3090,9 @@ func NewPopulatedMXNetInferenceRequest(r randyModel, easy bool) *MXNetInferenceR
 func NewPopulatedMXNetInferenceResponse(r randyModel, easy bool) *MXNetInferenceResponse {
 	this := &MXNetInferenceResponse{}
 	this.Id = string(randStringModel(r))
-	v13 := r.Intn(10)
-	this.Features = make([]float32, v13)
-	for i := 0; i < v13; i++ {
+	v16 := r.Intn(10)
+	this.Features = make([]float32, v16)
+	for i := 0; i < v16; i++ {
 		this.Features[i] = float32(r.Float32())
 		if r.Intn(2) == 0 {
 			this.Features[i] *= -1
@@ -2738,9 +3140,9 @@ func randUTF8RuneModel(r randyModel) rune {
 	return rune(ru + 61)
 }
 func randStringModel(r randyModel) string {
-	v14 := r.Intn(100)
-	tmps := make([]rune, v14)
-	for i := 0; i < v14; i++ {
+	v17 := r.Intn(100)
+	tmps := make([]rune, v17)
+	for i := 0; i < v17; i++ {
 		tmps[i] = randUTF8RuneModel(r)
 	}
 	return string(tmps)
@@ -2762,11 +3164,11 @@ func randFieldModel(dAtA []byte, r randyModel, fieldNumber int, wire int) []byte
 	switch wire {
 	case 0:
 		dAtA = encodeVarintPopulateModel(dAtA, uint64(key))
-		v15 := r.Int63()
+		v18 := r.Int63()
 		if r.Intn(2) == 0 {
-			v15 *= -1
+			v18 *= -1
 		}
-		dAtA = encodeVarintPopulateModel(dAtA, uint64(v15))
+		dAtA = encodeVarintPopulateModel(dAtA, uint64(v18))
 	case 1:
 		dAtA = encodeVarintPopulateModel(dAtA, uint64(key))
 		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
@@ -2804,9 +3206,52 @@ func (m *ErrorStatus) Size() (n int) {
 	return n
 }
 
+func (m *ContainerArchicture) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Gpu)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	l = len(m.Cpu)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+
 func (m *Model) Size() (n int) {
 	var l int
 	_ = l
+	return n
+}
+
+func (m *Model_Input) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Type)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	if len(m.Dimensions) > 0 {
+		l = 0
+		for _, e := range m.Dimensions {
+			l += sovModel(uint64(e))
+		}
+		n += 1 + sovModel(uint64(l)) + l
+	}
+	return n
+}
+
+func (m *Model_Output) Size() (n int) {
+	var l int
+	_ = l
+	if len(m.Labels) > 0 {
+		for _, s := range m.Labels {
+			l = len(s)
+			n += 1 + l + sovModel(uint64(l))
+		}
+	}
 	return n
 }
 
@@ -2816,6 +3261,19 @@ func (m *Model_Information) Size() (n int) {
 	l = len(m.Name)
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
+	}
+	if len(m.Container) > 0 {
+		for k, v := range m.Container {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovModel(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovModel(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovModel(uint64(mapEntrySize))
+		}
 	}
 	l = len(m.Framework)
 	if l > 0 {
@@ -2840,6 +3298,17 @@ func (m *Model_Information) Size() (n int) {
 	l = len(m.WeightsUrl)
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
+	}
+	l = len(m.FeaturesUrl)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	if m.Input != nil {
+		l = m.Input.Size()
+		n += 1 + l + sovModel(uint64(l))
+	}
+	if len(m.MeanImage) > 0 {
+		n += 1 + sovModel(uint64(len(m.MeanImage)*4)) + len(m.MeanImage)*4
 	}
 	if len(m.References) > 0 {
 		for _, s := range m.References {
@@ -2943,35 +3412,6 @@ func (m *Model_Graph_Node) Size() (n int) {
 	return n
 }
 
-func (m *Model_Input) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Type)
-	if l > 0 {
-		n += 1 + l + sovModel(uint64(l))
-	}
-	if len(m.Dimensions) > 0 {
-		l = 0
-		for _, e := range m.Dimensions {
-			l += sovModel(uint64(e))
-		}
-		n += 1 + sovModel(uint64(l)) + l
-	}
-	return n
-}
-
-func (m *Model_Output) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Labels) > 0 {
-		for _, s := range m.Labels {
-			l = len(s)
-			n += 1 + l + sovModel(uint64(l))
-		}
-	}
-	return n
-}
-
 func (m *ModelInformations) Size() (n int) {
 	var l int
 	_ = l
@@ -2995,7 +3435,11 @@ func (m *MXNetInferenceRequest) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
 	}
-	l = len(m.DataUrl)
+	l = len(m.Url)
+	if l > 0 {
+		n += 1 + l + sovModel(uint64(l))
+	}
+	l = len(m.Data)
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
 	}
@@ -3059,6 +3503,17 @@ func (this *ErrorStatus) String() string {
 	}, "")
 	return s
 }
+func (this *ContainerArchicture) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ContainerArchicture{`,
+		`Gpu:` + fmt.Sprintf("%v", this.Gpu) + `,`,
+		`Cpu:` + fmt.Sprintf("%v", this.Cpu) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *Model) String() string {
 	if this == nil {
 		return "nil"
@@ -3068,18 +3523,53 @@ func (this *Model) String() string {
 	}, "")
 	return s
 }
+func (this *Model_Input) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model_Input{`,
+		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
+		`Dimensions:` + fmt.Sprintf("%v", this.Dimensions) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Model_Output) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Model_Output{`,
+		`Labels:` + fmt.Sprintf("%v", this.Labels) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *Model_Information) String() string {
 	if this == nil {
 		return "nil"
 	}
+	keysForContainer := make([]string, 0, len(this.Container))
+	for k, _ := range this.Container {
+		keysForContainer = append(keysForContainer, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForContainer)
+	mapStringForContainer := "map[string]*ContainerArchicture{"
+	for _, k := range keysForContainer {
+		mapStringForContainer += fmt.Sprintf("%v: %v,", k, this.Container[k])
+	}
+	mapStringForContainer += "}"
 	s := strings.Join([]string{`&Model_Information{`,
 		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
+		`Container:` + mapStringForContainer + `,`,
 		`Framework:` + fmt.Sprintf("%v", this.Framework) + `,`,
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
 		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
 		`Dataset:` + fmt.Sprintf("%v", this.Dataset) + `,`,
 		`GraphUrl:` + fmt.Sprintf("%v", this.GraphUrl) + `,`,
 		`WeightsUrl:` + fmt.Sprintf("%v", this.WeightsUrl) + `,`,
+		`FeaturesUrl:` + fmt.Sprintf("%v", this.FeaturesUrl) + `,`,
+		`Input:` + strings.Replace(fmt.Sprintf("%v", this.Input), "Model_Input", "Model_Input", 1) + `,`,
+		`MeanImage:` + fmt.Sprintf("%v", this.MeanImage) + `,`,
 		`References:` + fmt.Sprintf("%v", this.References) + `,`,
 		`}`,
 	}, "")
@@ -3146,27 +3636,6 @@ func (this *Model_Graph_Node) String() string {
 	}, "")
 	return s
 }
-func (this *Model_Input) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Model_Input{`,
-		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
-		`Dimensions:` + fmt.Sprintf("%v", this.Dimensions) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *Model_Output) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&Model_Output{`,
-		`Labels:` + fmt.Sprintf("%v", this.Labels) + `,`,
-		`}`,
-	}, "")
-	return s
-}
 func (this *ModelInformations) String() string {
 	if this == nil {
 		return "nil"
@@ -3184,7 +3653,8 @@ func (this *MXNetInferenceRequest) String() string {
 	s := strings.Join([]string{`&MXNetInferenceRequest{`,
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
 		`ModelName:` + fmt.Sprintf("%v", this.ModelName) + `,`,
-		`DataUrl:` + fmt.Sprintf("%v", this.DataUrl) + `,`,
+		`Url:` + fmt.Sprintf("%v", this.Url) + `,`,
+		`Data:` + fmt.Sprintf("%v", this.Data) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -3327,6 +3797,114 @@ func (m *ErrorStatus) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ContainerArchicture) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ContainerArchicture: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ContainerArchicture: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Gpu", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Gpu = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cpu", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cpu = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *Model) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3356,6 +3934,226 @@ func (m *Model) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: Model: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model_Input) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Input: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Input: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Type = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType == 0 {
+				var v int64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (int64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Dimensions = append(m.Dimensions, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthModel
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v int64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowModel
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (int64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Dimensions = append(m.Dimensions, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dimensions", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipModel(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthModel
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Model_Output) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowModel
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Output: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Output: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Labels = append(m.Labels, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipModel(dAtA[iNdEx:])
@@ -3437,6 +4235,127 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Container", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			var keykey uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				keykey |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			var stringLenmapkey uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLenmapkey |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLenmapkey := int(stringLenmapkey)
+			if intStringLenmapkey < 0 {
+				return ErrInvalidLengthModel
+			}
+			postStringIndexmapkey := iNdEx + intStringLenmapkey
+			if postStringIndexmapkey > l {
+				return io.ErrUnexpectedEOF
+			}
+			mapkey := string(dAtA[iNdEx:postStringIndexmapkey])
+			iNdEx = postStringIndexmapkey
+			if m.Container == nil {
+				m.Container = make(map[string]*ContainerArchicture)
+			}
+			if iNdEx < postIndex {
+				var valuekey uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					valuekey |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				var mapmsglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					mapmsglen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if mapmsglen < 0 {
+					return ErrInvalidLengthModel
+				}
+				postmsgIndex := iNdEx + mapmsglen
+				if mapmsglen < 0 {
+					return ErrInvalidLengthModel
+				}
+				if postmsgIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				mapvalue := &ContainerArchicture{}
+				if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+					return err
+				}
+				iNdEx = postmsgIndex
+				m.Container[mapkey] = mapvalue
+			} else {
+				var mapvalue *ContainerArchicture
+				m.Container[mapkey] = mapvalue
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Framework", wireType)
 			}
 			var stringLen uint64
@@ -3464,7 +4383,7 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.Framework = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
 			}
@@ -3493,7 +4412,7 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.Version = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 4:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
 			}
@@ -3522,7 +4441,7 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.Type = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Dataset", wireType)
 			}
@@ -3551,7 +4470,7 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.Dataset = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 6:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field GraphUrl", wireType)
 			}
@@ -3580,7 +4499,7 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.GraphUrl = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 7:
+		case 8:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field WeightsUrl", wireType)
 			}
@@ -3609,7 +4528,121 @@ func (m *Model_Information) Unmarshal(dAtA []byte) error {
 			}
 			m.WeightsUrl = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 8:
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FeaturesUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FeaturesUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Input", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Input == nil {
+				m.Input = &Model_Input{}
+			}
+			if err := m.Input.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 11:
+			if wireType == 5 {
+				var v uint32
+				if (iNdEx + 4) > l {
+					return io.ErrUnexpectedEOF
+				}
+				iNdEx += 4
+				v = uint32(dAtA[iNdEx-4])
+				v |= uint32(dAtA[iNdEx-3]) << 8
+				v |= uint32(dAtA[iNdEx-2]) << 16
+				v |= uint32(dAtA[iNdEx-1]) << 24
+				v2 := float32(math.Float32frombits(v))
+				m.MeanImage = append(m.MeanImage, v2)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowModel
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthModel
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				for iNdEx < postIndex {
+					var v uint32
+					if (iNdEx + 4) > l {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += 4
+					v = uint32(dAtA[iNdEx-4])
+					v |= uint32(dAtA[iNdEx-3]) << 8
+					v |= uint32(dAtA[iNdEx-2]) << 16
+					v |= uint32(dAtA[iNdEx-1]) << 24
+					v2 := float32(math.Float32frombits(v))
+					m.MeanImage = append(m.MeanImage, v2)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field MeanImage", wireType)
+			}
+		case 12:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field References", wireType)
 			}
@@ -4454,226 +5487,6 @@ func (m *Model_Graph_Node) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *Model_Input) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowModel
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Input: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Input: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModel
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthModel
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Type = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType == 0 {
-				var v int64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowModel
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.Dimensions = append(m.Dimensions, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowModel
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthModel
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				for iNdEx < postIndex {
-					var v int64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowModel
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.Dimensions = append(m.Dimensions, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field Dimensions", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipModel(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthModel
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Model_Output) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowModel
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Output: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Output: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Labels", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowModel
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthModel
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Labels = append(m.Labels, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipModel(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthModel
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *ModelInformations) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -4844,7 +5657,7 @@ func (m *MXNetInferenceRequest) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DataUrl", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Url", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -4869,7 +5682,38 @@ func (m *MXNetInferenceRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DataUrl = string(dAtA[iNdEx:postIndex])
+			m.Url = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -5293,64 +6137,73 @@ var (
 func init() { proto.RegisterFile("model.proto", fileDescriptorModel) }
 
 var fileDescriptorModel = []byte{
-	// 934 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x55, 0x4f, 0x8f, 0xdb, 0x44,
-	0x14, 0xcf, 0xc4, 0x71, 0x36, 0x79, 0x29, 0x50, 0x06, 0xba, 0x18, 0xb3, 0x98, 0xd4, 0x07, 0xba,
-	0x87, 0x36, 0x45, 0x41, 0xa2, 0x15, 0xff, 0x24, 0x0a, 0xab, 0xd5, 0x0a, 0x35, 0x54, 0x5e, 0x2a,
-	0x21, 0x84, 0x88, 0x26, 0xf1, 0x24, 0x6b, 0x62, 0x7b, 0xcc, 0xcc, 0xb8, 0xd9, 0xbd, 0xf1, 0x11,
-	0xb8, 0xf2, 0x0d, 0xf8, 0x08, 0x70, 0xe3, 0xd8, 0x0b, 0x52, 0x8f, 0x1c, 0x9b, 0x20, 0x24, 0x8e,
-	0x3d, 0x72, 0x44, 0xf3, 0xec, 0xfc, 0xd1, 0x6e, 0xb6, 0xdb, 0xbd, 0xf9, 0xfd, 0xf9, 0xbd, 0x37,
-	0xef, 0xfd, 0xde, 0x7b, 0x86, 0x56, 0x22, 0x42, 0x1e, 0x77, 0x32, 0x29, 0xb4, 0xa0, 0xaf, 0x0c,
-	0x99, 0x4c, 0xe2, 0x8e, 0x90, 0xe3, 0x4e, 0x72, 0x9c, 0x72, 0xed, 0xde, 0x1a, 0x47, 0xfa, 0x28,
-	0x1f, 0x74, 0x86, 0x22, 0xb9, 0x3d, 0x16, 0x63, 0x71, 0x1b, 0xfd, 0x06, 0xf9, 0x08, 0x25, 0x14,
-	0xf0, 0xab, 0xc0, 0xfb, 0x77, 0xa0, 0xb5, 0x27, 0xa5, 0x90, 0x87, 0x9a, 0xe9, 0x5c, 0xd1, 0x97,
-	0xa1, 0x2a, 0x26, 0x0e, 0x69, 0x93, 0xdd, 0x46, 0x50, 0x15, 0x13, 0xea, 0xc0, 0x56, 0xc2, 0x95,
-	0x62, 0x63, 0xee, 0x54, 0xdb, 0x64, 0xb7, 0x19, 0x2c, 0x44, 0xff, 0x97, 0x06, 0xd8, 0xf7, 0xcd,
-	0x43, 0xdc, 0x7f, 0x08, 0xb4, 0x0e, 0xd2, 0x91, 0x90, 0x09, 0xd3, 0x91, 0x48, 0x29, 0x85, 0x5a,
-	0xca, 0x12, 0x8e, 0x51, 0x9a, 0x01, 0x7e, 0xd3, 0x1d, 0x68, 0x8e, 0x24, 0x4b, 0xf8, 0x54, 0xc8,
-	0x49, 0x19, 0x69, 0xa5, 0x30, 0x59, 0x1e, 0x71, 0xa9, 0x22, 0x91, 0x3a, 0x56, 0x91, 0xa5, 0x14,
-	0x4d, 0x2c, 0x7d, 0x92, 0x71, 0xa7, 0x56, 0xc4, 0x32, 0xdf, 0xc6, 0x3b, 0x64, 0x9a, 0x29, 0xae,
-	0x1d, 0xbb, 0xf0, 0x2e, 0x45, 0xfa, 0x16, 0x34, 0xc7, 0x92, 0x65, 0x47, 0xfd, 0x5c, 0xc6, 0x4e,
-	0x1d, 0x6d, 0x0d, 0x54, 0x3c, 0x94, 0x31, 0x7d, 0x07, 0x5a, 0x53, 0x1e, 0x8d, 0x8f, 0xb4, 0x42,
-	0xf3, 0x16, 0x9a, 0xa1, 0x54, 0x19, 0x07, 0x0f, 0x40, 0xf2, 0x11, 0x97, 0x3c, 0x1d, 0x72, 0xe5,
-	0x34, 0xda, 0x96, 0xb1, 0xaf, 0x34, 0xee, 0x63, 0x1b, 0xec, 0x7d, 0x13, 0x8d, 0xde, 0x01, 0x3b,
-	0x15, 0x21, 0x57, 0x0e, 0x69, 0x5b, 0xbb, 0xad, 0xee, 0xf5, 0xce, 0x29, 0x12, 0x3a, 0xd8, 0x98,
-	0x0e, 0x3a, 0x77, 0x7a, 0x22, 0xe4, 0x41, 0xe1, 0x6f, 0x1e, 0xc8, 0xe4, 0xb8, 0x5f, 0x80, 0xab,
-	0x6d, 0x6b, 0xd7, 0x0a, 0x1a, 0x4c, 0x8e, 0x7b, 0x68, 0x6c, 0xc3, 0x15, 0x63, 0xe8, 0x4b, 0x31,
-	0xed, 0x67, 0x5a, 0x3a, 0x16, 0xda, 0xc1, 0xe8, 0x02, 0x31, 0x7d, 0xa0, 0x25, 0xfd, 0x18, 0xec,
-	0x23, 0xce, 0x42, 0xe5, 0xd4, 0x30, 0xef, 0xbb, 0x17, 0xe6, 0xdd, 0x4b, 0xb5, 0x3c, 0x09, 0x0a,
-	0x10, 0xfd, 0x04, 0x6c, 0xa6, 0xb5, 0x54, 0x8e, 0x8d, 0xe8, 0x1b, 0xcf, 0x45, 0x7f, 0x66, 0x3c,
-	0x4b, 0x38, 0xa2, 0xdc, 0xaf, 0xa1, 0xb9, 0x0c, 0x49, 0xdf, 0x80, 0x2d, 0x7c, 0x6b, 0x14, 0x22,
-	0xcd, 0x56, 0x50, 0x37, 0xe2, 0x41, 0x48, 0x5f, 0x07, 0x3b, 0x4a, 0x43, 0x7e, 0x8c, 0x24, 0x5b,
-	0x41, 0x21, 0x9c, 0x26, 0xd8, 0x5a, 0x12, 0xec, 0xfe, 0x5e, 0x85, 0x9a, 0x09, 0x8b, 0x93, 0x97,
-	0x95, 0x33, 0x53, 0x15, 0x19, 0xbd, 0x07, 0x76, 0xc6, 0x24, 0x4b, 0xb0, 0x4d, 0xad, 0xee, 0xcd,
-	0x0b, 0x6b, 0xed, 0x3c, 0x30, 0xee, 0xe5, 0x93, 0x11, 0xba, 0x9c, 0x44, 0x6b, 0x6d, 0x12, 0x3f,
-	0x85, 0x7a, 0x94, 0x66, 0xb9, 0xbe, 0x6c, 0x13, 0x4b, 0x14, 0xbd, 0x09, 0x74, 0xc0, 0x86, 0x93,
-	0x29, 0x93, 0x61, 0x5f, 0x89, 0x5c, 0x0e, 0xb1, 0x09, 0x36, 0x56, 0x75, 0x75, 0x61, 0x39, 0x44,
-	0xc3, 0x41, 0x48, 0xaf, 0xc3, 0x95, 0xa1, 0x48, 0xb5, 0x14, 0x71, 0x3f, 0xe4, 0x99, 0x72, 0xea,
-	0xc8, 0x69, 0xab, 0xd4, 0x7d, 0xc1, 0x33, 0xe5, 0xde, 0x05, 0x58, 0xbd, 0x9c, 0x5e, 0x05, 0x6b,
-	0xc2, 0x4f, 0xca, 0x3e, 0x98, 0x4f, 0xd3, 0xd1, 0x47, 0x2c, 0xce, 0x17, 0x0b, 0x58, 0x08, 0x1f,
-	0x56, 0xef, 0x12, 0x83, 0x5c, 0xd1, 0x74, 0x29, 0xe4, 0x47, 0x60, 0x1f, 0x98, 0x72, 0x96, 0xfb,
-	0x45, 0xd6, 0xf6, 0xcb, 0x03, 0x08, 0xa3, 0x84, 0xa7, 0x86, 0x9f, 0xc5, 0x94, 0xae, 0x69, 0xdc,
-	0x36, 0xd4, 0xbf, 0xca, 0xb5, 0x41, 0x6f, 0x43, 0x3d, 0x66, 0x03, 0x1e, 0x17, 0x8b, 0xd0, 0x0c,
-	0x4a, 0xc9, 0xff, 0x12, 0x5e, 0xc5, 0x26, 0xae, 0x5d, 0x05, 0x45, 0x3f, 0x80, 0x5a, 0x94, 0x8e,
-	0x44, 0xb9, 0x33, 0xfe, 0x39, 0x6d, 0x5f, 0x83, 0x04, 0xe8, 0xef, 0x33, 0xb8, 0x76, 0xff, 0x9b,
-	0x1e, 0xd7, 0x07, 0x69, 0xb9, 0x89, 0x01, 0xff, 0x31, 0xe7, 0x4a, 0x9b, 0x89, 0x29, 0xc7, 0xaf,
-	0x19, 0x54, 0xa3, 0x90, 0xbe, 0x0d, 0x80, 0x97, 0xb1, 0x8f, 0x9c, 0x97, 0x47, 0x06, 0x35, 0x3d,
-	0x43, 0xfc, 0x9b, 0xd0, 0x30, 0x77, 0x02, 0x97, 0xdf, 0x5a, 0xdd, 0x8d, 0x87, 0x32, 0xf6, 0x8f,
-	0x61, 0xfb, 0x74, 0x0a, 0x95, 0x89, 0x54, 0xf1, 0x33, 0x39, 0x5c, 0x68, 0x8c, 0x38, 0xd3, 0xb9,
-	0x2c, 0xf7, 0xb7, 0x1a, 0x2c, 0x65, 0xda, 0x05, 0x9b, 0x9b, 0x53, 0x8a, 0xd1, 0x5b, 0xdd, 0x9d,
-	0x33, 0x15, 0xae, 0x1d, 0xda, 0xa0, 0x70, 0xf5, 0xbb, 0xb0, 0x83, 0x99, 0x4f, 0xb7, 0x6b, 0x51,
-	0xe3, 0x86, 0x5b, 0xea, 0xd7, 0xa1, 0xd6, 0xcb, 0xe3, 0xb8, 0xfb, 0xa7, 0x05, 0x36, 0x82, 0xe9,
-	0x77, 0x86, 0xce, 0x11, 0x97, 0x74, 0xc3, 0x30, 0x6f, 0x6a, 0x9d, 0x7b, 0xe3, 0x42, 0xbf, 0xa2,
-	0x7e, 0xbf, 0xf2, 0x1e, 0xa1, 0x7b, 0x50, 0xc7, 0xe7, 0x29, 0x7a, 0xed, 0x0c, 0xcc, 0x3c, 0xc4,
-	0x3d, 0x87, 0xcb, 0x75, 0xf6, 0xfd, 0x0a, 0x3d, 0x84, 0xc6, 0x7e, 0x59, 0x28, 0xbd, 0xb5, 0x39,
-	0xff, 0x39, 0x5d, 0x70, 0xb7, 0x37, 0x27, 0xf0, 0x2b, 0xf4, 0x07, 0x78, 0x6d, 0xff, 0x2c, 0xee,
-	0xb2, 0xf1, 0x5f, 0x60, 0x18, 0xfd, 0x0a, 0xfd, 0x1e, 0x5e, 0x5a, 0xe4, 0x2a, 0x7e, 0x03, 0x97,
-	0xcc, 0xb2, 0xf3, 0xbc, 0x4b, 0xe3, 0x57, 0xee, 0x7d, 0xfe, 0x64, 0xe6, 0x55, 0xfe, 0x9a, 0x79,
-	0x95, 0xa7, 0x33, 0x8f, 0x3c, 0x9b, 0x79, 0xe4, 0xbf, 0x99, 0x47, 0x7e, 0x9a, 0x7b, 0xe4, 0xd7,
-	0xb9, 0x47, 0x7e, 0x9b, 0x7b, 0xe4, 0x8f, 0xb9, 0x47, 0x1e, 0xcf, 0x3d, 0xf2, 0x64, 0xee, 0x91,
-	0xa7, 0x73, 0x8f, 0xfc, 0x3b, 0xf7, 0x2a, 0xcf, 0xe6, 0x1e, 0xf9, 0xf9, 0x6f, 0xaf, 0xf2, 0xad,
-	0x8d, 0x21, 0x07, 0x75, 0xfc, 0xad, 0xbf, 0xff, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xea, 0x1c,
-	0x28, 0xf2, 0x25, 0x08, 0x00, 0x00,
+	// 1083 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0xcf, 0x73, 0xdb, 0xc4,
+	0x17, 0xb7, 0x2c, 0xcb, 0xb1, 0x9e, 0xf2, 0xed, 0x37, 0x6c, 0xdb, 0xa0, 0x11, 0x41, 0xb8, 0x1a,
+	0x86, 0xfa, 0xd0, 0xba, 0x60, 0x66, 0x68, 0x28, 0x3f, 0x66, 0x9a, 0xd2, 0x09, 0x1e, 0x68, 0xda,
+	0x51, 0xe8, 0x0c, 0xc3, 0x01, 0xcf, 0xda, 0x5a, 0x3b, 0xc2, 0x92, 0x56, 0xac, 0x56, 0x4d, 0x72,
+	0xe3, 0x4f, 0xe8, 0x9f, 0xc1, 0x5f, 0xc0, 0xc0, 0x8d, 0x03, 0x87, 0x1e, 0x7b, 0xe4, 0xd8, 0x98,
+	0x0b, 0xc7, 0x1e, 0x39, 0x32, 0xfb, 0x24, 0x3b, 0x22, 0x71, 0x1a, 0x72, 0xe0, 0xb6, 0xef, 0xed,
+	0xfb, 0xec, 0xdb, 0xf7, 0x79, 0x9f, 0x7d, 0x12, 0x58, 0x31, 0x0f, 0x58, 0xd4, 0x4d, 0x05, 0x97,
+	0x9c, 0xfc, 0x7f, 0x44, 0x45, 0x1c, 0x75, 0xb9, 0x98, 0x74, 0xe3, 0x83, 0x84, 0x49, 0xe7, 0xe6,
+	0x24, 0x94, 0x7b, 0xf9, 0xb0, 0x3b, 0xe2, 0xf1, 0xad, 0x09, 0x9f, 0xf0, 0x5b, 0x18, 0x37, 0xcc,
+	0xc7, 0x68, 0xa1, 0x81, 0xab, 0x02, 0xef, 0xdd, 0x06, 0xeb, 0xbe, 0x10, 0x5c, 0xec, 0x4a, 0x2a,
+	0xf3, 0x8c, 0x5c, 0x82, 0x3a, 0x9f, 0xda, 0x5a, 0x5b, 0xeb, 0xb4, 0xfc, 0x3a, 0x9f, 0x12, 0x1b,
+	0x56, 0x62, 0x96, 0x65, 0x74, 0xc2, 0xec, 0x7a, 0x5b, 0xeb, 0x98, 0xfe, 0xdc, 0xf4, 0x3e, 0x84,
+	0xcb, 0xf7, 0x78, 0x22, 0x69, 0x98, 0x30, 0x71, 0x57, 0x8c, 0xf6, 0xc2, 0x91, 0xcc, 0x05, 0x23,
+	0x6b, 0xa0, 0x4f, 0xd2, 0x1c, 0x4f, 0x30, 0x7d, 0xb5, 0x54, 0x9e, 0x51, 0x9a, 0x97, 0x70, 0xb5,
+	0xf4, 0x7e, 0x03, 0x30, 0x1e, 0xa8, 0x1a, 0x9c, 0x8f, 0xc0, 0xe8, 0x27, 0x69, 0x2e, 0x09, 0x81,
+	0x86, 0x3c, 0x4c, 0x59, 0x89, 0xc3, 0x35, 0x71, 0x01, 0x82, 0x30, 0x66, 0x49, 0x16, 0xf2, 0x24,
+	0xb3, 0xeb, 0x6d, 0xbd, 0xa3, 0xfb, 0x15, 0x8f, 0xd3, 0x86, 0xe6, 0xc3, 0x5c, 0x2a, 0xf4, 0x3a,
+	0x34, 0x23, 0x3a, 0x64, 0x51, 0x66, 0x6b, 0x6d, 0xbd, 0x63, 0xfa, 0xa5, 0xe5, 0x3c, 0x6d, 0x80,
+	0xd5, 0x4f, 0xc6, 0x5c, 0xc4, 0x54, 0x86, 0x3c, 0x51, 0x59, 0x12, 0x1a, 0x2f, 0xb2, 0xa8, 0x35,
+	0x79, 0x08, 0xe6, 0x68, 0x5e, 0x07, 0x26, 0xb1, 0x7a, 0xef, 0x75, 0x4f, 0x90, 0xda, 0xc5, 0xdb,
+	0x76, 0x2b, 0x47, 0x75, 0x17, 0xb5, 0xdf, 0x4f, 0xa4, 0x38, 0xf4, 0x8f, 0xcf, 0x20, 0x1b, 0x60,
+	0x8e, 0x05, 0x8d, 0xd9, 0x3e, 0x17, 0x53, 0x5b, 0xc7, 0x4c, 0xc7, 0x0e, 0x45, 0xe8, 0x13, 0x26,
+	0x54, 0x01, 0x76, 0xa3, 0x20, 0xb4, 0x34, 0x17, 0x14, 0x18, 0x15, 0x0a, 0x6c, 0x58, 0x09, 0xa8,
+	0xa4, 0x19, 0x93, 0x76, 0xb3, 0x88, 0x2e, 0x4d, 0xf2, 0x06, 0x98, 0x13, 0x41, 0xd3, 0xbd, 0x41,
+	0x2e, 0x22, 0x7b, 0x05, 0xf7, 0x5a, 0xe8, 0x78, 0x2c, 0x22, 0xf2, 0x16, 0x58, 0xfb, 0x2c, 0x9c,
+	0xec, 0xc9, 0x0c, 0xb7, 0x5b, 0xb8, 0x0d, 0xa5, 0x4b, 0x05, 0x5c, 0x83, 0xd5, 0x31, 0xa3, 0xaa,
+	0x61, 0x45, 0x84, 0x89, 0x11, 0xd6, 0xdc, 0xa7, 0x42, 0x7a, 0x60, 0x84, 0xaa, 0x35, 0x36, 0xb4,
+	0xb5, 0x8e, 0xd5, 0xdb, 0x38, 0x93, 0x93, 0x34, 0x97, 0x7e, 0x11, 0x4a, 0xde, 0x04, 0x88, 0x19,
+	0x4d, 0x06, 0x61, 0xac, 0x04, 0x63, 0xb5, 0xf5, 0x4e, 0xdd, 0x37, 0x95, 0xa7, 0xaf, 0x1c, 0xaa,
+	0xa1, 0x82, 0x8d, 0x99, 0x60, 0xc9, 0x88, 0x65, 0xf6, 0x2a, 0xb6, 0xaa, 0xe2, 0x71, 0x86, 0x70,
+	0xe9, 0x9f, 0xb4, 0x2a, 0xed, 0x4c, 0xd9, 0xe1, 0x5c, 0x4d, 0x53, 0x76, 0x48, 0xee, 0x80, 0xf1,
+	0x84, 0x46, 0x79, 0x21, 0x47, 0xab, 0xf7, 0xf6, 0xa9, 0x6b, 0x2d, 0x11, 0xa5, 0x5f, 0x40, 0xee,
+	0xd4, 0x37, 0x35, 0xe7, 0x99, 0x01, 0xc6, 0xb6, 0xe2, 0x89, 0xdc, 0x06, 0x23, 0xe1, 0x01, 0x2b,
+	0x34, 0x63, 0xf5, 0xae, 0x9d, 0x51, 0x20, 0x06, 0x77, 0x77, 0x78, 0xc0, 0xfc, 0x22, 0x5e, 0x51,
+	0x4f, 0xc5, 0x64, 0x50, 0x80, 0x0b, 0x59, 0xb6, 0xa8, 0x98, 0xec, 0xe0, 0x66, 0x1b, 0x56, 0xd5,
+	0xc6, 0x40, 0xf0, 0xfd, 0x41, 0x2a, 0x85, 0xad, 0x17, 0xb2, 0x55, 0x3e, 0x9f, 0xef, 0x3f, 0x92,
+	0x82, 0x7c, 0x0c, 0xc6, 0x1e, 0xa3, 0x41, 0x66, 0x37, 0x30, 0xef, 0x3b, 0xe7, 0xe6, 0x2d, 0x14,
+	0x56, 0x80, 0xc8, 0x27, 0x60, 0x50, 0x29, 0x45, 0x66, 0x1b, 0x88, 0xbe, 0xfe, 0x4a, 0xf4, 0x5d,
+	0x15, 0x59, 0xc2, 0x11, 0xe5, 0x7c, 0x05, 0xe6, 0xe2, 0x48, 0xf2, 0x3a, 0xac, 0xe0, 0x5d, 0xc3,
+	0x00, 0x19, 0xd6, 0xfd, 0xa6, 0x32, 0xfb, 0x01, 0xb9, 0xa2, 0x7a, 0x1f, 0xb0, 0x03, 0x24, 0x59,
+	0xf7, 0x0b, 0xa3, 0x2a, 0x5d, 0x1d, 0xfd, 0x73, 0xd3, 0xf9, 0xa5, 0x0e, 0x0d, 0x75, 0x2c, 0x8e,
+	0x8f, 0xb4, 0x6c, 0x57, 0x9d, 0xa7, 0x64, 0x0b, 0x8c, 0x94, 0x0a, 0x1a, 0x97, 0x0f, 0xeb, 0xc6,
+	0xb9, 0xb5, 0x76, 0x1f, 0xa9, 0xf0, 0xf2, 0xca, 0x08, 0x5d, 0x3c, 0x5a, 0xbd, 0xf2, 0x68, 0x3f,
+	0x85, 0x26, 0x2a, 0xee, 0xa2, 0x24, 0x96, 0x28, 0x72, 0x03, 0xc8, 0x90, 0x8e, 0xa6, 0xfb, 0x54,
+	0x04, 0x83, 0x8c, 0xe7, 0x62, 0x84, 0x24, 0x18, 0x58, 0xd5, 0xda, 0x7c, 0x67, 0x17, 0x37, 0xfa,
+	0x81, 0x7a, 0x2d, 0xea, 0x79, 0x0b, 0x1e, 0x0d, 0x02, 0x96, 0x66, 0x76, 0x13, 0x7b, 0x6a, 0x95,
+	0xbe, 0xcf, 0x58, 0x9a, 0x39, 0x9b, 0x00, 0xc7, 0x37, 0x5f, 0x22, 0xdb, 0x2b, 0x55, 0xd9, 0x9a,
+	0x55, 0x41, 0x6e, 0x02, 0x1c, 0xb7, 0xe9, 0x22, 0x48, 0xef, 0x0b, 0x78, 0x0d, 0xab, 0xac, 0x8c,
+	0xa5, 0x8c, 0x7c, 0x00, 0x8d, 0x30, 0x19, 0xf3, 0x52, 0xd4, 0xde, 0xf9, 0x93, 0xcc, 0xc7, 0x78,
+	0x2f, 0x82, 0xab, 0x0f, 0xbe, 0xde, 0x61, 0xb2, 0x9f, 0x94, 0xcf, 0xd1, 0x67, 0xdf, 0xe7, 0x2c,
+	0x93, 0xaa, 0xa5, 0xa5, 0x3e, 0x4c, 0xbf, 0x1e, 0x06, 0xf8, 0xc6, 0xd5, 0x19, 0x03, 0x6c, 0x4a,
+	0x71, 0x29, 0x13, 0x3d, 0x3b, 0xaa, 0x33, 0x6b, 0xa0, 0xab, 0x81, 0x52, 0x34, 0x4b, 0x2d, 0x55,
+	0xff, 0xd4, 0xd0, 0xc2, 0x71, 0xb7, 0xea, 0xe3, 0xda, 0x3b, 0x80, 0xf5, 0x93, 0xd9, 0xb2, 0x94,
+	0x27, 0x19, 0x3b, 0x95, 0xce, 0x81, 0xd6, 0x7c, 0x2a, 0xa1, 0x88, 0xea, 0xfe, 0xc2, 0x56, 0x23,
+	0x8a, 0xa9, 0x6f, 0x17, 0x66, 0x5b, 0x36, 0xa2, 0x2a, 0x5f, 0x36, 0xbf, 0x08, 0xf5, 0x7a, 0xb0,
+	0x81, 0x99, 0x4f, 0x32, 0x37, 0x2f, 0x77, 0xc9, 0x27, 0xc2, 0x6b, 0x42, 0x63, 0x27, 0x8f, 0xa2,
+	0xde, 0x4f, 0x0d, 0x30, 0x10, 0x4c, 0x06, 0xd0, 0xc2, 0xab, 0x3f, 0xf6, 0xbf, 0x24, 0x4b, 0xb4,
+	0xb7, 0x8c, 0x48, 0xe7, 0xfa, 0xb9, 0x71, 0x05, 0x05, 0x5e, 0xed, 0x5d, 0x8d, 0x50, 0x00, 0xdc,
+	0xd8, 0x3a, 0x94, 0x2c, 0xfb, 0x6f, 0x52, 0x7c, 0x0e, 0xe6, 0x76, 0xc9, 0x43, 0x46, 0xae, 0x9e,
+	0x42, 0xaa, 0x8a, 0x9d, 0x33, 0xf4, 0x53, 0x55, 0x9c, 0x57, 0x23, 0xbb, 0xd0, 0x9a, 0x9f, 0x44,
+	0x6e, 0x2e, 0xbf, 0xc2, 0x19, 0x74, 0x3b, 0xeb, 0xcb, 0x13, 0x78, 0x35, 0xf2, 0x1d, 0x5c, 0xde,
+	0x3e, 0x8d, 0xbb, 0xe8, 0xf9, 0xff, 0xe2, 0x01, 0x78, 0x35, 0xf2, 0x2d, 0xfc, 0x6f, 0x9e, 0xab,
+	0xf8, 0x36, 0x5c, 0x30, 0xcb, 0xc6, 0xab, 0xc6, 0x8f, 0x57, 0xdb, 0xba, 0xf7, 0xfc, 0xc8, 0xad,
+	0xfd, 0x7e, 0xe4, 0xd6, 0x5e, 0x1c, 0xb9, 0xda, 0xcb, 0x23, 0x57, 0xfb, 0xeb, 0xc8, 0xd5, 0x7e,
+	0x98, 0xb9, 0xda, 0x8f, 0x33, 0x57, 0xfb, 0x79, 0xe6, 0x6a, 0xbf, 0xce, 0x5c, 0xed, 0xd9, 0xcc,
+	0xd5, 0x9e, 0xcf, 0x5c, 0xed, 0xc5, 0xcc, 0xd5, 0xfe, 0x9c, 0xb9, 0xb5, 0x97, 0x33, 0x57, 0x7b,
+	0xfa, 0x87, 0x5b, 0xfb, 0xc6, 0xc0, 0x23, 0x87, 0x4d, 0xfc, 0x61, 0x7b, 0xff, 0xef, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xf3, 0xce, 0x37, 0xe5, 0xff, 0x09, 0x00, 0x00,
 }
