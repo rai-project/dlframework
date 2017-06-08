@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 
+	"google.golang.org/grpc"
+
 	"github.com/levigross/grequests"
 	"github.com/rai-project/dlframework/mxnet"
-	"github.com/rai-project/grpc"
+	rgrpc "github.com/rai-project/grpc"
 	context "golang.org/x/net/context"
 )
 
@@ -29,12 +31,12 @@ func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformati
 	if graphURL == "" {
 		return nil, errors.New("empty graph url")
 	}
-	resp, err := grequests.Get(graphURL)
+	resp, err := grequests.Get(graphURL, nil)
 	if err != nil {
 		return nil, err
 	}
 	g := new(mxnet.Model_Graph)
-	err := json.Unmarshal(resp.String(), g)
+	err = json.Unmarshal(resp.Bytes(), g)
 	return g, err
 }
 
@@ -61,13 +63,8 @@ func (s *server) GetModelInformations(ctx context.Context, n *mxnet.Null) (*mxne
 	}, nil
 }
 
-func Register() {
-	grpcServer := grpc.NewServer()
-	mxnet.RegisterMXNetServer(grpcServer, &server{})
-}
-
-func NewServer() *grpc.Server {
-	grpcServer := grpc.NewServer()
+func Register() *grpc.Server {
+	grpcServer := rgrpc.NewServer(mxnet.ServiceDescription)
 	mxnet.RegisterMXNetServer(grpcServer, &server{})
 	return grpcServer
 }
