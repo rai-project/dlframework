@@ -82,13 +82,19 @@ message MXNetInferenceRequest {
   bytes data = 4;
 }
 
+message Feature {
+  int64 index = 1;
+  string name = 2;
+  float probability = 3;
+}
+
 message MXNetInferenceResponse {
   string id = 1;
-  repeated float features = 2;
+  repeated Feature features = 2;
   ErrorStatus error = 3;
 }
 
-message MXNetModelInformationRequest { string name = 1; }
+message MXNetModelInformationRequest { string model_name = 1; }
 
 message Null {}
 

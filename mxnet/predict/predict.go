@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/anthonynsimon/bild/imgio"
+	"github.com/anthonynsimon/bild/parallel"
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/mxnet"
@@ -23,7 +23,7 @@ type Predictor interface {
 	// Preprocess the data
 	Preprocess(data interface{}) (interface{}, error)
 	// Returns the features
-	Predict(data interface{}) ([]Feature, error)
+	Predict(data interface{}) ([]*mxnet.Feature, error)
 
 	io.Closer
 }
@@ -33,12 +33,6 @@ type ImagePredictor struct {
 	modelDir  string
 	features  []string
 	predictor *gomxnet.Predictor
-}
-
-type Feature struct {
-	idx  int
-	name string
-	prob float32
 }
 
 func NewImagePredictor(model mxnet.Model_Information, targetDir string) (*ImagePredictor, error) {
@@ -66,6 +60,11 @@ func (p *ImagePredictor) Preprocess(input interface{}) ([]float32, error) {
 		return nil, errors.New("expecting an image input")
 	}
 
+	modelInput := p.model.GetInput()
+	t := modelInput.GetDimensions()
+
+	img = transform.Resize(img, int(t[2]), int(t[3]), transform.Linear)
+
 	model := p.model
 	meanImage := model.GetMeanImage()
 	if len(meanImage) == 0 {
@@ -73,18 +72,22 @@ func (p *ImagePredictor) Preprocess(input interface{}) ([]float32, error) {
 	}
 
 	b := img.Bounds()
-	h := b.Max.Y - b.Min.Y // image height
-	w := b.Max.X - b.Min.X // image width
+	height := b.Max.Y - b.Min.Y // image height
+	width := b.Max.X - b.Min.X  // image width
 
-	res := make([]float32, 3*h*w)
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
-			r, g, b, _ := img.At(x+b.Min.X, y+b.Min.Y).RGBA()
-			res[y*w+x] = float32(r>>8) - meanImage[0]
-			res[w*h+y*w+x] = float32(g>>8) - meanImage[1]
-			res[2*w*h+y*w+x] = float32(b>>8) - meanImage[2]
+	res := make([]float32, 3*height*width)
+	parallel.Line(height, func(start, end int) {
+		w := width
+		h := height
+		for y := start; y < end; y++ {
+			for x := 0; x < width; x++ {
+				r, g, b, _ := img.At(x+b.Min.X, y+b.Min.Y).RGBA()
+				res[y*w+x] = float32(r>>8) - meanImage[0]
+				res[w*h+y*w+x] = float32(g>>8) - meanImage[1]
+				res[2*w*h+y*w+x] = float32(b>>8) - meanImage[2]
+			}
 		}
-	}
+	})
 	return res, nil
 }
 
@@ -135,32 +138,19 @@ func (p *ImagePredictor) getPredictor() error {
 	return nil
 }
 
-func (p *ImagePredictor) Predict(input interface{}) ([]Feature, error) {
-	path, ok := input.(string)
-	if !ok {
-		return nil, errors.New("expecting a path to predict")
-	}
-	img, err := imgio.Open(path)
-	if err != nil {
-		return nil, err
-	}
-
+func (p *ImagePredictor) Predict(input interface{}) ([]*mxnet.Feature, error) {
 	if p.predictor == nil {
 		if err := p.getPredictor(); err != nil {
 			return nil, err
 		}
 	}
 
-	modelInput := p.model.GetInput()
-	t := modelInput.GetDimensions()
-
-	resized := transform.Resize(img, int(t[2]), int(t[3]), transform.Linear)
-	res, err := p.Preprocess(resized)
-	if err != nil {
-		return nil, err
+	data, ok := input.([]float32)
+	if !ok {
+		return nil, errors.New("expecting []float32 input in predict function")
 	}
 
-	if err := p.predictor.SetInput("data", res); err != nil {
+	if err := p.predictor.SetInput("data", data); err != nil {
 		return nil, err
 	}
 
@@ -180,11 +170,14 @@ func (p *ImagePredictor) Predict(input interface{}) ([]Feature, error) {
 	out := utils.ArgSort{Args: probs, Idxs: idxs}
 	sort.Sort(out)
 
-	ret := make([]Feature, len(probs))
-	for i := range probs {
-		ret[i].prob = out.Args[i]
-		ret[i].idx = out.Idxs[i]
-		ret[i].name = p.features[out.Idxs[i]]
+	ret := make([]*mxnet.Feature, len(probs))
+	for ii := range probs {
+		feat := &mxnet.Feature{
+			Index:       int64(out.Idxs[ii]),
+			Name:        p.features[out.Idxs[ii]],
+			Probability: out.Args[ii],
+		}
+		ret[ii] = feat
 	}
 
 	return ret, nil
