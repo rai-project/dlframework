@@ -8,8 +8,8 @@ import (
 )
 
 func downloadURL(url, targetPath string) error {
-	response, e := http.Get(url)
-	if e != nil {
+	response, err := http.Get(url)
+	if err != nil {
 		return err
 	}
 	defer response.Body.Close()

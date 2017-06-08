@@ -23,7 +23,7 @@ type Predictor interface {
 	// Preprocess the data
 	Preprocess(data interface{}) (interface{}, error)
 	// Returns the features
-	Predict(data interface{}) ([]float32, error)
+	Predict(data interface{}) ([]Feature, error)
 
 	io.Closer
 }
@@ -41,7 +41,7 @@ type Feature struct {
 	prob float32
 }
 
-func NewImagePredictor(model mxnet.Model_Information, targetDir string) (Predictor, error) {
+func NewImagePredictor(model mxnet.Model_Information, targetDir string) (*ImagePredictor, error) {
 	return &ImagePredictor{
 		model:    model,
 		modelDir: targetDir,
@@ -60,7 +60,7 @@ func (p *ImagePredictor) GetFeaturesPath() string {
 	return filepath.Join(p.modelDir, p.model.GetName()+".features")
 }
 
-func (p *ImagePredictor) Preprocess(input interface{}) (interface{}, error) {
+func (p *ImagePredictor) Preprocess(input interface{}) ([]float32, error) {
 	img, ok := input.(image.Image)
 	if !ok {
 		return nil, errors.New("expecting an image input")
@@ -103,7 +103,7 @@ func (p *ImagePredictor) getPredictor() error {
 	var features []string
 	f, err := os.Open(p.GetFeaturesPath())
 	if err != nil {
-		return errors.Wrapf(err, "cannot read %s", model.GetFeaturesPath())
+		return errors.Wrapf(err, "cannot read %s", p.GetFeaturesPath())
 	}
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
@@ -115,7 +115,12 @@ func (p *ImagePredictor) getPredictor() error {
 	p.features = features
 
 	modelInput := model.GetInput()
-	modelInputShape := modelInput.GetDimensions()
+	t := modelInput.GetDimensions()
+
+	modelInputShape := make([]uint32, len(t))
+	for i := range t {
+		modelInputShape[i] = uint32(t[i])
+	}
 
 	pred, err := gomxnet.CreatePredictor(symbol,
 		params,
@@ -140,32 +145,30 @@ func (p *ImagePredictor) Predict(input interface{}) ([]Feature, error) {
 		return nil, err
 	}
 
-	_, ok = img.([]float32)
-	if !ok {
-		return nil, errors.New("expecting an flattened float32 array input")
-	}
-
 	if p.predictor == nil {
 		if err := p.getPredictor(); err != nil {
 			return nil, err
 		}
 	}
 
-	resized := transform.Resize(img, int(modelInputShape[2]), int(modelInputShape[3]), transform.Linear)
-	res, err := Preprocess(resized)
+	modelInput := p.model.GetInput()
+	t := modelInput.GetDimensions()
+
+	resized := transform.Resize(img, int(t[2]), int(t[3]), transform.Linear)
+	res, err := p.Preprocess(resized)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := p.SetInput("data", res); err != nil {
+	if err := p.predictor.SetInput("data", res); err != nil {
 		return nil, err
 	}
 
-	if err := p.Forward(); err != nil {
+	if err := p.predictor.Forward(); err != nil {
 		return nil, err
 	}
 
-	probs, err := p.GetOutput(0)
+	probs, err := p.predictor.GetOutput(0)
 	if err != nil {
 		return nil, err
 	}
@@ -181,7 +184,7 @@ func (p *ImagePredictor) Predict(input interface{}) ([]Feature, error) {
 	for i := range probs {
 		ret[i].prob = out.Args[i]
 		ret[i].idx = out.Idxs[i]
-		ret[i].name = features[out.Idxs[i]]
+		ret[i].name = p.features[out.Idxs[i]]
 	}
 
 	return ret, nil
@@ -191,4 +194,5 @@ func (p *ImagePredictor) Close() error {
 	if p.predictor != nil {
 		p.predictor.Free()
 	}
+	return nil
 }
