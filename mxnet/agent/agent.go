@@ -20,10 +20,6 @@ func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_Infer
 	panic(errors.New("*server.InferBytes not implemented"))
 }
 
-func (s *server) GetModel(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model, error) {
-	panic(errors.New("*server.GetModel not implemented"))
-}
-
 func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Graph, error) {
 	model, err := mxnet.GetModelInformation(m.GetName())
 	if err != nil {
@@ -50,7 +46,7 @@ func (s *server) GetModelInformation(ctx context.Context, m *mxnet.MXNetModelInf
 	return &model, nil
 }
 
-func (s *server) GetModels(ctx context.Context, n *mxnet.Null) (*mxnet.ModelInformations, error) {
+func (s *server) GetModelInformations(ctx context.Context, n *mxnet.Null) (*mxnet.ModelInformations, error) {
 	names := mxnet.ModelNames()
 	models := make([]*mxnet.Model_Information, len(names))
 	for ii, name := range names {
