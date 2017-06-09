@@ -1,11 +1,11 @@
 package: github.com/rai-project/dlframework
 import:
 - package: github.com/sirupsen/logrus
-  version: ~1.0.0
+  version: ^1.0.0
 - package: github.com/Sirupsen/logrus
   repo: git@github.com:/sirupsen/logrus
   vcs: git
-  version: ~1.0.0
+  version: ^1.0.0
 - package: github.com/anthonynsimon/bild
   version: ~0.10.0
   subpackages:
