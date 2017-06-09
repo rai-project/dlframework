@@ -42,6 +42,12 @@ func GetModelInformation(name string) (Model_Information, error) {
 		return model, nil
 	}
 
+	for _, model := range modelInfoRegistry.data {
+		if strings.ToLower(model.GetName()) == name {
+			return model, nil
+		}
+	}
+
 	return Model_Information{}, errors.Errorf("cannot find model %s in modelInfoRegistry", name)
 }
 
