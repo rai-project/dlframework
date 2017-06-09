@@ -11,3 +11,6 @@ graph_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-symbol.json
 weights_url: http://data.dmlc.ml/models/imagenet/vgg/vgg19-0000.params
 references:
   - https://arxiv.org/pdf/1409.1556v6.pdf
+description: >
+  VGG uses a network with 19 layers of 3x3 convolution filters.
+  VGG achieves 25.5% top-1 error and 8.0% top-5 error on the ImageNet challenge dataset in 2015.

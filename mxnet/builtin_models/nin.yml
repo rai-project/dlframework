@@ -11,3 +11,8 @@ graph_url: http://data.dmlc.ml/models/imagenet/nin/nin-symbol.json
 weights_url: http://data.dmlc.ml/models/imagenet/nin/nin-0000.params
 references:
   - https://arxiv.org/pdf/1312.4400v3.pdf
+description: >
+  NIN uses a network struture where small networks are used to slide over input maps, similar to a CNN.
+  This enhanes local modeling, allowing for simpler classification layers that are easier to interpret.
+  The network consists of 3 stacked layers, each of which is a 3-layer perceptron.
+  NIN achieved 35.69% on IFAR-100 in 2014.

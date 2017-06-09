@@ -17,3 +17,7 @@ graph_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/caffenet-symbol.js
 weights_url: http://data.dmlc.ml/models/imagenet/caffenet/caffenet-0000.params
 references:
   - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
+description: > 
+  A deep convolutional network trained to classify 1.3M images in the LSVRC-2010 ImageNet training set,
+  which achieved top-1 and top-5 error rates of 39.7% and 18.9%.
+  The network consists of 60M parameters and 500K neurons across 5 convolutional layers two fully-connected layers.
