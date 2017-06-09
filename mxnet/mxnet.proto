@@ -39,24 +39,26 @@ message Model {
 
   message Information {
     string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-    map<string, ContainerArchicture> container = 2
+    string description = 2
+        [ (gogoproto.moretags) = "yaml:\"description,omitempty\"" ];
+    map<string, ContainerArchicture> container = 3
         [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
-    string framework = 3
+    string framework = 4
         [ (gogoproto.moretags) = "yaml:\"framework,omitempty\"" ];
-    string version = 4 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
-    string type = 5 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
-    string dataset_name = 6
+    string version = 5 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
+    string type = 6 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+    string dataset_name = 7
         [ (gogoproto.moretags) = "yaml:\"dataset_name,omitempty\"" ];
-    string graph_url = 7
+    string graph_url = 8
         [ (gogoproto.moretags) = "yaml:\"graph_url,omitempty\"" ];
-    string weights_url = 8
+    string weights_url = 9
         [ (gogoproto.moretags) = "yaml:\"weights_url,omitempty\"" ];
-    string features_url = 9
+    string features_url = 10
         [ (gogoproto.moretags) = "yaml:\"features_url,omitempty\"" ];
-    Input input = 10 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
-    repeated float mean_image = 11
+    Input input = 11 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
+    repeated float mean_image = 12
         [ (gogoproto.moretags) = "yaml:\"mean_image,omitempty\"" ];
-    repeated string references = 12
+    repeated string references = 13
         [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
   }
   message Graph {
