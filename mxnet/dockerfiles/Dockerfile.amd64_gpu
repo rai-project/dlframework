@@ -63,10 +63,10 @@ WORKDIR $GOPATH/src/github.com/rai-project
 RUN git clone https://github.com/rai-project/dlframework.git
 WORKDIR dlframework
 RUN glide install
-WORKDIR mxnet/docker-agent
+WORKDIR mxnet/mxnet-agent
 #RUN go get -v .../.
 RUN go build
-ENTRYPOINT ["./docker-agent"]
+ENTRYPOINT ["./mxnet-agent"]
 
 ## Data needed for $GOPATH/src/github.com/songtiyani/examples/flower
 #RUN mkdir /data
