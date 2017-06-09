@@ -79,6 +79,8 @@ message Model {
           [ (gogoproto.moretags) = "yaml:\"control_deps,omitempty\"" ];
     }
 
+    message Attributes { map<string, string> attrs = 1; }
+
     repeated Node nodes = 1
         [ (gogoproto.moretags) = "yaml:\"nodes,omitempty\"" ];
     repeated int64 arg_nodes = 2
@@ -87,8 +89,7 @@ message Model {
         [ (gogoproto.moretags) = "yaml:\"node_row_ptr,omitempty\"" ];
     repeated NodeEntry heads = 4
         [ (gogoproto.moretags) = "yaml:\"heads,omitempty\"" ];
-    map<string, string> attrs = 5
-        [ (gogoproto.moretags) = "yaml:\"attrs,omitempty\"" ];
+    Attributes attrs = 5 [ (gogoproto.moretags) = "yaml:\"attrs,omitempty\"" ];
   }
 }
 

@@ -200,3 +200,5 @@ func (g *Model_Graph) ToDotGraph() (*gographviz.Escape, error) {
 
 	return dg, nil
 }
+
+type ModelGraphAttributes map[string][]string
