@@ -13,7 +13,7 @@ mean_image: [123.68, 116.779, 103.939]
 references:
   - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf
 description: >
-  A convolutional neural network (based on the Inception architecture) trained to localize photos.
-  The network was trained on 19M EXIF geotagged photos.
-  The network consists of 97,321,048 parameters.
-  LoationNet is able to localize 3.6% of images at street level, and 48% at continent level.
+  A photo-localization convolutional neural network based on the Inception architecture.
+  LocationNet is able to localize 3.6% of images at street level, and 48% at continent level.
+  The network was trained on 19M EXIF geotagged photos and consists of 97,321,048 parameters.
+  
