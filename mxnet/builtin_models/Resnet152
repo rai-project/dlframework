@@ -18,6 +18,7 @@ weights_url: http://data.dmlc.ml/mxnet/models/imagenet-11k/resnet-152/resnet-152
 references:
   - http://arxiv.org/abs/1512.03385
 description: >
-  An image-classification convolutional network.
+An image-classification network built of layers that learn residual functions w.r.t layer inputs.
+  This network consists of 512 layers.
  Resnet152 achieves 23.0% Top-1 Error and 6.7% Top-5 error on ILSVRC2015-Validation Set.
  
