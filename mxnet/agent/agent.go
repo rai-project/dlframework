@@ -14,6 +14,8 @@ import (
 	"github.com/rai-project/dlframework/mxnet/predict"
 	rgrpc "github.com/rai-project/grpc"
 	context "golang.org/x/net/context"
+
+	gocache "github.com/patrickmn/go-cache"
 )
 
 type server struct{}
@@ -101,6 +103,16 @@ func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformati
 	if err != nil {
 		return nil, err
 	}
+
+	cacheKey := "graph/" + model.GetName()
+	if val, found := cache.Get(cacheKey); found {
+		if g, ok := val.(*mxnet.Model_Graph); ok {
+			return g, nil
+		}
+	}
+
+	log.WithField("url", model.GetGraphUrl()).WithField("cacheKey", cacheKey).Debug("downloading model graph")
+
 	graphURL := model.GetGraphUrl()
 	if graphURL == "" {
 		return nil, errors.New("empty graph url")
@@ -111,6 +123,9 @@ func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformati
 	}
 	g := new(mxnet.Model_Graph)
 	err = json.Unmarshal(resp.Bytes(), g)
+	if err == nil {
+		cache.Set(cacheKey, g, gocache.DefaultExpiration)
+	}
 	return g, err
 }
 
