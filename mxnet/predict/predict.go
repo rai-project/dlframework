@@ -174,13 +174,18 @@ func (p *ImagePredictor) Predict(input interface{}) ([]*mxnet.Feature, error) {
 	for ii := range probs {
 		feat := &mxnet.Feature{
 			Index:       int64(out.Idxs[ii]),
-			Name:        p.features[out.Idxs[ii]],
+			Name:        p.getFeature(out.Idxs[ii]),
 			Probability: out.Args[ii],
 		}
 		ret[ii] = feat
 	}
 
 	return ret, nil
+}
+
+func (p *ImagePredictor) getFeature(idx int) string {
+	val := p.features[idx]
+	return val
 }
 
 func (p *ImagePredictor) Close() error {

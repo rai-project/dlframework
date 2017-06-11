@@ -35,7 +35,9 @@ message Model {
         [ (gogoproto.moretags) = "yaml:\"dimensions,omitempty\"" ];
   }
 
-  message Output { repeated string labels = 1; }
+  message Output {
+    string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+  }
 
   message Information {
     string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
@@ -56,9 +58,10 @@ message Model {
     string features_url = 10
         [ (gogoproto.moretags) = "yaml:\"features_url,omitempty\"" ];
     Input input = 11 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
-    repeated float mean_image = 12
+    Output output = 12 [ (gogoproto.moretags) = "yaml:\"output,omitempty\"" ];
+    repeated float mean_image = 13
         [ (gogoproto.moretags) = "yaml:\"mean_image,omitempty\"" ];
-    repeated string references = 13
+    repeated string references = 14
         [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
   }
   message Graph {
