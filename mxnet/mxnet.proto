@@ -130,9 +130,8 @@ message MXNetModelInformationRequest {
 message Null {}
 
 service MXNet {
-  rpc InferURL(MXNetInferenceRequest) returns (stream MXNetInferenceResponse) {}
-  rpc InferBytes(MXNetInferenceRequest)
-      returns (stream MXNetInferenceResponse) {}
+  rpc InferURL(MXNetInferenceRequest) returns (MXNetInferenceResponse) {}
+  rpc InferBytes(MXNetInferenceRequest) returns (MXNetInferenceResponse) {}
   rpc GetModelInformations(Null) returns (ModelInformations) {}
   rpc GetModelInformation(MXNetModelInformationRequest)
       returns (Model.Information) {}

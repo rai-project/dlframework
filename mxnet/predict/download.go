@@ -3,6 +3,7 @@ package predict
 import (
 	"time"
 
+	"github.com/Unknwon/com"
 	"github.com/levigross/grequests"
 	gocache "github.com/patrickmn/go-cache"
 )
@@ -15,6 +16,10 @@ func downloadURL(url, targetPath string) error {
 
 	// Get the string associated with the key url from the cache
 	if _, found := cache.Get(url); found {
+		return nil
+	}
+
+	if com.IsFile(targetPath) {
 		return nil
 	}
 

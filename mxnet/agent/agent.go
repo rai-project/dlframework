@@ -24,83 +24,78 @@ import (
 
 type server struct{}
 
-func (s *server) InferURL(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferURLServer) error {
+func (s *server) InferURL(ctx context.Context, m *mxnet.MXNetInferenceRequest) (*mxnet.MXNetInferenceResponse, error) {
 	resp, err := grequests.Get(m.GetUrl(), nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Close()
 	m.Data = resp.Bytes()
-	return s.InferBytes(m, m1)
+	return s.InferBytes(ctx, m)
 }
 
-func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferBytesServer) error {
+func (s *server) InferBytes(ctx context.Context, m *mxnet.MXNetInferenceRequest) (*mxnet.MXNetInferenceResponse, error) {
 
 	model, err := mxnet.GetModelInformation(m.GetModelName())
 	if err != nil {
-		return err
+		return nil, err
 	}
 	predictor, err := predict.NewImagePredictor(model, config.App.TempDir)
 	if err != nil {
-		m1.Send(&mxnet.MXNetInferenceResponse{
+		return &mxnet.MXNetInferenceResponse{
 			Error: &mxnet.ErrorStatus{
 				Ok:      false,
 				Message: err.Error(),
 			},
-		})
-		return err
+		}, err
 	}
 	defer predictor.Close()
 
 	if err := predictor.Download(); err != nil {
-		m1.Send(&mxnet.MXNetInferenceResponse{
+		return &mxnet.MXNetInferenceResponse{
 			Error: &mxnet.ErrorStatus{
 				Ok:      false,
 				Message: err.Error(),
 			},
-		})
-		return err
+		}, err
 	}
 
 	img, _, err := image.Decode(bytes.NewBuffer(m.GetData()))
 	if err != nil {
-		m1.Send(&mxnet.MXNetInferenceResponse{
+		return &mxnet.MXNetInferenceResponse{
 			Error: &mxnet.ErrorStatus{
 				Ok:      false,
 				Message: err.Error(),
 			},
-		})
-		return err
+		}, err
 	}
 
 	pre, err := predictor.Preprocess(img)
 	if err != nil {
-		m1.Send(&mxnet.MXNetInferenceResponse{
+		return &mxnet.MXNetInferenceResponse{
 			Error: &mxnet.ErrorStatus{
 				Ok:      false,
 				Message: err.Error(),
 			},
-		})
-		return err
+		}, err
 	}
 	features, err := predictor.Predict(pre)
 	if err != nil {
-		m1.Send(&mxnet.MXNetInferenceResponse{
+		return &mxnet.MXNetInferenceResponse{
 			Error: &mxnet.ErrorStatus{
 				Ok:      false,
 				Message: err.Error(),
 			},
-		})
-		return err
+		}, err
 	}
-	m1.Send(&mxnet.MXNetInferenceResponse{
+	log.Debug("infered features....")
+	return &mxnet.MXNetInferenceResponse{
 		Id:       m.GetId(),
 		Features: features,
 		Error: &mxnet.ErrorStatus{
 			Ok: true,
 		},
-	})
-	return nil
+	}, nil
 }
 
 func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Graph, error) {
