@@ -6,6 +6,10 @@ import (
 	"errors"
 	"image"
 
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
 	"google.golang.org/grpc"
 
 	"github.com/levigross/grequests"
@@ -31,6 +35,7 @@ func (s *server) InferURL(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferUR
 }
 
 func (s *server) InferBytes(m *mxnet.MXNetInferenceRequest, m1 mxnet.MXNet_InferBytesServer) error {
+
 	model, err := mxnet.GetModelInformation(m.GetModelName())
 	if err != nil {
 		return err
