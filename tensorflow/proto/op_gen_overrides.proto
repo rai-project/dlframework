@@ -4,7 +4,7 @@
 syntax = "proto3";
 
 package tensorflow;
-import "tensorflow/core/framework/attr_value.proto";
+import "attr_value.proto";
 
 // Used to override the default API & behavior in the generated code
 // for client languages, from what you would get from the OpDef alone.
@@ -62,6 +62,4 @@ message OpGenOverride {
   repeated Rename output_rename = 9;
 }
 
-message OpGenOverrides {
-  repeated OpGenOverride op = 1;
-}
+message OpGenOverrides { repeated OpGenOverride op = 1; }

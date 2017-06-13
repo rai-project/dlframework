@@ -6,7 +6,7 @@ option java_outer_classname = "LogMemoryProtos";
 option java_multiple_files = true;
 option java_package = "org.tensorflow.framework";
 
-import "tensorflow/core/framework/tensor_description.proto";
+import "tensor_description.proto";
 
 message MemoryLogStep {
   // Process-unique step id.

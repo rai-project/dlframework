@@ -6,9 +6,9 @@ option java_outer_classname = "FunctionProtos";
 option java_multiple_files = true;
 option java_package = "org.tensorflow.framework";
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/op_def.proto";
+import "attr_value.proto";
+import "node_def.proto";
+import "op_def.proto";
 
 // A library is a set of named functions.
 message FunctionDefLibrary {
@@ -96,6 +96,6 @@ message FunctionDef {
 // loss function). dL/dx_i is the partial derivative of L with respect
 // to x_i.
 message GradientDef {
-  string function_name = 1;  // The function name.
-  string gradient_func = 2;  // The gradient function's name.
+  string function_name = 1; // The function name.
+  string gradient_func = 2; // The gradient function's name.
 }
