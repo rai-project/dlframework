@@ -2,7 +2,7 @@
 
 ## Model Manifest Format
 
-~~~
+~~~{.yaml}
 name: InceptionNet # name of your model
 framework: MXNets
 kind: CNN
