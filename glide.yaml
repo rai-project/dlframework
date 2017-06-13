@@ -28,7 +28,7 @@ import:
 - package: github.com/rai-project/grpc
 - package: github.com/rai-project/logger
 - package: github.com/sirupsen/logrus
-  version: ~1.0.0
+  version: ^1.0.0
 - package: github.com/songtianyi/go-mxnet-predictor
   subpackages:
   - mxnet
