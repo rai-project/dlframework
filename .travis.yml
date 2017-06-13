@@ -21,6 +21,7 @@ addons:
     - build-essential
 before_install:
   - bash .travis/install-protobuf.sh
+  - export PATH=$HOME/protobuf/bin:$PATH
 install:
   - go get github.com/jteeuwen/go-bindata/...
   - go get github.com/elazarl/go-bindata-assetfs/...
