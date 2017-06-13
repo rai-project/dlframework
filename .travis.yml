@@ -20,7 +20,7 @@ addons:
     - glide
     - build-essential
 before_install:
-  - bash scripts/install-protobuf.sh
+  - bash .travis/install-protobuf.sh
 install:
   - go get github.com/jteeuwen/go-bindata/...
   - go get github.com/elazarl/go-bindata-assetfs/...
