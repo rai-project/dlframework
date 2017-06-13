@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.gostring_all) = true;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+option (gogoproto.goproto_stringer_all) = false;
+option (gogoproto.stringer_all) = true;
+option (gogoproto.populate_all) = true;
+option (gogoproto.testgen_all) = true;
+option (gogoproto.benchgen_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+option go_package = "dlframework";
+
+package carml.org.dlframework;
+
+message ErrorStatus {
+  bool ok = 1 [ (gogoproto.moretags) = "yaml:\"ok,omitempty\"" ];
+  string message = 2 [ (gogoproto.moretags) = "yaml:\"message,omitempty\"" ];
+}
+
+message ContainerArchicture {
+  string gpu = 1 [ (gogoproto.moretags) = "yaml:\"gpu,omitempty\"" ];
+  string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
+}
+
+message ModelInformation {
+  message Input {
+    string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+    repeated int64 dimensions = 2
+        [ (gogoproto.moretags) = "yaml:\"dimensions,omitempty\"" ];
+    repeated float mean = 3
+        [ (gogoproto.moretags) = "yaml:\"mean,omitempty\"" ];
+  }
+
+  message Output {
+    string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+  }
+
+  message Model {
+    message GraphWeights {
+      string graph_url = 1
+          [ (gogoproto.moretags) = "yaml:\"graph_url,omitempty\"" ];
+      string weights_url = 2
+          [ (gogoproto.moretags) = "yaml:\"weights_url,omitempty\"" ];
+    }
+    message Trained {
+      string trained_url = 1
+          [ (gogoproto.moretags) = "yaml:\"trained_url,omitempty\"" ];
+    }
+    oneof model_url {
+      GraphWeights graph_weights = 1
+          [ (gogoproto.moretags) = "yaml:\",flow\"" ];
+      GraphWeights trained_url = 2 [ (gogoproto.moretags) = "yaml:\",flow\"" ];
+    }
+    string features_url = 3
+        [ (gogoproto.moretags) = "yaml:\"features_url,omitempty\"" ];
+  }
+
+  string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+  string description = 2
+      [ (gogoproto.moretags) = "yaml:\"description,omitempty\"" ];
+  map<string, ContainerArchicture> container = 3
+      [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
+  string framework = 4
+      [ (gogoproto.moretags) = "yaml:\"framework,omitempty\"" ];
+  string version = 5 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
+  string type = 6 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+  string dataset_name = 7
+      [ (gogoproto.moretags) = "yaml:\"dataset_name,omitempty\"" ];
+  Input input = 8 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
+  Output output = 9 [ (gogoproto.moretags) = "yaml:\"output,omitempty\"" ];
+  repeated string references = 10
+      [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
+}
+
+message GetModelInformationsResponse {
+  repeated ModelInformation info = 1
+      [ (gogoproto.moretags) = "yaml:\"info,omitempty\"" ];
+}
+
+message GetModelInformationRequest { string name = 1; }
+
+message Null {}
+
+service MXNet {
+  rpc GetModelInformations(Null) returns (GetModelInformationsResponse) {}
+  rpc GetModelInformation(GetModelInformationRequest)
+      returns (ModelInformation) {}
+}
