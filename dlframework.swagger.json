@@ -1,0 +1,204 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "dlframework.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/model/{model_name}": {
+      "post": {
+        "operationId": "GetModelManifest",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkModelManifest"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "model_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "MXNet"
+        ]
+      }
+    },
+    "/v1/model_manifests": {
+      "get": {
+        "operationId": "GetModelManifests",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
+            }
+          }
+        },
+        "tags": [
+          "MXNet"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ModelManifestContainerHardware": {
+      "type": "object",
+      "properties": {
+        "gpu": {
+          "type": "string"
+        },
+        "cpu": {
+          "type": "string"
+        }
+      }
+    },
+    "ModelManifestFramework": {
+      "type": "string",
+      "enum": [
+        "MXNET",
+        "TENSORFLOW",
+        "CAFFE",
+        "CAFFE2",
+        "TORCH7",
+        "THEANO",
+        "OTHER"
+      ],
+      "default": "MXNET"
+    },
+    "ModelManifestModel": {
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "type": "string"
+        },
+        "weights_path": {
+          "type": "string"
+        },
+        "graph_path": {
+          "type": "string"
+        },
+        "is_archive": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
+    "TypeParameter": {
+      "type": "object",
+      "properties": {
+        "parameter": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkGetModelManifestsResponse": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkModelManifest"
+          }
+        }
+      }
+    },
+    "dlframeworkModelManifest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "framework": {
+          "$ref": "#/definitions/ModelManifestFramework"
+        },
+        "container": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/ModelManifestContainerHardware"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "license": {
+          "type": "string"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkModelManifestType"
+          }
+        },
+        "output": {
+          "$ref": "#/definitions/dlframeworkModelManifestType"
+        },
+        "before_preprocess": {
+          "type": "string"
+        },
+        "preprocess": {
+          "type": "string"
+        },
+        "after_preprocess": {
+          "type": "string"
+        },
+        "before_postprocess": {
+          "type": "string"
+        },
+        "postprocess": {
+          "type": "string"
+        },
+        "after_postprocess": {
+          "type": "string"
+        },
+        "model": {
+          "$ref": "#/definitions/ModelManifestModel"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dlframeworkModelManifestType": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/TypeParameter"
+          }
+        }
+      }
+    }
+  }
+}

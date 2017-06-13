@@ -10,10 +10,9 @@ It is generated from these files:
 
 It has these top-level messages:
 	ErrorStatus
-	ContainerArchicture
-	ModelInformation
-	GetModelInformationsResponse
-	GetModelInformationRequest
+	ModelManifest
+	GetModelManifestsResponse
+	GetModelManifestRequest
 	Null
 */
 package dlframework
@@ -27,6 +26,7 @@ import fmt "fmt"
 import go_parser "go/parser"
 import proto "github.com/gogo/protobuf/proto"
 import math "math"
+import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/gogo/protobuf/gogoproto"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -136,15 +136,15 @@ func BenchmarkErrorStatusProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestContainerArchictureProto(t *testing.T) {
+func TestModelManifestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, false)
+	p := NewPopulatedModelManifest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -170,10 +170,10 @@ func TestContainerArchictureProto(t *testing.T) {
 	}
 }
 
-func TestContainerArchictureMarshalTo(t *testing.T) {
+func TestModelManifestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, false)
+	p := NewPopulatedModelManifest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -183,7 +183,7 @@ func TestContainerArchictureMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -198,12 +198,12 @@ func TestContainerArchictureMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkContainerArchictureProtoMarshal(b *testing.B) {
+func BenchmarkModelManifestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ContainerArchicture, 10000)
+	pops := make([]*ModelManifest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedContainerArchicture(popr, false)
+		pops[i] = NewPopulatedModelManifest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -216,18 +216,18 @@ func BenchmarkContainerArchictureProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkContainerArchictureProtoUnmarshal(b *testing.B) {
+func BenchmarkModelManifestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedContainerArchicture(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelManifest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -238,15 +238,15 @@ func BenchmarkContainerArchictureProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformationProto(t *testing.T) {
+func TestModelManifest_TypeProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, false)
+	p := NewPopulatedModelManifest_Type(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -272,10 +272,10 @@ func TestModelInformationProto(t *testing.T) {
 	}
 }
 
-func TestModelInformationMarshalTo(t *testing.T) {
+func TestModelManifest_TypeMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, false)
+	p := NewPopulatedModelManifest_Type(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -285,7 +285,7 @@ func TestModelInformationMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -300,12 +300,12 @@ func TestModelInformationMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformationProtoMarshal(b *testing.B) {
+func BenchmarkModelManifest_TypeProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation, 10000)
+	pops := make([]*ModelManifest_Type, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation(popr, false)
+		pops[i] = NewPopulatedModelManifest_Type(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -318,18 +318,18 @@ func BenchmarkModelInformationProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformationProtoUnmarshal(b *testing.B) {
+func BenchmarkModelManifest_TypeProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelManifest_Type(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -340,15 +340,15 @@ func BenchmarkModelInformationProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_InputProto(t *testing.T) {
+func TestModelManifest_Type_ParameterProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, false)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -374,10 +374,10 @@ func TestModelInformation_InputProto(t *testing.T) {
 	}
 }
 
-func TestModelInformation_InputMarshalTo(t *testing.T) {
+func TestModelManifest_Type_ParameterMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, false)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -387,7 +387,7 @@ func TestModelInformation_InputMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -402,12 +402,12 @@ func TestModelInformation_InputMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_InputProtoMarshal(b *testing.B) {
+func BenchmarkModelManifest_Type_ParameterProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Input, 10000)
+	pops := make([]*ModelManifest_Type_Parameter, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation_Input(popr, false)
+		pops[i] = NewPopulatedModelManifest_Type_Parameter(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -420,18 +420,18 @@ func BenchmarkModelInformation_InputProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformation_InputProtoUnmarshal(b *testing.B) {
+func BenchmarkModelManifest_Type_ParameterProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation_Input(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelManifest_Type_Parameter(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -442,15 +442,15 @@ func BenchmarkModelInformation_InputProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_OutputProto(t *testing.T) {
+func TestModelManifest_ContainerHardwareProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, false)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -476,10 +476,10 @@ func TestModelInformation_OutputProto(t *testing.T) {
 	}
 }
 
-func TestModelInformation_OutputMarshalTo(t *testing.T) {
+func TestModelManifest_ContainerHardwareMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, false)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -489,7 +489,7 @@ func TestModelInformation_OutputMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -504,12 +504,12 @@ func TestModelInformation_OutputMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_OutputProtoMarshal(b *testing.B) {
+func BenchmarkModelManifest_ContainerHardwareProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Output, 10000)
+	pops := make([]*ModelManifest_ContainerHardware, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation_Output(popr, false)
+		pops[i] = NewPopulatedModelManifest_ContainerHardware(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -522,18 +522,18 @@ func BenchmarkModelInformation_OutputProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformation_OutputProtoUnmarshal(b *testing.B) {
+func BenchmarkModelManifest_ContainerHardwareProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation_Output(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelManifest_ContainerHardware(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -544,15 +544,15 @@ func BenchmarkModelInformation_OutputProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_ModelProto(t *testing.T) {
+func TestModelManifest_ModelProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, false)
+	p := NewPopulatedModelManifest_Model(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -578,10 +578,10 @@ func TestModelInformation_ModelProto(t *testing.T) {
 	}
 }
 
-func TestModelInformation_ModelMarshalTo(t *testing.T) {
+func TestModelManifest_ModelMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, false)
+	p := NewPopulatedModelManifest_Model(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -591,7 +591,7 @@ func TestModelInformation_ModelMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -606,12 +606,12 @@ func TestModelInformation_ModelMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_ModelProtoMarshal(b *testing.B) {
+func BenchmarkModelManifest_ModelProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model, 10000)
+	pops := make([]*ModelManifest_Model, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model(popr, false)
+		pops[i] = NewPopulatedModelManifest_Model(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -624,18 +624,18 @@ func BenchmarkModelInformation_ModelProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformation_ModelProtoUnmarshal(b *testing.B) {
+func BenchmarkModelManifest_ModelProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation_Model(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelManifest_Model(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -646,15 +646,15 @@ func BenchmarkModelInformation_ModelProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_Model_GraphWeightsProto(t *testing.T) {
+func TestGetModelManifestsResponseProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+	p := NewPopulatedGetModelManifestsResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -680,10 +680,10 @@ func TestModelInformation_Model_GraphWeightsProto(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_GraphWeightsMarshalTo(t *testing.T) {
+func TestGetModelManifestsResponseMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+	p := NewPopulatedGetModelManifestsResponse(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -693,7 +693,7 @@ func TestModelInformation_Model_GraphWeightsMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -708,12 +708,12 @@ func TestModelInformation_Model_GraphWeightsMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_Model_GraphWeightsProtoMarshal(b *testing.B) {
+func BenchmarkGetModelManifestsResponseProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model_GraphWeights, 10000)
+	pops := make([]*GetModelManifestsResponse, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+		pops[i] = NewPopulatedGetModelManifestsResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -726,18 +726,18 @@ func BenchmarkModelInformation_Model_GraphWeightsProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformation_Model_GraphWeightsProtoUnmarshal(b *testing.B) {
+func BenchmarkGetModelManifestsResponseProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation_Model_GraphWeights(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedGetModelManifestsResponse(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -748,15 +748,15 @@ func BenchmarkModelInformation_Model_GraphWeightsProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_Model_TrainedProto(t *testing.T) {
+func TestGetModelManifestRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, false)
+	p := NewPopulatedGetModelManifestRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_Trained{}
+	msg := &GetModelManifestRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -782,10 +782,10 @@ func TestModelInformation_Model_TrainedProto(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_TrainedMarshalTo(t *testing.T) {
+func TestGetModelManifestRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, false)
+	p := NewPopulatedGetModelManifestRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -795,7 +795,7 @@ func TestModelInformation_Model_TrainedMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_Trained{}
+	msg := &GetModelManifestRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -810,12 +810,12 @@ func TestModelInformation_Model_TrainedMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_Model_TrainedProtoMarshal(b *testing.B) {
+func BenchmarkGetModelManifestRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model_Trained, 10000)
+	pops := make([]*GetModelManifestRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model_Trained(popr, false)
+		pops[i] = NewPopulatedGetModelManifestRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -828,222 +828,18 @@ func BenchmarkModelInformation_Model_TrainedProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkModelInformation_Model_TrainedProtoUnmarshal(b *testing.B) {
+func BenchmarkGetModelManifestRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedModelInformation_Model_Trained(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedGetModelManifestRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ModelInformation_Model_Trained{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += len(datas[i%10000])
-		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
-			panic(err)
-		}
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestGetModelInformationsResponseProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationsResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestGetModelInformationsResponseMarshalTo(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, false)
-	size := p.Size()
-	dAtA := make([]byte, size)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	_, err := p.MarshalTo(dAtA)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationsResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func BenchmarkGetModelInformationsResponseProtoMarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*GetModelInformationsResponse, 10000)
-	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedGetModelInformationsResponse(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
-		if err != nil {
-			panic(err)
-		}
-		total += len(dAtA)
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func BenchmarkGetModelInformationsResponseProtoUnmarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	datas := make([][]byte, 10000)
-	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedGetModelInformationsResponse(popr, false))
-		if err != nil {
-			panic(err)
-		}
-		datas[i] = dAtA
-	}
-	msg := &GetModelInformationsResponse{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += len(datas[i%10000])
-		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
-			panic(err)
-		}
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestGetModelInformationRequestProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationRequest{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestGetModelInformationRequestMarshalTo(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, false)
-	size := p.Size()
-	dAtA := make([]byte, size)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	_, err := p.MarshalTo(dAtA)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationRequest{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func BenchmarkGetModelInformationRequestProtoMarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*GetModelInformationRequest, 10000)
-	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedGetModelInformationRequest(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
-		if err != nil {
-			panic(err)
-		}
-		total += len(dAtA)
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func BenchmarkGetModelInformationRequestProtoUnmarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	datas := make([][]byte, 10000)
-	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedGetModelInformationRequest(popr, false))
-		if err != nil {
-			panic(err)
-		}
-		datas[i] = dAtA
-	}
-	msg := &GetModelInformationRequest{}
+	msg := &GetModelManifestRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1177,16 +973,16 @@ func TestErrorStatusJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestContainerArchictureJSON(t *testing.T) {
+func TestModelManifestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, true)
+	p := NewPopulatedModelManifest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1198,16 +994,16 @@ func TestContainerArchictureJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformationJSON(t *testing.T) {
+func TestModelManifest_TypeJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, true)
+	p := NewPopulatedModelManifest_Type(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1219,16 +1015,16 @@ func TestModelInformationJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformation_InputJSON(t *testing.T) {
+func TestModelManifest_Type_ParameterJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, true)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1240,16 +1036,16 @@ func TestModelInformation_InputJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformation_OutputJSON(t *testing.T) {
+func TestModelManifest_ContainerHardwareJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, true)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1261,16 +1057,16 @@ func TestModelInformation_OutputJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformation_ModelJSON(t *testing.T) {
+func TestModelManifest_ModelJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, true)
+	p := NewPopulatedModelManifest_Model(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1282,16 +1078,16 @@ func TestModelInformation_ModelJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformation_Model_GraphWeightsJSON(t *testing.T) {
+func TestGetModelManifestsResponseJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, true)
+	p := NewPopulatedGetModelManifestsResponse(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1303,58 +1099,16 @@ func TestModelInformation_Model_GraphWeightsJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestModelInformation_Model_TrainedJSON(t *testing.T) {
+func TestGetModelManifestRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, true)
+	p := NewPopulatedGetModelManifestRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ModelInformation_Model_Trained{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestGetModelInformationsResponseJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationsResponse{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestGetModelInformationRequestJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetModelInformationRequest{}
+	msg := &GetModelManifestRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1421,12 +1175,12 @@ func TestErrorStatusProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestContainerArchictureProtoText(t *testing.T) {
+func TestModelManifestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, true)
+	p := NewPopulatedModelManifest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1438,12 +1192,12 @@ func TestContainerArchictureProtoText(t *testing.T) {
 	}
 }
 
-func TestContainerArchictureProtoCompactText(t *testing.T) {
+func TestModelManifestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, true)
+	p := NewPopulatedModelManifest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1455,12 +1209,12 @@ func TestContainerArchictureProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformationProtoText(t *testing.T) {
+func TestModelManifest_TypeProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, true)
+	p := NewPopulatedModelManifest_Type(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1472,12 +1226,12 @@ func TestModelInformationProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformationProtoCompactText(t *testing.T) {
+func TestModelManifest_TypeProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, true)
+	p := NewPopulatedModelManifest_Type(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1489,12 +1243,12 @@ func TestModelInformationProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_InputProtoText(t *testing.T) {
+func TestModelManifest_Type_ParameterProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, true)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1506,12 +1260,12 @@ func TestModelInformation_InputProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_InputProtoCompactText(t *testing.T) {
+func TestModelManifest_Type_ParameterProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, true)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1523,12 +1277,12 @@ func TestModelInformation_InputProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_OutputProtoText(t *testing.T) {
+func TestModelManifest_ContainerHardwareProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, true)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1540,12 +1294,12 @@ func TestModelInformation_OutputProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_OutputProtoCompactText(t *testing.T) {
+func TestModelManifest_ContainerHardwareProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, true)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1557,12 +1311,12 @@ func TestModelInformation_OutputProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_ModelProtoText(t *testing.T) {
+func TestModelManifest_ModelProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, true)
+	p := NewPopulatedModelManifest_Model(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1574,12 +1328,12 @@ func TestModelInformation_ModelProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_ModelProtoCompactText(t *testing.T) {
+func TestModelManifest_ModelProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, true)
+	p := NewPopulatedModelManifest_Model(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1591,12 +1345,12 @@ func TestModelInformation_ModelProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_GraphWeightsProtoText(t *testing.T) {
+func TestGetModelManifestsResponseProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, true)
+	p := NewPopulatedGetModelManifestsResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1608,12 +1362,12 @@ func TestModelInformation_Model_GraphWeightsProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_GraphWeightsProtoCompactText(t *testing.T) {
+func TestGetModelManifestsResponseProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, true)
+	p := NewPopulatedGetModelManifestsResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1625,12 +1379,12 @@ func TestModelInformation_Model_GraphWeightsProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_TrainedProtoText(t *testing.T) {
+func TestGetModelManifestRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, true)
+	p := NewPopulatedGetModelManifestRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ModelInformation_Model_Trained{}
+	msg := &GetModelManifestRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1642,80 +1396,12 @@ func TestModelInformation_Model_TrainedProtoText(t *testing.T) {
 	}
 }
 
-func TestModelInformation_Model_TrainedProtoCompactText(t *testing.T) {
+func TestGetModelManifestRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, true)
+	p := NewPopulatedGetModelManifestRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ModelInformation_Model_Trained{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetModelInformationsResponseProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &GetModelInformationsResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetModelInformationsResponseProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &GetModelInformationsResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetModelInformationRequestProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &GetModelInformationRequest{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetModelInformationRequestProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &GetModelInformationRequest{}
+	msg := &GetModelManifestRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1776,14 +1462,14 @@ func TestErrorStatusVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestContainerArchictureVerboseEqual(t *testing.T) {
+func TestModelManifestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedContainerArchicture(popr, false)
+	p := NewPopulatedModelManifest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ContainerArchicture{}
+	msg := &ModelManifest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1791,14 +1477,14 @@ func TestContainerArchictureVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformationVerboseEqual(t *testing.T) {
+func TestModelManifest_TypeVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation(popr, false)
+	p := NewPopulatedModelManifest_Type(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation{}
+	msg := &ModelManifest_Type{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1806,14 +1492,14 @@ func TestModelInformationVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformation_InputVerboseEqual(t *testing.T) {
+func TestModelManifest_Type_ParameterVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Input(popr, false)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation_Input{}
+	msg := &ModelManifest_Type_Parameter{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1821,14 +1507,14 @@ func TestModelInformation_InputVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformation_OutputVerboseEqual(t *testing.T) {
+func TestModelManifest_ContainerHardwareVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Output(popr, false)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation_Output{}
+	msg := &ModelManifest_ContainerHardware{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1836,14 +1522,14 @@ func TestModelInformation_OutputVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformation_ModelVerboseEqual(t *testing.T) {
+func TestModelManifest_ModelVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model(popr, false)
+	p := NewPopulatedModelManifest_Model(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation_Model{}
+	msg := &ModelManifest_Model{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1851,14 +1537,14 @@ func TestModelInformation_ModelVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformation_Model_GraphWeightsVerboseEqual(t *testing.T) {
+func TestGetModelManifestsResponseVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+	p := NewPopulatedGetModelManifestsResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation_Model_GraphWeights{}
+	msg := &GetModelManifestsResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1866,44 +1552,14 @@ func TestModelInformation_Model_GraphWeightsVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestModelInformation_Model_TrainedVerboseEqual(t *testing.T) {
+func TestGetModelManifestRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_Trained(popr, false)
+	p := NewPopulatedGetModelManifestRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ModelInformation_Model_Trained{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		panic(err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
-	}
-}
-func TestGetModelInformationsResponseVerboseEqual(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationsResponse(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	msg := &GetModelInformationsResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		panic(err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
-	}
-}
-func TestGetModelInformationRequestVerboseEqual(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationRequest(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	msg := &GetModelInformationRequest{}
+	msg := &GetModelManifestRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1939,9 +1595,9 @@ func TestErrorStatusGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestContainerArchictureGoString(t *testing.T) {
+func TestModelManifestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedContainerArchicture(popr, false)
+	p := NewPopulatedModelManifest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -1952,9 +1608,9 @@ func TestContainerArchictureGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformationGoString(t *testing.T) {
+func TestModelManifest_TypeGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation(popr, false)
+	p := NewPopulatedModelManifest_Type(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -1965,9 +1621,9 @@ func TestModelInformationGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformation_InputGoString(t *testing.T) {
+func TestModelManifest_Type_ParameterGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Input(popr, false)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -1978,9 +1634,9 @@ func TestModelInformation_InputGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformation_OutputGoString(t *testing.T) {
+func TestModelManifest_ContainerHardwareGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Output(popr, false)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -1991,9 +1647,9 @@ func TestModelInformation_OutputGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformation_ModelGoString(t *testing.T) {
+func TestModelManifest_ModelGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model(popr, false)
+	p := NewPopulatedModelManifest_Model(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -2004,9 +1660,9 @@ func TestModelInformation_ModelGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformation_Model_GraphWeightsGoString(t *testing.T) {
+func TestGetModelManifestsResponseGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+	p := NewPopulatedGetModelManifestsResponse(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -2017,35 +1673,9 @@ func TestModelInformation_Model_GraphWeightsGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestModelInformation_Model_TrainedGoString(t *testing.T) {
+func TestGetModelManifestRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_Trained(popr, false)
-	s1 := p.GoString()
-	s2 := fmt.Sprintf("%#v", p)
-	if s1 != s2 {
-		t.Fatalf("GoString want %v got %v", s1, s2)
-	}
-	_, err := go_parser.ParseExpr(s1)
-	if err != nil {
-		panic(err)
-	}
-}
-func TestGetModelInformationsResponseGoString(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationsResponse(popr, false)
-	s1 := p.GoString()
-	s2 := fmt.Sprintf("%#v", p)
-	if s1 != s2 {
-		t.Fatalf("GoString want %v got %v", s1, s2)
-	}
-	_, err := go_parser.ParseExpr(s1)
-	if err != nil {
-		panic(err)
-	}
-}
-func TestGetModelInformationRequestGoString(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationRequest(popr, false)
+	p := NewPopulatedGetModelManifestRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -2105,10 +1735,10 @@ func BenchmarkErrorStatusSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestContainerArchictureSize(t *testing.T) {
+func TestModelManifestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedContainerArchicture(popr, true)
+	p := NewPopulatedModelManifest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2127,12 +1757,12 @@ func TestContainerArchictureSize(t *testing.T) {
 	}
 }
 
-func BenchmarkContainerArchictureSize(b *testing.B) {
+func BenchmarkModelManifestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ContainerArchicture, 1000)
+	pops := make([]*ModelManifest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedContainerArchicture(popr, false)
+		pops[i] = NewPopulatedModelManifest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2141,10 +1771,10 @@ func BenchmarkContainerArchictureSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformationSize(t *testing.T) {
+func TestModelManifest_TypeSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation(popr, true)
+	p := NewPopulatedModelManifest_Type(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2163,12 +1793,12 @@ func TestModelInformationSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformationSize(b *testing.B) {
+func BenchmarkModelManifest_TypeSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation, 1000)
+	pops := make([]*ModelManifest_Type, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation(popr, false)
+		pops[i] = NewPopulatedModelManifest_Type(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2177,10 +1807,10 @@ func BenchmarkModelInformationSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_InputSize(t *testing.T) {
+func TestModelManifest_Type_ParameterSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Input(popr, true)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2199,12 +1829,12 @@ func TestModelInformation_InputSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_InputSize(b *testing.B) {
+func BenchmarkModelManifest_Type_ParameterSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Input, 1000)
+	pops := make([]*ModelManifest_Type_Parameter, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation_Input(popr, false)
+		pops[i] = NewPopulatedModelManifest_Type_Parameter(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2213,10 +1843,10 @@ func BenchmarkModelInformation_InputSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_OutputSize(t *testing.T) {
+func TestModelManifest_ContainerHardwareSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Output(popr, true)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2235,12 +1865,12 @@ func TestModelInformation_OutputSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_OutputSize(b *testing.B) {
+func BenchmarkModelManifest_ContainerHardwareSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Output, 1000)
+	pops := make([]*ModelManifest_ContainerHardware, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation_Output(popr, false)
+		pops[i] = NewPopulatedModelManifest_ContainerHardware(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2249,10 +1879,10 @@ func BenchmarkModelInformation_OutputSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_ModelSize(t *testing.T) {
+func TestModelManifest_ModelSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model(popr, true)
+	p := NewPopulatedModelManifest_Model(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2271,12 +1901,12 @@ func TestModelInformation_ModelSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_ModelSize(b *testing.B) {
+func BenchmarkModelManifest_ModelSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model, 1000)
+	pops := make([]*ModelManifest_Model, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model(popr, false)
+		pops[i] = NewPopulatedModelManifest_Model(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2285,10 +1915,10 @@ func BenchmarkModelInformation_ModelSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_Model_GraphWeightsSize(t *testing.T) {
+func TestGetModelManifestsResponseSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, true)
+	p := NewPopulatedGetModelManifestsResponse(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2307,12 +1937,12 @@ func TestModelInformation_Model_GraphWeightsSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_Model_GraphWeightsSize(b *testing.B) {
+func BenchmarkGetModelManifestsResponseSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model_GraphWeights, 1000)
+	pops := make([]*GetModelManifestsResponse, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+		pops[i] = NewPopulatedGetModelManifestsResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2321,10 +1951,10 @@ func BenchmarkModelInformation_Model_GraphWeightsSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestModelInformation_Model_TrainedSize(t *testing.T) {
+func TestGetModelManifestRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedModelInformation_Model_Trained(popr, true)
+	p := NewPopulatedGetModelManifestRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2343,84 +1973,12 @@ func TestModelInformation_Model_TrainedSize(t *testing.T) {
 	}
 }
 
-func BenchmarkModelInformation_Model_TrainedSize(b *testing.B) {
+func BenchmarkGetModelManifestRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ModelInformation_Model_Trained, 1000)
+	pops := make([]*GetModelManifestRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedModelInformation_Model_Trained(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += pops[i%1000].Size()
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestGetModelInformationsResponseSize(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationsResponse(popr, true)
-	size2 := github_com_gogo_protobuf_proto.Size(p)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	size := p.Size()
-	if len(dAtA) != size {
-		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
-	}
-	if size2 != size {
-		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
-	}
-	size3 := github_com_gogo_protobuf_proto.Size(p)
-	if size3 != size {
-		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
-	}
-}
-
-func BenchmarkGetModelInformationsResponseSize(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*GetModelInformationsResponse, 1000)
-	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedGetModelInformationsResponse(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += pops[i%1000].Size()
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestGetModelInformationRequestSize(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetModelInformationRequest(popr, true)
-	size2 := github_com_gogo_protobuf_proto.Size(p)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	size := p.Size()
-	if len(dAtA) != size {
-		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
-	}
-	if size2 != size {
-		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
-	}
-	size3 := github_com_gogo_protobuf_proto.Size(p)
-	if size3 != size {
-		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
-	}
-}
-
-func BenchmarkGetModelInformationRequestSize(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*GetModelInformationRequest, 1000)
-	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedGetModelInformationRequest(popr, false)
+		pops[i] = NewPopulatedGetModelManifestRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2474,81 +2032,63 @@ func TestErrorStatusStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestContainerArchictureStringer(t *testing.T) {
+func TestModelManifestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedContainerArchicture(popr, false)
+	p := NewPopulatedModelManifest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformationStringer(t *testing.T) {
+func TestModelManifest_TypeStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation(popr, false)
+	p := NewPopulatedModelManifest_Type(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformation_InputStringer(t *testing.T) {
+func TestModelManifest_Type_ParameterStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Input(popr, false)
+	p := NewPopulatedModelManifest_Type_Parameter(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformation_OutputStringer(t *testing.T) {
+func TestModelManifest_ContainerHardwareStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Output(popr, false)
+	p := NewPopulatedModelManifest_ContainerHardware(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformation_ModelStringer(t *testing.T) {
+func TestModelManifest_ModelStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model(popr, false)
+	p := NewPopulatedModelManifest_Model(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformation_Model_GraphWeightsStringer(t *testing.T) {
+func TestGetModelManifestsResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_GraphWeights(popr, false)
+	p := NewPopulatedGetModelManifestsResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestModelInformation_Model_TrainedStringer(t *testing.T) {
+func TestGetModelManifestRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedModelInformation_Model_Trained(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestGetModelInformationsResponseStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationsResponse(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestGetModelInformationRequestStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetModelInformationRequest(popr, false)
+	p := NewPopulatedGetModelManifestRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

@@ -20,8 +20,8 @@ description: >
   It consists of fewer than 25M parameters.
 references: # references to papers / websites / etc.. describing the model
   - https://arxiv.org/pdf/1512.00567.pdf
-# licence of the model
-licence: MIT
+# license of the model
+license: MIT
 # inputs to the model 
 inputs:
   # first input type for the model
