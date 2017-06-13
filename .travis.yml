@@ -8,12 +8,19 @@ matrix:
     - go: tip
 dist: trusty
 sudo: false
+cache:
+  directories:
+  - "$HOME/protobuf"
 addons:
   apt:
     sources:
     - sourceline: ppa:masterminds/glide
+    - sourceline: ppa:ubuntu-toolchain-r/test
     packages:
     - glide
+    - build-essential
+before_install:
+  - bash scripts/install-protobuf.sh
 install:
   - go get github.com/jteeuwen/go-bindata/...
   - go get github.com/elazarl/go-bindata-assetfs/...
