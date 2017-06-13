@@ -2,7 +2,7 @@
 
 ## Model Manifest Format
 
-~~~{.yaml}
+```yaml
 name: InceptionNet # name of your model
 framework: MXNets
 kind: CNN
@@ -48,4 +48,4 @@ model:
   weights_path: Inception-BN-0126.params
   is_archive: false 
 
-~~~
+```
