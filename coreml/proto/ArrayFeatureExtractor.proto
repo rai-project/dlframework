@@ -6,7 +6,7 @@
 syntax = "proto3";
 option optimize_for = LITE_RUNTIME;
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * An array feature extractor.
@@ -14,6 +14,4 @@ package CoreML.Specification;
  * Given an index, extracts the value at that index from its array input.
  * Indexes are zero-based.
  */
-message ArrayFeatureExtractor {
-    repeated uint64 extractIndex = 1;
-}
+message ArrayFeatureExtractor { repeated uint64 extractIndex = 1; }

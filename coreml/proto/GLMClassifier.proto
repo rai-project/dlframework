@@ -8,36 +8,34 @@ option optimize_for = LITE_RUNTIME;
 
 import public "DataStructures.proto";
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * A generalized linear model classifier.
  */
 message GLMClassifier {
-    message DoubleArray {
-        repeated double value = 1;
-    }
+  message DoubleArray { repeated double value = 1; }
 
-    enum PostEvaluationTransform {
-        Logit = 0;
-        Probit = 1; /// Only binary classification is supported for probit
-    }
+  enum PostEvaluationTransform {
+    Logit = 0;
+    Probit = 1; /// Only binary classification is supported for probit
+  }
 
-    enum ClassEncoding {
-        ReferenceClass = 0; /// First class is the reference class
-        OneVsRest = 1; /// Also called One vs All
-    }
+  enum ClassEncoding {
+    ReferenceClass = 0; /// First class is the reference class
+    OneVsRest = 1;      /// Also called One vs All
+  }
 
-    repeated DoubleArray weights = 1;
-    repeated double offset = 2;
-    PostEvaluationTransform postEvaluationTransform = 3;
-    ClassEncoding classEncoding = 4;
+  repeated DoubleArray weights = 1;
+  repeated double offset = 2;
+  PostEvaluationTransform postEvaluationTransform = 3;
+  ClassEncoding classEncoding = 4;
 
-    /**
-     * Required class label mapping.
-     */
-    oneof ClassLabels {
-        StringVector stringClassLabels = 100;
-        Int64Vector int64ClassLabels = 101;
-    }
+  /**
+   * Required class label mapping.
+   */
+  oneof ClassLabels {
+    StringVector stringClassLabels = 100;
+    Int64Vector int64ClassLabels = 101;
+  }
 }

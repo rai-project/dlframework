@@ -8,7 +8,7 @@ option optimize_for = LITE_RUNTIME;
 
 import public "DataStructures.proto";
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * A transformer that replaces missing values with a default value,
@@ -25,19 +25,19 @@ package CoreML.Specification;
  * value in ``imputedDoubleArray``.
  */
 message Imputer {
-    oneof ImputedValue {
-        double imputedDoubleValue = 1;
-        int64 imputedInt64Value = 2;
-        string imputedStringValue = 3;
-        DoubleVector imputedDoubleArray = 4;
-        Int64Vector imputedInt64Array = 5;
-        StringToDoubleMap imputedStringDictionary = 6;
-        Int64ToDoubleMap imputedInt64Dictionary = 7;
-    }
+  oneof ImputedValue {
+    double imputedDoubleValue = 1;
+    int64 imputedInt64Value = 2;
+    string imputedStringValue = 3;
+    DoubleVector imputedDoubleArray = 4;
+    Int64Vector imputedInt64Array = 5;
+    StringToDoubleMap imputedStringDictionary = 6;
+    Int64ToDoubleMap imputedInt64Dictionary = 7;
+  }
 
-    oneof ReplaceValue {
-        double replaceDoubleValue = 11;
-        int64 replaceInt64Value = 12;
-        string replaceStringValue = 13;
-    }
+  oneof ReplaceValue {
+    double replaceDoubleValue = 11;
+    int64 replaceInt64Value = 12;
+    string replaceStringValue = 13;
+  }
 }

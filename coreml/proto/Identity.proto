@@ -6,7 +6,7 @@
 syntax = "proto3";
 option optimize_for = LITE_RUNTIME;
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * An identity model.
@@ -14,5 +14,4 @@ package CoreML.Specification;
  * This model returns given inputs as outputs, unchanged.
  * Intended to be used for testing purposes.
  */
-message Identity {
-}
+message Identity {}

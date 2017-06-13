@@ -6,7 +6,7 @@
 syntax = "proto3";
 option optimize_for = LITE_RUNTIME;
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * A scaling operation.
@@ -29,6 +29,6 @@ package CoreML.Specification;
  * error is generated.
  */
 message Scaler {
-    repeated double shiftValue = 1;
-    repeated double scaleValue = 2;
+  repeated double shiftValue = 1;
+  repeated double scaleValue = 2;
 }

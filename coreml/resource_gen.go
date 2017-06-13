@@ -1,0 +1,3 @@
+//go:generate protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go --proto_path=./proto --gogofaster_out=plugins=grpc:. proto/ArrayFeatureExtractor.proto proto/CategoricalMapping.proto proto/DataStructures.proto proto/DictVectorizer.proto proto/FeatureTypes.proto proto/FeatureVectorizer.proto proto/GLMClassifier.proto proto/GLMRegressor.proto proto/Identity.proto proto/Imputer.proto proto/Model.proto proto/NeuralNetwork.proto proto/Normalizer.proto proto/OneHotEncoder.proto proto/Scaler.proto proto/SVM.proto proto/TreeEnsemble.proto
+//go:generate go-bindata -nomemcopy -prefix builtin_models/ -pkg coreml -o builtin_models_static.go -ignore=.DS_Store ./builtin_models/...
+package coreml

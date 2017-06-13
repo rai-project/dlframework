@@ -6,7 +6,7 @@
 syntax = "proto3";
 option optimize_for = LITE_RUNTIME;
 
-package CoreML.Specification;
+package CoreML;
 
 /**
  * A FeatureVectorizer puts one or more features into a single array.
@@ -17,10 +17,10 @@ package CoreML.Specification;
  * ``inputDimensions`` is a zero based index.
  */
 message FeatureVectorizer {
-    message InputColumn {
-        string inputColumn = 1;
-        uint64 inputDimensions = 2;
-    }
+  message InputColumn {
+    string inputColumn = 1;
+    uint64 inputDimensions = 2;
+  }
 
-    repeated InputColumn inputList = 1;
+  repeated InputColumn inputList = 1;
 }
