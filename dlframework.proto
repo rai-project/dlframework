@@ -28,7 +28,7 @@ message ContainerArchicture {
   string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
 }
 
-message ModelInformation {
+message ModelManifest {
   message Input {
     string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
     repeated int64 dimensions = 2
@@ -43,19 +43,14 @@ message ModelInformation {
 
   message Model {
     message GraphWeights {
-      string graph_url = 1
-          [ (gogoproto.moretags) = "yaml:\"graph_url,omitempty\"" ];
-      string weights_url = 2
-          [ (gogoproto.moretags) = "yaml:\"weights_url,omitempty\"" ];
-    }
-    message Trained {
-      string trained_url = 1
-          [ (gogoproto.moretags) = "yaml:\"trained_url,omitempty\"" ];
-    }
-    oneof model_url {
-      GraphWeights graph_weights = 1
-          [ (gogoproto.moretags) = "yaml:\",flow\"" ];
-      GraphWeights trained_url = 2 [ (gogoproto.moretags) = "yaml:\",flow\"" ];
+      string base_url = 1
+          [ (gogoproto.moretags) = "yaml:\"base_url,omitempty\"" ];
+      string weights_path = 2
+          [ (gogoproto.moretags) = "yaml:\"weights_path,omitempty\"" ];
+      string graph_path = 3
+          [ (gogoproto.moretags) = "yaml:\"graph_path,omitempty\"" ];
+      bool is_archive = 4
+          [ (gogoproto.moretags) = "yaml:\"is_archive,omitempty\"" ];
     }
     string features_url = 3
         [ (gogoproto.moretags) = "yaml:\"features_url,omitempty\"" ];
@@ -78,17 +73,16 @@ message ModelInformation {
       [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
 }
 
-message GetModelInformationsResponse {
-  repeated ModelInformation info = 1
+message GetModelManifestsResponse {
+  repeated ModelManifest manifest = 1
       [ (gogoproto.moretags) = "yaml:\"info,omitempty\"" ];
 }
 
-message GetModelInformationRequest { string name = 1; }
+message GetModelManifestRequest { string model_name = 1; }
 
 message Null {}
 
 service MXNet {
-  rpc GetModelInformations(Null) returns (GetModelInformationsResponse) {}
-  rpc GetModelInformation(GetModelInformationRequest)
-      returns (ModelInformation) {}
+  rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {}
+  rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {}
 }
