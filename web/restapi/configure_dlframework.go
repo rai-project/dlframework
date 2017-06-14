@@ -53,9 +53,6 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.CarmlPredictHandler = carml.PredictHandlerFunc(func(params carml.PredictParams) middleware.Responder {
 		return middleware.NotImplemented("operation carml.Predict has not yet been implemented")
 	})
-	api.CarmlPredictUrlxHandler = carml.PredictUrlxHandlerFunc(func(params carml.PredictUrlxParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.PredictUrlx has not yet been implemented")
-	})
 
 	api.ServerShutdown = func() {}
 

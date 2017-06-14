@@ -39,3 +39,5 @@ dist/
 cmd/rai/rai
 cmd/raid/raid
 debug
+
+dlframework.versioned.swagger.json

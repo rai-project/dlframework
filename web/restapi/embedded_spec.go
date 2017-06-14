@@ -24,8 +24,9 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "title": "dlframework.proto",
-    "version": "version not set"
+    "description": "TODO... fillme.",
+    "title": "CarML DLFramework",
+    "version": "1.0.0"
   },
   "paths": {
     "/v1/carml/framework/{framework_name}/info": {
@@ -159,8 +160,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "byte"
+              "$ref": "#/definitions/dlframeworkPredictRequest"
             }
           }
         ],
@@ -168,43 +168,6 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictResponse"
-            }
-          }
-        }
-      }
-    },
-    "/v1/carml/{framework_name}/{model_name}/predict_url": {
-      "post": {
-        "tags": [
-          "carml"
-        ],
-        "operationId": "PredictURLx",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "framework_name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "name": "model_name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLResponse"
             }
           }
         }
@@ -387,24 +350,32 @@ func init() {
         }
       }
     },
-    "dlframeworkPredictResponse": {
+    "dlframeworkPredictRequest": {
       "type": "object",
       "properties": {
-        "error": {
-          "$ref": "#/definitions/dlframeworkErrorStatus"
+        "data": {
+          "type": "string",
+          "format": "byte"
         },
-        "features": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkPredictionFeature"
-          }
+        "framework_name": {
+          "type": "string"
         },
-        "id": {
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "url": {
           "type": "string"
         }
       }
     },
-    "dlframeworkPredictURLResponse": {
+    "dlframeworkPredictResponse": {
       "type": "object",
       "properties": {
         "error": {

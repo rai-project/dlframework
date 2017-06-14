@@ -190,34 +190,6 @@ func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
 
 }
 
-/*
-PredictUrlx predict urlx API
-*/
-func (a *Client) PredictUrlx(params *PredictUrlxParams) (*PredictUrlxOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPredictUrlxParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "PredictURLx",
-		Method:             "POST",
-		PathPattern:        "/v1/carml/{framework_name}/{model_name}/predict_url",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &PredictUrlxReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*PredictUrlxOK), nil
-
-}
-
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

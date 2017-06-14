@@ -26,8 +26,8 @@ func main() {
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "dlframework.proto"
-	parser.LongDescription = swaggerSpec.Spec().Info.Description
+	parser.ShortDescription = "CarML DLFramework"
+	parser.LongDescription = "TODO... fillme."
 
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {

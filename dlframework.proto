@@ -113,18 +113,15 @@ message Null {}
 message PredictRequest {
   string model_name = 1
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string framework_name = 2
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+  string framework_name = 3
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  bytes data = 3 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   int32 limit = 4 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-}
-message PredictURLRequest {
-  string model_name = 1
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string framework_name = 2
-      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string url = 3 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
-  int32 limit = 4 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  oneof input {
+    bytes data = 5 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+    string url = 6 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
+  };
 }
 
 message PredictionFeature {
@@ -135,13 +132,6 @@ message PredictionFeature {
 }
 
 message PredictResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  repeated PredictionFeature features = 2
-      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
-  ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
-}
-
-message PredictURLResponse {
   string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
   repeated PredictionFeature features = 2
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
@@ -181,14 +171,7 @@ service carml {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post : "/v1/carml/{framework_name}/{model_name}/predict",
-      body : "data"
-    };
-  }
-
-  rpc PredictByURL(PredictURLRequest) returns (PredictURLResponse) {
-    option (google.api.http) = {
-      post : "/v1/carml/{framework_name}/{model_name}/predict_url",
-      body : "url"
+      body : "*"
     };
   }
 }

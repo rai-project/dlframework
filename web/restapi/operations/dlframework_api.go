@@ -53,13 +53,10 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		CarmlPredictHandler: carml.PredictHandlerFunc(func(params carml.PredictParams) middleware.Responder {
 			return middleware.NotImplemented("operation CarmlPredict has not yet been implemented")
 		}),
-		CarmlPredictUrlxHandler: carml.PredictUrlxHandlerFunc(func(params carml.PredictUrlxParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlPredictUrlx has not yet been implemented")
-		}),
 	}
 }
 
-/*DlframeworkAPI the dlframework API */
+/*DlframeworkAPI TODO... fillme. */
 type DlframeworkAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -97,8 +94,6 @@ type DlframeworkAPI struct {
 	CarmlGetModelManifestsHandler carml.GetModelManifestsHandler
 	// CarmlPredictHandler sets the operation handler for the predict operation
 	CarmlPredictHandler carml.PredictHandler
-	// CarmlPredictUrlxHandler sets the operation handler for the predict urlx operation
-	CarmlPredictUrlxHandler carml.PredictUrlxHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -184,10 +179,6 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.CarmlPredictHandler == nil {
 		unregistered = append(unregistered, "carml.PredictHandler")
-	}
-
-	if o.CarmlPredictUrlxHandler == nil {
-		unregistered = append(unregistered, "carml.PredictUrlxHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -302,11 +293,6 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v1/carml/{framework_name}/{model_name}/predict"] = carml.NewPredict(o.context, o.CarmlPredictHandler)
-
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/v1/carml/{framework_name}/{model_name}/predict_url"] = carml.NewPredictUrlx(o.context, o.CarmlPredictUrlxHandler)
 
 }
 

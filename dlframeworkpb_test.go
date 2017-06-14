@@ -19,10 +19,8 @@ It has these top-level messages:
 	GetFrameworkManifestRequest
 	Null
 	PredictRequest
-	PredictURLRequest
 	PredictionFeature
 	PredictResponse
-	PredictURLResponse
 */
 package dlframework
 
@@ -1369,108 +1367,6 @@ func BenchmarkPredictRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLRequestProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLRequest{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestPredictURLRequestMarshalTo(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, false)
-	size := p.Size()
-	dAtA := make([]byte, size)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	_, err := p.MarshalTo(dAtA)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLRequest{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func BenchmarkPredictURLRequestProtoMarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*PredictURLRequest, 10000)
-	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictURLRequest(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
-		if err != nil {
-			panic(err)
-		}
-		total += len(dAtA)
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func BenchmarkPredictURLRequestProtoUnmarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	datas := make([][]byte, 10000)
-	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLRequest(popr, false))
-		if err != nil {
-			panic(err)
-		}
-		datas[i] = dAtA
-	}
-	msg := &PredictURLRequest{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += len(datas[i%10000])
-		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
-			panic(err)
-		}
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
 func TestPredictionFeatureProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1665,108 +1561,6 @@ func BenchmarkPredictResponseProtoUnmarshal(b *testing.B) {
 		datas[i] = dAtA
 	}
 	msg := &PredictResponse{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += len(datas[i%10000])
-		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
-			panic(err)
-		}
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestPredictURLResponseProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestPredictURLResponseMarshalTo(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, false)
-	size := p.Size()
-	dAtA := make([]byte, size)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	_, err := p.MarshalTo(dAtA)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func BenchmarkPredictURLResponseProtoMarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*PredictURLResponse, 10000)
-	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictURLResponse(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
-		if err != nil {
-			panic(err)
-		}
-		total += len(dAtA)
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func BenchmarkPredictURLResponseProtoUnmarshal(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	datas := make([][]byte, 10000)
-	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLResponse(popr, false))
-		if err != nil {
-			panic(err)
-		}
-		datas[i] = dAtA
-	}
-	msg := &PredictURLResponse{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2050,27 +1844,6 @@ func TestPredictRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictURLRequestJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLRequest{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
 func TestPredictionFeatureJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -2102,27 +1875,6 @@ func TestPredictResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &PredictResponse{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestPredictURLResponseJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &PredictURLResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2576,40 +2328,6 @@ func TestPredictRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictURLRequestProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictURLRequest{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestPredictURLRequestProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictURLRequest{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
 func TestPredictionFeatureProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -2667,40 +2385,6 @@ func TestPredictResponseProtoCompactText(t *testing.T) {
 	p := NewPopulatedPredictResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &PredictResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestPredictURLResponseProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictURLResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestPredictURLResponseProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictURLResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2907,21 +2591,6 @@ func TestPredictRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictURLRequestVerboseEqual(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLRequest(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	msg := &PredictURLRequest{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		panic(err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
-	}
-}
 func TestPredictionFeatureVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionFeature(popr, false)
@@ -2945,21 +2614,6 @@ func TestPredictResponseVerboseEqual(t *testing.T) {
 		panic(err)
 	}
 	msg := &PredictResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		panic(err)
-	}
-	if err := p.VerboseEqual(msg); err != nil {
-		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
-	}
-}
-func TestPredictURLResponseVerboseEqual(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLResponse(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		panic(err)
-	}
-	msg := &PredictURLResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3136,19 +2790,6 @@ func TestPredictRequestGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestPredictURLRequestGoString(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLRequest(popr, false)
-	s1 := p.GoString()
-	s2 := fmt.Sprintf("%#v", p)
-	if s1 != s2 {
-		t.Fatalf("GoString want %v got %v", s1, s2)
-	}
-	_, err := go_parser.ParseExpr(s1)
-	if err != nil {
-		panic(err)
-	}
-}
 func TestPredictionFeatureGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionFeature(popr, false)
@@ -3165,19 +2806,6 @@ func TestPredictionFeatureGoString(t *testing.T) {
 func TestPredictResponseGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictResponse(popr, false)
-	s1 := p.GoString()
-	s2 := fmt.Sprintf("%#v", p)
-	if s1 != s2 {
-		t.Fatalf("GoString want %v got %v", s1, s2)
-	}
-	_, err := go_parser.ParseExpr(s1)
-	if err != nil {
-		panic(err)
-	}
-}
-func TestPredictURLResponseGoString(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLResponse(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -3656,42 +3284,6 @@ func BenchmarkPredictRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLRequestSize(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLRequest(popr, true)
-	size2 := github_com_gogo_protobuf_proto.Size(p)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	size := p.Size()
-	if len(dAtA) != size {
-		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
-	}
-	if size2 != size {
-		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
-	}
-	size3 := github_com_gogo_protobuf_proto.Size(p)
-	if size3 != size {
-		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
-	}
-}
-
-func BenchmarkPredictURLRequestSize(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*PredictURLRequest, 1000)
-	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictURLRequest(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += pops[i%1000].Size()
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
 func TestPredictionFeatureSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -3756,42 +3348,6 @@ func BenchmarkPredictResponseSize(b *testing.B) {
 	pops := make([]*PredictResponse, 1000)
 	for i := 0; i < 1000; i++ {
 		pops[i] = NewPopulatedPredictResponse(popr, false)
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		total += pops[i%1000].Size()
-	}
-	b.SetBytes(int64(total / b.N))
-}
-
-func TestPredictURLResponseSize(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLResponse(popr, true)
-	size2 := github_com_gogo_protobuf_proto.Size(p)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	size := p.Size()
-	if len(dAtA) != size {
-		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
-	}
-	if size2 != size {
-		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
-	}
-	size3 := github_com_gogo_protobuf_proto.Size(p)
-	if size3 != size {
-		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
-	}
-}
-
-func BenchmarkPredictURLResponseSize(b *testing.B) {
-	popr := math_rand.New(math_rand.NewSource(616))
-	total := 0
-	pops := make([]*PredictURLResponse, 1000)
-	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictURLResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -3917,15 +3473,6 @@ func TestPredictRequestStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictURLRequestStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLRequest(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
 func TestPredictionFeatureStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionFeature(popr, false)
@@ -3938,15 +3485,6 @@ func TestPredictionFeatureStringer(t *testing.T) {
 func TestPredictResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictResponse(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestPredictURLResponseStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

@@ -12,6 +12,8 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewPredictParams creates a new PredictParams object
@@ -34,7 +36,7 @@ type PredictParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *strfmt.Base64
+	Body *models.DlframeworkPredictRequest
 	/*
 	  Required: true
 	  In: path
@@ -55,7 +57,7 @@ func (o *PredictParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body strfmt.Base64
+		var body models.DlframeworkPredictRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body"))
@@ -64,6 +66,9 @@ func (o *PredictParams) BindRequest(r *http.Request, route *middleware.MatchedRo
 			}
 
 		} else {
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
 
 			if len(res) == 0 {
 				o.Body = &body

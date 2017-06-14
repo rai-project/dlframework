@@ -14,6 +14,8 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewPredictParams creates a new PredictParams object
@@ -61,7 +63,7 @@ for the predict operation typically these are written to a http.Request
 type PredictParams struct {
 
 	/*Body*/
-	Body *strfmt.Base64
+	Body *models.DlframeworkPredictRequest
 	/*FrameworkName*/
 	FrameworkName string
 	/*ModelName*/
@@ -106,13 +108,13 @@ func (o *PredictParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the predict params
-func (o *PredictParams) WithBody(body *strfmt.Base64) *PredictParams {
+func (o *PredictParams) WithBody(body *models.DlframeworkPredictRequest) *PredictParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the predict params
-func (o *PredictParams) SetBody(body *strfmt.Base64) {
+func (o *PredictParams) SetBody(body *models.DlframeworkPredictRequest) {
 	o.Body = body
 }
 
@@ -145,6 +147,10 @@ func (o *PredictParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 		return err
 	}
 	var res []error
+
+	if o.Body == nil {
+		o.Body = new(models.DlframeworkPredictRequest)
+	}
 
 	if err := r.SetBodyParam(o.Body); err != nil {
 		return err

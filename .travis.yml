@@ -19,8 +19,9 @@ addons:
     packages:
     - glide
     - build-essential
+    - jq
 install:
-  - bash .travis/install-protobuf.sh
+  - bash scripts/install-protobuf.sh
   - export PATH=$HOME/protobuf/bin:$PATH
   - go get github.com/jteeuwen/go-bindata/...
   - go get github.com/elazarl/go-bindata-assetfs/...

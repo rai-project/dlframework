@@ -156,46 +156,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "byte"
-            }
-          }
-        ],
-        "tags": [
-          "carml"
-        ]
-      }
-    },
-    "/v1/carml/{framework_name}/{model_name}/predict_url": {
-      "post": {
-        "operationId": "PredictURLx",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "string"
+              "$ref": "#/definitions/dlframeworkPredictRequest"
             }
           }
         ],
@@ -381,24 +342,32 @@
         }
       }
     },
-    "dlframeworkPredictResponse": {
+    "dlframeworkPredictRequest": {
       "type": "object",
       "properties": {
-        "id": {
+        "model_name": {
           "type": "string"
         },
-        "features": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkPredictionFeature"
-          }
+        "model_version": {
+          "type": "string"
         },
-        "error": {
-          "$ref": "#/definitions/dlframeworkErrorStatus"
+        "framework_name": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
-    "dlframeworkPredictURLResponse": {
+    "dlframeworkPredictResponse": {
       "type": "object",
       "properties": {
         "id": {
