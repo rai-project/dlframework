@@ -3,11 +3,34 @@ package dlframework
 import (
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/pkg/errors"
 	"golang.org/x/sync/syncmap"
 )
 
 var modelRegistry = syncmap.Map{}
+
+func (m *ModelManifest) Validate() error {
+	name := m.GetName()
+	if name == "" {
+		return errors.New("model name cannot be empty")
+	}
+	version := m.GetVersion()
+	if version == "" {
+		version = "latest"
+	}
+	if version != "latest" {
+		if _, err := semver.NewVersion(m.GetVersion()); err != nil {
+			return errors.Wrapf(err,
+				"the version %s for the model %s is not in semantic version format",
+				m.GetVersion(),
+				m.GetName(),
+			)
+		}
+	}
+	panic("not implemented...")
+	return nil
+}
 
 func (m ModelManifest) CannonicalName() (string, error) {
 	if m.GetFramework() == nil {
@@ -21,8 +44,7 @@ func (m ModelManifest) CannonicalName() (string, error) {
 	if !ok {
 		return "", errors.Wrapf(err, "cannot get frame %s for model %s in the registry", frameworkName, m.GetName())
 	}
-	framework, ok := fm.(FrameworkManifest)
-	if !ok {
+	if _, ok := fm.(FrameworkManifest); !ok {
 		return "", errors.Errorf("invalid framework %s registered for model %s in the registry", frameworkName, m.GetName())
 	}
 	modelName := m.GetName()
