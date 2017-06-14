@@ -16,18 +16,18 @@ import (
 	"github.com/rai-project/dlframework/web/models"
 )
 
-// NewGetFrameworkModelsParams creates a new GetFrameworkModelsParams object
+// NewGetFrameworkModelManifestParams creates a new GetFrameworkModelManifestParams object
 // with the default values initialized.
-func NewGetFrameworkModelsParams() GetFrameworkModelsParams {
+func NewGetFrameworkModelManifestParams() GetFrameworkModelManifestParams {
 	var ()
-	return GetFrameworkModelsParams{}
+	return GetFrameworkModelManifestParams{}
 }
 
-// GetFrameworkModelsParams contains all the bound params for the get framework models operation
+// GetFrameworkModelManifestParams contains all the bound params for the get framework model manifest operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters GetFrameworkModels
-type GetFrameworkModelsParams struct {
+// swagger:parameters GetFrameworkModelManifest
+type GetFrameworkModelManifestParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request
@@ -36,7 +36,7 @@ type GetFrameworkModelsParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.DlframeworkGetFrameworkManifestRequest
+	Body *models.DlframeworkGetFrameworkModelManifestRequest
 	/*
 	  Required: true
 	  In: path
@@ -47,17 +47,27 @@ type GetFrameworkModelsParams struct {
 	  In: path
 	*/
 	FrameworkVersion string
+	/*
+	  Required: true
+	  In: path
+	*/
+	ModelName string
+	/*
+	  Required: true
+	  In: path
+	*/
+	ModelVersion string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *GetFrameworkModelsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *GetFrameworkModelManifestParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.DlframeworkGetFrameworkManifestRequest
+		var body models.DlframeworkGetFrameworkModelManifestRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body"))
@@ -89,13 +99,23 @@ func (o *GetFrameworkModelsParams) BindRequest(r *http.Request, route *middlewar
 		res = append(res, err)
 	}
 
+	rModelName, rhkModelName, _ := route.Params.GetOK("model_name")
+	if err := o.bindModelName(rModelName, rhkModelName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	rModelVersion, rhkModelVersion, _ := route.Params.GetOK("model_version")
+	if err := o.bindModelVersion(rModelVersion, rhkModelVersion, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (o *GetFrameworkModelsParams) bindFrameworkName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetFrameworkModelManifestParams) bindFrameworkName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -106,13 +126,35 @@ func (o *GetFrameworkModelsParams) bindFrameworkName(rawData []string, hasKey bo
 	return nil
 }
 
-func (o *GetFrameworkModelsParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetFrameworkModelManifestParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
 	o.FrameworkVersion = raw
+
+	return nil
+}
+
+func (o *GetFrameworkModelManifestParams) bindModelName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	o.ModelName = raw
+
+	return nil
+}
+
+func (o *GetFrameworkModelManifestParams) bindModelVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	o.ModelVersion = raw
 
 	return nil
 }

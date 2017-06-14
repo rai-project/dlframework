@@ -14,6 +14,8 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkModelsParams creates a new GetFrameworkModelsParams object
@@ -60,8 +62,12 @@ for the get framework models operation typically these are written to a http.Req
 */
 type GetFrameworkModelsParams struct {
 
+	/*Body*/
+	Body *models.DlframeworkGetFrameworkManifestRequest
 	/*FrameworkName*/
 	FrameworkName string
+	/*FrameworkVersion*/
+	FrameworkVersion string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -101,6 +107,17 @@ func (o *GetFrameworkModelsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBody adds the body to the get framework models params
+func (o *GetFrameworkModelsParams) WithBody(body *models.DlframeworkGetFrameworkManifestRequest) *GetFrameworkModelsParams {
+	o.SetBody(body)
+	return o
+}
+
+// SetBody adds the body to the get framework models params
+func (o *GetFrameworkModelsParams) SetBody(body *models.DlframeworkGetFrameworkManifestRequest) {
+	o.Body = body
+}
+
 // WithFrameworkName adds the frameworkName to the get framework models params
 func (o *GetFrameworkModelsParams) WithFrameworkName(frameworkName string) *GetFrameworkModelsParams {
 	o.SetFrameworkName(frameworkName)
@@ -112,6 +129,17 @@ func (o *GetFrameworkModelsParams) SetFrameworkName(frameworkName string) {
 	o.FrameworkName = frameworkName
 }
 
+// WithFrameworkVersion adds the frameworkVersion to the get framework models params
+func (o *GetFrameworkModelsParams) WithFrameworkVersion(frameworkVersion string) *GetFrameworkModelsParams {
+	o.SetFrameworkVersion(frameworkVersion)
+	return o
+}
+
+// SetFrameworkVersion adds the frameworkVersion to the get framework models params
+func (o *GetFrameworkModelsParams) SetFrameworkVersion(frameworkVersion string) {
+	o.FrameworkVersion = frameworkVersion
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetFrameworkModelsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -120,8 +148,21 @@ func (o *GetFrameworkModelsParams) WriteToRequest(r runtime.ClientRequest, reg s
 	}
 	var res []error
 
+	if o.Body == nil {
+		o.Body = new(models.DlframeworkGetFrameworkManifestRequest)
+	}
+
+	if err := r.SetBodyParam(o.Body); err != nil {
+		return err
+	}
+
 	// path param framework_name
 	if err := r.SetPathParam("framework_name", o.FrameworkName); err != nil {
+		return err
+	}
+
+	// path param framework_version
+	if err := r.SetPathParam("framework_version", o.FrameworkVersion); err != nil {
 		return err
 	}
 

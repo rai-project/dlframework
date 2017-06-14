@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-// PredictURL generates an URL for the predict operation
-type PredictURL struct {
+// GetFrameworkModelManifestURL generates an URL for the get framework model manifest operation
+type GetFrameworkModelManifestURL struct {
 	FrameworkName    string
 	FrameworkVersion string
 	ModelName        string
@@ -25,7 +25,7 @@ type PredictURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *PredictURL) WithBasePath(bp string) *PredictURL {
+func (o *GetFrameworkModelManifestURL) WithBasePath(bp string) *GetFrameworkModelManifestURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -33,39 +33,39 @@ func (o *PredictURL) WithBasePath(bp string) *PredictURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *PredictURL) SetBasePath(bp string) {
+func (o *GetFrameworkModelManifestURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *PredictURL) Build() (*url.URL, error) {
+func (o *GetFrameworkModelManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"
+	var _path = "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {
 		_path = strings.Replace(_path, "{framework_name}", frameworkName, -1)
 	} else {
-		return nil, errors.New("FrameworkName is required on PredictURL")
+		return nil, errors.New("FrameworkName is required on GetFrameworkModelManifestURL")
 	}
 	frameworkVersion := o.FrameworkVersion
 	if frameworkVersion != "" {
 		_path = strings.Replace(_path, "{framework_version}", frameworkVersion, -1)
 	} else {
-		return nil, errors.New("FrameworkVersion is required on PredictURL")
+		return nil, errors.New("FrameworkVersion is required on GetFrameworkModelManifestURL")
 	}
 	modelName := o.ModelName
 	if modelName != "" {
 		_path = strings.Replace(_path, "{model_name}", modelName, -1)
 	} else {
-		return nil, errors.New("ModelName is required on PredictURL")
+		return nil, errors.New("ModelName is required on GetFrameworkModelManifestURL")
 	}
 	modelVersion := o.ModelVersion
 	if modelVersion != "" {
 		_path = strings.Replace(_path, "{model_version}", modelVersion, -1)
 	} else {
-		return nil, errors.New("ModelVersion is required on PredictURL")
+		return nil, errors.New("ModelVersion is required on GetFrameworkModelManifestURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
@@ -74,7 +74,7 @@ func (o *PredictURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *PredictURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetFrameworkModelManifestURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -85,17 +85,17 @@ func (o *PredictURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *PredictURL) String() string {
+func (o *GetFrameworkModelManifestURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *PredictURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetFrameworkModelManifestURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on PredictURL")
+		return nil, errors.New("scheme is required for a full url on GetFrameworkModelManifestURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on PredictURL")
+		return nil, errors.New("host is required for a full url on GetFrameworkModelManifestURL")
 	}
 
 	base, err := o.Build()
@@ -109,6 +109,6 @@ func (o *PredictURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *PredictURL) StringFull(scheme, host string) string {
+func (o *GetFrameworkModelManifestURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

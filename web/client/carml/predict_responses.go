@@ -49,7 +49,7 @@ type PredictOK struct {
 }
 
 func (o *PredictOK) Error() string {
-	return fmt.Sprintf("[POST /v1/{framework_name}/{model_name}/predict][%d] predictOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict][%d] predictOK  %+v", 200, o.Payload)
 }
 
 func (o *PredictOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

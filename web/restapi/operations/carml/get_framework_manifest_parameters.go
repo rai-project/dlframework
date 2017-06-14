@@ -4,12 +4,16 @@ package carml
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkManifestParams creates a new GetFrameworkManifestParams object
@@ -30,9 +34,19 @@ type GetFrameworkManifestParams struct {
 
 	/*
 	  Required: true
+	  In: body
+	*/
+	Body *models.DlframeworkGetFrameworkManifestRequest
+	/*
+	  Required: true
 	  In: path
 	*/
 	FrameworkName string
+	/*
+	  Required: true
+	  In: path
+	*/
+	FrameworkVersion string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -41,8 +55,37 @@ func (o *GetFrameworkManifestParams) BindRequest(r *http.Request, route *middlew
 	var res []error
 	o.HTTPRequest = r
 
+	if runtime.HasBody(r) {
+		defer r.Body.Close()
+		var body models.DlframeworkGetFrameworkManifestRequest
+		if err := route.Consumer.Consume(r.Body, &body); err != nil {
+			if err == io.EOF {
+				res = append(res, errors.Required("body", "body"))
+			} else {
+				res = append(res, errors.NewParseError("body", "body", "", err))
+			}
+
+		} else {
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.Body = &body
+			}
+		}
+
+	} else {
+		res = append(res, errors.Required("body", "body"))
+	}
+
 	rFrameworkName, rhkFrameworkName, _ := route.Params.GetOK("framework_name")
 	if err := o.bindFrameworkName(rFrameworkName, rhkFrameworkName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	rFrameworkVersion, rhkFrameworkVersion, _ := route.Params.GetOK("framework_version")
+	if err := o.bindFrameworkVersion(rFrameworkVersion, rhkFrameworkVersion, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -59,6 +102,17 @@ func (o *GetFrameworkManifestParams) bindFrameworkName(rawData []string, hasKey 
 	}
 
 	o.FrameworkName = raw
+
+	return nil
+}
+
+func (o *GetFrameworkManifestParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	o.FrameworkVersion = raw
 
 	return nil
 }

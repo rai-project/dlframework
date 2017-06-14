@@ -15,32 +15,8 @@
     "application/json"
   ],
   "paths": {
-    "/v1/carml/framework/{framework_name}/models": {
-      "get": {
-        "operationId": "GetFrameworkModels",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "carml"
-        ]
-      }
-    },
-    "/v1/framework/{framework_name}/info": {
-      "get": {
+    "/v1/framework/{framework_name}/{framework_version}/info": {
+      "post": {
         "operationId": "GetFrameworkManifest",
         "responses": {
           "200": {
@@ -56,6 +32,108 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
+            }
+          }
+        ],
+        "tags": [
+          "carml"
+        ]
+      }
+    },
+    "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info": {
+      "post": {
+        "operationId": "GetFrameworkModelManifest",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkModelManifest"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "framework_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkModelManifestRequest"
+            }
+          }
+        ],
+        "tags": [
+          "carml"
+        ]
+      }
+    },
+    "/v1/framework/{framework_name}/{framework_version}/models": {
+      "post": {
+        "operationId": "GetFrameworkModels",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "framework_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
+            }
           }
         ],
         "tags": [
@@ -79,7 +157,7 @@
         ]
       }
     },
-    "/v1/model/{model_name}/info": {
+    "/v1/model/{model_name}/{model_version}/info": {
       "post": {
         "operationId": "GetModelManifest",
         "responses": {
@@ -93,6 +171,12 @@
         "parameters": [
           {
             "name": "model_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
             "in": "path",
             "required": true,
             "type": "string"
@@ -127,7 +211,7 @@
         ]
       }
     },
-    "/v1/{framework_name}/{model_name}/predict": {
+    "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict": {
       "post": {
         "operationId": "Predict",
         "responses": {
@@ -146,7 +230,19 @@
             "type": "string"
           },
           {
+            "name": "framework_version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "model_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
             "in": "path",
             "required": true,
             "type": "string"
@@ -222,11 +318,25 @@
         "name": {
           "type": "string"
         },
-        "default_container": {
+        "version": {
+          "type": "string"
+        },
+        "container": {
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/dlframeworkContainerHardware"
           }
+        }
+      }
+    },
+    "dlframeworkGetFrameworkManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
         }
       }
     },
@@ -241,10 +351,30 @@
         }
       }
     },
+    "dlframeworkGetFrameworkModelManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkGetModelManifestRequest": {
       "type": "object",
       "properties": {
         "model_name": {
+          "type": "string"
+        },
+        "model_version": {
           "type": "string"
         }
       }
@@ -264,6 +394,9 @@
       "type": "object",
       "properties": {
         "name": {
+          "type": "string"
+        },
+        "version": {
           "type": "string"
         },
         "framework": {
@@ -352,6 +485,9 @@
           "type": "string"
         },
         "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
           "type": "string"
         },
         "limit": {

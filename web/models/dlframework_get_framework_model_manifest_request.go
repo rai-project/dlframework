@@ -10,12 +10,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictRequest dlframework predict request
-// swagger:model dlframeworkPredictRequest
-type DlframeworkPredictRequest struct {
-
-	// data
-	Data strfmt.Base64 `json:"data,omitempty"`
+// DlframeworkGetFrameworkModelManifestRequest dlframework get framework model manifest request
+// swagger:model dlframeworkGetFrameworkModelManifestRequest
+type DlframeworkGetFrameworkModelManifestRequest struct {
 
 	// framework name
 	FrameworkName string `json:"framework_name,omitempty"`
@@ -23,21 +20,15 @@ type DlframeworkPredictRequest struct {
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
 
-	// limit
-	Limit int32 `json:"limit,omitempty"`
-
 	// model name
 	ModelName string `json:"model_name,omitempty"`
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
-
-	// url
-	URL string `json:"url,omitempty"`
 }
 
-// Validate validates this dlframework predict request
-func (m *DlframeworkPredictRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework get framework model manifest request
+func (m *DlframeworkGetFrameworkModelManifestRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -47,7 +38,7 @@ func (m *DlframeworkPredictRequest) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkGetFrameworkModelManifestRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -55,8 +46,8 @@ func (m *DlframeworkPredictRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictRequest
+func (m *DlframeworkGetFrameworkModelManifestRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkGetFrameworkModelManifestRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

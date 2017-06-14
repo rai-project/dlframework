@@ -29,31 +29,8 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
-    "/v1/carml/framework/{framework_name}/models": {
-      "get": {
-        "tags": [
-          "carml"
-        ],
-        "operationId": "GetFrameworkModels",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "framework_name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
-            }
-          }
-        }
-      }
-    },
-    "/v1/framework/{framework_name}/info": {
-      "get": {
+    "/v1/framework/{framework_name}/{framework_version}/info": {
+      "post": {
         "tags": [
           "carml"
         ],
@@ -64,12 +41,112 @@ func init() {
             "name": "framework_name",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
+            }
           }
         ],
         "responses": {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifest"
+            }
+          }
+        }
+      }
+    },
+    "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info": {
+      "post": {
+        "tags": [
+          "carml"
+        ],
+        "operationId": "GetFrameworkModelManifest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "model_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "model_version",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkModelManifestRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkModelManifest"
+            }
+          }
+        }
+      }
+    },
+    "/v1/framework/{framework_name}/{framework_version}/models": {
+      "post": {
+        "tags": [
+          "carml"
+        ],
+        "operationId": "GetFrameworkModels",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
             }
           }
         }
@@ -90,7 +167,7 @@ func init() {
         }
       }
     },
-    "/v1/model/{model_name}/info": {
+    "/v1/model/{model_name}/{model_version}/info": {
       "post": {
         "tags": [
           "carml"
@@ -100,6 +177,12 @@ func init() {
           {
             "type": "string",
             "name": "model_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "model_version",
             "in": "path",
             "required": true
           },
@@ -136,7 +219,7 @@ func init() {
         }
       }
     },
-    "/v1/{framework_name}/{model_name}/predict": {
+    "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict": {
       "post": {
         "tags": [
           "carml"
@@ -151,7 +234,19 @@ func init() {
           },
           {
             "type": "string",
+            "name": "framework_version",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
             "name": "model_name",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "name": "model_version",
             "in": "path",
             "required": true
           },
@@ -227,13 +322,27 @@ func init() {
     "dlframeworkFrameworkManifest": {
       "type": "object",
       "properties": {
-        "default_container": {
+        "container": {
           "type": "object",
           "additionalProperties": {
             "$ref": "#/definitions/dlframeworkContainerHardware"
           }
         },
         "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkGetFrameworkManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
           "type": "string"
         }
       }
@@ -249,10 +358,30 @@ func init() {
         }
       }
     },
+    "dlframeworkGetFrameworkModelManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkGetModelManifestRequest": {
       "type": "object",
       "properties": {
         "model_name": {
+          "type": "string"
+        },
+        "model_version": {
           "type": "string"
         }
       }
@@ -330,6 +459,9 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "version": {
+          "type": "string"
         }
       }
     },
@@ -358,6 +490,9 @@ func init() {
           "format": "byte"
         },
         "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
           "type": "string"
         },
         "limit": {

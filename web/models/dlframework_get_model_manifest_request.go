@@ -16,6 +16,9 @@ type DlframeworkGetModelManifestRequest struct {
 
 	// model name
 	ModelName string `json:"model_name,omitempty"`
+
+	// model version
+	ModelVersion string `json:"model_version,omitempty"`
 }
 
 // Validate validates this dlframework get model manifest request

@@ -42,6 +42,11 @@ type GetModelManifestParams struct {
 	  In: path
 	*/
 	ModelName string
+	/*
+	  Required: true
+	  In: path
+	*/
+	ModelVersion string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -79,6 +84,11 @@ func (o *GetModelManifestParams) BindRequest(r *http.Request, route *middleware.
 		res = append(res, err)
 	}
 
+	rModelVersion, rhkModelVersion, _ := route.Params.GetOK("model_version")
+	if err := o.bindModelVersion(rModelVersion, rhkModelVersion, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -92,6 +102,17 @@ func (o *GetModelManifestParams) bindModelName(rawData []string, hasKey bool, fo
 	}
 
 	o.ModelName = raw
+
+	return nil
+}
+
+func (o *GetModelManifestParams) bindModelVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	o.ModelVersion = raw
 
 	return nil
 }

@@ -27,7 +27,7 @@ func NewGetModelManifest(ctx *middleware.Context, handler GetModelManifestHandle
 	return &GetModelManifest{Context: ctx, Handler: handler}
 }
 
-/*GetModelManifest swagger:route POST /v1/model/{model_name}/info carml getModelManifest
+/*GetModelManifest swagger:route POST /v1/model/{model_name}/{model_version}/info carml getModelManifest
 
 GetModelManifest get model manifest API
 

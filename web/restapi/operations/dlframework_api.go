@@ -41,6 +41,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		CarmlGetFrameworkManifestsHandler: carml.GetFrameworkManifestsHandlerFunc(func(params carml.GetFrameworkManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation CarmlGetFrameworkManifests has not yet been implemented")
 		}),
+		CarmlGetFrameworkModelManifestHandler: carml.GetFrameworkModelManifestHandlerFunc(func(params carml.GetFrameworkModelManifestParams) middleware.Responder {
+			return middleware.NotImplemented("operation CarmlGetFrameworkModelManifest has not yet been implemented")
+		}),
 		CarmlGetFrameworkModelsHandler: carml.GetFrameworkModelsHandlerFunc(func(params carml.GetFrameworkModelsParams) middleware.Responder {
 			return middleware.NotImplemented("operation CarmlGetFrameworkModels has not yet been implemented")
 		}),
@@ -86,6 +89,8 @@ type DlframeworkAPI struct {
 	CarmlGetFrameworkManifestHandler carml.GetFrameworkManifestHandler
 	// CarmlGetFrameworkManifestsHandler sets the operation handler for the get framework manifests operation
 	CarmlGetFrameworkManifestsHandler carml.GetFrameworkManifestsHandler
+	// CarmlGetFrameworkModelManifestHandler sets the operation handler for the get framework model manifest operation
+	CarmlGetFrameworkModelManifestHandler carml.GetFrameworkModelManifestHandler
 	// CarmlGetFrameworkModelsHandler sets the operation handler for the get framework models operation
 	CarmlGetFrameworkModelsHandler carml.GetFrameworkModelsHandler
 	// CarmlGetModelManifestHandler sets the operation handler for the get model manifest operation
@@ -163,6 +168,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.CarmlGetFrameworkManifestsHandler == nil {
 		unregistered = append(unregistered, "carml.GetFrameworkManifestsHandler")
+	}
+
+	if o.CarmlGetFrameworkModelManifestHandler == nil {
+		unregistered = append(unregistered, "carml.GetFrameworkModelManifestHandler")
 	}
 
 	if o.CarmlGetFrameworkModelsHandler == nil {
@@ -264,25 +273,30 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/framework/{framework_name}/info"] = carml.NewGetFrameworkManifest(o.context, o.CarmlGetFrameworkManifestHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/info"] = carml.NewGetFrameworkManifest(o.context, o.CarmlGetFrameworkManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/frameworks"] = carml.NewGetFrameworkManifests(o.context, o.CarmlGetFrameworkManifestsHandler)
 
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/carml/framework/{framework_name}/models"] = carml.NewGetFrameworkModels(o.context, o.CarmlGetFrameworkModelsHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"] = carml.NewGetFrameworkModelManifest(o.context, o.CarmlGetFrameworkModelManifestHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/model/{model_name}/info"] = carml.NewGetModelManifest(o.context, o.CarmlGetModelManifestHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/models"] = carml.NewGetFrameworkModels(o.context, o.CarmlGetFrameworkModelsHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/model/{model_name}/{model_version}/info"] = carml.NewGetModelManifest(o.context, o.CarmlGetModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -292,7 +306,7 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/{framework_name}/{model_name}/predict"] = carml.NewPredict(o.context, o.CarmlPredictHandler)
+	o.handlers["POST"]["/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"] = carml.NewPredict(o.context, o.CarmlPredictHandler)
 
 }
 

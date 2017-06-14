@@ -10,34 +10,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictRequest dlframework predict request
-// swagger:model dlframeworkPredictRequest
-type DlframeworkPredictRequest struct {
-
-	// data
-	Data strfmt.Base64 `json:"data,omitempty"`
+// DlframeworkGetFrameworkManifestRequest dlframework get framework manifest request
+// swagger:model dlframeworkGetFrameworkManifestRequest
+type DlframeworkGetFrameworkManifestRequest struct {
 
 	// framework name
 	FrameworkName string `json:"framework_name,omitempty"`
 
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// limit
-	Limit int32 `json:"limit,omitempty"`
-
-	// model name
-	ModelName string `json:"model_name,omitempty"`
-
-	// model version
-	ModelVersion string `json:"model_version,omitempty"`
-
-	// url
-	URL string `json:"url,omitempty"`
 }
 
-// Validate validates this dlframework predict request
-func (m *DlframeworkPredictRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework get framework manifest request
+func (m *DlframeworkGetFrameworkManifestRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -47,7 +32,7 @@ func (m *DlframeworkPredictRequest) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkGetFrameworkManifestRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -55,8 +40,8 @@ func (m *DlframeworkPredictRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictRequest
+func (m *DlframeworkGetFrameworkManifestRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkGetFrameworkManifestRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

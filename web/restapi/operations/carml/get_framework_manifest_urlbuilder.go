@@ -12,7 +12,8 @@ import (
 
 // GetFrameworkManifestURL generates an URL for the get framework manifest operation
 type GetFrameworkManifestURL struct {
-	FrameworkName string
+	FrameworkName    string
+	FrameworkVersion string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -38,13 +39,19 @@ func (o *GetFrameworkManifestURL) SetBasePath(bp string) {
 func (o *GetFrameworkManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/framework/{framework_name}/info"
+	var _path = "/v1/framework/{framework_name}/{framework_version}/info"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {
 		_path = strings.Replace(_path, "{framework_name}", frameworkName, -1)
 	} else {
 		return nil, errors.New("FrameworkName is required on GetFrameworkManifestURL")
+	}
+	frameworkVersion := o.FrameworkVersion
+	if frameworkVersion != "" {
+		_path = strings.Replace(_path, "{framework_version}", frameworkVersion, -1)
+	} else {
+		return nil, errors.New("FrameworkVersion is required on GetFrameworkManifestURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

@@ -41,6 +41,9 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.CarmlGetFrameworkManifestsHandler = carml.GetFrameworkManifestsHandlerFunc(func(params carml.GetFrameworkManifestsParams) middleware.Responder {
 		return middleware.NotImplemented("operation carml.GetFrameworkManifests has not yet been implemented")
 	})
+	api.CarmlGetFrameworkModelManifestHandler = carml.GetFrameworkModelManifestHandlerFunc(func(params carml.GetFrameworkModelManifestParams) middleware.Responder {
+		return middleware.NotImplemented("operation carml.GetFrameworkModelManifest has not yet been implemented")
+	})
 	api.CarmlGetFrameworkModelsHandler = carml.GetFrameworkModelsHandlerFunc(func(params carml.GetFrameworkModelsParams) middleware.Responder {
 		return middleware.NotImplemented("operation carml.GetFrameworkModels has not yet been implemented")
 	})

@@ -12,7 +12,8 @@ import (
 
 // GetFrameworkModelsURL generates an URL for the get framework models operation
 type GetFrameworkModelsURL struct {
-	FrameworkName string
+	FrameworkName    string
+	FrameworkVersion string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -38,13 +39,19 @@ func (o *GetFrameworkModelsURL) SetBasePath(bp string) {
 func (o *GetFrameworkModelsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/framework/{framework_name}/models"
+	var _path = "/v1/framework/{framework_name}/{framework_version}/models"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {
 		_path = strings.Replace(_path, "{framework_name}", frameworkName, -1)
 	} else {
 		return nil, errors.New("FrameworkName is required on GetFrameworkModelsURL")
+	}
+	frameworkVersion := o.FrameworkVersion
+	if frameworkVersion != "" {
+		_path = strings.Replace(_path, "{framework_version}", frameworkVersion, -1)
+	} else {
+		return nil, errors.New("FrameworkVersion is required on GetFrameworkModelsURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

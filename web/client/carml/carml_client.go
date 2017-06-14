@@ -33,8 +33,8 @@ func (a *Client) GetFrameworkManifest(params *GetFrameworkManifestParams) (*GetF
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkManifest",
-		Method:             "GET",
-		PathPattern:        "/v1/framework/{framework_name}/info",
+		Method:             "POST",
+		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -79,6 +79,34 @@ func (a *Client) GetFrameworkManifests(params *GetFrameworkManifestsParams) (*Ge
 }
 
 /*
+GetFrameworkModelManifest get framework model manifest API
+*/
+func (a *Client) GetFrameworkModelManifest(params *GetFrameworkModelManifestParams) (*GetFrameworkModelManifestOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetFrameworkModelManifestParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "GetFrameworkModelManifest",
+		Method:             "POST",
+		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &GetFrameworkModelManifestReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*GetFrameworkModelManifestOK), nil
+
+}
+
+/*
 GetFrameworkModels get framework models API
 */
 func (a *Client) GetFrameworkModels(params *GetFrameworkModelsParams) (*GetFrameworkModelsOK, error) {
@@ -89,8 +117,8 @@ func (a *Client) GetFrameworkModels(params *GetFrameworkModelsParams) (*GetFrame
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkModels",
-		Method:             "GET",
-		PathPattern:        "/v1/carml/framework/{framework_name}/models",
+		Method:             "POST",
+		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/models",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -118,7 +146,7 @@ func (a *Client) GetModelManifest(params *GetModelManifestParams) (*GetModelMani
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetModelManifest",
 		Method:             "POST",
-		PathPattern:        "/v1/model/{model_name}/info",
+		PathPattern:        "/v1/model/{model_name}/{model_version}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -174,7 +202,7 @@ func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Predict",
 		Method:             "POST",
-		PathPattern:        "/v1/{framework_name}/{model_name}/predict",
+		PathPattern:        "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

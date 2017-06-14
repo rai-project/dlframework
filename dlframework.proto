@@ -30,9 +30,10 @@ message ContainerHardware {
 }
 
 message FrameworkManifest {
-  string name = 1 [ (gogoproto.moretags) = "yaml:\",flow\"" ];
-  map<string, ContainerHardware> default_container = 2
-      [ (gogoproto.moretags) = "yaml:\"default_container,omitempty\"" ];
+  string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+  string version = 2 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
+  map<string, ContainerHardware> container = 3
+      [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
 }
 
 message ModelManifest {
@@ -59,32 +60,33 @@ message ModelManifest {
   }
 
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-  FrameworkManifest framework = 2
+  string version = 2 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
+  FrameworkManifest framework = 3
       [ (gogoproto.moretags) = "yaml:\"framework,omitempty\"" ];
-  map<string, ContainerHardware> container = 3
+  map<string, ContainerHardware> container = 4
       [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
-  string description = 4
+  string description = 5
       [ (gogoproto.moretags) = "yaml:\"description,omitempty\"" ];
-  repeated string reference = 5
+  repeated string reference = 6
       [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
-  string license = 6 [ (gogoproto.moretags) = "yaml:\"license,omitempty\"" ];
-  repeated Type inputs = 7
+  string license = 7 [ (gogoproto.moretags) = "yaml:\"license,omitempty\"" ];
+  repeated Type inputs = 8
       [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
-  Type output = 8 [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
-  string before_preprocess = 9
+  Type output = 9 [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
+  string before_preprocess = 10
       [ (gogoproto.moretags) = "yaml:\"before_preprocess,omitempty\"" ];
-  string preprocess = 10
+  string preprocess = 11
       [ (gogoproto.moretags) = "yaml:\"preprocess,omitempty\"" ];
-  string after_preprocess = 11
+  string after_preprocess = 12
       [ (gogoproto.moretags) = "yaml:\"after_preprocess,omitempty\"" ];
-  string before_postprocess = 12
+  string before_postprocess = 13
       [ (gogoproto.moretags) = "yaml:\"before_postprocess,omitempty\"" ];
-  string postprocess = 13
+  string postprocess = 14
       [ (gogoproto.moretags) = "yaml:\"postprocess,omitempty\"" ];
-  string after_postprocess = 14
+  string after_postprocess = 15
       [ (gogoproto.moretags) = "yaml:\"after_postprocess,omitempty\"" ];
-  Model model = 15 [ (gogoproto.moretags) = "yaml:\"model,omitempty\"" ];
-  map<string, string> attributes = 16
+  Model model = 16 [ (gogoproto.moretags) = "yaml:\"model,omitempty\"" ];
+  map<string, string> attributes = 17
       [ (gogoproto.moretags) = "yaml:\"attributes,omitempty\"" ];
 }
 
@@ -98,14 +100,29 @@ message GetFrameworkManifestsResponse {
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
+message GetFrameworkModelManifestRequest {
+  string framework_name = 1
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 2
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  string model_name = 3
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 4
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+}
+
 message GetModelManifestRequest {
   string model_name = 1
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
 }
 
 message GetFrameworkManifestRequest {
   string framework_name = 1
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 2
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
 }
 
 message Null {}
@@ -117,10 +134,12 @@ message PredictRequest {
       [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
   string framework_name = 3
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  int32 limit = 4 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  string framework_version = 4
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
   oneof input {
-    bytes data = 5 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
-    string url = 6 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
+    bytes data = 6 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+    string url = 7 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
   };
 }
 
@@ -141,35 +160,46 @@ message PredictResponse {
 service carml {
   rpc GetFrameworkManifests(Null) returns (GetFrameworkManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/frameworks"
+      get : "/v1/frameworks",
     };
   }
   rpc GetFrameworkManifest(GetFrameworkManifestRequest)
       returns (FrameworkManifest) {
     option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/info"
+      post : "/v1/framework/{framework_name}/{framework_version}/info",
+      body : "*"
     };
   }
   rpc GetFrameworkModels(GetFrameworkManifestRequest)
       returns (GetModelManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/carml/framework/{framework_name}/models"
+      post : "/v1/framework/{framework_name}/{framework_version}/models",
+      body : "*"
     };
   }
   rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/models"
+      get : "/v1/models",
+    };
+  }
+  rpc GetFrameworkModelManifest(GetFrameworkModelManifestRequest)
+      returns (ModelManifest) {
+    option (google.api.http) = {
+      post : "/v1/framework/{framework_name}/{framework_version}/model/"
+             "{model_name}/{model_version}/info",
+      body : "*"
     };
   }
   rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/model/{model_name}/info",
+      post : "/v1/model/{model_name}/{model_version}/info",
       body : "*"
     };
   }
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
-      post : "/v1/{framework_name}/{model_name}/predict",
+      post : "/v1/{framework_name}/{framework_version}/{model_name}/"
+             "{model_version}/predict",
       body : "*"
     };
   }

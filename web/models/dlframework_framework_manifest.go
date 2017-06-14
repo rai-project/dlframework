@@ -15,18 +15,21 @@ import (
 // swagger:model dlframeworkFrameworkManifest
 type DlframeworkFrameworkManifest struct {
 
-	// default container
-	DefaultContainer map[string]DlframeworkContainerHardware `json:"default_container,omitempty"`
+	// container
+	Container map[string]DlframeworkContainerHardware `json:"container,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// version
+	Version string `json:"version,omitempty"`
 }
 
 // Validate validates this dlframework framework manifest
 func (m *DlframeworkFrameworkManifest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDefaultContainer(formats); err != nil {
+	if err := m.validateContainer(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -37,13 +40,13 @@ func (m *DlframeworkFrameworkManifest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkFrameworkManifest) validateDefaultContainer(formats strfmt.Registry) error {
+func (m *DlframeworkFrameworkManifest) validateContainer(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.DefaultContainer) { // not required
+	if swag.IsZero(m.Container) { // not required
 		return nil
 	}
 
-	if err := validate.Required("default_container", "body", m.DefaultContainer); err != nil {
+	if err := validate.Required("container", "body", m.Container); err != nil {
 		return err
 	}
 

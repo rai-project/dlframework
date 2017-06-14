@@ -64,6 +64,9 @@ type DlframeworkModelManifest struct {
 
 	// reference
 	Reference []string `json:"reference"`
+
+	// version
+	Version string `json:"version,omitempty"`
 }
 
 // Validate validates this dlframework model manifest

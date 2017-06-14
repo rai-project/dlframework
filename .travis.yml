@@ -22,20 +22,10 @@ addons:
     - jq
 install:
   - bash scripts/install-protobuf.sh
-  - export PATH=$HOME/protobuf/bin:$PATH
-  - go get github.com/jteeuwen/go-bindata/...
-  - go get github.com/elazarl/go-bindata-assetfs/...
-  - go get github.com/golang/protobuf/{proto,protoc-gen-go}
-  - go get google.golang.org/grpc
-  - go get github.com/gogo/protobuf/{proto,gogoproto,protoc-gen-gofast,protoc-gen-gogofaster,protoc-gen-gogoslick}
-  - go get github.com/grpc-ecosystem/grpc-gateway/{protoc-gen-swagger,protoc-gen-grpc-gateway}
-  - go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-  - go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-  - go get -u github.com/golang/protobuf/protoc-gen-go
-  - glide install --force
-  - rm -fr vendor/github.com/Sirupsen
-  - find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
-  - go generate
+  - make install-deps
+  - make glide-install
+  - make logrus-fix
+  - make generate
   - go build
 script:
   - echo "Skip tests..."
