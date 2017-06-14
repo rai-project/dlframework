@@ -1,19 +1,26 @@
-FROM mxnet/python:gpu
+FROM rai/cuda_ppc64le:cudnn-8.0
 MAINTAINER Carl Pearson <pearson@illinois.edu>
 
-# Install the core library
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update \
-    && apt-get install -y \
-    curl \
-    git \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# install the core library
+RUN apt-get update && apt-get install -y build-essential git libopenblas-dev libopencv-dev
+
+# Install mxnet
+WORKDIR /
+RUN git clone --recursive https://github.com/dmlc/mxnet && cd mxnet && \
+    cp make/config.mk . && \
+    echo "USE_CUDA=1" >>config.mk && \
+    echo "USE_CUDA_PATH=/usr/local/cuda" >>config.mk && \
+    echo "USE_CUDNN=1" >>config.mk && \
+    echo "USE_BLAS=openblas" >>config.mk && \
+    make -j$(nproc) ADD_LDFLAGS=-L/usr/local/cuda/lib64/stubs
+RUN ln -s /mxnet/lib/libmxnet.so /usr/lib/libmxnet.so
+
+ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
 #Install Go
 ENV GIMME_GO_VERSION "1.8.3"
 ENV GIMME_OS "linux"
-ENV GIMME_ARCH "amd64"
+ENV GIMME_ARCH "ppc64le"
 
 ADD https://raw.githubusercontent.com/travis-ci/gimme/master/gimme /usr/bin/gimme
 RUN chmod +x /usr/bin/gimme && \

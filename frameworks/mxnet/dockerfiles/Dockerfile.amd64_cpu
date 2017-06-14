@@ -1,4 +1,4 @@
-FROM mxnet/python
+FROM mxnet/python:latest
 MAINTAINER Carl Pearson <pearson@illinois.edu>
 
 # Install the core library
@@ -28,25 +28,18 @@ ENV PATH $GOPATH/bin:$PATH
 #Install Glide
 RUN go get github.com/Masterminds/glide
 
-# Get mxnet go bindings
-RUN go get -u -v github.com/songtianyi/go-mxnet-predictor
-RUN sed -i "/prefix=/c prefix=\/mxnet" $GOPATH/src/github.com/songtianyi/go-mxnet-predictor/travis/mxnet.pc
-RUN cp $GOPATH/src/github.com/songtianyi/go-mxnet-predictor/travis/mxnet.pc /usr/lib/pkgconfig
-RUN pkg-config --libs mxnet
-RUN cd $GOPATH/src/github.com/songtianyi/go-mxnet-predictor \
-    && go get -v .../.
+# Get Go bindings
+RUN go get -u -v github.com/songtianyi/go-mxnet-predictor && \
+    sed -i "/prefix=/c prefix=\/mxnet" $GOPATH/src/github.com/songtianyi/go-mxnet-predictor/travis/mxnet.pc && \
+    cp $GOPATH/src/github.com/songtianyi/go-mxnet-predictor/travis/mxnet.pc /usr/lib/pkgconfig && \
+    pkg-config --libs mxnet && \
+    cd $GOPATH/src/github.com/songtianyi/go-mxnet-predictor && go get -v .../.
 ENV LD_LIBRARY_PATH /mxnet/lib:$LD_LIBRARY_PATH
 
 ## Get the rai-project mxnet agent
-WORKDIR $GOPATH/src/github.com/rai-project
-RUN git clone https://github.com/rai-project/dlframework.git
-## Uncomment the following 3 lines to use the local mxnet-agent instead of the github version
-# WORKDIR dlframework/mxnet/mxnet-agent
-# RUN rm -rf *
-# ADD *.go ./
+RUN go get github.com/rai-project/dlframework
 WORKDIR $GOPATH/src/github.com/rai-project/dlframework
 RUN glide install
-WORKDIR mxnet/mxnet-agent
-#RUN go get -v .../.
+WORKDIR $GOPATH/src/github.com/rai-project/dlframework/mxnet/mxnet-agent
 RUN go build
 ENTRYPOINT ["./mxnet-agent", "--debug", "--verbose"]
