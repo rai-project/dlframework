@@ -39,7 +39,7 @@ func (o *PredictURL) SetBasePath(bp string) {
 func (o *PredictURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/{framework_name}/{model_name}/predict"
+	var _path = "/v1/{framework_name}/{model_name}/predict"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {

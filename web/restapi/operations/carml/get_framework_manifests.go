@@ -27,7 +27,7 @@ func NewGetFrameworkManifests(ctx *middleware.Context, handler GetFrameworkManif
 	return &GetFrameworkManifests{Context: ctx, Handler: handler}
 }
 
-/*GetFrameworkManifests swagger:route GET /v1/carml/frameworks carml getFrameworkManifests
+/*GetFrameworkManifests swagger:route GET /v1/frameworks carml getFrameworkManifests
 
 GetFrameworkManifests get framework manifests API
 

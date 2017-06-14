@@ -38,7 +38,7 @@ func (o *GetFrameworkManifestURL) SetBasePath(bp string) {
 func (o *GetFrameworkManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/framework/{framework_name}/info"
+	var _path = "/v1/framework/{framework_name}/info"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {

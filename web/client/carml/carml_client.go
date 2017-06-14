@@ -34,7 +34,7 @@ func (a *Client) GetFrameworkManifest(params *GetFrameworkManifestParams) (*GetF
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkManifest",
 		Method:             "GET",
-		PathPattern:        "/v1/carml/framework/{framework_name}/info",
+		PathPattern:        "/v1/framework/{framework_name}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -62,7 +62,7 @@ func (a *Client) GetFrameworkManifests(params *GetFrameworkManifestsParams) (*Ge
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkManifests",
 		Method:             "GET",
-		PathPattern:        "/v1/carml/frameworks",
+		PathPattern:        "/v1/frameworks",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -118,7 +118,7 @@ func (a *Client) GetModelManifest(params *GetModelManifestParams) (*GetModelMani
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetModelManifest",
 		Method:             "POST",
-		PathPattern:        "/v1/carml/model/{model_name}/info",
+		PathPattern:        "/v1/model/{model_name}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -146,7 +146,7 @@ func (a *Client) GetModelManifests(params *GetModelManifestsParams) (*GetModelMa
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetModelManifests",
 		Method:             "GET",
-		PathPattern:        "/v1/carml/models",
+		PathPattern:        "/v1/models",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -174,7 +174,7 @@ func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Predict",
 		Method:             "POST",
-		PathPattern:        "/v1/carml/{framework_name}/{model_name}/predict",
+		PathPattern:        "/v1/{framework_name}/{model_name}/predict",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

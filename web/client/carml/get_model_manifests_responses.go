@@ -49,7 +49,7 @@ type GetModelManifestsOK struct {
 }
 
 func (o *GetModelManifestsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/carml/models][%d] getModelManifestsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/models][%d] getModelManifestsOK  %+v", 200, o.Payload)
 }
 
 func (o *GetModelManifestsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

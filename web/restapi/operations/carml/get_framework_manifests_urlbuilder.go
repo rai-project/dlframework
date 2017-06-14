@@ -33,7 +33,7 @@ func (o *GetFrameworkManifestsURL) SetBasePath(bp string) {
 func (o *GetFrameworkManifestsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/frameworks"
+	var _path = "/v1/frameworks"
 
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

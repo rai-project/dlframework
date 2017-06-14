@@ -27,7 +27,7 @@ func NewPredict(ctx *middleware.Context, handler PredictHandler) *Predict {
 	return &Predict{Context: ctx, Handler: handler}
 }
 
-/*Predict swagger:route POST /v1/carml/{framework_name}/{model_name}/predict carml predict
+/*Predict swagger:route POST /v1/{framework_name}/{model_name}/predict carml predict
 
 Predict predict API
 

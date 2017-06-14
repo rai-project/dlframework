@@ -38,7 +38,7 @@ func (o *GetModelManifestURL) SetBasePath(bp string) {
 func (o *GetModelManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/model/{model_name}/info"
+	var _path = "/v1/model/{model_name}/info"
 
 	modelName := o.ModelName
 	if modelName != "" {

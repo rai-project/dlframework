@@ -29,29 +29,6 @@ func init() {
     "version": "1.0.0"
   },
   "paths": {
-    "/v1/carml/framework/{framework_name}/info": {
-      "get": {
-        "tags": [
-          "carml"
-        ],
-        "operationId": "GetFrameworkManifest",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "framework_name",
-            "in": "path",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFrameworkManifest"
-            }
-          }
-        }
-      }
-    },
     "/v1/carml/framework/{framework_name}/models": {
       "get": {
         "tags": [
@@ -75,7 +52,30 @@ func init() {
         }
       }
     },
-    "/v1/carml/frameworks": {
+    "/v1/framework/{framework_name}/info": {
+      "get": {
+        "tags": [
+          "carml"
+        ],
+        "operationId": "GetFrameworkManifest",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFrameworkManifest"
+            }
+          }
+        }
+      }
+    },
+    "/v1/frameworks": {
       "get": {
         "tags": [
           "carml"
@@ -90,7 +90,7 @@ func init() {
         }
       }
     },
-    "/v1/carml/model/{model_name}/info": {
+    "/v1/model/{model_name}/info": {
       "post": {
         "tags": [
           "carml"
@@ -121,7 +121,7 @@ func init() {
         }
       }
     },
-    "/v1/carml/models": {
+    "/v1/models": {
       "get": {
         "tags": [
           "carml"
@@ -136,7 +136,7 @@ func init() {
         }
       }
     },
-    "/v1/carml/{framework_name}/{model_name}/predict": {
+    "/v1/{framework_name}/{model_name}/predict": {
       "post": {
         "tags": [
           "carml"

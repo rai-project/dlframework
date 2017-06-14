@@ -15,7 +15,7 @@ import (
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../web --name dlframework --spec ../dlframework.swagger.json
+//go:generate swagger generate server --target ../web --name dlframework --spec ../dlframework.versioned.swagger.json
 
 func configureFlags(api *operations.DlframeworkAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }

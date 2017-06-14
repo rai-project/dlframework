@@ -49,7 +49,7 @@ type GetFrameworkManifestsOK struct {
 }
 
 func (o *GetFrameworkManifestsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/carml/frameworks][%d] getFrameworkManifestsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/frameworks][%d] getFrameworkManifestsOK  %+v", 200, o.Payload)
 }
 
 func (o *GetFrameworkManifestsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

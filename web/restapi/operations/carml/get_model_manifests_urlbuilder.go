@@ -33,7 +33,7 @@ func (o *GetModelManifestsURL) SetBasePath(bp string) {
 func (o *GetModelManifestsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/carml/models"
+	var _path = "/v1/models"
 
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
