@@ -67,4 +67,7 @@ func TestModelRegistration(t *testing.T) {
 		}
 		return err
 	})
+	models, err := dlframework.Models()
+	assert.NoError(t, err)
+	assert.NotEmpty(t, models)
 }

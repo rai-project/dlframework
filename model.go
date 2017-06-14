@@ -1,6 +1,7 @@
 package dlframework
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/Masterminds/semver"
@@ -35,7 +36,11 @@ func (m ModelManifest) CannonicalName() (string, error) {
 	if m.GetFramework() == nil {
 		return "", errors.Errorf("the model %s does not have a valid framework", m.GetName())
 	}
-	frameworkName, err := m.GetFramework().CannonicalName()
+	framework, err := m.ResolveFramework()
+	if err != nil {
+		return "", err
+	}
+	frameworkName, err := framework.CannonicalName()
 	if err != nil {
 		return "", errors.Wrapf(err, "cannot get cannonical name for the framework %s and model %s in the registry", m.GetFramework().GetName(), m.GetName())
 	}
@@ -55,6 +60,38 @@ func (m ModelManifest) CannonicalName() (string, error) {
 		modelVersion = "latest"
 	}
 	return frameworkName + "/" + modelName + ":" + modelVersion, nil
+}
+
+func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
+	modelFrameworkConstraint, err := semver.NewConstraint(m.GetFramework().GetVersion())
+	if err != nil {
+		return FrameworkManifest{}, err
+	}
+	frameworks, err := Frameworks()
+	if err != nil {
+		return FrameworkManifest{}, err
+	}
+
+	filtered := []FrameworkManifest{}
+	for _, framework := range frameworks {
+		frameworkVersion, err := semver.NewVersion(framework.GetVersion())
+		if err != nil {
+			continue
+		}
+		if !modelFrameworkConstraint.Check(frameworkVersion) {
+			continue
+		}
+		filtered = append(filtered, framework)
+	}
+	if len(frameworks) == 0 {
+		return FrameworkManifest{}, errors.New("framework not found")
+	}
+	sort.Slice(filtered, func(ii, jj int) bool {
+		f1, _ := semver.NewVersion(filtered[ii].GetVersion())
+		f2, _ := semver.NewVersion(filtered[jj].GetVersion())
+		return f1.LessThan(f2)
+	})
+	return filtered[len(filtered)-1], nil
 }
 
 func (m ModelManifest) Register() error {

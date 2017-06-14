@@ -41,3 +41,20 @@ func (f FrameworkManifest) RegisterNamed(s string) error {
 func RegisteredFrameworkNames() []string {
 	return syncMapKeys(frameworkRegistry)
 }
+
+func Frameworks() ([]FrameworkManifest, error) {
+	names := RegisteredFrameworkNames()
+	fws := make([]FrameworkManifest, len(names))
+	for ii, name := range names {
+		f, ok := frameworkRegistry.Load(name)
+		if !ok {
+			return nil, errors.Errorf("framework %s was not found", name)
+		}
+		fw, ok := f.(FrameworkManifest)
+		if !ok {
+			return nil, errors.Errorf("framework %s was found but not of type FrameworkManifest", name)
+		}
+		fws[ii] = fw
+	}
+	return fws, nil
+}

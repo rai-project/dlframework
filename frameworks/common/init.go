@@ -7,10 +7,11 @@ import (
 )
 
 var (
-	log *logrus.Entry
+	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/frameworks/common")
 )
 
 func init() {
+	log.Level = logrus.DebugLevel
 	config.AfterInit(func() {
 		log = logger.New().WithField("pkg", "dlframework/frameworks/common")
 	})
