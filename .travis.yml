@@ -8,9 +8,6 @@ matrix:
     - go: tip
 dist: trusty
 sudo: false
-cache:
-  directories:
-  - "$HOME/protobuf"
 addons:
   apt:
     sources:
