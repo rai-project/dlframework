@@ -37,7 +37,9 @@ generate-mxnet:
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/mxnet -I$(GOPATH)/src --gogofaster_out=plugins=grpc:frameworks/mxnet frameworks/mxnet/mxnet.proto
 	go-bindata -nomemcopy -prefix frameworks/mxnet/builtin_models/ -pkg mxnet -o frameworks/mxnet/builtin_models_static.go -ignore=.DS_Store frameworks/mxnet/builtin_models/...
 
-travis: install-deps glide-install logrus-fix generate
+install-proto:
 	./scripts/install-protobuf.sh
+
+travis: install-proto install-deps glide-install logrus-fix generate
 	echo "building..."
 	go build
