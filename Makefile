@@ -6,13 +6,18 @@ fmt:
 install-deps:
 	go get github.com/jteeuwen/go-bindata/...
 	go get github.com/elazarl/go-bindata-assetfs/...
-	go get github.com/golang/protobuf/{proto,protoc-gen-go}
+	go get github.com/golang/protobuf/proto
+	go get github.com/golang/protobuf/protoc-gen-go
 	go get google.golang.org/grpc
-	go get github.com/gogo/protobuf/{proto,gogoproto,protoc-gen-gofast,protoc-gen-gogofaster,protoc-gen-gogoslick}
-	go get github.com/grpc-ecosystem/grpc-gateway/{protoc-gen-swagger,protoc-gen-grpc-gateway}
-	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-	go get -u github.com/golang/protobuf/protoc-gen-go
+	go get github.com/gogo/protobuf/proto
+	go get github.com/gogo/protobuf/gogoproto
+	go get github.com/gogo/protobuf/protoc-gen-gofast
+	go get github.com/gogo/protobuf/protoc-gen-gogofaster
+	go get github.com/gogo/protobuf/protoc-gen-gogoslick
+	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	go get github.com/golang/protobuf/protoc-gen-go
 
 glide-install:
 	glide install --force
@@ -31,3 +36,8 @@ generate:
 generate-mxnet:
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/mxnet -I$(GOPATH)/src --gogofaster_out=plugins=grpc:frameworks/mxnet frameworks/mxnet/mxnet.proto
 	go-bindata -nomemcopy -prefix frameworks/mxnet/builtin_models/ -pkg mxnet -o frameworks/mxnet/builtin_models_static.go -ignore=.DS_Store frameworks/mxnet/builtin_models/...
+
+travis: install-deps glide-install logrus-fix generate
+	./scripts/install-protobuf.sh
+	echo "building..."
+	go build

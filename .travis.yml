@@ -21,12 +21,7 @@ addons:
     - build-essential
     - jq
 install:
-  - bash scripts/install-protobuf.sh
-  - make install-deps
-  - make glide-install
-  - make logrus-fix
-  - make generate
-  - go build
+  - make travis
 script:
   - echo "Skip tests..."
 after_script:
