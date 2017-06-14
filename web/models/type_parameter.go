@@ -14,17 +14,41 @@ import (
 // swagger:model TypeParameter
 type TypeParameter struct {
 
-	// parameter
-	Parameter string `json:"parameter,omitempty"`
+	// value
+	Value *ProtobufStruct `json:"value,omitempty"`
 }
 
 // Validate validates this type parameter
 func (m *TypeParameter) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateValue(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *TypeParameter) validateValue(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Value) { // not required
+		return nil
+	}
+
+	if m.Value != nil {
+
+		if err := m.Value.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("value")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

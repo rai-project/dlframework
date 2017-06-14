@@ -25,8 +25,10 @@ logrus-fix:
 	rm -fr vendor/github.com/Sirupsen
 	find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
 
-generate:
-	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. --gogofaster_out=plugins=grpc:. dlframework.proto
+generate-proto:
+	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. --gogofaster_out=Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,plugins=grpc:. dlframework.proto
+
+generate: generate-proto
 	jq -s '.[0] * .[1]' dlframework.swagger.json swagger-info.json > dlframework.versioned.swagger.json
 	swagger generate server -f dlframework.versioned.swagger.json -t web -A dlframework
 	swagger generate client -f dlframework.versioned.swagger.json -t web -A dlframework

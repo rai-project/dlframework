@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/rai-project/dlframework"
-	yaml "gopkg.in/yaml.v1"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var thisFramework = dlframework.FrameworkManifest{

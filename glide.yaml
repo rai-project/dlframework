@@ -63,7 +63,7 @@ import:
   version: ^1.4.0
 - package: gopkg.in/fatih/set.v0
   version: ^0.1.0
-- package: gopkg.in/yaml.v1
+- package: gopkg.in/yaml.v2
 testImport:
 - package: github.com/GeertJohan/go.rice
 - package: github.com/stretchr/testify

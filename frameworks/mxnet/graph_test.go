@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	box                 = rice.MustFindBox("_fixtures")
-	inceptionSymbolJSON = box.MustBytes("Inception-BN-symbol.json")
-	caffenetSymbolJSON  = box.MustBytes("caffenet-symbol.json")
-	rn101               = box.MustBytes("RN101-5k500-symbol.json")
+	fixturesBox         = rice.MustFindBox("_fixtures")
+	inceptionSymbolJSON = fixturesBox.MustBytes("Inception-BN-symbol.json")
+	caffenetSymbolJSON  = fixturesBox.MustBytes("caffenet-symbol.json")
+	rn101               = fixturesBox.MustBytes("RN101-5k500-symbol.json")
 )
 
 func TestUnmarshalGraph(t *testing.T) {

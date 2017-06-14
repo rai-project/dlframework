@@ -34,6 +34,7 @@ import fmt "fmt"
 import go_parser "go/parser"
 import proto "github.com/gogo/protobuf/proto"
 import math "math"
+import _ "github.com/gogo/protobuf/types"
 import _ "google.golang.org/genproto/googleapis/api/annotations"
 import _ "github.com/gogo/protobuf/gogoproto"
 

@@ -78,3 +78,20 @@ func (m ModelManifest) RegisterNamed(s string) error {
 func RegisteredModelNames() []string {
 	return syncMapKeys(modelRegistry)
 }
+
+func Models() ([]ModelManifest, error) {
+	names := RegisteredModelNames()
+	models := make([]ModelManifest, len(names))
+	for ii, name := range names {
+		m, ok := modelRegistry.Load(name)
+		if !ok {
+			return nil, errors.Errorf("model %s was not found", name)
+		}
+		model, ok := m.(ModelManifest)
+		if !ok {
+			return nil, errors.Errorf("model %s was found but not of type ModelManifest", name)
+		}
+		models[ii] = model
+	}
+	return models, nil
+}

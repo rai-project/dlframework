@@ -1,5 +1,6 @@
 syntax = "proto3";
 
+import "google/protobuf/struct.proto";
 import "google/api/annotations.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -39,7 +40,8 @@ message FrameworkManifest {
 message ModelManifest {
   message Type {
     message Parameter {
-      string parameter = 1 [ (gogoproto.moretags) = "yaml:\",flow\"" ];
+      google.protobuf.Struct value = 1
+          [ (gogoproto.moretags) = "yaml:\",inline\"" ];
     }
     string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
     string description = 2
