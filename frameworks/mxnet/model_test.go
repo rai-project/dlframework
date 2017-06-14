@@ -28,7 +28,9 @@ func TestUnmarshalModel(t *testing.T) {
 		err = yaml.Unmarshal(data, &model)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, model)
-		pp.Println(model)
+		if false {
+			pp.Println(model)
+		}
 		return err
 	})
 
