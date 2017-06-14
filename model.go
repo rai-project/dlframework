@@ -94,3 +94,26 @@ func Models() ([]ModelManifest, error) {
 	}
 	return models, nil
 }
+
+func FindModel(name string) (*ModelManifest, error) {
+	var model *ModelManifest
+	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
+		key, ok := key0.(string)
+		if !ok {
+			return true
+		}
+		if key != name {
+			return true
+		}
+		m, ok := value.(ModelManifest)
+		if !ok {
+			return true
+		}
+		model = &m
+		return true
+	})
+	if model == nil {
+		return nil, errors.Errorf("model %s not found in registery", name)
+	}
+	return model, nil
+}
