@@ -1,4 +1,4 @@
-name: CaffeNet # name of your model
+name: ResidualNet34 # name of your model
 framework: MXNet # framework for the model
 version: 1.0 # version information in semantic version format
 container: # containers used to perform model prediction
@@ -10,11 +10,11 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-mxnet:ppc64le-gpu
     gpu: raiproject/carml-mxnet:ppc64le-gpu
 description: >
-  An image-classification deep convolutional network trained on the LSVRC-2010 ImageNet training set,
-  which achieved top-1 and top-5 error rates of 39.7% and 18.9%.
-  The network consists of 60M parameters and 500K neurons across 5 convolutional layers two fully-connected layers.
+  An image-classification network built of layers that learn residual functions w.r.t layer inputs.
+  This network consists of 34 layers.
+  An ensemble of these networks achieves 3.57% error rate on ILSVRC-2015.
 references: # references to papers / websites / etc.. describing the model
-  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
+  - https://arxiv.org/pdf/1512.03385v1.pdf
 # license of the model
 license: MIT
 # inputs to the model 
@@ -29,14 +29,14 @@ output:
   # the type of the output
   type: feature
   # a description of the output parameter
-  description: an output image net label
+  description: the output label
   parameters:
     # type parameters 
-    features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
+    features_url: http://data.dmlc.ml/mxnet/models/imagenet/resnet/synset.txt
 model: # specifies model graph and weights resources
-  base_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/
-  graph_path: caffenet-symbol.json
-  weights_path: caffenet-0000.params
+  base_url: http://data.dmlc.ml/models/imagenet/resnet/34-layers/
+  graph_path: resnet-34-symbol.json
+  weights_path: resnet-34-0000.params
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the 
                     # file names of the graph and weights within the archive

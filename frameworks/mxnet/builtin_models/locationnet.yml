@@ -1,4 +1,4 @@
-name: CaffeNet # name of your model
+name: LocationNet # name of your model
 framework: MXNet # framework for the model
 version: 1.0 # version information in semantic version format
 container: # containers used to perform model prediction
@@ -10,11 +10,11 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-mxnet:ppc64le-gpu
     gpu: raiproject/carml-mxnet:ppc64le-gpu
 description: >
-  An image-classification deep convolutional network trained on the LSVRC-2010 ImageNet training set,
-  which achieved top-1 and top-5 error rates of 39.7% and 18.9%.
-  The network consists of 60M parameters and 500K neurons across 5 convolutional layers two fully-connected layers.
+  A photo-localization convolutional neural network based on the Inception architecture.
+  LocationNet is able to localize 3.6% of images at street level, and 48% at continent level.
+  The network was trained on 19M EXIF geotagged photos and consists of 97,321,048 parameters.
 references: # references to papers / websites / etc.. describing the model
-  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
+  - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45488.pdf
 # license of the model
 license: MIT
 # inputs to the model 
@@ -27,20 +27,21 @@ inputs:
       dimensions: [1, 3, 224, 224]
 output:
   # the type of the output
-  type: feature
+  type: coordinates
   # a description of the output parameter
-  description: an output image net label
+  description: the output coordinates
   parameters:
     # type parameters 
-    features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
+    features_url: https://raw.githubusercontent.com/multimedia-berkeley/tutorials/master/grids.txt
+mean_image: [123.68, 116.779, 103.939]
 model: # specifies model graph and weights resources
-  base_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/
-  graph_path: caffenet-symbol.json
-  weights_path: caffenet-0000.params
+  base_url: https://s3.amazonaws.com/mmcommons-tutorial/models/
+  graph_path: RN101-5k500-symbol.json
+  weights_path: RN101-5k500-0012.params
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the 
                     # file names of the graph and weights within the archive
 attributes: # extra network attributes 
   kind: CNN # the kind of neural network (CNN, RNN, ...)
-  training_dataset: ImageNet # dataset used to for training
+  training_dataset: MultimediaCommons # dataset used to for training
   manifest_author: abduld

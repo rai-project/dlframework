@@ -1,4 +1,4 @@
-name: CaffeNet # name of your model
+name: Network in Network (NiN) # name of your model
 framework: MXNet # framework for the model
 version: 1.0 # version information in semantic version format
 container: # containers used to perform model prediction
@@ -10,11 +10,12 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-mxnet:ppc64le-gpu
     gpu: raiproject/carml-mxnet:ppc64le-gpu
 description: >
-  An image-classification deep convolutional network trained on the LSVRC-2010 ImageNet training set,
-  which achieved top-1 and top-5 error rates of 39.7% and 18.9%.
-  The network consists of 60M parameters and 500K neurons across 5 convolutional layers two fully-connected layers.
+  An image-classification network struture where small perceptrons slide over input maps, similar to a CNN.
+  This enhances local modeling, allowing for simpler classification layers that are easier to interpret.
+  The network consists of 3 stacked layers, each of which is a 3-layer perceptron.
+  NIN achieved 35.69% on IFAR-100 in 2014.
 references: # references to papers / websites / etc.. describing the model
-  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
+  - https://arxiv.org/pdf/1312.4400v3.pdf
 # license of the model
 license: MIT
 # inputs to the model 
@@ -29,14 +30,14 @@ output:
   # the type of the output
   type: feature
   # a description of the output parameter
-  description: an output image net label
+  description: the output label
   parameters:
     # type parameters 
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model: # specifies model graph and weights resources
-  base_url: http://data.dmlc.ml/mxnet/models/imagenet/caffenet/
-  graph_path: caffenet-symbol.json
-  weights_path: caffenet-0000.params
+  base_url: http://data.dmlc.ml/models/imagenet/nin/
+  graph_path: nin-symbol.json
+  weights_path: nin-0000.params
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the 
                     # file names of the graph and weights within the archive
