@@ -6,18 +6,17 @@ fmt:
 install-deps:
 	go get github.com/jteeuwen/go-bindata/...
 	go get github.com/elazarl/go-bindata-assetfs/...
-	go get github.com/golang/protobuf/proto
-	go get github.com/golang/protobuf/protoc-gen-go
 	go get google.golang.org/grpc
 	go get github.com/gogo/protobuf/proto
 	go get github.com/gogo/protobuf/gogoproto
+	go get github.com/golang/protobuf/protoc-gen-go
 	go get github.com/gogo/protobuf/protoc-gen-gofast
 	go get github.com/gogo/protobuf/protoc-gen-gogofaster
 	go get github.com/gogo/protobuf/protoc-gen-gogoslick
 	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-	go get github.com/golang/protobuf/protoc-gen-go
+	go get github.com/go-swagger/go-swagger/cmd/swagger
 
 glide-install:
 	glide install --force

@@ -11,7 +11,7 @@ import (
 
 var thisFramework = dlframework.FrameworkManifest{
 	Name: "MXNet",
-	DefaultContainer: map[string]*dlframework.ContainerHardware{
+	Container: map[string]*dlframework.ContainerHardware{
 		"amd64": &dlframework.ContainerHardware{
 			Cpu: "raiproject/carml-mxnet:amd64-cpu",
 			Gpu: "raiproject/carml-mxnet:amd64-gpu",
@@ -24,7 +24,7 @@ var thisFramework = dlframework.FrameworkManifest{
 }
 
 func init() {
-	dlframework.AddFramework(thisFramework)
+	thisFramework.Register()
 
 	assets, err := AssetDir("")
 	if err != nil {
@@ -50,7 +50,7 @@ func init() {
 				return
 			}
 			name := strings.TrimRight(filepath.Base(asset), ext)
-			mode.Register()
+			model.Register()
 		}(ii, asset)
 	}
 	wg.Wait()
