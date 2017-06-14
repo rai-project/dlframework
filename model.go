@@ -63,11 +63,23 @@ func (m ModelManifest) CannonicalName() (string, error) {
 }
 
 func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
-	modelFrameworkConstraint, err := semver.NewConstraint(m.GetFramework().GetVersion())
+	frameworks, err := Frameworks()
 	if err != nil {
 		return FrameworkManifest{}, err
 	}
-	frameworks, err := Frameworks()
+	if len(frameworks) == 0 {
+		return FrameworkManifest{}, errors.New("framework not found")
+	}
+	if m.GetFramework().GetVersion() == "lastest" {
+		sort.Slice(frameworks, func(ii, jj int) bool {
+			f1, _ := semver.NewVersion(frameworks[ii].GetVersion())
+			f2, _ := semver.NewVersion(frameworks[jj].GetVersion())
+			return f1.LessThan(f2)
+		})
+		return frameworks[len(frameworks)-1], nil
+	}
+
+	modelFrameworkConstraint, err := semver.NewConstraint(m.GetFramework().GetVersion())
 	if err != nil {
 		return FrameworkManifest{}, err
 	}
