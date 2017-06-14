@@ -14,8 +14,8 @@ import (
 
 	"github.com/levigross/grequests"
 	"github.com/rai-project/config"
-	"github.com/rai-project/dlframework/mxnet"
-	"github.com/rai-project/dlframework/mxnet/predict"
+	"github.com/rai-project/dlframework/frameworks/mxnet"
+	"github.com/rai-project/dlframework/frameworks/mxnet/predict"
 	rgrpc "github.com/rai-project/grpc"
 	context "golang.org/x/net/context"
 

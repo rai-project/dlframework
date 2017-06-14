@@ -10,7 +10,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
-	"github.com/rai-project/dlframework/mxnet/agent"
+	"github.com/rai-project/dlframework/frameworks/mxnet/agent"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

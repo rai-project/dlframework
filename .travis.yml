@@ -1,11 +1,10 @@
 language: go
 matrix:
   include:
-    - go: 1.7.x
     - go: 1.8.x
-    - go: tip
-  allow_failures:
-    - go: tip
+    # - go: tip
+  # allow_failures:
+    # - go: tip
 dist: trusty
 sudo: false
 cache:

@@ -47,6 +47,6 @@ ENV LD_LIBRARY_PATH /mxnet/lib:$LD_LIBRARY_PATH
 RUN go get github.com/rai-project/dlframework
 WORKDIR $GOPATH/src/github.com/rai-project/dlframework
 RUN glide install
-WORKDIR $GOPATH/src/github.com/rai-project/dlframework/mxnet/mxnet-agent
+WORKDIR $GOPATH/src/github.com/rai-project/dlframework/frameworks/mxnet/mxnet-agent
 RUN go build
 ENTRYPOINT ["./mxnet-agent", "--debug", "--verbose"]

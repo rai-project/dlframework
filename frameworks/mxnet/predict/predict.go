@@ -12,7 +12,7 @@ import (
 	"github.com/anthonynsimon/bild/parallel"
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/pkg/errors"
-	"github.com/rai-project/dlframework/mxnet"
+	"github.com/rai-project/dlframework/frameworks/mxnet"
 	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
 	"github.com/songtianyi/go-mxnet-predictor/utils"
 )
