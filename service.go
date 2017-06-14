@@ -1,3 +1,6 @@
 package dlframework
 
-var ServiceDescription = _Carml_serviceDesc
+var (
+	RegistryServiceDescription  = _Registry_serviceDesc
+	PredictorServiceDescription = _Predictor_serviceDesc
+)
