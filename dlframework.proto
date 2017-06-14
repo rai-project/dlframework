@@ -159,7 +159,7 @@ message PredictResponse {
   ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
 }
 
-service carml {
+service registry {
   rpc GetFrameworkManifests(Null) returns (GetFrameworkManifestsResponse) {
     option (google.api.http) = {
       get : "/v1/frameworks",

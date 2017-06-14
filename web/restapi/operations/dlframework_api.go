@@ -17,8 +17,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/rai-project/dlframework/web/restapi/operations/carml"
 	"github.com/rai-project/dlframework/web/restapi/operations/predictor"
+	"github.com/rai-project/dlframework/web/restapi/operations/registry"
 )
 
 // NewDlframeworkAPI creates a new Dlframework instance
@@ -36,23 +36,23 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		CarmlGetFrameworkManifestHandler: carml.GetFrameworkManifestHandlerFunc(func(params carml.GetFrameworkManifestParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetFrameworkManifest has not yet been implemented")
+		RegistryGetFrameworkManifestHandler: registry.GetFrameworkManifestHandlerFunc(func(params registry.GetFrameworkManifestParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetFrameworkManifest has not yet been implemented")
 		}),
-		CarmlGetFrameworkManifestsHandler: carml.GetFrameworkManifestsHandlerFunc(func(params carml.GetFrameworkManifestsParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetFrameworkManifests has not yet been implemented")
+		RegistryGetFrameworkManifestsHandler: registry.GetFrameworkManifestsHandlerFunc(func(params registry.GetFrameworkManifestsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetFrameworkManifests has not yet been implemented")
 		}),
-		CarmlGetFrameworkModelManifestHandler: carml.GetFrameworkModelManifestHandlerFunc(func(params carml.GetFrameworkModelManifestParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetFrameworkModelManifest has not yet been implemented")
+		RegistryGetFrameworkModelManifestHandler: registry.GetFrameworkModelManifestHandlerFunc(func(params registry.GetFrameworkModelManifestParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetFrameworkModelManifest has not yet been implemented")
 		}),
-		CarmlGetFrameworkModelsHandler: carml.GetFrameworkModelsHandlerFunc(func(params carml.GetFrameworkModelsParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetFrameworkModels has not yet been implemented")
+		RegistryGetFrameworkModelsHandler: registry.GetFrameworkModelsHandlerFunc(func(params registry.GetFrameworkModelsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetFrameworkModels has not yet been implemented")
 		}),
-		CarmlGetModelManifestHandler: carml.GetModelManifestHandlerFunc(func(params carml.GetModelManifestParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetModelManifest has not yet been implemented")
+		RegistryGetModelManifestHandler: registry.GetModelManifestHandlerFunc(func(params registry.GetModelManifestParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetModelManifest has not yet been implemented")
 		}),
-		CarmlGetModelManifestsHandler: carml.GetModelManifestsHandlerFunc(func(params carml.GetModelManifestsParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlGetModelManifests has not yet been implemented")
+		RegistryGetModelManifestsHandler: registry.GetModelManifestsHandlerFunc(func(params registry.GetModelManifestsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryGetModelManifests has not yet been implemented")
 		}),
 		PredictorPredictHandler: predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictorPredict has not yet been implemented")
@@ -86,18 +86,18 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// CarmlGetFrameworkManifestHandler sets the operation handler for the get framework manifest operation
-	CarmlGetFrameworkManifestHandler carml.GetFrameworkManifestHandler
-	// CarmlGetFrameworkManifestsHandler sets the operation handler for the get framework manifests operation
-	CarmlGetFrameworkManifestsHandler carml.GetFrameworkManifestsHandler
-	// CarmlGetFrameworkModelManifestHandler sets the operation handler for the get framework model manifest operation
-	CarmlGetFrameworkModelManifestHandler carml.GetFrameworkModelManifestHandler
-	// CarmlGetFrameworkModelsHandler sets the operation handler for the get framework models operation
-	CarmlGetFrameworkModelsHandler carml.GetFrameworkModelsHandler
-	// CarmlGetModelManifestHandler sets the operation handler for the get model manifest operation
-	CarmlGetModelManifestHandler carml.GetModelManifestHandler
-	// CarmlGetModelManifestsHandler sets the operation handler for the get model manifests operation
-	CarmlGetModelManifestsHandler carml.GetModelManifestsHandler
+	// RegistryGetFrameworkManifestHandler sets the operation handler for the get framework manifest operation
+	RegistryGetFrameworkManifestHandler registry.GetFrameworkManifestHandler
+	// RegistryGetFrameworkManifestsHandler sets the operation handler for the get framework manifests operation
+	RegistryGetFrameworkManifestsHandler registry.GetFrameworkManifestsHandler
+	// RegistryGetFrameworkModelManifestHandler sets the operation handler for the get framework model manifest operation
+	RegistryGetFrameworkModelManifestHandler registry.GetFrameworkModelManifestHandler
+	// RegistryGetFrameworkModelsHandler sets the operation handler for the get framework models operation
+	RegistryGetFrameworkModelsHandler registry.GetFrameworkModelsHandler
+	// RegistryGetModelManifestHandler sets the operation handler for the get model manifest operation
+	RegistryGetModelManifestHandler registry.GetModelManifestHandler
+	// RegistryGetModelManifestsHandler sets the operation handler for the get model manifests operation
+	RegistryGetModelManifestsHandler registry.GetModelManifestsHandler
 	// PredictorPredictHandler sets the operation handler for the predict operation
 	PredictorPredictHandler predictor.PredictHandler
 
@@ -163,28 +163,28 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.CarmlGetFrameworkManifestHandler == nil {
-		unregistered = append(unregistered, "carml.GetFrameworkManifestHandler")
+	if o.RegistryGetFrameworkManifestHandler == nil {
+		unregistered = append(unregistered, "registry.GetFrameworkManifestHandler")
 	}
 
-	if o.CarmlGetFrameworkManifestsHandler == nil {
-		unregistered = append(unregistered, "carml.GetFrameworkManifestsHandler")
+	if o.RegistryGetFrameworkManifestsHandler == nil {
+		unregistered = append(unregistered, "registry.GetFrameworkManifestsHandler")
 	}
 
-	if o.CarmlGetFrameworkModelManifestHandler == nil {
-		unregistered = append(unregistered, "carml.GetFrameworkModelManifestHandler")
+	if o.RegistryGetFrameworkModelManifestHandler == nil {
+		unregistered = append(unregistered, "registry.GetFrameworkModelManifestHandler")
 	}
 
-	if o.CarmlGetFrameworkModelsHandler == nil {
-		unregistered = append(unregistered, "carml.GetFrameworkModelsHandler")
+	if o.RegistryGetFrameworkModelsHandler == nil {
+		unregistered = append(unregistered, "registry.GetFrameworkModelsHandler")
 	}
 
-	if o.CarmlGetModelManifestHandler == nil {
-		unregistered = append(unregistered, "carml.GetModelManifestHandler")
+	if o.RegistryGetModelManifestHandler == nil {
+		unregistered = append(unregistered, "registry.GetModelManifestHandler")
 	}
 
-	if o.CarmlGetModelManifestsHandler == nil {
-		unregistered = append(unregistered, "carml.GetModelManifestsHandler")
+	if o.RegistryGetModelManifestsHandler == nil {
+		unregistered = append(unregistered, "registry.GetModelManifestsHandler")
 	}
 
 	if o.PredictorPredictHandler == nil {
@@ -277,32 +277,32 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/info"] = carml.NewGetFrameworkManifest(o.context, o.CarmlGetFrameworkManifestHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/info"] = registry.NewGetFrameworkManifest(o.context, o.RegistryGetFrameworkManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/frameworks"] = carml.NewGetFrameworkManifests(o.context, o.CarmlGetFrameworkManifestsHandler)
+	o.handlers["GET"]["/v1/frameworks"] = registry.NewGetFrameworkManifests(o.context, o.RegistryGetFrameworkManifestsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"] = carml.NewGetFrameworkModelManifest(o.context, o.CarmlGetFrameworkModelManifestHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"] = registry.NewGetFrameworkModelManifest(o.context, o.RegistryGetFrameworkModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/models"] = carml.NewGetFrameworkModels(o.context, o.CarmlGetFrameworkModelsHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/models"] = registry.NewGetFrameworkModels(o.context, o.RegistryGetFrameworkModelsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/model/{model_name}/{model_version}/info"] = carml.NewGetModelManifest(o.context, o.CarmlGetModelManifestHandler)
+	o.handlers["POST"]["/v1/model/{model_name}/{model_version}/info"] = registry.NewGetModelManifest(o.context, o.RegistryGetModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/models"] = carml.NewGetModelManifests(o.context, o.CarmlGetModelManifestsHandler)
+	o.handlers["GET"]["/v1/models"] = registry.NewGetModelManifests(o.context, o.RegistryGetModelManifestsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

@@ -10,8 +10,8 @@ import (
 	graceful "github.com/tylerb/graceful"
 
 	"github.com/rai-project/dlframework/web/restapi/operations"
-	"github.com/rai-project/dlframework/web/restapi/operations/carml"
 	"github.com/rai-project/dlframework/web/restapi/operations/predictor"
+	"github.com/rai-project/dlframework/web/restapi/operations/registry"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
@@ -36,23 +36,23 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.CarmlGetFrameworkManifestHandler = carml.GetFrameworkManifestHandlerFunc(func(params carml.GetFrameworkManifestParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetFrameworkManifest has not yet been implemented")
+	api.RegistryGetFrameworkManifestHandler = registry.GetFrameworkManifestHandlerFunc(func(params registry.GetFrameworkManifestParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetFrameworkManifest has not yet been implemented")
 	})
-	api.CarmlGetFrameworkManifestsHandler = carml.GetFrameworkManifestsHandlerFunc(func(params carml.GetFrameworkManifestsParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetFrameworkManifests has not yet been implemented")
+	api.RegistryGetFrameworkManifestsHandler = registry.GetFrameworkManifestsHandlerFunc(func(params registry.GetFrameworkManifestsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetFrameworkManifests has not yet been implemented")
 	})
-	api.CarmlGetFrameworkModelManifestHandler = carml.GetFrameworkModelManifestHandlerFunc(func(params carml.GetFrameworkModelManifestParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetFrameworkModelManifest has not yet been implemented")
+	api.RegistryGetFrameworkModelManifestHandler = registry.GetFrameworkModelManifestHandlerFunc(func(params registry.GetFrameworkModelManifestParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetFrameworkModelManifest has not yet been implemented")
 	})
-	api.CarmlGetFrameworkModelsHandler = carml.GetFrameworkModelsHandlerFunc(func(params carml.GetFrameworkModelsParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetFrameworkModels has not yet been implemented")
+	api.RegistryGetFrameworkModelsHandler = registry.GetFrameworkModelsHandlerFunc(func(params registry.GetFrameworkModelsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetFrameworkModels has not yet been implemented")
 	})
-	api.CarmlGetModelManifestHandler = carml.GetModelManifestHandlerFunc(func(params carml.GetModelManifestParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetModelManifest has not yet been implemented")
+	api.RegistryGetModelManifestHandler = registry.GetModelManifestHandlerFunc(func(params registry.GetModelManifestParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetModelManifest has not yet been implemented")
 	})
-	api.CarmlGetModelManifestsHandler = carml.GetModelManifestsHandlerFunc(func(params carml.GetModelManifestsParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.GetModelManifests has not yet been implemented")
+	api.RegistryGetModelManifestsHandler = registry.GetModelManifestsHandlerFunc(func(params registry.GetModelManifestsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.GetModelManifests has not yet been implemented")
 	})
 	api.PredictorPredictHandler = predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
 		return middleware.NotImplemented("operation predictor.Predict has not yet been implemented")

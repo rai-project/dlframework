@@ -32,7 +32,7 @@ func init() {
     "/v1/framework/{framework_name}/{framework_version}/info": {
       "get": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetFrameworkManifest",
         "parameters": [
@@ -61,7 +61,7 @@ func init() {
     "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info": {
       "post": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetFrameworkModelManifest",
         "parameters": [
@@ -110,7 +110,7 @@ func init() {
     "/v1/framework/{framework_name}/{framework_version}/models": {
       "get": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetFrameworkModels",
         "parameters": [
@@ -139,7 +139,7 @@ func init() {
     "/v1/frameworks": {
       "get": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetFrameworkManifests",
         "responses": {
@@ -154,7 +154,7 @@ func init() {
     "/v1/model/{model_name}/{model_version}/info": {
       "post": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetModelManifest",
         "parameters": [
@@ -191,7 +191,7 @@ func init() {
     "/v1/models": {
       "get": {
         "tags": [
-          "carml"
+          "registry"
         ],
         "operationId": "GetModelManifests",
         "responses": {
