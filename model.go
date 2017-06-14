@@ -52,3 +52,7 @@ func (m ModelManifest) RegisterNamed(s string) error {
 	modelRegistry.Store(s, m)
 	return nil
 }
+
+func RegisteredModelNames() []string {
+	return syncMapKeys(modelRegistry)
+}

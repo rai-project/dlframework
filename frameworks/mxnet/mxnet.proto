@@ -16,127 +16,73 @@ option (gogoproto.unmarshaler_all) = true;
 
 option go_package = "mxnet";
 
-package carml.org.mxnet;
+package carml.org.dlframework.frameworks.mxnet;
 
-message ErrorStatus {
-  bool ok = 1 [ (gogoproto.moretags) = "yaml:\"ok,omitempty\"" ];
-  string message = 2 [ (gogoproto.moretags) = "yaml:\"message,omitempty\"" ];
-}
-
-message ContainerArchicture {
-  string gpu = 1 [ (gogoproto.moretags) = "yaml:\"gpu,omitempty\"" ];
-  string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
-}
-
-message Model {
-  message Input {
-    string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
-    repeated int64 dimensions = 2
-        [ (gogoproto.moretags) = "yaml:\"dimensions,omitempty\"" ];
+message Graph {
+  message NodeEntry {
+    int64 node_id = 1 [
+      (gogoproto.jsontag) = "node_id",
+      (gogoproto.moretags) = "yaml:\"node_id,omitempty\""
+    ];
+    int64 index = 2 [
+      (gogoproto.jsontag) = "index",
+      (gogoproto.moretags) = "yaml:\"input,omitempty\""
+    ];
+    int64 version = 3 [
+      (gogoproto.jsontag) = "version",
+      (gogoproto.moretags) = "yaml:\"version,omitempty\""
+    ];
   }
 
-  message Output {
-    string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+  message Node {
+    string op = 1 [
+      (gogoproto.jsontag) = "op",
+      (gogoproto.moretags) = "yaml:\"op,omitempty\""
+    ];
+    map<string, string> param = 2 [
+      (gogoproto.jsontag) = "param",
+      (gogoproto.moretags) = "yaml:\"params,omitempty\""
+    ];
+    string name = 3 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+    repeated NodeEntry inputs = 4 [
+      (gogoproto.jsontag) = "inputs",
+      (gogoproto.moretags) = "yaml:\"inputs,omitempty\""
+    ];
+    int64 backward_source_id = 5 [
+      (gogoproto.jsontag) = "backward_source_id",
+      (gogoproto.moretags) = "yaml:\"backward_source_id,omitempty\""
+    ];
+    repeated int64 control_deps = 6 [
+      (gogoproto.jsontag) = "control_deps",
+      (gogoproto.moretags) = "yaml:\"control_deps,omitempty\""
+    ];
   }
 
-  message Information {
-    string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-    string description = 2
-        [ (gogoproto.moretags) = "yaml:\"description,omitempty\"" ];
-    map<string, ContainerArchicture> container = 3
-        [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
-    string framework = 4
-        [ (gogoproto.moretags) = "yaml:\"framework,omitempty\"" ];
-    string version = 5 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
-    string type = 6 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
-    string dataset_name = 7
-        [ (gogoproto.moretags) = "yaml:\"dataset_name,omitempty\"" ];
-    string graph_url = 8
-        [ (gogoproto.moretags) = "yaml:\"graph_url,omitempty\"" ];
-    string weights_url = 9
-        [ (gogoproto.moretags) = "yaml:\"weights_url,omitempty\"" ];
-    string features_url = 10
-        [ (gogoproto.moretags) = "yaml:\"features_url,omitempty\"" ];
-    Input input = 11 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
-    Output output = 12 [ (gogoproto.moretags) = "yaml:\"output,omitempty\"" ];
-    repeated float mean_image = 13
-        [ (gogoproto.moretags) = "yaml:\"mean_image,omitempty\"" ];
-    repeated string references = 14
-        [ (gogoproto.moretags) = "yaml:\"references,omitempty\"" ];
+  message Attributes {
+    map<string, string> attrs = 1 [
+      (gogoproto.jsontag) = "attrs",
+      (gogoproto.moretags) = "yaml:\"attrs,omitempty\""
+    ];
   }
-  message Graph {
-    message NodeEntry {
-      int64 node_id = 1 [ (gogoproto.moretags) = "yaml:\"node_id,omitempty\"" ];
-      int64 index = 2 [ (gogoproto.moretags) = "yaml:\"input,omitempty\"" ];
-      int64 version = 3 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
-    }
 
-    message Node {
-      string op = 1 [ (gogoproto.moretags) = "yaml:\"op,omitempty\"" ];
-      map<string, string> param = 2
-          [ (gogoproto.moretags) = "yaml:\"params,omitempty\"" ];
-      string name = 3 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-      repeated NodeEntry inputs = 4
-          [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
-      int64 backward_source_id = 5
-          [ (gogoproto.moretags) = "yaml:\"backward_source_id,omitempty\"" ];
-      repeated int64 control_deps = 6
-          [ (gogoproto.moretags) = "yaml:\"control_deps,omitempty\"" ];
-    }
-
-    message Attributes { map<string, string> attrs = 1; }
-
-    repeated Node nodes = 1
-        [ (gogoproto.moretags) = "yaml:\"nodes,omitempty\"" ];
-    repeated int64 arg_nodes = 2
-        [ (gogoproto.moretags) = "yaml:\"arg_nodes,omitempty\"" ];
-    repeated int64 node_row_ptr = 3
-        [ (gogoproto.moretags) = "yaml:\"node_row_ptr,omitempty\"" ];
-    repeated NodeEntry heads = 4
-        [ (gogoproto.moretags) = "yaml:\"heads,omitempty\"" ];
-    Attributes attrs = 5 [ (gogoproto.moretags) = "yaml:\"attrs,omitempty\"" ];
-  }
-}
-
-message ModelInformations {
-  repeated Model.Information info = 1
-      [ (gogoproto.moretags) = "yaml:\"info,omitempty\"" ];
-}
-
-message MXNetInferenceRequest {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  string model_name = 2
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string url = 3 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
-  bytes data = 4 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
-}
-
-message Feature {
-  int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-  float probability = 3
-      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
-}
-
-message MXNetInferenceResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  repeated Feature features = 2
-      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
-  ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
-}
-
-message MXNetModelInformationRequest {
-  string model_name = 1
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-}
-
-message Null {}
-
-service MXNet {
-  rpc InferURL(MXNetInferenceRequest) returns (MXNetInferenceResponse) {}
-  rpc InferBytes(MXNetInferenceRequest) returns (MXNetInferenceResponse) {}
-  rpc GetModelInformations(Null) returns (ModelInformations) {}
-  rpc GetModelInformation(MXNetModelInformationRequest)
-      returns (Model.Information) {}
-  rpc GetModelGraph(MXNetModelInformationRequest) returns (Model.Graph) {}
+  repeated Node nodes = 1 [
+    (gogoproto.jsontag) = "nodes",
+    (gogoproto.moretags) = "yaml:\"nodes,omitempty\""
+  ];
+  repeated int64 arg_nodes = 2 [
+    (gogoproto.jsontag) = "arg_nodes",
+    (gogoproto.moretags) = "yaml:\"arg_nodes,omitempty\""
+  ];
+  repeated int64 node_row_ptr = 3 [
+    (gogoproto.jsontag) = "node_row_ptr",
+    (gogoproto.moretags) = "yaml:\"node_row_ptr,omitempty\""
+  ];
+  repeated NodeEntry heads = 4 [
+    (gogoproto.jsontag) = "heads",
+    (gogoproto.moretags) = "yaml:\"heads,omitempty\""
+  ];
+  Attributes attrs = 5 [
+    (gogoproto.jsontag) = "attrs",
+    (gogoproto.moretags) = "yaml:\"attrs,omitempty\""
+  ];
 }

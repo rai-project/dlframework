@@ -37,3 +37,7 @@ func (f FrameworkManifest) RegisterNamed(s string) error {
 	frameworkRegistry.Store(s, f)
 	return nil
 }
+
+func RegisteredFrameworkNames() []string {
+	return syncMapKeys(frameworkRegistry)
+}

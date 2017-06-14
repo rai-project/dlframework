@@ -1,3 +1,3 @@
 # builtin_models
 
-Run `go generate` in `mxnet` (`..`) after updating model descriptions.
+Run `make generate-mxnet` in the root `dlframework` (`../..`) after updating model descriptions.

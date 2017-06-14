@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (e *Model_Graph_NodeEntry) UnmarshalJSON(b []byte) error {
+func (e *Graph_NodeEntry) UnmarshalJSON(b []byte) error {
 	var s []int64
 	if err := json.Unmarshal(b, &s); err != nil {
 		return err
@@ -22,7 +22,7 @@ func (e *Model_Graph_NodeEntry) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (e *Model_Graph_NodeEntry) MarshalJSON() ([]byte, error) {
+func (e *Graph_NodeEntry) MarshalJSON() ([]byte, error) {
 	if e.GetVersion() == 0 {
 		s := fmt.Sprintf("[\"%d\",\"%d\"]", e.NodeId, e.Index)
 		return []byte(s), nil
