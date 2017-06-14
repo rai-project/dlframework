@@ -27,7 +27,7 @@ func NewGetFrameworkManifest(ctx *middleware.Context, handler GetFrameworkManife
 	return &GetFrameworkManifest{Context: ctx, Handler: handler}
 }
 
-/*GetFrameworkManifest swagger:route POST /v1/framework/{framework_name}/{framework_version}/info carml getFrameworkManifest
+/*GetFrameworkManifest swagger:route GET /v1/framework/{framework_name}/{framework_version}/info carml getFrameworkManifest
 
 GetFrameworkManifest get framework manifest API
 

@@ -16,7 +16,7 @@
   ],
   "paths": {
     "/v1/framework/{framework_name}/{framework_version}/info": {
-      "post": {
+      "get": {
         "operationId": "GetFrameworkManifest",
         "responses": {
           "200": {
@@ -38,14 +38,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
-            }
           }
         ],
         "tags": [
@@ -104,7 +96,7 @@
       }
     },
     "/v1/framework/{framework_name}/{framework_version}/models": {
-      "post": {
+      "get": {
         "operationId": "GetFrameworkModels",
         "responses": {
           "200": {
@@ -126,14 +118,6 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
-            }
           }
         ],
         "tags": [
@@ -326,17 +310,6 @@
           "additionalProperties": {
             "$ref": "#/definitions/dlframeworkContainerHardware"
           }
-        }
-      }
-    },
-    "dlframeworkGetFrameworkManifestRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
         }
       }
     },

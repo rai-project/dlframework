@@ -273,10 +273,10 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/info"] = carml.NewGetFrameworkManifest(o.context, o.CarmlGetFrameworkManifestHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/info"] = carml.NewGetFrameworkManifest(o.context, o.CarmlGetFrameworkManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -288,10 +288,10 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"] = carml.NewGetFrameworkModelManifest(o.context, o.CarmlGetFrameworkModelManifestHandler)
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/models"] = carml.NewGetFrameworkModels(o.context, o.CarmlGetFrameworkModelsHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/models"] = carml.NewGetFrameworkModels(o.context, o.CarmlGetFrameworkModelsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

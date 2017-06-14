@@ -14,8 +14,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkManifestParams creates a new GetFrameworkManifestParams object
@@ -62,8 +60,6 @@ for the get framework manifest operation typically these are written to a http.R
 */
 type GetFrameworkManifestParams struct {
 
-	/*Body*/
-	Body *models.DlframeworkGetFrameworkManifestRequest
 	/*FrameworkName*/
 	FrameworkName string
 	/*FrameworkVersion*/
@@ -107,17 +103,6 @@ func (o *GetFrameworkManifestParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the get framework manifest params
-func (o *GetFrameworkManifestParams) WithBody(body *models.DlframeworkGetFrameworkManifestRequest) *GetFrameworkManifestParams {
-	o.SetBody(body)
-	return o
-}
-
-// SetBody adds the body to the get framework manifest params
-func (o *GetFrameworkManifestParams) SetBody(body *models.DlframeworkGetFrameworkManifestRequest) {
-	o.Body = body
-}
-
 // WithFrameworkName adds the frameworkName to the get framework manifest params
 func (o *GetFrameworkManifestParams) WithFrameworkName(frameworkName string) *GetFrameworkManifestParams {
 	o.SetFrameworkName(frameworkName)
@@ -147,14 +132,6 @@ func (o *GetFrameworkManifestParams) WriteToRequest(r runtime.ClientRequest, reg
 		return err
 	}
 	var res []error
-
-	if o.Body == nil {
-		o.Body = new(models.DlframeworkGetFrameworkManifestRequest)
-	}
-
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
-	}
 
 	// path param framework_name
 	if err := r.SetPathParam("framework_name", o.FrameworkName); err != nil {

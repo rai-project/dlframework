@@ -4,16 +4,12 @@ package carml
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkManifestParams creates a new GetFrameworkManifestParams object
@@ -34,11 +30,6 @@ type GetFrameworkManifestParams struct {
 
 	/*
 	  Required: true
-	  In: body
-	*/
-	Body *models.DlframeworkGetFrameworkManifestRequest
-	/*
-	  Required: true
 	  In: path
 	*/
 	FrameworkName string
@@ -54,30 +45,6 @@ type GetFrameworkManifestParams struct {
 func (o *GetFrameworkManifestParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
-
-	if runtime.HasBody(r) {
-		defer r.Body.Close()
-		var body models.DlframeworkGetFrameworkManifestRequest
-		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
-
-		} else {
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			if len(res) == 0 {
-				o.Body = &body
-			}
-		}
-
-	} else {
-		res = append(res, errors.Required("body", "body"))
-	}
 
 	rFrameworkName, rhkFrameworkName, _ := route.Params.GetOK("framework_name")
 	if err := o.bindFrameworkName(rFrameworkName, rhkFrameworkName, route.Formats); err != nil {

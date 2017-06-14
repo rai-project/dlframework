@@ -166,15 +166,13 @@ service carml {
   rpc GetFrameworkManifest(GetFrameworkManifestRequest)
       returns (FrameworkManifest) {
     option (google.api.http) = {
-      post : "/v1/framework/{framework_name}/{framework_version}/info",
-      body : "*"
+      get : "/v1/framework/{framework_name}/{framework_version}/info"
     };
   }
   rpc GetFrameworkModels(GetFrameworkManifestRequest)
       returns (GetModelManifestsResponse) {
     option (google.api.http) = {
-      post : "/v1/framework/{framework_name}/{framework_version}/models",
-      body : "*"
+      get : "/v1/framework/{framework_name}/{framework_version}/models"
     };
   }
   rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {

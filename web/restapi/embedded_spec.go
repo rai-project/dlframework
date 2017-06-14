@@ -30,7 +30,7 @@ func init() {
   },
   "paths": {
     "/v1/framework/{framework_name}/{framework_version}/info": {
-      "post": {
+      "get": {
         "tags": [
           "carml"
         ],
@@ -47,14 +47,6 @@ func init() {
             "name": "framework_version",
             "in": "path",
             "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
-            }
           }
         ],
         "responses": {
@@ -116,7 +108,7 @@ func init() {
       }
     },
     "/v1/framework/{framework_name}/{framework_version}/models": {
-      "post": {
+      "get": {
         "tags": [
           "carml"
         ],
@@ -133,14 +125,6 @@ func init() {
             "name": "framework_version",
             "in": "path",
             "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkManifestRequest"
-            }
           }
         ],
         "responses": {
@@ -332,17 +316,6 @@ func init() {
           "type": "string"
         },
         "version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkGetFrameworkManifestRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
           "type": "string"
         }
       }

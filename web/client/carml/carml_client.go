@@ -33,7 +33,7 @@ func (a *Client) GetFrameworkManifest(params *GetFrameworkManifestParams) (*GetF
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkManifest",
-		Method:             "POST",
+		Method:             "GET",
 		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
@@ -117,7 +117,7 @@ func (a *Client) GetFrameworkModels(params *GetFrameworkModelsParams) (*GetFrame
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkModels",
-		Method:             "POST",
+		Method:             "GET",
 		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/models",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
