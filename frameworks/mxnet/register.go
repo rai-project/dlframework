@@ -2,7 +2,6 @@ package mxnet
 
 import (
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/rai-project/dlframework"
@@ -49,7 +48,6 @@ func init() {
 			if err := yaml.Unmarshal(bts, &model); err != nil {
 				return
 			}
-			name := strings.TrimRight(filepath.Base(asset), ext)
 			model.Register()
 		}(ii, asset)
 	}

@@ -72,7 +72,7 @@ message ModelManifest {
   string license = 7 [ (gogoproto.moretags) = "yaml:\"license,omitempty\"" ];
   repeated Type inputs = 8
       [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
-  Type output = 9 [ (gogoproto.moretags) = "yaml:\"inputs,omitempty\"" ];
+  Type output = 9 [ (gogoproto.moretags) = "yaml:\"output,omitempty\"" ];
   string before_preprocess = 10
       [ (gogoproto.moretags) = "yaml:\"before_preprocess,omitempty\"" ];
   string preprocess = 11

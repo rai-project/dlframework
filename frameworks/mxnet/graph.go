@@ -32,7 +32,7 @@ var edgecolors = []string{
 	"#90094e",
 }
 
-func (g *Model_Graph) ToDotGraph() (*gographviz.Escape, error) {
+func (g *Graph) ToDotGraph() (*gographviz.Escape, error) {
 	tuples := func(s string) []string {
 		re := regexp.MustCompile(`\d+`)
 		return re.FindAllString(s, -1)

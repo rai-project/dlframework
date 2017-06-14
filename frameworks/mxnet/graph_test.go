@@ -16,7 +16,7 @@ var (
 )
 
 func TestUnmarshalGraph(t *testing.T) {
-	var g Model_Graph
+	var g Graph
 	err := json.Unmarshal(rn101, &g)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, g)
