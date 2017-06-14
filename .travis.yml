@@ -2,9 +2,6 @@ language: go
 matrix:
   include:
     - go: 1.8.x
-    # - go: tip
-  # allow_failures:
-    # - go: tip
 dist: trusty
 sudo: false
 addons:
@@ -26,3 +23,4 @@ after_script:
 env:
   global:
   - PROTOBUF_VER="3.3.0"
+  - PATH=$HOME/protobuf/bin:$PATH

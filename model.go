@@ -20,7 +20,7 @@ func (m *ModelManifest) Validate() error {
 		version = "latest"
 	}
 	if version != "latest" {
-		if _, err := semver.NewVersion(m.GetVersion()); err != nil {
+		if _, err := semver.NewVersion(version); err != nil {
 			return errors.Wrapf(err,
 				"the version %s for the model %s is not in semantic version format",
 				m.GetVersion(),
