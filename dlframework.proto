@@ -24,6 +24,17 @@ message ErrorStatus {
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message,omitempty\"" ];
 }
 
+message ContainerHardware {
+  string gpu = 1 [ (gogoproto.moretags) = "yaml:\"gpu,omitempty\"" ];
+  string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
+}
+
+message FrameworkManifest {
+  string name = 1 [ (gogoproto.moretags) = "yaml:\",flow\"" ];
+  map<string, ContainerHardware> default_container = 2
+      [ (gogoproto.moretags) = "yaml:\"default_container,omitempty\"" ];
+}
+
 message ModelManifest {
   message Type {
     message Parameter {
@@ -34,19 +45,6 @@ message ModelManifest {
         [ (gogoproto.moretags) = "yaml:\"description,omitempty\"" ];
     map<string, Parameter> parameters = 3
         [ (gogoproto.moretags) = "yaml:\"parameters,omitempty\"" ];
-  }
-  enum Framework {
-    MXNET = 0;
-    TENSORFLOW = 1;
-    CAFFE = 2;
-    CAFFE2 = 3;
-    TORCH7 = 4;
-    THEANO = 5;
-    OTHER = 6;
-  }
-  message ContainerHardware {
-    string gpu = 1 [ (gogoproto.moretags) = "yaml:\"gpu,omitempty\"" ];
-    string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
   }
 
   message Model {
@@ -61,7 +59,7 @@ message ModelManifest {
   }
 
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
-  Framework framework = 2
+  FrameworkManifest framework = 2
       [ (gogoproto.moretags) = "yaml:\"framework,omitempty\"" ];
   map<string, ContainerHardware> container = 3
       [ (gogoproto.moretags) = "yaml:\"container,omitempty\"" ];
@@ -91,23 +89,106 @@ message ModelManifest {
 }
 
 message GetModelManifestsResponse {
-  repeated ModelManifest manifest = 1
-      [ (gogoproto.moretags) = "yaml:\"info,omitempty\"" ];
+  repeated ModelManifest manifests = 1
+      [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
-message GetModelManifestRequest { string model_name = 1; }
+message GetFrameworkManifestsResponse {
+  repeated FrameworkManifest manifests = 1
+      [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
+}
+
+message GetModelManifestRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+}
+
+message GetFrameworkManifestRequest {
+  string framework_name = 1
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+}
 
 message Null {}
 
-service MXNet {
+message PredictRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string framework_name = 2
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  bytes data = 3 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  int32 limit = 4 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+}
+message PredictURLRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string framework_name = 2
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string url = 3 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
+  int32 limit = 4 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+}
+
+message PredictionFeature {
+  int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+  float probability = 3
+      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+}
+
+message PredictResponse {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  repeated PredictionFeature features = 2
+      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
+  ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
+}
+
+message PredictURLResponse {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  repeated PredictionFeature features = 2
+      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
+  ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
+}
+
+service carml {
+  rpc GetFrameworkManifests(Null) returns (GetFrameworkManifestsResponse) {
+    option (google.api.http) = {
+      get : "/v1/carml/frameworks"
+    };
+  }
+  rpc GetFrameworkManifest(GetFrameworkManifestRequest)
+      returns (FrameworkManifest) {
+    option (google.api.http) = {
+      get : "/v1/carml/framework/{framework_name}/info"
+    };
+  }
+  rpc GetFrameworkModels(GetFrameworkManifestRequest)
+      returns (GetModelManifestsResponse) {
+    option (google.api.http) = {
+      get : "/v1/carml/framework/{framework_name}/models"
+    };
+  }
   rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/model_manifests"
+      get : "/v1/carml/models"
     };
   }
   rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/model/{model_name}"
+      post : "/v1/carml/model/{model_name}/info",
+      body : "*"
+    };
+  }
+
+  rpc Predict(PredictRequest) returns (PredictResponse) {
+    option (google.api.http) = {
+      post : "/v1/carml/{framework_name}/{model_name}/predict",
+      body : "data"
+    };
+  }
+
+  rpc PredictByURL(PredictURLRequest) returns (PredictURLResponse) {
+    option (google.api.http) = {
+      post : "/v1/carml/{framework_name}/{model_name}/predict_url",
+      body : "url"
     };
   }
 }
