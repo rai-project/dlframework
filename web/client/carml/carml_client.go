@@ -190,34 +190,6 @@ func (a *Client) GetModelManifests(params *GetModelManifestsParams) (*GetModelMa
 
 }
 
-/*
-Predict predict API
-*/
-func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPredictParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Predict",
-		Method:             "POST",
-		PathPattern:        "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &PredictReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*PredictOK), nil
-
-}
-
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

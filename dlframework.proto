@@ -196,6 +196,8 @@ service carml {
       body : "*"
     };
   }
+}
+service predictor {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post : "/v1/{framework_name}/{framework_version}/{model_name}/"

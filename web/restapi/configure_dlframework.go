@@ -11,11 +11,12 @@ import (
 
 	"github.com/rai-project/dlframework/web/restapi/operations"
 	"github.com/rai-project/dlframework/web/restapi/operations/carml"
+	"github.com/rai-project/dlframework/web/restapi/operations/predictor"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../web --name dlframework --spec ../dlframework.versioned.swagger.json
+//go:generate swagger generate server --target ../web --name dlframework --spec ../dlframework.swagger.json
 
 func configureFlags(api *operations.DlframeworkAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -53,8 +54,8 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.CarmlGetModelManifestsHandler = carml.GetModelManifestsHandlerFunc(func(params carml.GetModelManifestsParams) middleware.Responder {
 		return middleware.NotImplemented("operation carml.GetModelManifests has not yet been implemented")
 	})
-	api.CarmlPredictHandler = carml.PredictHandlerFunc(func(params carml.PredictParams) middleware.Responder {
-		return middleware.NotImplemented("operation carml.Predict has not yet been implemented")
+	api.PredictorPredictHandler = predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
+		return middleware.NotImplemented("operation predictor.Predict has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}

@@ -18,6 +18,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/rai-project/dlframework/web/restapi/operations/carml"
+	"github.com/rai-project/dlframework/web/restapi/operations/predictor"
 )
 
 // NewDlframeworkAPI creates a new Dlframework instance
@@ -53,8 +54,8 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		CarmlGetModelManifestsHandler: carml.GetModelManifestsHandlerFunc(func(params carml.GetModelManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation CarmlGetModelManifests has not yet been implemented")
 		}),
-		CarmlPredictHandler: carml.PredictHandlerFunc(func(params carml.PredictParams) middleware.Responder {
-			return middleware.NotImplemented("operation CarmlPredict has not yet been implemented")
+		PredictorPredictHandler: predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictorPredict has not yet been implemented")
 		}),
 	}
 }
@@ -97,8 +98,8 @@ type DlframeworkAPI struct {
 	CarmlGetModelManifestHandler carml.GetModelManifestHandler
 	// CarmlGetModelManifestsHandler sets the operation handler for the get model manifests operation
 	CarmlGetModelManifestsHandler carml.GetModelManifestsHandler
-	// CarmlPredictHandler sets the operation handler for the predict operation
-	CarmlPredictHandler carml.PredictHandler
+	// PredictorPredictHandler sets the operation handler for the predict operation
+	PredictorPredictHandler predictor.PredictHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -186,8 +187,8 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "carml.GetModelManifestsHandler")
 	}
 
-	if o.CarmlPredictHandler == nil {
-		unregistered = append(unregistered, "carml.PredictHandler")
+	if o.PredictorPredictHandler == nil {
+		unregistered = append(unregistered, "predictor.PredictHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -306,7 +307,7 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"] = carml.NewPredict(o.context, o.CarmlPredictHandler)
+	o.handlers["POST"]["/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"] = predictor.NewPredict(o.context, o.PredictorPredictHandler)
 
 }
 

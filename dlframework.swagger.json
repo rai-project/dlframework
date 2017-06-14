@@ -1,8 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "dlframework.proto",
-    "version": "version not set"
+    "title": "CarML DLFramework",
+    "version": "1.0.0",
+    "description": "TODO... fillme."
   },
   "schemes": [
     "http",
@@ -241,7 +242,7 @@
           }
         ],
         "tags": [
-          "carml"
+          "predictor"
         ]
       }
     }

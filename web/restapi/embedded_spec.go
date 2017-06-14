@@ -206,7 +206,7 @@ func init() {
     "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict": {
       "post": {
         "tags": [
-          "carml"
+          "predictor"
         ],
         "operationId": "Predict",
         "parameters": [
