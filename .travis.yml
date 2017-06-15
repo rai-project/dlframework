@@ -4,6 +4,9 @@ matrix:
     - go: 1.8.x
 dist: trusty
 sudo: false
+cache:
+  directories:
+    - $HOME/.linuxbrew/
 addons:
   apt:
     sources:

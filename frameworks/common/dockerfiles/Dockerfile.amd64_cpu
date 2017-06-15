@@ -1,0 +1,38 @@
+FROM golang:latest AS gotools
+RUN go get github.com/Masterminds/glide && \
+    go get github.com/jteeuwen/go-bindata/... && \
+	  go get github.com/elazarl/go-bindata-assetfs/... && \
+    go get google.golang.org/grpc && \
+    go get github.com/gogo/protobuf/proto && \
+    go get github.com/gogo/protobuf/gogoproto && \
+    go get github.com/golang/protobuf/protoc-gen-go && \
+    go get github.com/gogo/protobuf/protoc-gen-gofast && \
+    go get github.com/gogo/protobuf/protoc-gen-gogofaster && \
+    go get github.com/gogo/protobuf/protoc-gen-gogoslick && \
+    go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+    go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+    go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+    go get github.com/go-swagger/go-swagger/cmd/swagger && \
+    go get github.com/tockins/realize
+WORKDIR /opt/bin
+RUN cp /go/bin/* .
+
+FROM ubuntu:latest AS protobuf
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y wget unzip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# Install the protobuf binaries
+ENV PROTOBUF_VER 3.3.0
+RUN wget https://github.com/google/protobuf/releases/download/v$PROTOBUF_VER/protoc-$PROTOBUF_VER-linux-x86_64.zip && \
+    unzip protoc-$PROTOBUF_VER-linux-x86_64.zip -d /opt
+
+FROM ubuntu:latest
+COPY --from=gotools /opt /opt
+COPY --from=protobuf /opt /opt
+
+
+MAINTAINER Abdul Dakkak <dakkak@illinois.edu>

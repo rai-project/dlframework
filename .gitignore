@@ -44,3 +44,5 @@ dlframework.swagger.json.tmp
 dlframework.versioned.swagger.json
 cert.pem
 key.pem
+
+/bazel-*

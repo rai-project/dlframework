@@ -45,6 +45,17 @@ generate-tensorflow:
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/tensorflow/proto --gogofaster_out=plugins=grpc:frameworks/tensorflow frameworks/tensorflow/proto/allocation_description.proto frameworks/tensorflow/proto/attr_value.proto frameworks/tensorflow/proto/cost_graph.proto frameworks/tensorflow/proto/device_attributes.proto frameworks/tensorflow/proto/function.proto frameworks/tensorflow/proto/graph.proto frameworks/tensorflow/proto/graph_transfer_info.proto frameworks/tensorflow/proto/kernel_def.proto frameworks/tensorflow/proto/log_memory.proto frameworks/tensorflow/proto/node_def.proto frameworks/tensorflow/proto/op_def.proto frameworks/tensorflow/proto/op_gen_overrides.proto frameworks/tensorflow/proto/reader_base.proto frameworks/tensorflow/proto/remote_fused_graph_execute_info.proto frameworks/tensorflow/proto/resource_handle.proto frameworks/tensorflow/proto/step_stats.proto frameworks/tensorflow/proto/summary.proto frameworks/tensorflow/proto/tensor_description.proto frameworks/tensorflow/proto/tensor.proto frameworks/tensorflow/proto/tensor_shape.proto frameworks/tensorflow/proto/tensor_slice.proto frameworks/tensorflow/proto/types.proto frameworks/tensorflow/proto/variable.proto frameworks/tensorflow/proto/versions.proto
 	go-bindata -nomemcopy -prefix frameworks/tensorflow/builtin_models/ -pkg tensorflow -o frameworks/tensorflow/builtin_models_static.go -ignore=.DS_Store  -ignore=README.md frameworks/tensorflow/builtin_models/...
 
+linux-brew:
+	test -d $HOME/.linuxbrew/bin || git clone https://github.com/Linuxbrew/brew.git $HOME/.linuxbrew
+	PATH="$HOME/.linuxbrew/bin:$PATH"
+	echo 'export PATH="$HOME/.linuxbrew/bin:$PATH"' >>~/.bash_profile
+	export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+	export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+	brew --version
+  # Install Buck
+	brew tap facebook/fb
+	brew install buck
+	buck --version
 
 install-proto:
 	./scripts/install-protobuf.sh
