@@ -1,7 +1,13 @@
 FROM mxnet/python:latest as mxnet
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
 
-FROM golang:latest as go
+FROM carml/go:amd64-cpu as go
+
+RUN apt-get update && apt-get install -y \
+    libatlas3-base libopencv-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=mxnet /mxnet /mxnet
 
 RUN go get -u -v github.com/songtianyi/go-mxnet-predictor && \

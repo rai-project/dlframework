@@ -30,9 +30,12 @@ ENV PROTOBUF_VER 3.3.0
 RUN wget https://github.com/google/protobuf/releases/download/v$PROTOBUF_VER/protoc-$PROTOBUF_VER-linux-x86_64.zip && \
     unzip protoc-$PROTOBUF_VER-linux-x86_64.zip -d /opt
 
-FROM ubuntu:latest
+FROM golang:latest
+
 COPY --from=gotools /opt /opt
 COPY --from=protobuf /opt /opt
+
+ENV PATH /opt/bin:$PATH
 
 
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
