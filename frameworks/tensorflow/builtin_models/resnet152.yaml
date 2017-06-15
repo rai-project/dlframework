@@ -1,8 +1,8 @@
-name: Inception
+name: ResNet152
 framework:
   name: Tensorflow
   version: ~1.1.x
-version: 3.0
+version: 1.0
 container:
   amd64:
     gpu: raiproject/carml-tensorflow:amd64-cpu
@@ -11,11 +11,10 @@ container:
     cpu: raiproject/carml-tensorflow:ppc64le-gpu
     gpu: raiproject/carml-tensorflow:ppc64le-gpu
 description: >
-  An image-classification convolutional network.
-  Inception achieves 78.0% top-1 and 93.9% top-5 accuracy on the ILSVRC 2012 validation dataset.
-  It consists of fewer than 25M parameters.
+  An image-classification network built of layers that learn residual functions w.r.t layer inputs.
+  This network consists of 152 layers and achieves 76.8 top-1 and 93.2 top-5 accuracy on ILSVRC-2015. 	
 references:
-  - https://arxiv.org/pdf/1512.00567.pdf
+  - https://arxiv.org/pdf/1512.03385.pdf
 license: TODO
 inputs:
   - type: image
@@ -28,7 +27,7 @@ output:
   parameters:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model:
-  checkpoint: http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
+  checkpoint: http://download.tensorflow.org/models/resnet_v1_152_2016_08_28.tar.gz
   is_archive: false
 attributes:
   manifest_author: abduld

@@ -1,7 +1,8 @@
-name: CaffeNet
+name: ResNet50
 framework:
   name: Tensorflow
   version: ~1.1.x
+version: 1.0
 container:
   amd64:
     gpu: raiproject/carml-tensorflow:amd64-cpu
@@ -10,11 +11,10 @@ container:
     cpu: raiproject/carml-tensorflow:ppc64le-gpu
     gpu: raiproject/carml-tensorflow:ppc64le-gpu
 description: >
-  An image-classification deep convolutional network trained on the LSVRC-2010 ImageNet training set,
-  which achieved top-1 and top-5 error rates of 39.7% and 18.9%.
-  The network consists of 60M parameters and 500K neurons across 5 convolutional layers two fully-connected layers.
+  An image-classification network built of layers that learn residual functions w.r.t layer inputs.
+  This network consists of 50 layers and achieves 75.2 top-1 and 92.2 top-5 accuracy on ILSVRC-2015. 	
 references:
-  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks
+  - https://arxiv.org/pdf/1512.03385.pdf
 license: TODO
 inputs:
   - type: image
@@ -27,9 +27,7 @@ output:
   parameters:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model:
-  base_url: todo
-  graph_path: caffenet-symbol.json
-  weights_path: caffenet-0000.params
+  checkpoint: http://download.tensorflow.org/models/resnet_v1_50_2016_08_28.tar.gz
   is_archive: false
 attributes:
   manifest_author: abduld
