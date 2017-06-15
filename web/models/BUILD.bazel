@@ -1,0 +1,32 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "dlframework_container_hardware.go",
+        "dlframework_error_status.go",
+        "dlframework_framework_manifest.go",
+        "dlframework_get_framework_manifests_response.go",
+        "dlframework_get_framework_model_manifest_request.go",
+        "dlframework_get_model_manifest_request.go",
+        "dlframework_get_model_manifests_response.go",
+        "dlframework_model_manifest.go",
+        "dlframework_model_manifest_type.go",
+        "dlframework_predict_request.go",
+        "dlframework_predict_response.go",
+        "dlframework_prediction_feature.go",
+        "model_manifest_model.go",
+        "protobuf_list_value.go",
+        "protobuf_null_value.go",
+        "protobuf_struct.go",
+        "protobuf_value.go",
+        "type_parameter.go",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_go_openapi_errors//:go_default_library",
+        "@com_github_go_openapi_strfmt//:go_default_library",
+        "@com_github_go_openapi_swag//:go_default_library",
+        "@com_github_go_openapi_validate//:go_default_library",
+    ],
+)

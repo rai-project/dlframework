@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "predict.go",
+        "predict_parameters.go",
+        "predict_responses.go",
+        "predict_urlbuilder.go",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//web/models:go_default_library",
+        "@com_github_go_openapi_errors//:go_default_library",
+        "@com_github_go_openapi_runtime//:go_default_library",
+        "@com_github_go_openapi_runtime//middleware:go_default_library",
+        "@com_github_go_openapi_strfmt//:go_default_library",
+    ],
+)

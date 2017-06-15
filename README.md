@@ -1,14 +1,31 @@
 # DLFramework
 
+## Framework Manifest Format
+
+```yaml
+name: MXNet # name of the framework
+version: 0.1 # framework version
+container: # containers used to perform model prediction
+           # multiple platforms can be specified
+  amd64:   # if unspecified, then the default container for the framework is used
+    gpu: raiproject/carml-mxnet:amd64-cpu
+    cpu: raiproject/carml-mxnet:amd64-gpu
+  ppc64le:
+    cpu: raiproject/carml-mxnet:ppc64le-gpu
+    gpu: raiproject/carml-mxnet:ppc64le-gpu
+```
+
 ## Model Manifest Format
 
 ```yaml
 name: InceptionNet # name of your model
-framework: MXNet # framework for the model
+framework: # the framework to use
+  name: MXNet # framework for the model
+  version: ^0.1 # framework version constraint
 version: 1.0 # version information in semantic version format
 container: # containers used to perform model prediction
            # multiple platforms can be specified
-  amd64:
+  amd64:   # if unspecified, then the default container for the framework is used
     gpu: raiproject/carml-mxnet:amd64-cpu
     cpu: raiproject/carml-mxnet:amd64-gpu
   ppc64le:

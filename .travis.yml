@@ -1,16 +1,12 @@
 language: go
 matrix:
   include:
-    - go: 1.7.x
     - go: 1.8.x
-    - go: tip
-  allow_failures:
-    - go: tip
 dist: trusty
 sudo: false
 cache:
   directories:
-  - "$HOME/protobuf"
+    - $HOME/.linuxbrew/
 addons:
   apt:
     sources:
@@ -19,23 +15,9 @@ addons:
     packages:
     - glide
     - build-essential
+    - jq
 install:
-  - bash .travis/install-protobuf.sh
-  - export PATH=$HOME/protobuf/bin:$PATH
-  - go get github.com/jteeuwen/go-bindata/...
-  - go get github.com/elazarl/go-bindata-assetfs/...
-  - go get github.com/golang/protobuf/{proto,protoc-gen-go}
-  - go get google.golang.org/grpc
-  - go get github.com/gogo/protobuf/{proto,gogoproto,protoc-gen-gofast,protoc-gen-gogofaster,protoc-gen-gogoslick}
-  - go get github.com/grpc-ecosystem/grpc-gateway/{protoc-gen-swagger,protoc-gen-grpc-gateway}
-  - go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-  - go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-  - go get -u github.com/golang/protobuf/protoc-gen-go
-  - glide install --force
-  - rm -fr vendor/github.com/Sirupsen
-  - find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
-  - go generate
-  - go build
+  - make travis
 script:
   - echo "Skip tests..."
 after_script:
@@ -44,3 +26,4 @@ after_script:
 env:
   global:
   - PROTOBUF_VER="3.3.0"
+  - PATH=$HOME/protobuf/bin:$PATH

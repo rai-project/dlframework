@@ -39,3 +39,10 @@ dist/
 cmd/rai/rai
 cmd/raid/raid
 debug
+
+dlframework.swagger.json.tmp
+dlframework.versioned.swagger.json
+cert.pem
+key.pem
+
+/bazel-*

@@ -1,29 +1,42 @@
 package: github.com/rai-project/dlframework
 import:
 - package: github.com/Unknwon/com
-  version: ~1.0.0
+  version: ^1.0.0
 - package: github.com/anthonynsimon/bild
-  version: ~0.10.0
+  version: ^0.10.0
   subpackages:
-  - imgio
   - parallel
   - transform
 - package: github.com/awalterschulze/gographviz
-  version: ~2.0.0
+  version: ^2.0.0
 - package: github.com/fatih/color
   version: master
+- package: github.com/go-openapi/errors
+- package: github.com/go-openapi/loads
+- package: github.com/go-openapi/runtime
+  subpackages:
+  - client
+  - flagext
+  - middleware
+  - security
+- package: github.com/go-openapi/spec
+- package: github.com/go-openapi/strfmt
+- package: github.com/go-openapi/swag
+- package: github.com/go-openapi/validate
 - package: github.com/gogo/protobuf
-  version: ~0.4.0
+  version: ^0.4.0
   subpackages:
   - gogoproto
   - proto
   - sortkeys
+- package: github.com/jessevdk/go-flags
+  version: ^1.2.0
 - package: github.com/levigross/grequests
-  version: ~0.9.0
+  version: ^0.9.0
 - package: github.com/patrickmn/go-cache
-  version: ~2.0.0
+  version: ^2.0.0
 - package: github.com/pkg/errors
-  version: ~0.8.0
+  version: ^0.8.0
 - package: github.com/rai-project/config
 - package: github.com/rai-project/grpc
 - package: github.com/rai-project/logger
@@ -35,19 +48,25 @@ import:
   - utils
 - package: github.com/spf13/cobra
 - package: github.com/spf13/viper
+- package: github.com/tylerb/graceful
+  version: ^1.2.15
 - package: golang.org/x/net
   subpackages:
   - context
+- package: golang.org/x/sync
+  subpackages:
+  - syncmap
+- package: google.golang.org/genproto
+  subpackages:
+  - googleapis/api/annotations
 - package: google.golang.org/grpc
-  version: ~1.4.0
+  version: ^1.4.0
 - package: gopkg.in/fatih/set.v0
-  version: ~0.1.0
+  version: ^0.1.0
 - package: gopkg.in/yaml.v2
 testImport:
 - package: github.com/GeertJohan/go.rice
-- package: github.com/k0kubun/pp
-  version: ~2.3.0
 - package: github.com/stretchr/testify
-  version: ~1.1.4
+  version: ^1.1.4
   subpackages:
   - assert

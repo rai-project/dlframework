@@ -1,3 +1,0 @@
-//go:generate protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go --proto_path=../../../..:. --gogofaster_out=plugins=grpc:. mxnet.proto
-//go:generate go-bindata -nomemcopy -prefix builtin_models/ -pkg mxnet -o builtin_models_static.go -ignore=.DS_Store ./builtin_models/...
-package mxnet
