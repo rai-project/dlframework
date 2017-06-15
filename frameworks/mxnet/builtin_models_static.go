@@ -179,7 +179,7 @@ func residualnet18Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497484448, 0)}
+	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497485202, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -319,7 +319,7 @@ func locationnetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "locationnet.yml", size: 2132, mode: os.FileMode(420), modTime: time.Unix(1497484433, 0)}
+	info := bindataFileInfo{name: "locationnet.yml", size: 2132, mode: os.FileMode(420), modTime: time.Unix(1497484596, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

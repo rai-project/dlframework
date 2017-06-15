@@ -1,7 +1,9 @@
 package mxnet
 
 import (
+	"errors"
 	"os"
+	"path/filepath"
 	"testing"
 
 	rice "github.com/GeertJohan/go.rice"
@@ -45,11 +47,18 @@ func TestModelRegistration(t *testing.T) {
 		if info.IsDir() {
 			return nil
 		}
+		if ext := filepath.Ext(path); ext != ".yml" && ext != ".yaml" {
+			return nil
+		}
 		var model dlframework.ModelManifest
 		data := builtinModelsBox.MustBytes(path)
 		err = yaml.Unmarshal(data, &model)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, model)
+		if assert.NoError(t, err) {
+			return err
+		}
+		if assert.NotEmpty(t, model) {
+			return errors.New("empty model")
+		}
 
 		name, err := model.CannonicalName()
 		assert.NoError(t, err)
