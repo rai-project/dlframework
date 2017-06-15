@@ -27,7 +27,7 @@ func NewPredict(ctx *middleware.Context, handler PredictHandler) *Predict {
 	return &Predict{Context: ctx, Handler: handler}
 }
 
-/*Predict swagger:route POST /v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict predictor predict
+/*Predict swagger:route POST /v1/framework/{framework_name}/model/{model_name}/predict predictor predict
 
 Predict predict API
 

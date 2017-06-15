@@ -46,17 +46,7 @@ type GetFrameworkModelManifestParams struct {
 	  Required: true
 	  In: path
 	*/
-	FrameworkVersion string
-	/*
-	  Required: true
-	  In: path
-	*/
 	ModelName string
-	/*
-	  Required: true
-	  In: path
-	*/
-	ModelVersion string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -94,18 +84,8 @@ func (o *GetFrameworkModelManifestParams) BindRequest(r *http.Request, route *mi
 		res = append(res, err)
 	}
 
-	rFrameworkVersion, rhkFrameworkVersion, _ := route.Params.GetOK("framework_version")
-	if err := o.bindFrameworkVersion(rFrameworkVersion, rhkFrameworkVersion, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
 	rModelName, rhkModelName, _ := route.Params.GetOK("model_name")
 	if err := o.bindModelName(rModelName, rhkModelName, route.Formats); err != nil {
-		res = append(res, err)
-	}
-
-	rModelVersion, rhkModelVersion, _ := route.Params.GetOK("model_version")
-	if err := o.bindModelVersion(rModelVersion, rhkModelVersion, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -126,17 +106,6 @@ func (o *GetFrameworkModelManifestParams) bindFrameworkName(rawData []string, ha
 	return nil
 }
 
-func (o *GetFrameworkModelManifestParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	o.FrameworkVersion = raw
-
-	return nil
-}
-
 func (o *GetFrameworkModelManifestParams) bindModelName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
@@ -144,17 +113,6 @@ func (o *GetFrameworkModelManifestParams) bindModelName(rawData []string, hasKey
 	}
 
 	o.ModelName = raw
-
-	return nil
-}
-
-func (o *GetFrameworkModelManifestParams) bindModelVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	var raw string
-	if len(rawData) > 0 {
-		raw = rawData[len(rawData)-1]
-	}
-
-	o.ModelVersion = raw
 
 	return nil
 }

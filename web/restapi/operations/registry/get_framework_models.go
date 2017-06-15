@@ -27,7 +27,7 @@ func NewGetFrameworkModels(ctx *middleware.Context, handler GetFrameworkModelsHa
 	return &GetFrameworkModels{Context: ctx, Handler: handler}
 }
 
-/*GetFrameworkModels swagger:route GET /v1/framework/{framework_name}/{framework_version}/models registry getFrameworkModels
+/*GetFrameworkModels swagger:route GET /v1/framework/{framework_name}/models registry getFrameworkModels
 
 GetFrameworkModels get framework models API
 

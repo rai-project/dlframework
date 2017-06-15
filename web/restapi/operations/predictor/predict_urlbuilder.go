@@ -12,10 +12,8 @@ import (
 
 // PredictURL generates an URL for the predict operation
 type PredictURL struct {
-	FrameworkName    string
-	FrameworkVersion string
-	ModelName        string
-	ModelVersion     string
+	FrameworkName string
+	ModelName     string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -41,7 +39,7 @@ func (o *PredictURL) SetBasePath(bp string) {
 func (o *PredictURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"
+	var _path = "/v1/framework/{framework_name}/model/{model_name}/predict"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {
@@ -49,23 +47,11 @@ func (o *PredictURL) Build() (*url.URL, error) {
 	} else {
 		return nil, errors.New("FrameworkName is required on PredictURL")
 	}
-	frameworkVersion := o.FrameworkVersion
-	if frameworkVersion != "" {
-		_path = strings.Replace(_path, "{framework_version}", frameworkVersion, -1)
-	} else {
-		return nil, errors.New("FrameworkVersion is required on PredictURL")
-	}
 	modelName := o.ModelName
 	if modelName != "" {
 		_path = strings.Replace(_path, "{model_name}", modelName, -1)
 	} else {
 		return nil, errors.New("ModelName is required on PredictURL")
-	}
-	modelVersion := o.ModelVersion
-	if modelVersion != "" {
-		_path = strings.Replace(_path, "{model_version}", modelVersion, -1)
-	} else {
-		return nil, errors.New("ModelVersion is required on PredictURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

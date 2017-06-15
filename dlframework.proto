@@ -168,13 +168,13 @@ service registry {
   rpc GetFrameworkManifest(GetFrameworkManifestRequest)
       returns (FrameworkManifest) {
     option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/{framework_version}/info"
+      get : "/v1/framework/{framework_name}/info"
     };
   }
   rpc GetFrameworkModels(GetFrameworkManifestRequest)
       returns (GetModelManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/{framework_version}/models"
+      get : "/v1/framework/{framework_name}/models"
     };
   }
   rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {
@@ -185,14 +185,13 @@ service registry {
   rpc GetFrameworkModelManifest(GetFrameworkModelManifestRequest)
       returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/framework/{framework_name}/{framework_version}/model/"
-             "{model_name}/{model_version}/info",
+      post : "/v1/framework/{framework_name}/model/{model_name}/info",
       body : "*"
     };
   }
   rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/model/{model_name}/{model_version}/info",
+      post : "/v1/model/{model_name}/info",
       body : "*"
     };
   }
@@ -200,8 +199,7 @@ service registry {
 service predictor {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
-      post : "/v1/{framework_name}/{framework_version}/{model_name}/"
-             "{model_version}/predict",
+      post : "/v1/framework/{framework_name}/model/{model_name}/predict",
       body : "*"
     };
   }

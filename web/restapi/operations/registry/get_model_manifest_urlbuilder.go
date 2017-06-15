@@ -12,8 +12,7 @@ import (
 
 // GetModelManifestURL generates an URL for the get model manifest operation
 type GetModelManifestURL struct {
-	ModelName    string
-	ModelVersion string
+	ModelName string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -39,19 +38,13 @@ func (o *GetModelManifestURL) SetBasePath(bp string) {
 func (o *GetModelManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/model/{model_name}/{model_version}/info"
+	var _path = "/v1/model/{model_name}/info"
 
 	modelName := o.ModelName
 	if modelName != "" {
 		_path = strings.Replace(_path, "{model_name}", modelName, -1)
 	} else {
 		return nil, errors.New("ModelName is required on GetModelManifestURL")
-	}
-	modelVersion := o.ModelVersion
-	if modelVersion != "" {
-		_path = strings.Replace(_path, "{model_version}", modelVersion, -1)
-	} else {
-		return nil, errors.New("ModelVersion is required on GetModelManifestURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

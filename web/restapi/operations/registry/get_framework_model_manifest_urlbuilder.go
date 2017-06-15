@@ -12,10 +12,8 @@ import (
 
 // GetFrameworkModelManifestURL generates an URL for the get framework model manifest operation
 type GetFrameworkModelManifestURL struct {
-	FrameworkName    string
-	FrameworkVersion string
-	ModelName        string
-	ModelVersion     string
+	FrameworkName string
+	ModelName     string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -41,7 +39,7 @@ func (o *GetFrameworkModelManifestURL) SetBasePath(bp string) {
 func (o *GetFrameworkModelManifestURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"
+	var _path = "/v1/framework/{framework_name}/model/{model_name}/info"
 
 	frameworkName := o.FrameworkName
 	if frameworkName != "" {
@@ -49,23 +47,11 @@ func (o *GetFrameworkModelManifestURL) Build() (*url.URL, error) {
 	} else {
 		return nil, errors.New("FrameworkName is required on GetFrameworkModelManifestURL")
 	}
-	frameworkVersion := o.FrameworkVersion
-	if frameworkVersion != "" {
-		_path = strings.Replace(_path, "{framework_version}", frameworkVersion, -1)
-	} else {
-		return nil, errors.New("FrameworkVersion is required on GetFrameworkModelManifestURL")
-	}
 	modelName := o.ModelName
 	if modelName != "" {
 		_path = strings.Replace(_path, "{model_name}", modelName, -1)
 	} else {
 		return nil, errors.New("ModelName is required on GetFrameworkModelManifestURL")
-	}
-	modelVersion := o.ModelVersion
-	if modelVersion != "" {
-		_path = strings.Replace(_path, "{model_version}", modelVersion, -1)
-	} else {
-		return nil, errors.New("ModelVersion is required on GetFrameworkModelManifestURL")
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)

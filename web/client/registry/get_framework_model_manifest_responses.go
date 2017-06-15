@@ -49,7 +49,7 @@ type GetFrameworkModelManifestOK struct {
 }
 
 func (o *GetFrameworkModelManifestOK) Error() string {
-	return fmt.Sprintf("[POST /v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info][%d] getFrameworkModelManifestOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /v1/framework/{framework_name}/model/{model_name}/info][%d] getFrameworkModelManifestOK  %+v", 200, o.Payload)
 }
 
 func (o *GetFrameworkModelManifestOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

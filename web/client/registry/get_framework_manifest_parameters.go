@@ -63,7 +63,7 @@ type GetFrameworkManifestParams struct {
 	/*FrameworkName*/
 	FrameworkName string
 	/*FrameworkVersion*/
-	FrameworkVersion string
+	FrameworkVersion *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -115,13 +115,13 @@ func (o *GetFrameworkManifestParams) SetFrameworkName(frameworkName string) {
 }
 
 // WithFrameworkVersion adds the frameworkVersion to the get framework manifest params
-func (o *GetFrameworkManifestParams) WithFrameworkVersion(frameworkVersion string) *GetFrameworkManifestParams {
+func (o *GetFrameworkManifestParams) WithFrameworkVersion(frameworkVersion *string) *GetFrameworkManifestParams {
 	o.SetFrameworkVersion(frameworkVersion)
 	return o
 }
 
 // SetFrameworkVersion adds the frameworkVersion to the get framework manifest params
-func (o *GetFrameworkManifestParams) SetFrameworkVersion(frameworkVersion string) {
+func (o *GetFrameworkManifestParams) SetFrameworkVersion(frameworkVersion *string) {
 	o.FrameworkVersion = frameworkVersion
 }
 
@@ -138,9 +138,20 @@ func (o *GetFrameworkManifestParams) WriteToRequest(r runtime.ClientRequest, reg
 		return err
 	}
 
-	// path param framework_version
-	if err := r.SetPathParam("framework_version", o.FrameworkVersion); err != nil {
-		return err
+	if o.FrameworkVersion != nil {
+
+		// query param framework_version
+		var qrFrameworkVersion string
+		if o.FrameworkVersion != nil {
+			qrFrameworkVersion = *o.FrameworkVersion
+		}
+		qFrameworkVersion := qrFrameworkVersion
+		if qFrameworkVersion != "" {
+			if err := r.SetQueryParam("framework_version", qFrameworkVersion); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

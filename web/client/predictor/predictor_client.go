@@ -34,7 +34,7 @@ func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Predict",
 		Method:             "POST",
-		PathPattern:        "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict",
+		PathPattern:        "/v1/framework/{framework_name}/model/{model_name}/predict",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

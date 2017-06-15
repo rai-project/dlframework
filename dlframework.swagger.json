@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/framework/{framework_name}/{framework_version}/info": {
+    "/v1/framework/{framework_name}/info": {
       "get": {
         "operationId": "GetFrameworkManifest",
         "responses": {
@@ -36,8 +36,8 @@
           },
           {
             "name": "framework_version",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -46,7 +46,7 @@
         ]
       }
     },
-    "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info": {
+    "/v1/framework/{framework_name}/model/{model_name}/info": {
       "post": {
         "operationId": "GetFrameworkModelManifest",
         "responses": {
@@ -65,19 +65,7 @@
             "type": "string"
           },
           {
-            "name": "framework_version",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
             "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_version",
             "in": "path",
             "required": true,
             "type": "string"
@@ -96,7 +84,45 @@
         ]
       }
     },
-    "/v1/framework/{framework_name}/{framework_version}/models": {
+    "/v1/framework/{framework_name}/model/{model_name}/predict": {
+      "post": {
+        "operationId": "Predict",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "framework_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "model_name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictRequest"
+            }
+          }
+        ],
+        "tags": [
+          "predictor"
+        ]
+      }
+    },
+    "/v1/framework/{framework_name}/models": {
       "get": {
         "operationId": "GetFrameworkModels",
         "responses": {
@@ -116,8 +142,8 @@
           },
           {
             "name": "framework_version",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           }
         ],
@@ -142,7 +168,7 @@
         ]
       }
     },
-    "/v1/model/{model_name}/{model_version}/info": {
+    "/v1/model/{model_name}/info": {
       "post": {
         "operationId": "GetModelManifest",
         "responses": {
@@ -156,12 +182,6 @@
         "parameters": [
           {
             "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_version",
             "in": "path",
             "required": true,
             "type": "string"
@@ -193,56 +213,6 @@
         },
         "tags": [
           "registry"
-        ]
-      }
-    },
-    "/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict": {
-      "post": {
-        "operationId": "Predict",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "framework_version",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_version",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictRequest"
-            }
-          }
-        ],
-        "tags": [
-          "predictor"
         ]
       }
     }

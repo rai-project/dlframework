@@ -34,7 +34,7 @@ func (a *Client) GetFrameworkManifest(params *GetFrameworkManifestParams) (*GetF
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkManifest",
 		Method:             "GET",
-		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/info",
+		PathPattern:        "/v1/framework/{framework_name}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -90,7 +90,7 @@ func (a *Client) GetFrameworkModelManifest(params *GetFrameworkModelManifestPara
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkModelManifest",
 		Method:             "POST",
-		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info",
+		PathPattern:        "/v1/framework/{framework_name}/model/{model_name}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -118,7 +118,7 @@ func (a *Client) GetFrameworkModels(params *GetFrameworkModelsParams) (*GetFrame
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetFrameworkModels",
 		Method:             "GET",
-		PathPattern:        "/v1/framework/{framework_name}/{framework_version}/models",
+		PathPattern:        "/v1/framework/{framework_name}/models",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -146,7 +146,7 @@ func (a *Client) GetModelManifest(params *GetModelManifestParams) (*GetModelMani
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "GetModelManifest",
 		Method:             "POST",
-		PathPattern:        "/v1/model/{model_name}/{model_version}/info",
+		PathPattern:        "/v1/model/{model_name}/info",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

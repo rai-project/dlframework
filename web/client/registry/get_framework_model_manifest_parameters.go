@@ -66,12 +66,8 @@ type GetFrameworkModelManifestParams struct {
 	Body *models.DlframeworkGetFrameworkModelManifestRequest
 	/*FrameworkName*/
 	FrameworkName string
-	/*FrameworkVersion*/
-	FrameworkVersion string
 	/*ModelName*/
 	ModelName string
-	/*ModelVersion*/
-	ModelVersion string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -133,17 +129,6 @@ func (o *GetFrameworkModelManifestParams) SetFrameworkName(frameworkName string)
 	o.FrameworkName = frameworkName
 }
 
-// WithFrameworkVersion adds the frameworkVersion to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) WithFrameworkVersion(frameworkVersion string) *GetFrameworkModelManifestParams {
-	o.SetFrameworkVersion(frameworkVersion)
-	return o
-}
-
-// SetFrameworkVersion adds the frameworkVersion to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) SetFrameworkVersion(frameworkVersion string) {
-	o.FrameworkVersion = frameworkVersion
-}
-
 // WithModelName adds the modelName to the get framework model manifest params
 func (o *GetFrameworkModelManifestParams) WithModelName(modelName string) *GetFrameworkModelManifestParams {
 	o.SetModelName(modelName)
@@ -153,17 +138,6 @@ func (o *GetFrameworkModelManifestParams) WithModelName(modelName string) *GetFr
 // SetModelName adds the modelName to the get framework model manifest params
 func (o *GetFrameworkModelManifestParams) SetModelName(modelName string) {
 	o.ModelName = modelName
-}
-
-// WithModelVersion adds the modelVersion to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) WithModelVersion(modelVersion string) *GetFrameworkModelManifestParams {
-	o.SetModelVersion(modelVersion)
-	return o
-}
-
-// SetModelVersion adds the modelVersion to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) SetModelVersion(modelVersion string) {
-	o.ModelVersion = modelVersion
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -187,18 +161,8 @@ func (o *GetFrameworkModelManifestParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 
-	// path param framework_version
-	if err := r.SetPathParam("framework_version", o.FrameworkVersion); err != nil {
-		return err
-	}
-
 	// path param model_name
 	if err := r.SetPathParam("model_name", o.ModelName); err != nil {
-		return err
-	}
-
-	// path param model_version
-	if err := r.SetPathParam("model_version", o.ModelVersion); err != nil {
 		return err
 	}
 

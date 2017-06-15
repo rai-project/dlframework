@@ -66,8 +66,6 @@ type GetModelManifestParams struct {
 	Body *models.DlframeworkGetModelManifestRequest
 	/*ModelName*/
 	ModelName string
-	/*ModelVersion*/
-	ModelVersion string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -129,17 +127,6 @@ func (o *GetModelManifestParams) SetModelName(modelName string) {
 	o.ModelName = modelName
 }
 
-// WithModelVersion adds the modelVersion to the get model manifest params
-func (o *GetModelManifestParams) WithModelVersion(modelVersion string) *GetModelManifestParams {
-	o.SetModelVersion(modelVersion)
-	return o
-}
-
-// SetModelVersion adds the modelVersion to the get model manifest params
-func (o *GetModelManifestParams) SetModelVersion(modelVersion string) {
-	o.ModelVersion = modelVersion
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *GetModelManifestParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -158,11 +145,6 @@ func (o *GetModelManifestParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 	// path param model_name
 	if err := r.SetPathParam("model_name", o.ModelName); err != nil {
-		return err
-	}
-
-	// path param model_version
-	if err := r.SetPathParam("model_version", o.ModelVersion); err != nil {
 		return err
 	}
 

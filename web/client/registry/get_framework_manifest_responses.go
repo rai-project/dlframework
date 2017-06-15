@@ -49,7 +49,7 @@ type GetFrameworkManifestOK struct {
 }
 
 func (o *GetFrameworkManifestOK) Error() string {
-	return fmt.Sprintf("[GET /v1/framework/{framework_name}/{framework_version}/info][%d] getFrameworkManifestOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /v1/framework/{framework_name}/info][%d] getFrameworkManifestOK  %+v", 200, o.Payload)
 }
 
 func (o *GetFrameworkManifestOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

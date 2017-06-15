@@ -66,12 +66,8 @@ type PredictParams struct {
 	Body *models.DlframeworkPredictRequest
 	/*FrameworkName*/
 	FrameworkName string
-	/*FrameworkVersion*/
-	FrameworkVersion string
 	/*ModelName*/
 	ModelName string
-	/*ModelVersion*/
-	ModelVersion string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -133,17 +129,6 @@ func (o *PredictParams) SetFrameworkName(frameworkName string) {
 	o.FrameworkName = frameworkName
 }
 
-// WithFrameworkVersion adds the frameworkVersion to the predict params
-func (o *PredictParams) WithFrameworkVersion(frameworkVersion string) *PredictParams {
-	o.SetFrameworkVersion(frameworkVersion)
-	return o
-}
-
-// SetFrameworkVersion adds the frameworkVersion to the predict params
-func (o *PredictParams) SetFrameworkVersion(frameworkVersion string) {
-	o.FrameworkVersion = frameworkVersion
-}
-
 // WithModelName adds the modelName to the predict params
 func (o *PredictParams) WithModelName(modelName string) *PredictParams {
 	o.SetModelName(modelName)
@@ -153,17 +138,6 @@ func (o *PredictParams) WithModelName(modelName string) *PredictParams {
 // SetModelName adds the modelName to the predict params
 func (o *PredictParams) SetModelName(modelName string) {
 	o.ModelName = modelName
-}
-
-// WithModelVersion adds the modelVersion to the predict params
-func (o *PredictParams) WithModelVersion(modelVersion string) *PredictParams {
-	o.SetModelVersion(modelVersion)
-	return o
-}
-
-// SetModelVersion adds the modelVersion to the predict params
-func (o *PredictParams) SetModelVersion(modelVersion string) {
-	o.ModelVersion = modelVersion
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -187,18 +161,8 @@ func (o *PredictParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 		return err
 	}
 
-	// path param framework_version
-	if err := r.SetPathParam("framework_version", o.FrameworkVersion); err != nil {
-		return err
-	}
-
 	// path param model_name
 	if err := r.SetPathParam("model_name", o.ModelName); err != nil {
-		return err
-	}
-
-	// path param model_version
-	if err := r.SetPathParam("model_version", o.ModelVersion); err != nil {
 		return err
 	}
 

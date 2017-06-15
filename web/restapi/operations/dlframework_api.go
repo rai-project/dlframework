@@ -277,7 +277,7 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/info"] = registry.NewGetFrameworkManifest(o.context, o.RegistryGetFrameworkManifestHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/info"] = registry.NewGetFrameworkManifest(o.context, o.RegistryGetFrameworkManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -287,17 +287,17 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/framework/{framework_name}/{framework_version}/model/{model_name}/{model_version}/info"] = registry.NewGetFrameworkModelManifest(o.context, o.RegistryGetFrameworkModelManifestHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/model/{model_name}/info"] = registry.NewGetFrameworkModelManifest(o.context, o.RegistryGetFrameworkModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/framework/{framework_name}/{framework_version}/models"] = registry.NewGetFrameworkModels(o.context, o.RegistryGetFrameworkModelsHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/models"] = registry.NewGetFrameworkModels(o.context, o.RegistryGetFrameworkModelsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/model/{model_name}/{model_version}/info"] = registry.NewGetModelManifest(o.context, o.RegistryGetModelManifestHandler)
+	o.handlers["POST"]["/v1/model/{model_name}/info"] = registry.NewGetModelManifest(o.context, o.RegistryGetModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -307,7 +307,7 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/{framework_name}/{framework_version}/{model_name}/{model_version}/predict"] = predictor.NewPredict(o.context, o.PredictorPredictHandler)
+	o.handlers["POST"]["/v1/framework/{framework_name}/model/{model_name}/predict"] = predictor.NewPredict(o.context, o.PredictorPredictHandler)
 
 }
 
