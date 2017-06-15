@@ -1,0 +1,29 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "get_framework_manifest_parameters.go",
+        "get_framework_manifest_responses.go",
+        "get_framework_manifests_parameters.go",
+        "get_framework_manifests_responses.go",
+        "get_framework_model_manifest_parameters.go",
+        "get_framework_model_manifest_responses.go",
+        "get_framework_models_parameters.go",
+        "get_framework_models_responses.go",
+        "get_model_manifest_parameters.go",
+        "get_model_manifest_responses.go",
+        "get_model_manifests_parameters.go",
+        "get_model_manifests_responses.go",
+        "registry_client.go",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//web/models:go_default_library",
+        "@com_github_go_openapi_errors//:go_default_library",
+        "@com_github_go_openapi_runtime//:go_default_library",
+        "@com_github_go_openapi_runtime//client:go_default_library",
+        "@com_github_go_openapi_strfmt//:go_default_library",
+        "@org_golang_x_net//context:go_default_library",
+    ],
+)
