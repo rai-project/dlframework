@@ -12,7 +12,7 @@ container:
     gpu: raiproject/carml-tensorflow:ppc64le-gpu
 description: >
   MobileNets are small, low-latency, low-power models parameterized to meet the resource constraints of a variety of use cases.
-  This network consists of 224 layers and achieves 64.0 top-1 and 85.4 top-5 accuracy. 	
+  This network consists of 224 layers and achieves 64.0 top-1 and 85.4 top-5 accuracy.
 references:
   - https://arxiv.org/pdf/1704.04861.pdf
 license: TODO
@@ -28,7 +28,7 @@ output:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model:
   checkpoint: http://download.tensorflow.org/models/mobilenet_v1_0.50_224_2017_06_14.tar.gz
-  is_archive: false
+  is_archive: true
 attributes:
   manifest_author: abduld
   trailing_dataset: ImageNet

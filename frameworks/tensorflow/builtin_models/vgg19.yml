@@ -2,7 +2,7 @@ name: VGG19
 framework:
   name: Tensorflow
   version: ~1.1.x
-version: 1.0  
+version: 1.0
 container:
   amd64:
     gpu: raiproject/carml-tensorflow:amd64-cpu
@@ -29,6 +29,7 @@ output:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model:
   checkpoint: http://download.tensorflow.org/models/vgg_19_2016_08_28.tar.gz
+  is_archive: true
 attributes:
   manifest_author: abduld
   trailing_dataset: ImageNet
