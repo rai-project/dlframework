@@ -15,6 +15,7 @@
 		debug.proto
 		device_attributes.proto
 		device_properties.proto
+		error_codes.proto
 		function.proto
 		graph.proto
 		graph_transfer_info.proto
@@ -71,6 +72,7 @@
 		DeviceLocality
 		DeviceAttributes
 		DeviceProperties
+		Error
 		FunctionDefLibrary
 		FunctionDef
 		GradientDef

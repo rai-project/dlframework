@@ -7,7 +7,6 @@ package tensorflow
 import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import tensorflow_error "."
 
 import io "io"
 
@@ -28,7 +27,7 @@ type QueueRunnerDef struct {
 	CancelOpName string `protobuf:"bytes,4,opt,name=cancel_op_name,json=cancelOpName,proto3" json:"cancel_op_name,omitempty"`
 	// A list of exception types considered to signal a safely closed queue
 	// if raised during enqueue operations.
-	QueueClosedExceptionTypes []tensorflow_error.Code `protobuf:"varint,5,rep,packed,name=queue_closed_exception_types,json=queueClosedExceptionTypes,enum=tensorflow.error.Code" json:"queue_closed_exception_types,omitempty"`
+	QueueClosedExceptionTypes []Error_Code `protobuf:"varint,5,rep,packed,name=queue_closed_exception_types,json=queueClosedExceptionTypes,enum=tensorflow.Error_Code" json:"queue_closed_exception_types,omitempty"`
 }
 
 func (m *QueueRunnerDef) Reset()                    { *m = QueueRunnerDef{} }
@@ -64,7 +63,7 @@ func (m *QueueRunnerDef) GetCancelOpName() string {
 	return ""
 }
 
-func (m *QueueRunnerDef) GetQueueClosedExceptionTypes() []tensorflow_error.Code {
+func (m *QueueRunnerDef) GetQueueClosedExceptionTypes() []Error_Code {
 	if m != nil {
 		return m.QueueClosedExceptionTypes
 	}
@@ -360,7 +359,7 @@ func (m *QueueRunnerDef) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 5:
 			if wireType == 0 {
-				var v tensorflow_error.Code
+				var v Error_Code
 				for shift := uint(0); ; shift += 7 {
 					if shift >= 64 {
 						return ErrIntOverflowQueueRunner
@@ -370,7 +369,7 @@ func (m *QueueRunnerDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (tensorflow_error.Code(b) & 0x7F) << shift
+					v |= (Error_Code(b) & 0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -400,7 +399,7 @@ func (m *QueueRunnerDef) Unmarshal(dAtA []byte) error {
 					return io.ErrUnexpectedEOF
 				}
 				for iNdEx < postIndex {
-					var v tensorflow_error.Code
+					var v Error_Code
 					for shift := uint(0); ; shift += 7 {
 						if shift >= 64 {
 							return ErrIntOverflowQueueRunner
@@ -410,7 +409,7 @@ func (m *QueueRunnerDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (tensorflow_error.Code(b) & 0x7F) << shift
+						v |= (Error_Code(b) & 0x7F) << shift
 						if b < 0x80 {
 							break
 						}
