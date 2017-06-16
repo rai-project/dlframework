@@ -28,8 +28,9 @@ output:
   parameters:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
 model:
-  checkpoint: http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
-  is_archive: false
+  base_url: https://storage.googleapis.com/download.tensorflow.org/models/inception5h.zip
+  graph_path: tensorflow_inception_graph.pb
+  is_archive: true
 attributes:
   manifest_author: abduld
   trailing_dataset: ImageNet

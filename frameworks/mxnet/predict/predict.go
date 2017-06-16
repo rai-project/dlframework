@@ -3,11 +3,14 @@ package predict
 import (
 	"bufio"
 	"image"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
+
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 
 	"github.com/anthonynsimon/bild/parallel"
 	"github.com/anthonynsimon/bild/transform"
@@ -16,17 +19,6 @@ import (
 	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
 	"github.com/songtianyi/go-mxnet-predictor/utils"
 )
-
-type Predictor interface {
-	// Downloads the features / symbol file / weights
-	Download() error
-	// Preprocess the data
-	Preprocess(data interface{}) (interface{}, error)
-	// Returns the features
-	Predict(data interface{}) ([]*mxnet.Feature, error)
-
-	io.Closer
-}
 
 type ImagePredictor struct {
 	model     mxnet.Model_Information

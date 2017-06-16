@@ -1,4 +1,5 @@
-package tensorflow
+package caffe
+
 
 import (
 	"os"
@@ -9,16 +10,16 @@ import (
 )
 
 var FrameworkManifest = dlframework.FrameworkManifest{
-	Name:    "Tensorflow",
-	Version: "1.1",
+	Name:    "Caffe",
+	Version: "1.0",
 	Container: map[string]*dlframework.ContainerHardware{
 		"amd64": &dlframework.ContainerHardware{
-			Cpu: "raiproject/carml-tensorflow:amd64-cpu",
-			Gpu: "raiproject/carml-tensorflow:amd64-gpu",
+			Cpu: "raiproject/carml-caffe:amd64-cpu",
+			Gpu: "raiproject/carml-caffe:amd64-gpu",
 		},
 		"ppc64le": &dlframework.ContainerHardware{
-			Cpu: "raiproject/carml-tensorflow:ppc64le-gpu",
-			Gpu: "raiproject/carml-tensorflow:ppc64le-gpu",
+			Cpu: "raiproject/carml-caffe:ppc64le-gpu",
+			Gpu: "raiproject/carml-caffe:ppc64le-gpu",
 		},
 	},
 }

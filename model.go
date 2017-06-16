@@ -32,7 +32,16 @@ func (m *ModelManifest) Validate() error {
 	return nil
 }
 
-func (m ModelManifest) CannonicalName() (string, error) {
+func (m ModelManifest) MustCanonicalName() string {
+	s, err := m.CanonicalName()
+	if err != nil {
+		log.WithField("model_name", m.GetName()).Fatal("unable to get model canonical name")
+		return ""
+	}
+	return s
+}
+
+func (m ModelManifest) CanonicalName() (string, error) {
 	if m.GetFramework() == nil {
 		return "", errors.Errorf("the model %s does not have a valid framework", m.GetName())
 	}
@@ -40,9 +49,9 @@ func (m ModelManifest) CannonicalName() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	frameworkName, err := framework.CannonicalName()
+	frameworkName, err := framework.CanonicalName()
 	if err != nil {
-		return "", errors.Wrapf(err, "cannot get cannonical name for the framework %s and model %s in the registry", m.GetFramework().GetName(), m.GetName())
+		return "", errors.Wrapf(err, "cannot get canonical name for the framework %s and model %s in the registry", m.GetFramework().GetName(), m.GetName())
 	}
 	fm, ok := frameworkRegistry.Load(frameworkName)
 	if !ok {
@@ -51,7 +60,7 @@ func (m ModelManifest) CannonicalName() (string, error) {
 	if _, ok := fm.(FrameworkManifest); !ok {
 		return "", errors.Errorf("invalid framework %s registered for model %s in the registry", frameworkName, m.GetName())
 	}
-	modelName := m.GetName()
+	modelName := strings.ToLower(m.GetName())
 	if modelName == "" {
 		return "", errors.New("model name must not be empty")
 	}
@@ -60,6 +69,10 @@ func (m ModelManifest) CannonicalName() (string, error) {
 		modelVersion = "latest"
 	}
 	return frameworkName + "/" + modelName + ":" + modelVersion, nil
+}
+
+func (m ModelManifest) FrameworkConstraint() (*semver.Constraints, error) {
+	return semver.NewConstraint(m.GetFramework().GetVersion())
 }
 
 func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
@@ -79,9 +92,10 @@ func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
 		return frameworks[len(frameworks)-1], nil
 	}
 
-	modelFrameworkConstraint, err := semver.NewConstraint(m.GetFramework().GetVersion())
+	modelFrameworkConstraint, err := m.FrameworkConstraint()
 	if err != nil {
-		return FrameworkManifest{}, err
+		return FrameworkManifest{},
+			errors.Wrapf(err, "cannot get framework constraints for model %v", m.GetName())
 	}
 
 	filtered := []FrameworkManifest{}
@@ -107,7 +121,7 @@ func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
 }
 
 func (m ModelManifest) Register() error {
-	n, err := m.CannonicalName()
+	n, err := m.CanonicalName()
 	if err != nil {
 		return err
 	}
@@ -159,7 +173,7 @@ func FindModel(name string) (*ModelManifest, error) {
 			return true
 		}
 		model = &m
-		return true
+		return false
 	})
 	if model == nil {
 		return nil, errors.Errorf("model %s not found in registery", name)

@@ -60,7 +60,7 @@ func TestModelRegistration(t *testing.T) {
 			return errors.New("empty model")
 		}
 
-		name, err := model.CannonicalName()
+		name, err := model.CanonicalName()
 		assert.NoError(t, err)
 		assert.NotEmpty(t, name)
 

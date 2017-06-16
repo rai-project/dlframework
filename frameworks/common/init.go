@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/frameworks/common")
+	log       *logrus.Entry = logrus.New().WithField("pkg", "dlframework/frameworks/common")
+	debugging               = false
 )
 
 func init() {
