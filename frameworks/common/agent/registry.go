@@ -6,6 +6,7 @@ import (
 )
 
 type Registry struct {
+	Base
 }
 
 func (c *Registry) GetFrameworkManifests(ctx context.Context, ignore *dl.Null) (*dl.GetFrameworkManifestsResponse, error) {
@@ -82,5 +83,9 @@ func (c *Registry) GetModelManifest(ctx context.Context, req *dl.GetModelManifes
 	if err != nil {
 		return nil, err
 	}
-	return &m, nil
+	return m, nil
+}
+
+func (c *Registry) PublishInRegistery() error {
+	return c.Base.PublishInRegistery("registry")
 }

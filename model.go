@@ -155,6 +155,9 @@ func Models() ([]ModelManifest, error) {
 		}
 		models[ii] = model
 	}
+	sort.Slice(models, func(ii, jj int) bool {
+		return models[ii].GetName() < models[jj].GetName()
+	})
 	return models, nil
 }
 
