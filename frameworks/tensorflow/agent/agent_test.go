@@ -7,9 +7,15 @@ import (
 
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
-	_ "github.com/rai-project/dlframework/frameworks/tensorflow"
+	tf "github.com/rai-project/dlframework/frameworks/tensorflow"
 	"github.com/stretchr/testify/assert"
 )
+
+func XXXTestFrameworkRegistration(t *testing.T) {
+	framework := tf.FrameworkManifest
+	models := framework.Models()
+	assert.NotEmpty(t, models)
+}
 
 func XXXTestModelRegistration(t *testing.T) {
 	models, err := dl.Models()
@@ -21,6 +27,7 @@ func XXXTestModelRegistration(t *testing.T) {
 
 func TestGRPCRegistration(t *testing.T) {
 	RegisterRegistryServer()
+	RegisterPredictorServer()
 }
 
 func TestMain(m *testing.M) {

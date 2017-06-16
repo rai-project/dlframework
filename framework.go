@@ -71,8 +71,13 @@ func Frameworks() ([]FrameworkManifest, error) {
 
 func (f FrameworkManifest) Models() []ModelManifest { // todo: this is not optimal
 	models := []ModelManifest{}
+	cn, err := f.CanonicalName()
+	if err != nil {
+		return []ModelManifest{}
+	}
 	names := RegisteredModelNames()
 	for _, name := range names {
+		name = strings.TrimPrefix(name, cn+"/")
 		m, err := f.FindModel(name)
 		if err != nil {
 			continue

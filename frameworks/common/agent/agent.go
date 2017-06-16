@@ -3,9 +3,8 @@ package agent
 import (
 	"path"
 	"strings"
-	"time"
+	"sync"
 
-	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
 	store "github.com/rai-project/libkv/store"
@@ -33,41 +32,80 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		return err
 	}
 
+	var wg sync.WaitGroup
 	prefix = path.Join(config.App.Name, prefix)
+	rgs.Put(prefix, nil, &store.WriteOptions{IsDir: true})
 	{
 		frameworksKey := path.Join(prefix, "frameworks")
-		lk, err := rgs.NewLock(frameworksKey, &store.LockOptions{TTL: time.Second})
-		if err != nil {
-			return errors.Wrapf(err, "cannot get lock for %v", frameworksKey)
-		}
-		_, err = lk.Lock(nil)
-		if err != nil {
-			return errors.Wrapf(err, "cannot lock %v", frameworksKey)
-		}
-		kv, err := rgs.Get(frameworksKey)
-		if err != nil {
-			return errors.Wrapf(err, "cannot get value for key %v", frameworksKey)
-		}
-		found := false
-		val := strings.TrimSpace(string(kv.Value))
-		frameworkLines := strings.Split(val, "\n")
-		for _, name := range frameworkLines {
-			if name == cn {
-				found = true
-				break
+		// lock, err := rgs.NewLock(frameworksKey, &store.LockOptions{TTL: 2 * time.Second})
+		// if err != nil {
+		// 	return errors.Wrapf(err, "cannot get lock for key %v", frameworksKey)
+		// }
+		// pp.Println("trying lock....")
+		// _, err = lock.Lock(nil)
+		// if err != nil {
+		// 	return errors.Wrapf(err, "cannot lock key %v", frameworksKey)
+		// }
+		// pp.Println("locking....")
+		wg.Add(1)
+		go func() {
+			// defer lock.Unlock()
+			defer wg.Done()
+			kv, err := rgs.Get(frameworksKey)
+			if err != nil {
+				if ok, e := rgs.Exists(frameworksKey); e == nil && ok {
+					log.WithError(err).Errorf("cannot get value for key %v", frameworksKey)
+					return
+				}
+				kv = &store.KVPair{
+					Key:   frameworksKey,
+					Value: []byte{},
+				}
 			}
-		}
-		if !found {
-			frameworkLines = append(frameworkLines, cn)
-			newVal := strings.TrimSpace(strings.Join(frameworkLines, "\n"))
-			rgs.Put(frameworksKey, []byte(newVal), &store.WriteOptions{IsDir: false})
-		}
-		lk.Unlock()
+			found := false
+			val := strings.TrimSpace(string(kv.Value))
+			frameworkLines := strings.Split(val, "\n")
+			for _, name := range frameworkLines {
+				if name == cn {
+					found = true
+					break
+				}
+			}
+			if !found {
+				frameworkLines = append(frameworkLines, cn)
+				newVal := strings.TrimSpace(strings.Join(frameworkLines, "\n"))
+				rgs.AtomicPut(frameworksKey, []byte(newVal), kv, nil)
+			}
+		}()
 	}
-	key := path.Join(config.App.Name, prefix, toPath(cn))
-	if err := rgs.Put(key, []byte(cn), nil); err != nil {
-		return err
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		key := path.Join(prefix, toPath(cn))
+		if err := rgs.Put(key, nil, &store.WriteOptions{IsDir: true}); err != nil {
+			return
+		}
+	}()
+
+	models := framework.Models()
+	wg.Add(len(models))
+	for _, model := range models {
+		go func(model dl.ModelManifest) {
+			defer wg.Done()
+			mn, err := model.CanonicalName()
+			if err != nil {
+				return
+			}
+			bts, err := model.Marshal()
+			if err != nil {
+				return
+			}
+			key := path.Join(prefix, toPath(mn))
+			rgs.Put(key, bts, nil)
+		}(model)
 	}
+
+	wg.Wait()
 
 	return nil
 }
