@@ -8,36 +8,69 @@
 	It is generated from these files:
 		allocation_description.proto
 		attr_value.proto
+		cluster.proto
+		config.proto
+		control_flow.proto
 		cost_graph.proto
+		debug.proto
 		device_attributes.proto
+		device_properties.proto
 		function.proto
 		graph.proto
 		graph_transfer_info.proto
 		kernel_def.proto
 		log_memory.proto
+		master.proto
+		master_service.proto
+		meta_graph.proto
+		named_tensor.proto
 		node_def.proto
 		op_def.proto
 		op_gen_overrides.proto
+		queue_runner.proto
 		reader_base.proto
 		remote_fused_graph_execute_info.proto
 		resource_handle.proto
+		rewriter_config.proto
+		saved_model.proto
+		saver.proto
 		step_stats.proto
 		summary.proto
+		tensor_bundle.proto
 		tensor_description.proto
+		tensorflow_server.proto
 		tensor.proto
 		tensor_shape.proto
 		tensor_slice.proto
 		types.proto
 		variable.proto
 		versions.proto
+		worker.proto
+		worker_service.proto
 
 	It has these top-level messages:
 		AllocationDescription
 		AttrValue
 		NameAttrList
+		JobDef
+		ClusterDef
+		GPUOptions
+		OptimizerOptions
+		GraphOptions
+		ThreadPoolOptionProto
+		RPCOptions
+		ConfigProto
+		RunOptions
+		RunMetadata
+		ValuesDef
+		CondContextDef
+		WhileContextDef
 		CostGraphDef
+		DebugTensorWatch
+		DebugOptions
 		DeviceLocality
 		DeviceAttributes
+		DeviceProperties
 		FunctionDefLibrary
 		FunctionDef
 		GradientDef
@@ -50,15 +83,40 @@
 		MemoryLogTensorOutput
 		MemoryLogRawAllocation
 		MemoryLogRawDeallocation
+		CreateSessionRequest
+		CreateSessionResponse
+		ExtendSessionRequest
+		ExtendSessionResponse
+		RunStepRequest
+		RunStepResponse
+		PartialRunSetupRequest
+		PartialRunSetupResponse
+		CloseSessionRequest
+		CloseSessionResponse
+		ResetRequest
+		ResetResponse
+		ListDevicesRequest
+		ListDevicesResponse
+		MetaGraphDef
+		CollectionDef
+		TensorInfo
+		SignatureDef
+		AssetFileDef
+		NamedTensorProto
 		NodeDef
 		OpDef
 		OpDeprecation
 		OpList
 		OpGenOverride
 		OpGenOverrides
+		QueueRunnerDef
 		ReaderBaseState
 		RemoteFusedGraphExecuteInfo
 		ResourceHandle
+		AutoParallelOptions
+		RewriterConfig
+		SavedModel
+		SaverDef
 		AllocatorMemoryUsed
 		NodeOutput
 		MemoryStats
@@ -68,13 +126,39 @@
 		SummaryDescription
 		HistogramProto
 		Summary
+		BundleHeaderProto
+		BundleEntryProto
 		TensorDescription
+		ServerDef
 		TensorProto
 		TensorShapeProto
 		TensorSliceProto
 		VariableDef
 		SaveSliceInfoDef
 		VersionDef
+		GetStatusRequest
+		GetStatusResponse
+		CreateWorkerSessionRequest
+		CreateWorkerSessionResponse
+		RegisterGraphRequest
+		RegisterGraphResponse
+		DeregisterGraphRequest
+		DeregisterGraphResponse
+		CleanupAllRequest
+		CleanupAllResponse
+		ExecutorOpts
+		RunGraphRequest
+		RunGraphResponse
+		CleanupGraphRequest
+		CleanupGraphResponse
+		RecvTensorRequest
+		RecvTensorResponse
+		LoggingRequest
+		LabeledStepStats
+		LoggingResponse
+		TraceOpts
+		TracingRequest
+		TracingResponse
 */
 package tensorflow
 
