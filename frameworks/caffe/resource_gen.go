@@ -1,3 +1,0 @@
-//go:generate protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go --proto_path=./proto --gogofaster_out=plugins=grpc:. proto/caffe.proto
-//go:generate go-bindata -nomemcopy -prefix builtin_models/ -pkg caffe -o builtin_models_static.go -ignore=.DS_Store ./builtin_models/...
-package caffe

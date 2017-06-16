@@ -36,14 +36,31 @@ generate: generate-proto
 	swagger generate client -f dlframework.swagger.json -t web -A dlframework
 	swagger generate support -f dlframework.swagger.json -t web -A dlframework
 
-generate-mxnet:
+clean-mxnet:
+	rm -fr frameworks/mxnet/builtin_models_static.go frameworks/mxnet/*pb.go
+
+generate-mxnet: clean-mxnet
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/mxnet -I$(GOPATH)/src --gogofaster_out=plugins=grpc:frameworks/mxnet frameworks/mxnet/mxnet.proto
 	go-bindata -nomemcopy -prefix frameworks/mxnet/builtin_models/ -pkg mxnet -o frameworks/mxnet/builtin_models_static.go -ignore=.DS_Store -ignore=README.md frameworks/mxnet/builtin_models/...
 
-generate-tensorflow:
-	rm -fr frameworks/tensorflow/*pb.go
+clean-tensorflow:
+	rm -fr frameworks/tensorflow/builtin_models_static.go frameworks/tensorflow/*pb.go
+
+generate-tensorflow: clean-tensorflow
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/tensorflow/proto --gogofaster_out=plugins=grpc:frameworks/tensorflow frameworks/tensorflow/proto/allocation_description.proto frameworks/tensorflow/proto/attr_value.proto frameworks/tensorflow/proto/cost_graph.proto frameworks/tensorflow/proto/device_attributes.proto frameworks/tensorflow/proto/function.proto frameworks/tensorflow/proto/graph.proto frameworks/tensorflow/proto/graph_transfer_info.proto frameworks/tensorflow/proto/kernel_def.proto frameworks/tensorflow/proto/log_memory.proto frameworks/tensorflow/proto/node_def.proto frameworks/tensorflow/proto/op_def.proto frameworks/tensorflow/proto/op_gen_overrides.proto frameworks/tensorflow/proto/reader_base.proto frameworks/tensorflow/proto/remote_fused_graph_execute_info.proto frameworks/tensorflow/proto/resource_handle.proto frameworks/tensorflow/proto/step_stats.proto frameworks/tensorflow/proto/summary.proto frameworks/tensorflow/proto/tensor_description.proto frameworks/tensorflow/proto/tensor.proto frameworks/tensorflow/proto/tensor_shape.proto frameworks/tensorflow/proto/tensor_slice.proto frameworks/tensorflow/proto/types.proto frameworks/tensorflow/proto/variable.proto frameworks/tensorflow/proto/versions.proto
 	go-bindata -nomemcopy -prefix frameworks/tensorflow/builtin_models/ -pkg tensorflow -o frameworks/tensorflow/builtin_models_static.go -ignore=.DS_Store  -ignore=README.md frameworks/tensorflow/builtin_models/...
+
+clean-caffe:
+	rm -fr frameworks/caffe/builtin_models_static.go frameworks/caffe/*pb.go
+
+generate-caffe: clean-caffe
+	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -Iframeworks/caffe/proto --gogofaster_out=plugins=grpc:frameworks/caffe frameworks/caffe/proto/caffe.proto
+	go-bindata -nomemcopy -prefix frameworks/caffe/builtin_models/ -pkg tensorflow -o frameworks/caffe/builtin_models_static.go -ignore=.DS_Store  -ignore=README.md frameworks/caffe/builtin_models/...
+
+
+clean-frameworks: clean-mxnet clean-caffe clean-tensorflow
+
+generate-frameworks: generate-mxnet generate-caffe generate-tensorflow
 
 linux-brew:
 	test -d $HOME/.linuxbrew/bin || git clone https://github.com/Linuxbrew/brew.git $HOME/.linuxbrew
