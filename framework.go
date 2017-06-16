@@ -69,6 +69,19 @@ func Frameworks() ([]FrameworkManifest, error) {
 	return fws, nil
 }
 
+func (f FrameworkManifest) Models() []ModelManifest { // todo: this is not optimal
+	models := []ModelManifest{}
+	names := RegisteredModelNames()
+	for _, name := range names {
+		m, err := f.FindModel(name)
+		if err != nil {
+			continue
+		}
+		models = append(models, m)
+	}
+	return models
+}
+
 func (f FrameworkManifest) FindModel(name string) (ModelManifest, error) {
 	var model *ModelManifest
 	frameworkVersionString := f.GetVersion()
@@ -111,7 +124,30 @@ func (f FrameworkManifest) FindModel(name string) (ModelManifest, error) {
 		return false
 	})
 	if model == nil {
-		return ModelManifest{}, errors.Errorf("model %s for framework %s not found in registery", name, f.GetName())
+		return ModelManifest{}, errors.Errorf("model %s for framework %s not found in registry", name, f.GetName())
 	}
 	return *model, nil
+}
+
+func FindFramework(name string) (*FrameworkManifest, error) {
+	var framework *FrameworkManifest
+	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
+		key, ok := key0.(string)
+		if !ok {
+			return true
+		}
+		if key != name {
+			return true
+		}
+		f, ok := value.(FrameworkManifest)
+		if !ok {
+			return true
+		}
+		framework = &f
+		return false
+	})
+	if framework == nil {
+		return nil, errors.Errorf("framework %s not found in registry", name)
+	}
+	return framework, nil
 }

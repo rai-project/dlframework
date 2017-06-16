@@ -176,7 +176,7 @@ func FindModel(name string) (*ModelManifest, error) {
 		return false
 	})
 	if model == nil {
-		return nil, errors.Errorf("model %s not found in registery", name)
+		return nil, errors.Errorf("model %s not found in registry", name)
 	}
 	return model, nil
 }
