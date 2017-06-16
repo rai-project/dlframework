@@ -167,7 +167,7 @@ func (p *ImagePredictor) constructGraphToNormalizeImage(img []byte) (graph *tf.G
 		return
 	}
 
-	mean := p.meanImage[0]
+	mean := p.meanImage
 	scale := float32(1)
 
 	// - input is a String-Tensor, where the string the JPEG-encoded image.
