@@ -5,13 +5,13 @@ import (
 	"io/ioutil"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
-	"github.com/levigross/grequests"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 
-	"github.com/rai-project/archive"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/downloadmanager"
@@ -24,11 +24,12 @@ import (
 
 type ImagePredictor struct {
 	*common.Base
-	meanImage       []float64
+	meanImage       []float32
 	imageDimensions []int32
 	tfGraph         *tf.Graph
 	tfSession       *tf.Session
 	workDir         string
+	graphFilePath   string
 }
 
 func New(model dlframework.ModelManifest) (common.Predictor, error) {
@@ -78,8 +79,10 @@ func newImagePredictor(model dlframework.ModelManifest) (*ImagePredictor, error)
 }
 
 func (p *ImagePredictor) makeSession() error {
-
-	model := []byte("temporary")
+	model, err := ioutil.ReadFile(p.graphFilePath)
+	if err != nil {
+		return errors.Wrapf(err, "unable to read graph file %v", p.graphFilePath)
+	}
 
 	// Construct an in-memory graph from the serialized form.
 	graph := tf.NewGraph()
@@ -101,28 +104,27 @@ func (p *ImagePredictor) makeSession() error {
 
 func (p *ImagePredictor) Download() error {
 	model := p.Model
+	var downloadPath string
 	if model.Model.IsArchive {
 		baseURL := model.Model.BaseUrl
-		parsedURL, err := url.Parse(baseURL)
-		if err != nil {
-			return errors.Wrapf(err, "%v is not a valid url. unable to parse it", baseURL)
-		}
-		fileBaseName := filepath.Base(parsedURL.Path)
-		_ = fileBaseName
-		target := p.workDir
-
-		err = downloadmanager.Download(baseURL, target)
+		_, err := downloadmanager.Download(baseURL, p.workDir)
 		if err != nil {
 			return errors.Wrapf(err, "failed to download model archive from %v", model.Model.BaseUrl)
 		}
-		targetFile, err := os.Open(target)
+		downloadPath = p.workDir
+	} else {
+		var err error
+		url := path.Join(model.Model.BaseUrl, model.Model.GetGraphPath()) // this is a url, so path is correct
+		downloadPath, err = downloadmanager.Download(url, filepath.Join(p.workDir, model.Model.GetGraphPath()))
 		if err != nil {
-			return errors.Wrapf(err, "unable to open %v file", target)
+			return errors.Wrapf(err, "failed to download model graph from %v", url)
 		}
-		defer targetFile.Close()
-		unarchivedPath := filepath.Join(p.workDir, "model")
-		archive.Unzip(targetFile, unarchivedPath)
 	}
+	pth := filepath.Join(downloadPath, model.Model.GetGraphPath())
+	if !com.IsFile(pth) {
+		return errors.Errorf("the graph file %v was not found or is not a file", pth)
+	}
+	p.graphFilePath = pth
 	return nil
 }
 
@@ -130,7 +132,7 @@ func (p *ImagePredictor) Preprocess(data interface{}) (interface{}, error) {
 	return nil, nil
 }
 
-func (p *ImagePredictor) Predict(data interface{}) ([]*dlframework.PredictionFeature, error) {
+func (p *ImagePredictor) Predict(data interface{}) (*dlframework.PredictionFeatures, error) {
 
 	if p.tfSession == nil {
 		if err := p.makeSession(); err != nil {
@@ -156,15 +158,27 @@ func (p *ImagePredictor) Predict(data interface{}) ([]*dlframework.PredictionFea
 			}
 			reader = f
 		} else if utils.IsURL(str) {
-			resp, err := grequests.Get(str, nil)
+			_, err := url.Parse(str)
 			if err != nil {
-				return nil, errors.Wrapf(err, "unable to download data from %v", str)
+				return nil, errors.Wrapf(err, "unable to parse url %v", str)
 			}
-			reader = resp
+			pth, err := downloadmanager.Download(str, p.workDir)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to download url %v", str)
+			}
+			if !com.IsFile(pth) {
+				return nil, errors.Wrapf(err, "downloaded file %v not found", pth)
+			}
+			f, err := os.Open(pth)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to open downloaded file %v", pth)
+			}
+			reader = f
 		}
-	}
-	if rdr, ok := data.(io.Reader); ok {
+	} else if rdr, ok := data.(io.Reader); ok {
 		reader = ioutil.NopCloser(rdr)
+	} else {
+		return nil, errors.New("unexpected input")
 	}
 
 	tensor, err := p.makeTensorFromImage(reader)
@@ -180,22 +194,23 @@ func (p *ImagePredictor) Predict(data interface{}) ([]*dlframework.PredictionFea
 		},
 		nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, errors.Wrapf(err, "failed to perform inference")
 	}
 	// output[0].Value() is a vector containing probabilities of
 	// labels for each image in the "batch". The batch size was 1.
 	// Find the most probably label index.
 	probabilities := output[0].Value().([][]float32)[0]
-
-	res := make([]*dlframework.PredictionFeature, len(probabilities))
+	// pp.Println("probabilities == ", probabilities)
+	rprobs := make([]*dlframework.PredictionFeature, len(probabilities))
 	for ii, prob := range probabilities {
-		res[ii] = &dlframework.PredictionFeature{
+		rprobs[ii] = &dlframework.PredictionFeature{
 			Index:       int64(ii),
 			Probability: prob,
 		}
 	}
 
-	return res, nil
+	res := dlframework.PredictionFeatures(rprobs)
+	return &res, nil
 }
 
 func (p *ImagePredictor) Close() error {
@@ -203,4 +218,10 @@ func (p *ImagePredictor) Close() error {
 		p.tfSession.Close()
 	}
 	return nil
+}
+
+func dummy() {
+	if false {
+		pp.Println("....")
+	}
 }

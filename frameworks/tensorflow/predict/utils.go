@@ -1,6 +1,7 @@
 package predict
 
 import (
+	"bytes"
 	"image"
 	"io"
 	"io/ioutil"
@@ -9,6 +10,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 
 	"github.com/gogo/protobuf/types"
@@ -65,7 +67,7 @@ func (p *ImagePredictor) setMeanImage() error {
 	}
 	pdims, ok := typeParameters["mean"]
 	if !ok {
-		p.meanImage = []float64{0, 0, 0}
+		p.meanImage = []float32{0, 0, 0}
 		log.Debug("using 0,0,0 as the mean image")
 		return nil
 	}
@@ -87,13 +89,13 @@ func (p *ImagePredictor) setMeanImage() error {
 		if _, ok := kind.(*types.Value_NumberValue); !ok {
 			return errors.New("invalid number or list value in image mean")
 		}
-		val := data.GetNumberValue()
+		val := float32(data.GetNumberValue())
 		log.Debugf("using %v,%v,%v as the mean image", val, val, val)
-		p.meanImage = []float64{val, val, val}
+		p.meanImage = []float32{val, val, val}
 		return nil
 	}
 
-	dims := []float64{}
+	dims := []float32{}
 	for _, v := range lstVal.Values {
 		kind := v.GetKind()
 		if kind == nil {
@@ -103,7 +105,7 @@ func (p *ImagePredictor) setMeanImage() error {
 			return errors.New("invalid number value in image dimensions")
 		}
 		val := v.GetNumberValue()
-		dims = append(dims, val)
+		dims = append(dims, float32(val))
 	}
 	p.meanImage = dims
 	return nil
@@ -111,17 +113,17 @@ func (p *ImagePredictor) setMeanImage() error {
 
 // Convert the image in reader to a Tensor suitable as input to the Inception model.
 func (p *ImagePredictor) makeTensorFromImage(reader io.Reader) (*tf.Tensor, error) {
-	bytes, err := ioutil.ReadAll(reader)
+	bts, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
 	// DecodeJpeg uses a scalar String-valued tensor as input.
-	tensor, err := tf.NewTensor(string(bytes))
+	tensor, err := tf.NewTensor(string(bts))
 	if err != nil {
 		return nil, err
 	}
 	// Construct a graph to normalize the image
-	graph, input, output, err := p.constructGraphToNormalizeImage(reader)
+	graph, input, output, err := p.constructGraphToNormalizeImage(bts)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +150,7 @@ func (p *ImagePredictor) makeTensorFromImage(reader io.Reader) (*tf.Tensor, erro
 // This function constructs a graph of TensorFlow operations which takes as
 // input a JPEG-encoded string and returns a tensor suitable as input to the
 // inception model.
-func (p *ImagePredictor) constructGraphToNormalizeImage(reader io.Reader) (graph *tf.Graph, input, output tf.Output, err error) {
+func (p *ImagePredictor) constructGraphToNormalizeImage(img []byte) (graph *tf.Graph, input, output tf.Output, err error) {
 	// Some constants specific to the pre-trained model at
 	// - The model was trained after with images scaled to pixels.
 	// - The colors, represented as R, G, B in 1-byte each were converted to
@@ -165,8 +167,8 @@ func (p *ImagePredictor) constructGraphToNormalizeImage(reader io.Reader) (graph
 		return
 	}
 
-	mean := p.meanImage
-	scale := 1
+	mean := p.meanImage[0]
+	scale := float32(1)
 
 	// - input is a String-Tensor, where the string the JPEG-encoded image.
 	// - The inception model takes a 4D tensor of shape
@@ -178,11 +180,12 @@ func (p *ImagePredictor) constructGraphToNormalizeImage(reader io.Reader) (graph
 	input = op.Placeholder(s, tf.String)
 
 	var decoder tf.Output
-	chans, imageFormat, err := findImageFormat(reader)
+	chans, imageFormat, err := findImageFormat(img)
 	if err != nil {
 		err = errors.Wrapf(err, "unable to get metadata for input image")
 		return
 	}
+
 	switch imageFormat {
 	case "jpeg":
 		decoder = op.DecodeJpeg(s, input, op.DecodeJpegChannels(chans))
@@ -197,8 +200,7 @@ func (p *ImagePredictor) constructGraphToNormalizeImage(reader io.Reader) (graph
 		op.Sub(s,
 			op.ResizeBilinear(s,
 				op.ExpandDims(s,
-					op.Cast(s,
-						decoder, tf.Float),
+					op.Cast(s, decoder, tf.Float),
 					op.Const(s.SubScope("make_batch"), int32(0))),
 				op.Const(s.SubScope("size"), []int32{height, width})),
 			op.Const(s.SubScope("mean"), mean)),
@@ -207,11 +209,18 @@ func (p *ImagePredictor) constructGraphToNormalizeImage(reader io.Reader) (graph
 	return graph, input, output, err
 }
 
-func findImageFormat(r io.Reader) (int64, string, error) {
+func findImageFormat(img []byte) (int64, string, error) {
+	r := bytes.NewBuffer(img)
 	_, name, err := image.DecodeConfig(r)
 	if err != nil {
 		return 0, "", err
 	}
 	channels := int64(3) // todo implement me
 	return channels, name, err
+}
+
+func dummy2() {
+	if false {
+		pp.Println("....")
+	}
 }

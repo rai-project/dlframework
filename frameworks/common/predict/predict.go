@@ -12,7 +12,7 @@ type Predictor interface {
 	// Preprocess the data
 	Preprocess(data interface{}) (interface{}, error)
 	// Returns the features
-	Predict(data interface{}) ([]*dlframework.PredictionFeature, error)
+	Predict(data interface{}) (*dlframework.PredictionFeatures, error)
 
 	io.Closer
 }

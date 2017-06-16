@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/k0kubun/pp"
 	"github.com/rai-project/config"
 	tf "github.com/rai-project/dlframework/frameworks/tensorflow"
 	"github.com/stretchr/testify/assert"
@@ -42,6 +43,21 @@ func TestPredictInference(t *testing.T) {
 
 	err = predictor.Download()
 	assert.NoError(t, err)
+
+	preds, err := predictor.Predict("http://buzzsharer.com/wp-content/uploads/2015/06/beautiful-running-horse.jpg")
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	_ = preds
+	if false {
+		pp.Println(preds)
+	}
+
+	preds.Sort()
+
+	pp.Println(preds.Take(3))
+
 }
 
 func TestMain(m *testing.M) {
