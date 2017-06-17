@@ -12,11 +12,11 @@ var FrameworkManifest = dlframework.FrameworkManifest{
 	Name:    "Tensorflow",
 	Version: "1.1",
 	Container: map[string]*dlframework.ContainerHardware{
-		"amd64": &dlframework.ContainerHardware{
+		"amd64": {
 			Cpu: "raiproject/carml-tensorflow:amd64-cpu",
 			Gpu: "raiproject/carml-tensorflow:amd64-gpu",
 		},
-		"ppc64le": &dlframework.ContainerHardware{
+		"ppc64le": {
 			Cpu: "raiproject/carml-tensorflow:ppc64le-gpu",
 			Gpu: "raiproject/carml-tensorflow:ppc64le-gpu",
 		},

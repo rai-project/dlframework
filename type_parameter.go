@@ -36,7 +36,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil
@@ -58,7 +58,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil
@@ -80,7 +80,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil
@@ -93,7 +93,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 		}
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil
@@ -105,7 +105,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 		}
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil
@@ -117,7 +117,7 @@ func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interfac
 		}
 		param.Value = &google_protobuf.Struct{
 			Fields: map[string]*google_protobuf.Value{
-				"data": &google_protobuf.Value{Kind: this},
+				"data": {Kind: this},
 			},
 		}
 		return nil

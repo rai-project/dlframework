@@ -157,7 +157,7 @@ func (m *NodeDef) MarshalTo(dAtA []byte) (int, error) {
 		i += copy(dAtA[i:], m.Device)
 	}
 	if len(m.Attr) > 0 {
-		for k, _ := range m.Attr {
+		for k := range m.Attr {
 			dAtA[i] = 0x2a
 			i++
 			v := m.Attr[k]

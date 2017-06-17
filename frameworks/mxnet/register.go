@@ -12,11 +12,11 @@ var FrameworkManifest = dlframework.FrameworkManifest{
 	Name:    "MXNet",
 	Version: "0.1",
 	Container: map[string]*dlframework.ContainerHardware{
-		"amd64": &dlframework.ContainerHardware{
+		"amd64": {
 			Cpu: "raiproject/carml-mxnet:amd64-cpu",
 			Gpu: "raiproject/carml-mxnet:amd64-gpu",
 		},
-		"ppc64le": &dlframework.ContainerHardware{
+		"ppc64le": {
 			Cpu: "raiproject/carml-mxnet:ppc64le-gpu",
 			Gpu: "raiproject/carml-mxnet:ppc64le-gpu",
 		},

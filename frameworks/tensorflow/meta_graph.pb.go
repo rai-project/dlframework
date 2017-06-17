@@ -932,7 +932,7 @@ func (m *MetaGraphDef) MarshalTo(dAtA []byte) (int, error) {
 		i += n3
 	}
 	if len(m.CollectionDef) > 0 {
-		for k, _ := range m.CollectionDef {
+		for k := range m.CollectionDef {
 			dAtA[i] = 0x22
 			i++
 			v := m.CollectionDef[k]
@@ -960,7 +960,7 @@ func (m *MetaGraphDef) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.SignatureDef) > 0 {
-		for k, _ := range m.SignatureDef {
+		for k := range m.SignatureDef {
 			dAtA[i] = 0x2a
 			i++
 			v := m.SignatureDef[k]
@@ -1441,7 +1441,7 @@ func (m *SignatureDef) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if len(m.Inputs) > 0 {
-		for k, _ := range m.Inputs {
+		for k := range m.Inputs {
 			dAtA[i] = 0xa
 			i++
 			v := m.Inputs[k]
@@ -1469,7 +1469,7 @@ func (m *SignatureDef) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.Outputs) > 0 {
-		for k, _ := range m.Outputs {
+		for k := range m.Outputs {
 			dAtA[i] = 0x12
 			i++
 			v := m.Outputs[k]

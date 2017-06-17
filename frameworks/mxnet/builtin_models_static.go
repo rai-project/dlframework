@@ -455,22 +455,22 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"ResNeXt101.yml": resnext101Yml,
-	"ResNeXt50.yml": resnext50Yml,
+	"ResNeXt101.yml":     resnext101Yml,
+	"ResNeXt50.yml":      resnext50Yml,
 	"ResidualNet101.yml": residualnet101Yml,
-	"ResidualNet18.yml": residualnet18Yml,
+	"ResidualNet18.yml":  residualnet18Yml,
 	"ResidualNet200.yml": residualnet200Yml,
-	"ResidualNet34.yml": residualnet34Yml,
-	"ResidualNet50.yml": residualnet50Yml,
-	"Resnet152_11k.yml": resnet152_11kYml,
-	"caffenet.yml": caffenetYml,
-	"inceptionv3.yml": inceptionv3Yml,
-	"locationnet.yml": locationnetYml,
-	"nin.yml": ninYml,
+	"ResidualNet34.yml":  residualnet34Yml,
+	"ResidualNet50.yml":  residualnet50Yml,
+	"Resnet152_11k.yml":  resnet152_11kYml,
+	"caffenet.yml":       caffenetYml,
+	"inceptionv3.yml":    inceptionv3Yml,
+	"locationnet.yml":    locationnetYml,
+	"nin.yml":            ninYml,
 	"residualNet152.yml": residualnet152Yml,
-	"squeeznet.yml": squeeznetYml,
-	"vgg16.yml": vgg16Yml,
-	"vgg19.yml": vgg19Yml,
+	"squeeznet.yml":      squeeznetYml,
+	"vgg16.yml":          vgg16Yml,
+	"vgg19.yml":          vgg19Yml,
 }
 
 // AssetDir returns the file names below a certain
@@ -512,23 +512,24 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
-	"ResNeXt101.yml": &bintree{resnext101Yml, map[string]*bintree{}},
-	"ResNeXt50.yml": &bintree{resnext50Yml, map[string]*bintree{}},
-	"ResidualNet101.yml": &bintree{residualnet101Yml, map[string]*bintree{}},
-	"ResidualNet18.yml": &bintree{residualnet18Yml, map[string]*bintree{}},
-	"ResidualNet200.yml": &bintree{residualnet200Yml, map[string]*bintree{}},
-	"ResidualNet34.yml": &bintree{residualnet34Yml, map[string]*bintree{}},
-	"ResidualNet50.yml": &bintree{residualnet50Yml, map[string]*bintree{}},
-	"Resnet152_11k.yml": &bintree{resnet152_11kYml, map[string]*bintree{}},
-	"caffenet.yml": &bintree{caffenetYml, map[string]*bintree{}},
-	"inceptionv3.yml": &bintree{inceptionv3Yml, map[string]*bintree{}},
-	"locationnet.yml": &bintree{locationnetYml, map[string]*bintree{}},
-	"nin.yml": &bintree{ninYml, map[string]*bintree{}},
-	"residualNet152.yml": &bintree{residualnet152Yml, map[string]*bintree{}},
-	"squeeznet.yml": &bintree{squeeznetYml, map[string]*bintree{}},
-	"vgg16.yml": &bintree{vgg16Yml, map[string]*bintree{}},
-	"vgg19.yml": &bintree{vgg19Yml, map[string]*bintree{}},
+	"ResNeXt101.yml":     {resnext101Yml, map[string]*bintree{}},
+	"ResNeXt50.yml":      {resnext50Yml, map[string]*bintree{}},
+	"ResidualNet101.yml": {residualnet101Yml, map[string]*bintree{}},
+	"ResidualNet18.yml":  {residualnet18Yml, map[string]*bintree{}},
+	"ResidualNet200.yml": {residualnet200Yml, map[string]*bintree{}},
+	"ResidualNet34.yml":  {residualnet34Yml, map[string]*bintree{}},
+	"ResidualNet50.yml":  {residualnet50Yml, map[string]*bintree{}},
+	"Resnet152_11k.yml":  {resnet152_11kYml, map[string]*bintree{}},
+	"caffenet.yml":       {caffenetYml, map[string]*bintree{}},
+	"inceptionv3.yml":    {inceptionv3Yml, map[string]*bintree{}},
+	"locationnet.yml":    {locationnetYml, map[string]*bintree{}},
+	"nin.yml":            {ninYml, map[string]*bintree{}},
+	"residualNet152.yml": {residualnet152Yml, map[string]*bintree{}},
+	"squeeznet.yml":      {squeeznetYml, map[string]*bintree{}},
+	"vgg16.yml":          {vgg16Yml, map[string]*bintree{}},
+	"vgg19.yml":          {vgg19Yml, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -577,4 +578,3 @@ func _filePath(dir, name string) string {
 	canonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(canonicalName, "/")...)...)
 }
-

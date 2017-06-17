@@ -1,6 +1,5 @@
 package caffe
 
-
 import (
 	"os"
 
@@ -13,11 +12,11 @@ var FrameworkManifest = dlframework.FrameworkManifest{
 	Name:    "Caffe",
 	Version: "1.0",
 	Container: map[string]*dlframework.ContainerHardware{
-		"amd64": &dlframework.ContainerHardware{
+		"amd64": {
 			Cpu: "raiproject/carml-caffe:amd64-cpu",
 			Gpu: "raiproject/carml-caffe:amd64-gpu",
 		},
-		"ppc64le": &dlframework.ContainerHardware{
+		"ppc64le": {
 			Cpu: "raiproject/carml-caffe:ppc64le-gpu",
 			Gpu: "raiproject/carml-caffe:ppc64le-gpu",
 		},
