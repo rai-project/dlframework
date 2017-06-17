@@ -1,23 +1,15 @@
 package agent
 
 import (
-	"bytes"
-	"io"
-	"os"
-	"path/filepath"
-
-	"github.com/pkg/errors"
-	"github.com/rai-project/config"
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/rai-project/uuid"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	dl "github.com/rai-project/dlframework"
-	"github.com/rai-project/dlframework/downloadmanager"
 	common "github.com/rai-project/dlframework/frameworks/common/agent"
 	tf "github.com/rai-project/dlframework/frameworks/tensorflow"
-	"github.com/rai-project/dlframework/frameworks/tensorflow/predict"
+	predict "github.com/rai-project/dlframework/frameworks/tensorflow/predict"
 )
 
 type registryServer struct {
@@ -29,16 +21,12 @@ type predictorServer struct {
 }
 
 func (p *predictorServer) Predict(ctx context.Context, req *dl.PredictRequest) (*dl.PredictResponse, error) {
-	framework, err := dl.FindFramework(req.GetFrameworkName() + ":" + req.GetFrameworkVersion())
-	if err != nil {
-		return nil, err
-	}
-	model, err := framework.FindModel(req.GetModelName() + ":" + req.GetModelVersion())
+	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	predictor, err := predict.New(model)
+	predictor, err := predict.New(*model)
 	if err != nil {
 		return nil, err
 	}
@@ -47,25 +35,18 @@ func (p *predictorServer) Predict(ctx context.Context, req *dl.PredictRequest) (
 		return nil, err
 	}
 
-	var reader io.Reader
-	if req.GetUrl() != "" {
-		targetDir := filepath.Join(config.App.TempDir, "uploads")
-		path, err := downloadmanager.Download(req.GetUrl(), targetDir)
-		if err != nil {
-			return nil, err
-		}
-		f, err := os.Open(path)
-		if err != nil {
-			return nil, errors.Wrapf(err, "failed to open file %v", path)
-		}
-		defer f.Close()
-		reader = f
-	} else if req.GetData() != nil {
-		reader = bytes.NewBuffer(req.GetData())
-	} else {
-		return nil, errors.New("invalid input")
+	reader, err := p.InputReaderCloser(ctx, req)
+	if err != nil {
+		return nil, err
 	}
-	probs, err := predictor.Predict(reader)
+	defer reader.Close()
+
+	data, err := predictor.Preprocess(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	probs, err := predictor.Predict(data)
 	if err != nil {
 		return nil, err
 	}

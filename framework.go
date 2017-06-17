@@ -1,10 +1,14 @@
 package dlframework
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/Masterminds/semver"
+	"github.com/Unknwon/com"
 	"github.com/pkg/errors"
+	"github.com/rai-project/config"
 	"golang.org/x/sync/syncmap"
 )
 
@@ -82,24 +86,24 @@ func (f FrameworkManifest) Models() []ModelManifest { // todo: this is not optim
 		if err != nil {
 			continue
 		}
-		models = append(models, m)
+		models = append(models, *m)
 	}
 	return models
 }
 
-func (f FrameworkManifest) FindModel(name string) (ModelManifest, error) {
+func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 	var model *ModelManifest
 	frameworkVersionString := f.GetVersion()
 	if frameworkVersionString == "" {
-		return ModelManifest{}, errors.Errorf("expecting a framework version for framework = %v", f.GetName())
+		return nil, errors.Errorf("expecting a framework version for framework = %v", f.GetName())
 	}
 	frameworkVersion, err := semver.NewVersion(frameworkVersionString)
 	if err != nil {
-		return ModelManifest{}, errors.Wrapf(err, "unable to parse version information for framework = %v", f.GetName())
+		return nil, errors.Wrapf(err, "unable to parse version information for framework = %v", f.GetName())
 	}
 	frameworkCanonicalName, err := f.CanonicalName()
 	if err != nil {
-		return ModelManifest{}, err
+		return nil, err
 	}
 	name = strings.ToLower(name)
 	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
@@ -129,9 +133,9 @@ func (f FrameworkManifest) FindModel(name string) (ModelManifest, error) {
 		return false
 	})
 	if model == nil {
-		return ModelManifest{}, errors.Errorf("model %s for framework %s not found in registry", name, f.GetName())
+		return nil, errors.Errorf("model %s for framework %s not found in registry", name, f.GetName())
 	}
-	return *model, nil
+	return model, nil
 }
 
 func FindFramework(name string) (*FrameworkManifest, error) {
@@ -155,4 +159,18 @@ func FindFramework(name string) (*FrameworkManifest, error) {
 		return nil, errors.Errorf("framework %s not found in registry", name)
 	}
 	return framework, nil
+}
+
+func (f *FrameworkManifest) WorkDir() (string, error) {
+	cannonicalName, err := f.CanonicalName()
+	if err != nil {
+		return "", err
+	}
+	workDir := filepath.Join(config.App.TempDir, strings.Replace(cannonicalName, ":", "_", -1))
+	if !com.IsDir(workDir) {
+		if err := os.MkdirAll(workDir, 0700); err != nil {
+			return "", errors.Wrapf(err, "failed to create framework work directory %v", workDir)
+		}
+	}
+	return workDir, nil
 }

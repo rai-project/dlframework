@@ -75,7 +75,7 @@ func (c *Registry) GetFrameworkModelManifest(ctx context.Context, req *dl.GetFra
 	if err != nil {
 		return nil, err
 	}
-	return &m, nil
+	return m, nil
 }
 
 func (c *Registry) GetModelManifest(ctx context.Context, req *dl.GetModelManifestRequest) (*dl.ModelManifest, error) {

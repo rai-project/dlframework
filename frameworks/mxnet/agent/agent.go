@@ -1,160 +1,109 @@
 package agent
 
 import (
-	"bytes"
-	"encoding/json"
-	"errors"
 	"image"
-
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
 
 	"google.golang.org/grpc"
 
-	"github.com/levigross/grequests"
-	"github.com/rai-project/config"
+	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/frameworks/mxnet"
-	"github.com/rai-project/dlframework/frameworks/mxnet/predict"
 	rgrpc "github.com/rai-project/grpc"
 	context "golang.org/x/net/context"
 
-	gocache "github.com/patrickmn/go-cache"
+	dl "github.com/rai-project/dlframework"
+
+	"github.com/rai-project/uuid"
+
+	common "github.com/rai-project/dlframework/frameworks/common/agent"
+	predict "github.com/rai-project/dlframework/frameworks/mxnet/predict"
 )
 
-type server struct{}
-
-func (s *server) InferURL(ctx context.Context, m *mxnet.MXNetInferenceRequest) (*mxnet.MXNetInferenceResponse, error) {
-	resp, err := grequests.Get(m.GetUrl(), nil)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Close()
-	m.Data = resp.Bytes()
-	return s.InferBytes(ctx, m)
+type registryServer struct {
+	common.Registry
 }
 
-func (s *server) InferBytes(ctx context.Context, m *mxnet.MXNetInferenceRequest) (*mxnet.MXNetInferenceResponse, error) {
+type predictorServer struct {
+	common.Predictor
+}
 
-	model, err := mxnet.GetModelInformation(m.GetModelName())
+func (p *predictorServer) Predict(ctx context.Context, req *dl.PredictRequest) (*dl.PredictResponse, error) {
+	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	predictor, err := predict.NewImagePredictor(model, config.App.TempDir)
+
+	predictor, err := predict.New(*model)
 	if err != nil {
-		return &mxnet.MXNetInferenceResponse{
-			Error: &mxnet.ErrorStatus{
-				Ok:      false,
-				Message: err.Error(),
-			},
-		}, err
+		return nil, err
 	}
 	defer predictor.Close()
-
 	if err := predictor.Download(); err != nil {
-		return &mxnet.MXNetInferenceResponse{
-			Error: &mxnet.ErrorStatus{
-				Ok:      false,
-				Message: err.Error(),
-			},
-		}, err
+		return nil, err
 	}
 
-	img, _, err := image.Decode(bytes.NewBuffer(m.GetData()))
+	reader, err := p.InputReaderCloser(ctx, req)
 	if err != nil {
-		return &mxnet.MXNetInferenceResponse{
-			Error: &mxnet.ErrorStatus{
-				Ok:      false,
-				Message: err.Error(),
-			},
-		}, err
+		return nil, err
+	}
+	defer reader.Close()
+
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to read input as image")
+	}
+	data, err := predictor.Preprocess(img)
+	if err != nil {
+		return nil, err
 	}
 
-	pre, err := predictor.Preprocess(img)
+	probs, err := predictor.Predict(data)
 	if err != nil {
-		return &mxnet.MXNetInferenceResponse{
-			Error: &mxnet.ErrorStatus{
-				Ok:      false,
-				Message: err.Error(),
-			},
-		}, err
+		return nil, err
 	}
-	features, err := predictor.Predict(pre)
-	if err != nil {
-		return &mxnet.MXNetInferenceResponse{
-			Error: &mxnet.ErrorStatus{
-				Ok:      false,
-				Message: err.Error(),
-			},
-		}, err
+
+	probs.Sort()
+
+	if req.GetLimit() != 0 {
+		trunc := probs.Take(int(req.GetLimit()))
+		probs = &trunc
 	}
-	log.Debug("infered features....")
-	return &mxnet.MXNetInferenceResponse{
-		Id:       m.GetId(),
-		Features: features,
-		Error: &mxnet.ErrorStatus{
-			Ok: true,
-		},
+
+	return &dl.PredictResponse{
+		Id:       uuid.NewV4(),
+		Features: *probs,
+		Error:    nil,
 	}, nil
 }
 
-func (s *server) GetModelGraph(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Graph, error) {
-	model, err := mxnet.GetModelInformation(m.GetModelName())
-	if err != nil {
-		return nil, err
-	}
-
-	cacheKey := "graph/" + model.GetName()
-	if val, found := cache.Get(cacheKey); found {
-		if g, ok := val.(*mxnet.Model_Graph); ok {
-			return g, nil
-		}
-	}
-
-	log.WithField("url", model.GetGraphUrl()).WithField("cacheKey", cacheKey).Debug("downloading model graph")
-
-	graphURL := model.GetGraphUrl()
-	if graphURL == "" {
-		return nil, errors.New("empty graph url")
-	}
-	resp, err := grequests.Get(graphURL, nil)
-	if err != nil {
-		return nil, err
-	}
-	g := new(mxnet.Model_Graph)
-	err = json.Unmarshal(resp.Bytes(), g)
-	if err == nil {
-		cache.Set(cacheKey, g, gocache.DefaultExpiration)
-	}
-	return g, err
-}
-
-func (s *server) GetModelInformation(ctx context.Context, m *mxnet.MXNetModelInformationRequest) (*mxnet.Model_Information, error) {
-	model, err := mxnet.GetModelInformation(m.GetModelName())
-	if err != nil {
-		return nil, err
-	}
-	return &model, nil
-}
-
-func (s *server) GetModelInformations(ctx context.Context, n *mxnet.Null) (*mxnet.ModelInformations, error) {
-	names := mxnet.ModelNames()
-	models := make([]*mxnet.Model_Information, len(names))
-	for ii, name := range names {
-		model, err := mxnet.GetModelInformation(name)
-		if err != nil {
-			return nil, err
-		}
-		models[ii] = &model
-	}
-	return &mxnet.ModelInformations{
-		Info: models,
-	}, nil
-}
-
-func Register() *grpc.Server {
+func RegisterRegistryServer() *grpc.Server {
 	var grpcServer *grpc.Server
-	grpcServer = rgrpc.NewServer(mxnet.ServiceDescription)
-	mxnet.RegisterMXNetServer(grpcServer, &server{})
+	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
+	svr := &registryServer{
+		Registry: common.Registry{
+			Base: common.Base{
+				Framework: mxnet.FrameworkManifest,
+			},
+		},
+	}
+	svr.PublishInRegistery()
+	dl.RegisterRegistryServer(grpcServer, svr)
+	return grpcServer
+}
+
+func RegisterPredictorServer() *grpc.Server {
+	var grpcServer *grpc.Server
+	grpcServer = rgrpc.NewServer(dl.PredictorServiceDescription)
+	svr := &predictorServer{
+		Predictor: common.Predictor{
+			Base: common.Base{
+				Framework: mxnet.FrameworkManifest,
+			},
+		},
+	}
+	svr.PublishInRegistery()
+	dl.RegisterPredictorServer(grpcServer, svr)
 	return grpcServer
 }

@@ -1,11 +1,15 @@
 package dlframework
 
 import (
+	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/Masterminds/semver"
+	"github.com/Unknwon/com"
 	"github.com/pkg/errors"
+	"github.com/rai-project/config"
 	"golang.org/x/sync/syncmap"
 )
 
@@ -182,4 +186,18 @@ func FindModel(name string) (*ModelManifest, error) {
 		return nil, errors.Errorf("model %s not found in registry", name)
 	}
 	return model, nil
+}
+
+func (m *ModelManifest) WorkDir() (string, error) {
+	cannonicalName, err := m.CanonicalName()
+	if err != nil {
+		return "", err
+	}
+	workDir := filepath.Join(config.App.TempDir, strings.Replace(cannonicalName, ":", "_", -1))
+	if !com.IsDir(workDir) {
+		if err := os.MkdirAll(workDir, 0700); err != nil {
+			return "", errors.Wrapf(err, "failed to create model work directory %v", workDir)
+		}
+	}
+	return workDir, nil
 }

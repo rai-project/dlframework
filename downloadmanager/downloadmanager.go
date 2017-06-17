@@ -19,6 +19,9 @@ func cleanup(s string) string {
 }
 
 func Download(url, targetDir string) (string, error) {
+  if url == "" {
+    return "", errors.New("invalid empty url")
+  }
 
 	// Get the string associated with the key url from the cache
 	if val, found := cache.Get(url); found {

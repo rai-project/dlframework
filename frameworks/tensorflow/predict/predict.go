@@ -12,7 +12,6 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 
-	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/downloadmanager"
 	common "github.com/rai-project/dlframework/frameworks/common/predict"
@@ -23,7 +22,7 @@ import (
 )
 
 type ImagePredictor struct {
-	*common.Base
+	common.ImagePredictor
 	meanImage       []float32
 	imageDimensions []int32
 	tfGraph         *tf.Graph
@@ -50,19 +49,17 @@ func newImagePredictor(model dlframework.ModelManifest) (*ImagePredictor, error)
 		return nil, err
 	}
 
-	cannonicalName, err := model.CanonicalName()
+	workDir, err := model.WorkDir()
 	if err != nil {
 		return nil, err
 	}
-	workDir := filepath.Join(config.App.TempDir, strings.Replace(cannonicalName, ":", "_", -1))
-	if err := os.MkdirAll(workDir, 0700); err != nil {
-		return nil, errors.Wrapf(err, "failed to create model work directory %v", workDir)
-	}
 
 	ip := &ImagePredictor{
-		Base: &common.Base{
-			Framework: framework,
-			Model:     model,
+		ImagePredictor: common.ImagePredictor{
+			Base: common.Base{
+				Framework: framework,
+				Model:     model,
+			},
 		},
 		workDir: workDir,
 	}
@@ -129,19 +126,6 @@ func (p *ImagePredictor) Download() error {
 }
 
 func (p *ImagePredictor) Preprocess(data interface{}) (interface{}, error) {
-	return nil, nil
-}
-
-func (p *ImagePredictor) Predict(data interface{}) (*dlframework.PredictionFeatures, error) {
-
-	if p.tfSession == nil {
-		if err := p.makeSession(); err != nil {
-			return nil, err
-		}
-	}
-
-	session := p.tfSession
-	graph := p.tfGraph
 
 	var reader io.ReadCloser
 	defer func() {
@@ -185,6 +169,26 @@ func (p *ImagePredictor) Predict(data interface{}) (*dlframework.PredictionFeatu
 	if err != nil {
 		return nil, err
 	}
+
+	return tensor, nil
+}
+
+func (p *ImagePredictor) Predict(data interface{}) (*dlframework.PredictionFeatures, error) {
+
+	if p.tfSession == nil {
+		if err := p.makeSession(); err != nil {
+			return nil, err
+		}
+	}
+
+	session := p.tfSession
+	graph := p.tfGraph
+
+	tensor, ok := data.(*tf.Tensor)
+	if !ok {
+		return nil, errors.New("expecting a *tf.Tensor input to predict")
+	}
+
 	output, err := session.Run(
 		map[tf.Output]*tf.Tensor{
 			graph.Operation("input").Output(0): tensor,

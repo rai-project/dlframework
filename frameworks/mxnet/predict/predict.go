@@ -5,8 +5,9 @@ import (
 	"image"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
-	"sort"
+	"strings"
 
 	_ "image/gif"
 	_ "image/jpeg"
@@ -15,51 +16,121 @@ import (
 	"github.com/anthonynsimon/bild/parallel"
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/pkg/errors"
-	"github.com/rai-project/dlframework/frameworks/mxnet"
+	"github.com/rai-project/dlframework"
+	"github.com/rai-project/dlframework/downloadmanager"
+	common "github.com/rai-project/dlframework/frameworks/common/predict"
 	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
-	"github.com/songtianyi/go-mxnet-predictor/utils"
 )
 
 type ImagePredictor struct {
-	model     mxnet.Model_Information
-	modelDir  string
+	common.ImagePredictor
+	workDir   string
 	features  []string
 	predictor *gomxnet.Predictor
 }
 
-func NewImagePredictor(model mxnet.Model_Information, targetDir string) (*ImagePredictor, error) {
-	return &ImagePredictor{
-		model:    model,
-		modelDir: targetDir,
-	}, nil
+func New(model dlframework.ModelManifest) (common.Predictor, error) {
+	modelInputs := model.GetInputs()
+	if len(modelInputs) != 1 {
+		return nil, errors.New("number of inputs not supported")
+	}
+	firstInputType := modelInputs[0].GetType()
+	if strings.ToLower(firstInputType) != "image" {
+		return nil, errors.New("input type not supported")
+	}
+	return newImagePredictor(model)
+}
+
+func newImagePredictor(model dlframework.ModelManifest) (*ImagePredictor, error) {
+	framework, err := model.ResolveFramework()
+	if err != nil {
+		return nil, err
+	}
+
+	workDir, err := model.WorkDir()
+	if err != nil {
+		return nil, err
+	}
+
+	ip := &ImagePredictor{
+		ImagePredictor: common.ImagePredictor{
+			Base: common.Base{
+				Framework: framework,
+				Model:     model,
+			},
+		},
+		workDir: workDir,
+	}
+
+	return ip, nil
+}
+
+func (p *ImagePredictor) GetWeightsUrl() string {
+	model := p.Model
+	if model.GetModel().GetIsArchive() {
+		return model.GetModel().GetBaseUrl()
+	}
+	return path.Join(model.GetModel().GetBaseUrl(), model.GetModel().GetWeightsPath())
+}
+
+func (p *ImagePredictor) GetGraphUrl() string {
+	model := p.Model
+	if model.GetModel().GetIsArchive() {
+		return model.GetModel().GetBaseUrl()
+	}
+	return path.Join(model.GetModel().GetBaseUrl(), model.GetModel().GetGraphPath())
+}
+
+func (p *ImagePredictor) GetFeaturesUrl() string {
+	model := p.Model
+	params := model.GetOutput().GetParameters()
+	pfeats, ok := params["features"]
+	if !ok {
+		return ""
+	}
+	pfeatsVal := pfeats.Value
+	if pfeatsVal == nil {
+		return ""
+	}
+	data, ok := pfeatsVal.Fields["data"]
+	if !ok {
+		return ""
+	}
+	str := data.GetStringValue()
+	return str
 }
 
 func (p *ImagePredictor) GetGraphPath() string {
-	return filepath.Join(p.modelDir, p.model.GetName()+"-graph.json")
+	model := p.Model
+	graphPath := model.GetModel().GetGraphPath()
+	return filepath.Join(p.workDir, graphPath)
 }
 
 func (p *ImagePredictor) GetWeightsPath() string {
-	return filepath.Join(p.modelDir, p.model.GetName()+"-weights.params")
+	model := p.Model
+	graphPath := model.GetModel().GetWeightsPath()
+	return filepath.Join(p.workDir, graphPath)
 }
 
 func (p *ImagePredictor) GetFeaturesPath() string {
-	return filepath.Join(p.modelDir, p.model.GetName()+".features")
+	model := p.Model
+	return filepath.Join(p.workDir, model.GetName()+".features")
 }
 
-func (p *ImagePredictor) Preprocess(input interface{}) ([]float32, error) {
+func (p *ImagePredictor) Preprocess(input interface{}) (interface{}, error) {
 	img, ok := input.(image.Image)
 	if !ok {
 		return nil, errors.New("expecting an image input")
 	}
 
-	modelInput := p.model.GetInput()
-	t := modelInput.GetDimensions()
+	imageDims, err := p.GetImageDimensions()
+	if err != nil {
+		return nil, err
+	}
+	img = transform.Resize(img, int(imageDims[2]), int(imageDims[3]), transform.Linear)
 
-	img = transform.Resize(img, int(t[2]), int(t[3]), transform.Linear)
-
-	model := p.model
-	meanImage := model.GetMeanImage()
-	if len(meanImage) == 0 {
+	meanImage, err := p.GetMeanImage()
+	if err != nil || meanImage == nil {
 		meanImage = []float32{0, 0, 0}
 	}
 
@@ -83,9 +154,23 @@ func (p *ImagePredictor) Preprocess(input interface{}) ([]float32, error) {
 	return res, nil
 }
 
-func (p *ImagePredictor) getPredictor() error {
-	model := p.model
+func (p *ImagePredictor) Download() error {
+	if _, err := downloadmanager.Download(p.GetGraphUrl(), p.GetGraphPath()); err != nil {
+		return err
+	}
+	if _, err := downloadmanager.Download(p.GetWeightsUrl(), p.GetWeightsPath()); err != nil {
+		return err
+	}
+	if _, err := downloadmanager.Download(p.GetFeaturesUrl(), p.GetFeaturesPath()); err != nil {
+		return err
+	}
+	return nil
+}
 
+func (p *ImagePredictor) getPredictor() error {
+	if p.predictor != nil {
+		return nil
+	}
 	symbol, err := ioutil.ReadFile(p.GetGraphPath())
 	if err != nil {
 		return errors.Wrapf(err, "cannot read %s", p.GetGraphPath())
@@ -109,12 +194,13 @@ func (p *ImagePredictor) getPredictor() error {
 
 	p.features = features
 
-	modelInput := model.GetInput()
-	t := modelInput.GetDimensions()
-
-	modelInputShape := make([]uint32, len(t))
-	for i := range t {
-		modelInputShape[i] = uint32(t[i])
+	inputDims, err := p.GetImageDimensions()
+	if err != nil {
+		return err
+	}
+	modelInputShape := make([]uint32, len(inputDims))
+	for ii, v := range inputDims {
+		modelInputShape[ii] = uint32(v)
 	}
 
 	pred, err := gomxnet.CreatePredictor(symbol,
@@ -130,11 +216,10 @@ func (p *ImagePredictor) getPredictor() error {
 	return nil
 }
 
-func (p *ImagePredictor) Predict(input interface{}) ([]*mxnet.Feature, error) {
-	if p.predictor == nil {
-		if err := p.getPredictor(); err != nil {
-			return nil, err
-		}
+func (p *ImagePredictor) Predict(input interface{}) (*dlframework.PredictionFeatures, error) {
+
+	if err := p.getPredictor(); err != nil {
+		return nil, err
 	}
 
 	data, ok := input.([]float32)
@@ -150,34 +235,21 @@ func (p *ImagePredictor) Predict(input interface{}) ([]*mxnet.Feature, error) {
 		return nil, err
 	}
 
-	probs, err := p.predictor.GetOutput(0)
+	probabilities, err := p.predictor.GetOutput(0)
 	if err != nil {
 		return nil, err
 	}
 
-	idxs := make([]int, len(probs))
-	for i := range probs {
-		idxs[i] = i
-	}
-	out := utils.ArgSort{Args: probs, Idxs: idxs}
-	sort.Sort(out)
-
-	ret := make([]*mxnet.Feature, len(probs))
-	for ii := range probs {
-		feat := &mxnet.Feature{
-			Index:       int64(out.Idxs[ii]),
-			Name:        p.getFeature(out.Idxs[ii]),
-			Probability: out.Args[ii],
+	rprobs := make([]*dlframework.PredictionFeature, len(probabilities))
+	for ii, prob := range probabilities {
+		rprobs[ii] = &dlframework.PredictionFeature{
+			Index:       int64(ii),
+			Probability: prob,
 		}
-		ret[ii] = feat
 	}
 
-	return ret, nil
-}
-
-func (p *ImagePredictor) getFeature(idx int) string {
-	val := p.features[idx]
-	return val
+	res := dlframework.PredictionFeatures(rprobs)
+	return &res, nil
 }
 
 func (p *ImagePredictor) Close() error {

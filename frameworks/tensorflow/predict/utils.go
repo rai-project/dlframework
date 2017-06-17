@@ -13,101 +13,25 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 
-	"github.com/gogo/protobuf/types"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
 func (p *ImagePredictor) setImageDimensions() error {
-	model := p.Model
-	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	if typeParameters == nil {
-		return errors.New("invalid type paramters")
-	}
-	pdims, ok := typeParameters["dimensions"]
-	if !ok {
-		return errors.New("expecting image type dimensions")
-	}
-	pdimsVal := pdims.Value
-	if pdimsVal == nil {
-		return errors.New("invalid image dimensions")
-	}
-	data, ok := pdimsVal.Fields["data"]
-	if !ok {
-		return errors.New("expecting data field in struct")
-	}
-	lstVal := data.GetListValue()
-	if lstVal == nil {
-		return errors.New("expecting list value in data field in struct")
-	}
-
-	dims := []int32{}
-	for _, v := range lstVal.Values {
-		kind := v.GetKind()
-		if kind == nil {
-			return errors.New("unable to get kind of value in image dimensions")
-		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return errors.New("invalid number value in image dimensions")
-		}
-		val := v.GetNumberValue()
-		dims = append(dims, int32(val))
+	dims, err := p.GetImageDimensions()
+	if err != nil {
+		return err
 	}
 	p.imageDimensions = dims
 	return nil
 }
 
 func (p *ImagePredictor) setMeanImage() error {
-	model := p.Model
-	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	if typeParameters == nil {
-		return errors.New("invalid type paramters")
+	mean, err := p.GetMeanImage()
+	if err != nil {
+		return err
 	}
-	pdims, ok := typeParameters["mean"]
-	if !ok {
-		p.meanImage = []float32{0, 0, 0}
-		log.Debug("using 0,0,0 as the mean image")
-		return nil
-	}
-	pdimsVal := pdims.Value
-	if pdimsVal == nil {
-		return errors.New("invalid image dimensions")
-	}
-	data, ok := pdimsVal.Fields["data"]
-	if !ok {
-		return errors.New("expecting data field in struct")
-	}
-	lstVal := data.GetListValue()
-	if lstVal == nil {
-		// try to get a number value
-		kind := data.GetKind()
-		if kind == nil {
-			return errors.New("unable to get kind of value in mean image")
-		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return errors.New("invalid number or list value in image mean")
-		}
-		val := float32(data.GetNumberValue())
-		log.Debugf("using %v,%v,%v as the mean image", val, val, val)
-		p.meanImage = []float32{val, val, val}
-		return nil
-	}
-
-	dims := []float32{}
-	for _, v := range lstVal.Values {
-		kind := v.GetKind()
-		if kind == nil {
-			return errors.New("unable to get kind of value in image dimensions")
-		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return errors.New("invalid number value in image dimensions")
-		}
-		val := v.GetNumberValue()
-		dims = append(dims, float32(val))
-	}
-	p.meanImage = dims
+	p.meanImage = mean
 	return nil
 }
 
