@@ -84,7 +84,7 @@ func (p *ImagePredictor) GetGraphUrl() string {
 func (p *ImagePredictor) GetFeaturesUrl() string {
 	model := p.Model
 	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features"]
+	pfeats, ok := params["features_url"]
 	if !ok {
 		return ""
 	}
