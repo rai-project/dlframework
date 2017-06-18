@@ -26,12 +26,16 @@ logrus-fix:
 	find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
 
 generate-proto:
-	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. --gogofaster_out=Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,plugins=grpc:. dlframework.proto
+	rm -fr swagger.pb.go
+	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --gogofaster_out=Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,plugins=grpc:. dlframework.proto
+	protoc -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --grpc-gateway_out=logtostderr=true:. dlframework.proto
+	protoc -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. dlframework.proto
+	mv dlframework.swagger.json dlframework.swagger.json.tmp
+	jq -s '.[0] * .[1]' dlframework.swagger.json.tmp swagger_info.json > dlframework.swagger.json
+	rm -fr dlframework.swagger.json.tmp
+	go generate .
 
 generate: generate-proto
-	mv dlframework.swagger.json dlframework.swagger.json.tmp
-	jq -s '.[0] * .[1]' dlframework.swagger.json.tmp swagger-info.json > dlframework.swagger.json
-	rm -fr dlframework.swagger.json.tmp
 	swagger generate server -f dlframework.swagger.json -t web -A dlframework
 	swagger generate client -f dlframework.swagger.json -t web -A dlframework
 	swagger generate support -f dlframework.swagger.json -t web -A dlframework

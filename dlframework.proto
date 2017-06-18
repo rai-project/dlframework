@@ -159,7 +159,7 @@ message PredictResponse {
   ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
 }
 
-service registry {
+service Registry {
   rpc GetFrameworkManifests(Null) returns (GetFrameworkManifestsResponse) {
     option (google.api.http) = {
       get : "/v1/frameworks",
@@ -196,7 +196,7 @@ service registry {
     };
   }
 }
-service predictor {
+service Predictor {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post : "/v1/framework/{framework_name}/model/{model_name}/predict",
