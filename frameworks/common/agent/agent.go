@@ -4,11 +4,16 @@ import (
 	"path"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
 	store "github.com/rai-project/libkv/store"
 	"github.com/rai-project/registry"
+)
+
+var (
+	DefaultTTL = time.Hour
 )
 
 type Base struct {
@@ -82,7 +87,14 @@ func (b *Base) PublishInRegistery(prefix string) error {
 	go func() {
 		defer wg.Done()
 		key := path.Join(prefix, toPath(cn))
-		if err := rgs.Put(key, nil, &store.WriteOptions{IsDir: true}); err != nil {
+		rgs.Put(key, nil, &store.WriteOptions{TTL: DefaultTTL, IsDir: true})
+
+		key = path.Join(key, "info")
+		bts, err := framework.Marshal()
+		if err != nil {
+			return
+		}
+		if err := rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
 			return
 		}
 	}()
@@ -100,8 +112,8 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			if err != nil {
 				return
 			}
-			key := path.Join(prefix, toPath(mn))
-			rgs.Put(key, bts, nil)
+			key := path.Join(prefix, toPath(mn), "info")
+			rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
 		}(model)
 	}
 
