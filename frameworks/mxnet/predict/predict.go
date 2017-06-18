@@ -17,7 +17,7 @@ import (
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
-	"github.com/rai-project/dlframework/downloadmanager"
+	"github.com/rai-project/downloadmanager"
 	common "github.com/rai-project/dlframework/frameworks/common/predict"
 	gomxnet "github.com/songtianyi/go-mxnet-predictor/mxnet"
 )

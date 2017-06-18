@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
-	"github.com/rai-project/dlframework/downloadmanager"
+	"github.com/rai-project/downloadmanager"
 	context "golang.org/x/net/context"
 )
 
