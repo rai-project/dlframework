@@ -13,8 +13,8 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/rai-project/dlframework"
-	"github.com/rai-project/downloadmanager"
 	common "github.com/rai-project/dlframework/frameworks/common/predict"
+	"github.com/rai-project/downloadmanager"
 	"github.com/rai-project/utils"
 
 	"github.com/Unknwon/com"
