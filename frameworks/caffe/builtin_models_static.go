@@ -86,7 +86,7 @@ func bvlc_alexnetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_alexnet.yml", size: 2130, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "bvlc_alexnet.yml", size: 2130, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -106,7 +106,7 @@ func bvlc_googlenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_googlenet.yml", size: 1798, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "bvlc_googlenet.yml", size: 1798, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -126,7 +126,7 @@ func bvlc_reference_caffenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_reference_caffenet.yml", size: 1934, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "bvlc_reference_caffenet.yml", size: 1934, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -146,7 +146,7 @@ func bvlc_reference_rcnn_ilsvrc13Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_reference_rcnn_ilsvrc13.yml", size: 1775, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "bvlc_reference_rcnn_ilsvrc13.yml", size: 1775, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

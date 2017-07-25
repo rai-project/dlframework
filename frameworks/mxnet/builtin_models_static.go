@@ -98,7 +98,7 @@ func resnext101Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResNeXt101.yml", size: 1929, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResNeXt101.yml", size: 1929, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -118,7 +118,7 @@ func resnext50Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResNeXt50.yml", size: 1913, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResNeXt50.yml", size: 1913, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -138,7 +138,7 @@ func residualnet101Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet101.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResidualNet101.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -158,7 +158,7 @@ func residualnet18Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -178,7 +178,7 @@ func residualnet200Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet200.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResidualNet200.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -198,7 +198,7 @@ func residualnet34Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet34.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResidualNet34.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -218,7 +218,7 @@ func residualnet50Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet50.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "ResidualNet50.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -238,7 +238,7 @@ func resnet152_11kYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "Resnet152_11k.yml", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "Resnet152_11k.yml", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -258,7 +258,7 @@ func caffenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "caffenet.yml", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "caffenet.yml", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -278,7 +278,7 @@ func inceptionv3Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "inceptionv3.yml", size: 1894, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "inceptionv3.yml", size: 1894, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -298,7 +298,7 @@ func locationnetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "locationnet.yml", size: 2126, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "locationnet.yml", size: 2126, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -318,7 +318,7 @@ func ninYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "nin.yml", size: 2036, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "nin.yml", size: 2036, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -338,7 +338,7 @@ func residualnet152Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "residualNet152.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "residualNet152.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -358,7 +358,7 @@ func squeeznetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "squeeznet.yml", size: 2062, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "squeeznet.yml", size: 2062, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -378,7 +378,7 @@ func vgg16Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vgg16.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "vgg16.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -398,7 +398,7 @@ func vgg19Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vgg19.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "vgg19.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

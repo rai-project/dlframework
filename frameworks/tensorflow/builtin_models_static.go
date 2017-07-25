@@ -94,7 +94,7 @@ func mobilenet_v1_025_128Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.25_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.25_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629859, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -114,7 +114,7 @@ func mobilenet_v1_025_224Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.25_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.25_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629862, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -134,7 +134,7 @@ func mobilenet_v1_050_128Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.50_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.50_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629866, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -154,7 +154,7 @@ func mobilenet_v1_050_224Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.50_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.50_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629870, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -174,7 +174,7 @@ func mobilenet_v1_075_128Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.75_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.75_128.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629826, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -194,7 +194,7 @@ func mobilenet_v1_075_224Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_0.75_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_0.75_224.yml", size: 1052, mode: os.FileMode(420), modTime: time.Unix(1497629836, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -214,7 +214,7 @@ func mobilenet_v1_10_128Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_1.0_128.yml", size: 1050, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_1.0_128.yml", size: 1050, mode: os.FileMode(420), modTime: time.Unix(1497629841, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -234,7 +234,7 @@ func mobilenet_v1_10_224Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "MobileNet_v1_1.0_224.yml", size: 1050, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "MobileNet_v1_1.0_224.yml", size: 1050, mode: os.FileMode(420), modTime: time.Unix(1497629844, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -254,7 +254,7 @@ func inceptionYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "inception.yml", size: 1085, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "inception.yml", size: 1085, mode: os.FileMode(420), modTime: time.Unix(1497623566, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -274,7 +274,7 @@ func resnet152Yaml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resnet152.yaml", size: 1019, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "resnet152.yaml", size: 1019, mode: os.FileMode(420), modTime: time.Unix(1497629851, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -294,7 +294,7 @@ func resnet50Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "resnet50.yml", size: 1016, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "resnet50.yml", size: 1016, mode: os.FileMode(420), modTime: time.Unix(1497629848, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -314,7 +314,7 @@ func vgg19Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vgg19.yml", size: 1017, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
+	info := bindataFileInfo{name: "vgg19.yml", size: 1017, mode: os.FileMode(420), modTime: time.Unix(1497629855, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

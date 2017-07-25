@@ -284,17 +284,6 @@
         }
       }
     },
-    "dlframeworkGetFrameworkManifestRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkGetFrameworkManifestsResponse": {
       "type": "object",
       "properties": {
@@ -429,9 +418,6 @@
           }
         }
       }
-    },
-    "dlframeworkNull": {
-      "type": "object"
     },
     "dlframeworkPredictRequest": {
       "type": "object",
