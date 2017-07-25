@@ -20,12 +20,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/status"
 )
 
 var _ codes.Code
 var _ io.Reader
-var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
@@ -55,7 +53,7 @@ func request_Registry_GetFrameworkManifest_0(ctx context.Context, marshaler runt
 
 	val, ok = pathParams["framework_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
 	}
 
 	protoReq.FrameworkName, err = runtime.String(val)
@@ -65,7 +63,7 @@ func request_Registry_GetFrameworkManifest_0(ctx context.Context, marshaler runt
 	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_GetFrameworkManifest_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetFrameworkManifest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -90,7 +88,7 @@ func request_Registry_GetFrameworkModels_0(ctx context.Context, marshaler runtim
 
 	val, ok = pathParams["framework_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
 	}
 
 	protoReq.FrameworkName, err = runtime.String(val)
@@ -100,7 +98,7 @@ func request_Registry_GetFrameworkModels_0(ctx context.Context, marshaler runtim
 	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_GetFrameworkModels_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetFrameworkModels(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -122,7 +120,7 @@ func request_Registry_GetFrameworkModelManifest_0(ctx context.Context, marshaler
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	var (
@@ -134,7 +132,7 @@ func request_Registry_GetFrameworkModelManifest_0(ctx context.Context, marshaler
 
 	val, ok = pathParams["framework_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
 	}
 
 	protoReq.FrameworkName, err = runtime.String(val)
@@ -145,7 +143,7 @@ func request_Registry_GetFrameworkModelManifest_0(ctx context.Context, marshaler
 
 	val, ok = pathParams["model_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
 	}
 
 	protoReq.ModelName, err = runtime.String(val)
@@ -164,7 +162,7 @@ func request_Registry_GetModelManifest_0(ctx context.Context, marshaler runtime.
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	var (
@@ -176,7 +174,7 @@ func request_Registry_GetModelManifest_0(ctx context.Context, marshaler runtime.
 
 	val, ok = pathParams["model_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
 	}
 
 	protoReq.ModelName, err = runtime.String(val)
@@ -195,7 +193,7 @@ func request_Predictor_Predict_0(ctx context.Context, marshaler runtime.Marshale
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	var (
@@ -207,7 +205,7 @@ func request_Predictor_Predict_0(ctx context.Context, marshaler runtime.Marshale
 
 	val, ok = pathParams["framework_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "framework_name")
 	}
 
 	protoReq.FrameworkName, err = runtime.String(val)
@@ -218,7 +216,7 @@ func request_Predictor_Predict_0(ctx context.Context, marshaler runtime.Marshale
 
 	val, ok = pathParams["model_name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "missing parameter %s", "model_name")
 	}
 
 	protoReq.ModelName, err = runtime.String(val)
@@ -275,19 +273,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetFrameworkManifests_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetFrameworkManifests_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetFrameworkManifests_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -304,19 +301,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetFrameworkManifest_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetFrameworkManifest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetFrameworkManifest_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -333,19 +329,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetFrameworkModels_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetFrameworkModels_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetFrameworkModels_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -362,19 +357,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetModelManifests_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetModelManifests_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetModelManifests_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -391,19 +385,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetFrameworkModelManifest_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetFrameworkModelManifest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetFrameworkModelManifest_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -420,19 +413,18 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Registry_GetModelManifest_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Registry_GetModelManifest_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Registry_GetModelManifest_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -510,19 +502,18 @@ func RegisterPredictorHandler(ctx context.Context, mux *runtime.ServeMux, conn *
 			}(ctx.Done(), cn.CloseNotify())
 		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, req)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 		}
 		resp, md, err := request_Predictor_Predict_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			runtime.HTTPError(ctx, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Predictor_Predict_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Predictor_Predict_0(ctx, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 

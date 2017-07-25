@@ -98,7 +98,7 @@ func resnext101Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResNeXt101.yml", size: 1929, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResNeXt101.yml", size: 1929, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -118,7 +118,7 @@ func resnext50Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResNeXt50.yml", size: 1913, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResNeXt50.yml", size: 1913, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -138,7 +138,7 @@ func residualnet101Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet101.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResidualNet101.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -158,7 +158,7 @@ func residualnet18Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResidualNet18.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -178,7 +178,7 @@ func residualnet200Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet200.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResidualNet200.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -198,7 +198,7 @@ func residualnet34Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet34.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResidualNet34.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -218,7 +218,7 @@ func residualnet50Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "ResidualNet50.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "ResidualNet50.yml", size: 1931, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -238,7 +238,7 @@ func resnet152_11kYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "Resnet152_11k.yml", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "Resnet152_11k.yml", size: 1960, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -258,7 +258,7 @@ func caffenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "caffenet.yml", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "caffenet.yml", size: 2053, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -278,7 +278,7 @@ func inceptionv3Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "inceptionv3.yml", size: 1894, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "inceptionv3.yml", size: 1894, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -298,7 +298,7 @@ func locationnetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "locationnet.yml", size: 2126, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "locationnet.yml", size: 2126, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -318,7 +318,7 @@ func ninYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "nin.yml", size: 2036, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "nin.yml", size: 2036, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -338,7 +338,7 @@ func residualnet152Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "residualNet152.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "residualNet152.yml", size: 1936, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -358,7 +358,7 @@ func squeeznetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "squeeznet.yml", size: 2062, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "squeeznet.yml", size: 2062, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -378,7 +378,7 @@ func vgg16Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vgg16.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "vgg16.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -398,7 +398,7 @@ func vgg19Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "vgg19.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "vgg19.yml", size: 1892, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -407,8 +407,8 @@ func vgg19Yml() (*asset, error) {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func Asset(name string) ([]byte, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	if f, ok := _bindata[canonicalName]; ok {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
 		a, err := f()
 		if err != nil {
 			return nil, fmt.Errorf("Asset %s can't read by error: %v", name, err)
@@ -433,8 +433,8 @@ func MustAsset(name string) []byte {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func AssetInfo(name string) (os.FileInfo, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	if f, ok := _bindata[canonicalName]; ok {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
 		a, err := f()
 		if err != nil {
 			return nil, fmt.Errorf("AssetInfo %s can't read by error: %v", name, err)
@@ -455,22 +455,22 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"ResNeXt101.yml":     resnext101Yml,
-	"ResNeXt50.yml":      resnext50Yml,
+	"ResNeXt101.yml": resnext101Yml,
+	"ResNeXt50.yml": resnext50Yml,
 	"ResidualNet101.yml": residualnet101Yml,
-	"ResidualNet18.yml":  residualnet18Yml,
+	"ResidualNet18.yml": residualnet18Yml,
 	"ResidualNet200.yml": residualnet200Yml,
-	"ResidualNet34.yml":  residualnet34Yml,
-	"ResidualNet50.yml":  residualnet50Yml,
-	"Resnet152_11k.yml":  resnet152_11kYml,
-	"caffenet.yml":       caffenetYml,
-	"inceptionv3.yml":    inceptionv3Yml,
-	"locationnet.yml":    locationnetYml,
-	"nin.yml":            ninYml,
+	"ResidualNet34.yml": residualnet34Yml,
+	"ResidualNet50.yml": residualnet50Yml,
+	"Resnet152_11k.yml": resnet152_11kYml,
+	"caffenet.yml": caffenetYml,
+	"inceptionv3.yml": inceptionv3Yml,
+	"locationnet.yml": locationnetYml,
+	"nin.yml": ninYml,
 	"residualNet152.yml": residualnet152Yml,
-	"squeeznet.yml":      squeeznetYml,
-	"vgg16.yml":          vgg16Yml,
-	"vgg19.yml":          vgg19Yml,
+	"squeeznet.yml": squeeznetYml,
+	"vgg16.yml": vgg16Yml,
+	"vgg19.yml": vgg19Yml,
 }
 
 // AssetDir returns the file names below a certain
@@ -489,8 +489,8 @@ var _bindata = map[string]func() (*asset, error){
 func AssetDir(name string) ([]string, error) {
 	node := _bintree
 	if len(name) != 0 {
-		canonicalName := strings.Replace(name, "\\", "/", -1)
-		pathList := strings.Split(canonicalName, "/")
+		cannonicalName := strings.Replace(name, "\\", "/", -1)
+		pathList := strings.Split(cannonicalName, "/")
 		for _, p := range pathList {
 			node = node.Children[p]
 			if node == nil {
@@ -512,24 +512,23 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
-	"ResNeXt101.yml":     {resnext101Yml, map[string]*bintree{}},
-	"ResNeXt50.yml":      {resnext50Yml, map[string]*bintree{}},
-	"ResidualNet101.yml": {residualnet101Yml, map[string]*bintree{}},
-	"ResidualNet18.yml":  {residualnet18Yml, map[string]*bintree{}},
-	"ResidualNet200.yml": {residualnet200Yml, map[string]*bintree{}},
-	"ResidualNet34.yml":  {residualnet34Yml, map[string]*bintree{}},
-	"ResidualNet50.yml":  {residualnet50Yml, map[string]*bintree{}},
-	"Resnet152_11k.yml":  {resnet152_11kYml, map[string]*bintree{}},
-	"caffenet.yml":       {caffenetYml, map[string]*bintree{}},
-	"inceptionv3.yml":    {inceptionv3Yml, map[string]*bintree{}},
-	"locationnet.yml":    {locationnetYml, map[string]*bintree{}},
-	"nin.yml":            {ninYml, map[string]*bintree{}},
-	"residualNet152.yml": {residualnet152Yml, map[string]*bintree{}},
-	"squeeznet.yml":      {squeeznetYml, map[string]*bintree{}},
-	"vgg16.yml":          {vgg16Yml, map[string]*bintree{}},
-	"vgg19.yml":          {vgg19Yml, map[string]*bintree{}},
+	"ResNeXt101.yml": &bintree{resnext101Yml, map[string]*bintree{}},
+	"ResNeXt50.yml": &bintree{resnext50Yml, map[string]*bintree{}},
+	"ResidualNet101.yml": &bintree{residualnet101Yml, map[string]*bintree{}},
+	"ResidualNet18.yml": &bintree{residualnet18Yml, map[string]*bintree{}},
+	"ResidualNet200.yml": &bintree{residualnet200Yml, map[string]*bintree{}},
+	"ResidualNet34.yml": &bintree{residualnet34Yml, map[string]*bintree{}},
+	"ResidualNet50.yml": &bintree{residualnet50Yml, map[string]*bintree{}},
+	"Resnet152_11k.yml": &bintree{resnet152_11kYml, map[string]*bintree{}},
+	"caffenet.yml": &bintree{caffenetYml, map[string]*bintree{}},
+	"inceptionv3.yml": &bintree{inceptionv3Yml, map[string]*bintree{}},
+	"locationnet.yml": &bintree{locationnetYml, map[string]*bintree{}},
+	"nin.yml": &bintree{ninYml, map[string]*bintree{}},
+	"residualNet152.yml": &bintree{residualnet152Yml, map[string]*bintree{}},
+	"squeeznet.yml": &bintree{squeeznetYml, map[string]*bintree{}},
+	"vgg16.yml": &bintree{vgg16Yml, map[string]*bintree{}},
+	"vgg19.yml": &bintree{vgg19Yml, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -575,6 +574,7 @@ func RestoreAssets(dir, name string) error {
 }
 
 func _filePath(dir, name string) string {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	return filepath.Join(append([]string{dir}, strings.Split(canonicalName, "/")...)...)
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+

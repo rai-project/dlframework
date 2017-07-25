@@ -86,7 +86,7 @@ func bvlc_alexnetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_alexnet.yml", size: 2130, mode: os.FileMode(420), modTime: time.Unix(1497531314, 0)}
+	info := bindataFileInfo{name: "bvlc_alexnet.yml", size: 2130, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -106,7 +106,7 @@ func bvlc_googlenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_googlenet.yml", size: 1798, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
+	info := bindataFileInfo{name: "bvlc_googlenet.yml", size: 1798, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -126,7 +126,7 @@ func bvlc_reference_caffenetYml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_reference_caffenet.yml", size: 1934, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
+	info := bindataFileInfo{name: "bvlc_reference_caffenet.yml", size: 1934, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -146,7 +146,7 @@ func bvlc_reference_rcnn_ilsvrc13Yml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "bvlc_reference_rcnn_ilsvrc13.yml", size: 1775, mode: os.FileMode(420), modTime: time.Unix(1497537748, 0)}
+	info := bindataFileInfo{name: "bvlc_reference_rcnn_ilsvrc13.yml", size: 1775, mode: os.FileMode(420), modTime: time.Unix(1500916950, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -155,8 +155,8 @@ func bvlc_reference_rcnn_ilsvrc13Yml() (*asset, error) {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func Asset(name string) ([]byte, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	if f, ok := _bindata[canonicalName]; ok {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
 		a, err := f()
 		if err != nil {
 			return nil, fmt.Errorf("Asset %s can't read by error: %v", name, err)
@@ -181,8 +181,8 @@ func MustAsset(name string) []byte {
 // It returns an error if the asset could not be found or
 // could not be loaded.
 func AssetInfo(name string) (os.FileInfo, error) {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	if f, ok := _bindata[canonicalName]; ok {
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	if f, ok := _bindata[cannonicalName]; ok {
 		a, err := f()
 		if err != nil {
 			return nil, fmt.Errorf("AssetInfo %s can't read by error: %v", name, err)
@@ -203,9 +203,9 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"bvlc_alexnet.yml":                 bvlc_alexnetYml,
-	"bvlc_googlenet.yml":               bvlc_googlenetYml,
-	"bvlc_reference_caffenet.yml":      bvlc_reference_caffenetYml,
+	"bvlc_alexnet.yml": bvlc_alexnetYml,
+	"bvlc_googlenet.yml": bvlc_googlenetYml,
+	"bvlc_reference_caffenet.yml": bvlc_reference_caffenetYml,
 	"bvlc_reference_rcnn_ilsvrc13.yml": bvlc_reference_rcnn_ilsvrc13Yml,
 }
 
@@ -225,8 +225,8 @@ var _bindata = map[string]func() (*asset, error){
 func AssetDir(name string) ([]string, error) {
 	node := _bintree
 	if len(name) != 0 {
-		canonicalName := strings.Replace(name, "\\", "/", -1)
-		pathList := strings.Split(canonicalName, "/")
+		cannonicalName := strings.Replace(name, "\\", "/", -1)
+		pathList := strings.Split(cannonicalName, "/")
 		for _, p := range pathList {
 			node = node.Children[p]
 			if node == nil {
@@ -248,12 +248,11 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
-	"bvlc_alexnet.yml":                 {bvlc_alexnetYml, map[string]*bintree{}},
-	"bvlc_googlenet.yml":               {bvlc_googlenetYml, map[string]*bintree{}},
-	"bvlc_reference_caffenet.yml":      {bvlc_reference_caffenetYml, map[string]*bintree{}},
-	"bvlc_reference_rcnn_ilsvrc13.yml": {bvlc_reference_rcnn_ilsvrc13Yml, map[string]*bintree{}},
+	"bvlc_alexnet.yml": &bintree{bvlc_alexnetYml, map[string]*bintree{}},
+	"bvlc_googlenet.yml": &bintree{bvlc_googlenetYml, map[string]*bintree{}},
+	"bvlc_reference_caffenet.yml": &bintree{bvlc_reference_caffenetYml, map[string]*bintree{}},
+	"bvlc_reference_rcnn_ilsvrc13.yml": &bintree{bvlc_reference_rcnn_ilsvrc13Yml, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -299,6 +298,7 @@ func RestoreAssets(dir, name string) error {
 }
 
 func _filePath(dir, name string) string {
-	canonicalName := strings.Replace(name, "\\", "/", -1)
-	return filepath.Join(append([]string{dir}, strings.Split(canonicalName, "/")...)...)
+	cannonicalName := strings.Replace(name, "\\", "/", -1)
+	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+

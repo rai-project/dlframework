@@ -10,7 +10,7 @@ import (
 // and encodes them as strings literals in textfiles.go
 func main() {
 	fs, _ := ioutil.ReadDir(".")
-	out, _ := os.Create("swagger.pb.go")
+	out, _ := os.Create("swagger.go")
 	out.Write([]byte("package dlframework \n\nconst (\n"))
 	for _, f := range fs {
 		if strings.HasSuffix(f.Name(), ".json") {
