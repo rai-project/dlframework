@@ -290,6 +290,17 @@ func init() {
         }
       }
     },
+    "dlframeworkGetFrameworkManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkGetFrameworkManifestsResponse": {
       "type": "object",
       "properties": {
@@ -424,6 +435,9 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "dlframeworkNull": {
+      "type": "object"
     },
     "dlframeworkPredictRequest": {
       "type": "object",

@@ -13,8 +13,10 @@ install-deps:
 	go get github.com/gogo/protobuf/protoc-gen-gofast
 	go get github.com/gogo/protobuf/protoc-gen-gogofaster
 	go get github.com/gogo/protobuf/protoc-gen-gogoslick
-	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	go get -d github.com/grpc-ecosystem/grpc-gateway/
+	git --git-dir=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/.git --work-tree=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/ checkout v1.2.2
+	go install $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+	go install $GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get github.com/go-swagger/go-swagger/cmd/swagger
 
 glide-install:
@@ -34,10 +36,13 @@ generate-proto:
 	rm -fr dlframework.swagger.json.tmp
 	go run scripts/includetext.go
 
-generate: generate-proto
+generate: generate-proto generate-frameworks
 	swagger generate server -f dlframework.swagger.json -t web -A dlframework
 	swagger generate client -f dlframework.swagger.json -t web -A dlframework
 	swagger generate support -f dlframework.swagger.json -t web -A dlframework
+
+clean: clean-frameworks
+	rm -fr *pb.go *pb.gw.go *pb_test.go swagger.go
 
 clean-mxnet:
 	rm -fr frameworks/mxnet/builtin_models_static.go frameworks/mxnet/*pb.go
