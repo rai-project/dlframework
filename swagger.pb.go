@@ -6,7 +6,7 @@ dlframework_swagger = `{
   "info": {
     "title": "CarML DLFramework",
     "version": "1.0.0",
-    "description": "TODO... fillme."
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration."
   },
   "schemes": [
     "http",
@@ -555,8 +555,8 @@ dlframework_swagger = `{
 swagger_info = `{
   "info": {
     "title": "CarML DLFramework",
-    "description": "TODO... fillme.",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration."
   }
 }
 `

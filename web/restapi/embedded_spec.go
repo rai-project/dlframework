@@ -24,7 +24,7 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "TODO... fillme.",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
     "title": "CarML DLFramework",
     "version": "1.0.0"
   },
@@ -32,7 +32,7 @@ func init() {
     "/v1/framework/{framework_name}/info": {
       "get": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetFrameworkManifest",
         "parameters": [
@@ -60,7 +60,7 @@ func init() {
     "/v1/framework/{framework_name}/model/{model_name}/info": {
       "post": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetFrameworkModelManifest",
         "parameters": [
@@ -97,7 +97,7 @@ func init() {
     "/v1/framework/{framework_name}/model/{model_name}/predict": {
       "post": {
         "tags": [
-          "predictor"
+          "Predictor"
         ],
         "operationId": "Predict",
         "parameters": [
@@ -134,7 +134,7 @@ func init() {
     "/v1/framework/{framework_name}/models": {
       "get": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetFrameworkModels",
         "parameters": [
@@ -162,7 +162,7 @@ func init() {
     "/v1/frameworks": {
       "get": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetFrameworkManifests",
         "responses": {
@@ -177,7 +177,7 @@ func init() {
     "/v1/model/{model_name}/info": {
       "post": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetModelManifest",
         "parameters": [
@@ -208,7 +208,7 @@ func init() {
     "/v1/models": {
       "get": {
         "tags": [
-          "registry"
+          "Registry"
         ],
         "operationId": "GetModelManifests",
         "responses": {
