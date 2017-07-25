@@ -13,7 +13,8 @@ install-deps:
 	go get github.com/gogo/protobuf/protoc-gen-gofast
 	go get github.com/gogo/protobuf/protoc-gen-gogofaster
 	go get github.com/gogo/protobuf/protoc-gen-gogoslick
-	go get github.com/grpc-ecosystem/grpc-gateway/
+	go get -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+	go get -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	git --git-dir=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/.git --work-tree=$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/ checkout v1.2.2
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
