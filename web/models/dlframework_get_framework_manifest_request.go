@@ -12,25 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkGetFrameworkModelManifestRequest dlframework get framework model manifest request
-// swagger:model dlframeworkGetFrameworkModelManifestRequest
-type DlframeworkGetFrameworkModelManifestRequest struct {
+// DlframeworkGetFrameworkManifestRequest dlframework get framework manifest request
+// swagger:model dlframeworkGetFrameworkManifestRequest
+type DlframeworkGetFrameworkManifestRequest struct {
 
 	// framework name
 	FrameworkName string `json:"framework_name,omitempty"`
 
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// model name
-	ModelName string `json:"model_name,omitempty"`
-
-	// model version
-	ModelVersion string `json:"model_version,omitempty"`
 }
 
-// Validate validates this dlframework get framework model manifest request
-func (m *DlframeworkGetFrameworkModelManifestRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework get framework manifest request
+func (m *DlframeworkGetFrameworkManifestRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -40,7 +34,7 @@ func (m *DlframeworkGetFrameworkModelManifestRequest) Validate(formats strfmt.Re
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkGetFrameworkModelManifestRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkGetFrameworkManifestRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -48,8 +42,8 @@ func (m *DlframeworkGetFrameworkModelManifestRequest) MarshalBinary() ([]byte, e
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkGetFrameworkModelManifestRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkGetFrameworkModelManifestRequest
+func (m *DlframeworkGetFrameworkManifestRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkGetFrameworkManifestRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

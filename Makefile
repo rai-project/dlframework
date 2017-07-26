@@ -37,13 +37,18 @@ generate-proto:
 	rm -fr dlframework.swagger.json.tmp
 	go run scripts/includetext.go
 
-generate: generate-proto generate-frameworks
+generate: generate-proto generate-frameworks generate-swagger
+
+generate-swagger: clean-web
 	swagger generate server -f dlframework.swagger.json -t web -A dlframework
 	swagger generate client -f dlframework.swagger.json -t web -A dlframework
 	swagger generate support -f dlframework.swagger.json -t web -A dlframework
 
-clean: clean-frameworks
+clean: clean-web clean-frameworks
 	rm -fr *pb.go *pb.gw.go *pb_test.go swagger.go
+
+clean-web:
+	rm -fr web
 
 clean-mxnet:
 	rm -fr frameworks/mxnet/builtin_models_static.go frameworks/mxnet/*pb.go

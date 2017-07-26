@@ -287,6 +287,17 @@ dlframework_swagger = `{
         }
       }
     },
+    "dlframeworkGetFrameworkManifestRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkGetFrameworkManifestsResponse": {
       "type": "object",
       "properties": {
@@ -421,6 +432,9 @@ dlframework_swagger = `{
           }
         }
       }
+    },
+    "dlframeworkNull": {
+      "type": "object"
     },
     "dlframeworkPredictRequest": {
       "type": "object",
