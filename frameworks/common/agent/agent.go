@@ -1,19 +1,25 @@
 package agent
 
 import (
+	"bytes"
+	"encoding/base64"
 	"path"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/k0kubun/pp"
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
 	store "github.com/rai-project/libkv/store"
 	"github.com/rai-project/registry"
+
+	"github.com/gogo/protobuf/jsonpb"
 )
 
 var (
-	DefaultTTL = time.Hour
+	DefaultTTL       = time.Hour
+	DefaultMarshaler = &jsonpb.Marshaler{}
 )
 
 type Base struct {
@@ -24,7 +30,18 @@ func toPath(s string) string {
 	return strings.Replace(s, ":", "/", -1)
 }
 
+func encode0(src []byte) []byte {
+	enc := base64.StdEncoding
+	buf := make([]byte, enc.EncodedLen(len(src)))
+	enc.Encode(buf, src)
+	return buf
+}
+func encode(src []byte) []byte {
+	return src
+}
+
 func (b *Base) PublishInRegistery(prefix string) error {
+	marshaler := DefaultMarshaler
 	rgs, err := registry.New()
 	if err != nil {
 		return err
@@ -79,7 +96,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			if !found {
 				frameworkLines = append(frameworkLines, cn)
 				newVal := strings.TrimSpace(strings.Join(frameworkLines, "\n"))
-				rgs.AtomicPut(frameworksKey, []byte(newVal), kv, nil)
+				rgs.AtomicPut(frameworksKey, encode([]byte(newVal)), kv, nil)
 			}
 		}()
 	}
@@ -90,11 +107,12 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		rgs.Put(key, nil, &store.WriteOptions{TTL: DefaultTTL, IsDir: true})
 
 		key = path.Join(key, "info")
-		bts, err := framework.Marshal()
+		bts := new(bytes.Buffer)
+		err := marshaler.Marshal(bts, &framework)
 		if err != nil {
 			return
 		}
-		if err := rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
+		if err := rgs.Put(key, encode(bts.Bytes()), &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
 			return
 		}
 	}()
@@ -106,14 +124,18 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			defer wg.Done()
 			mn, err := model.CanonicalName()
 			if err != nil {
+				pp.Println(err)
 				return
 			}
-			bts, err := model.Marshal()
+			bts := new(bytes.Buffer)
+			err = marshaler.Marshal(bts, &model)
+			// bts, err := model.Marshal()
 			if err != nil {
+				pp.Println(err)
 				return
 			}
 			key := path.Join(prefix, toPath(mn), "info")
-			rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
+			rgs.Put(key, encode(bts.Bytes()), &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
 		}(model)
 	}
 

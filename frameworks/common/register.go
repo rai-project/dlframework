@@ -45,7 +45,7 @@ func Register(framework dlframework.FrameworkManifest, a *assetfs.AssetFS) error
 
 			var model dlframework.ModelManifest
 			if err := yaml.Unmarshal(bts, &model); err != nil {
-				log.WithField("asset", asset).Error("failed to unmarshal model ")
+				log.WithField("asset", asset).WithError(err).Error("failed to unmarshal model")
 				return
 			}
 			if model.GetFramework().GetName() != framework.GetName() {

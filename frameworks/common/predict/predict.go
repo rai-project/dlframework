@@ -1,11 +1,11 @@
 package predict
 
 import (
-	"errors"
 	"io"
 
-	"github.com/gogo/protobuf/types"
+	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
+	"github.com/spf13/cast"
 )
 
 type Predictor interface {
@@ -40,29 +40,22 @@ func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
 		return nil, errors.New("expecting image type dimensions")
 	}
 	pdimsVal := pdims.Value
-	if pdimsVal == nil {
+	if pdimsVal == "" {
 		return nil, errors.New("invalid image dimensions")
 	}
-	data, ok := pdimsVal.Fields["data"]
-	if !ok {
-		return nil, errors.New("expecting data field in struct")
-	}
-	lstVal := data.GetListValue()
-	if lstVal == nil {
-		return nil, errors.New("expecting list value in data field in struct")
+
+	slice, err := cast.ToSliceE(pdimsVal)
+	if err != nil {
+		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
 	}
 
 	dims := []int32{}
-	for _, v := range lstVal.Values {
-		kind := v.GetKind()
-		if kind == nil {
-			return nil, errors.New("unable to get kind of value in image dimensions")
+	for _, v := range slice {
+		val, err := cast.ToInt32E(v)
+		if err != nil {
+			return nil, errors.Errorf("unable to get image mean %v as an integer slice", pdimsVal)
 		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return nil, errors.New("invalid number value in image dimensions")
-		}
-		val := v.GetNumberValue()
-		dims = append(dims, int32(val))
+		dims = append(dims, val)
 	}
 	return dims, nil
 }
@@ -80,39 +73,27 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 		return []float32{0, 0, 0}, nil
 	}
 	pdimsVal := pdims.Value
-	if pdimsVal == nil {
+	if pdimsVal == "" {
 		return nil, errors.New("invalid image dimensions")
 	}
-	data, ok := pdimsVal.Fields["data"]
-	if !ok {
-		return nil, errors.New("expecting data field in struct")
-	}
-	lstVal := data.GetListValue()
-	if lstVal == nil {
-		// try to get a number value
-		kind := data.GetKind()
-		if kind == nil {
-			return nil, errors.New("unable to get kind of value in mean image")
+
+	slice, err := cast.ToSliceE(pdimsVal)
+	if err != nil {
+		val, err := cast.ToFloat32E(pdimsVal)
+		if err != nil {
+			return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
 		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return nil, errors.New("invalid number or list value in image mean")
-		}
-		val := float32(data.GetNumberValue())
 		log.Debugf("using %v,%v,%v as the mean image", val, val, val)
 		return []float32{val, val, val}, nil
 	}
 
 	dims := []float32{}
-	for _, v := range lstVal.Values {
-		kind := v.GetKind()
-		if kind == nil {
-			return nil, errors.New("unable to get kind of value in image dimensions")
+	for _, v := range slice {
+		f, err := cast.ToFloat32E(v)
+		if err != nil {
+			return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
 		}
-		if _, ok := kind.(*types.Value_NumberValue); !ok {
-			return nil, errors.New("invalid number value in image dimensions")
-		}
-		val := v.GetNumberValue()
-		dims = append(dims, float32(val))
+		dims = append(dims, f)
 	}
 	return dims, nil
 }

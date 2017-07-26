@@ -40,8 +40,7 @@ message FrameworkManifest {
 message ModelManifest {
   message Type {
     message Parameter {
-      google.protobuf.Struct value = 1
-          [ (gogoproto.moretags) = "yaml:\",inline\"" ];
+      string value = 1 [ (gogoproto.moretags) = "yaml:\",inline\"" ];
     }
     string type = 1 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
     string description = 2
