@@ -17,6 +17,9 @@ type GetFrameworkModelManifestURL struct {
 	FrameworkName string
 	ModelName     string
 
+	FrameworkVersion *string
+	ModelVersion     *string
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -57,6 +60,26 @@ func (o *GetFrameworkModelManifestURL) Build() (*url.URL, error) {
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var frameworkVersion string
+	if o.FrameworkVersion != nil {
+		frameworkVersion = *o.FrameworkVersion
+	}
+	if frameworkVersion != "" {
+		qs.Set("framework_version", frameworkVersion)
+	}
+
+	var modelVersion string
+	if o.ModelVersion != nil {
+		modelVersion = *o.ModelVersion
+	}
+	if modelVersion != "" {
+		qs.Set("model_version", modelVersion)
+	}
+
+	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

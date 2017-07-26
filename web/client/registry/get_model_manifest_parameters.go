@@ -16,8 +16,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetModelManifestParams creates a new GetModelManifestParams object
@@ -64,10 +62,10 @@ for the get model manifest operation typically these are written to a http.Reque
 */
 type GetModelManifestParams struct {
 
-	/*Body*/
-	Body *models.DlframeworkGetModelManifestRequest
 	/*ModelName*/
 	ModelName string
+	/*ModelVersion*/
+	ModelVersion *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -107,17 +105,6 @@ func (o *GetModelManifestParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the get model manifest params
-func (o *GetModelManifestParams) WithBody(body *models.DlframeworkGetModelManifestRequest) *GetModelManifestParams {
-	o.SetBody(body)
-	return o
-}
-
-// SetBody adds the body to the get model manifest params
-func (o *GetModelManifestParams) SetBody(body *models.DlframeworkGetModelManifestRequest) {
-	o.Body = body
-}
-
 // WithModelName adds the modelName to the get model manifest params
 func (o *GetModelManifestParams) WithModelName(modelName string) *GetModelManifestParams {
 	o.SetModelName(modelName)
@@ -129,6 +116,17 @@ func (o *GetModelManifestParams) SetModelName(modelName string) {
 	o.ModelName = modelName
 }
 
+// WithModelVersion adds the modelVersion to the get model manifest params
+func (o *GetModelManifestParams) WithModelVersion(modelVersion *string) *GetModelManifestParams {
+	o.SetModelVersion(modelVersion)
+	return o
+}
+
+// SetModelVersion adds the modelVersion to the get model manifest params
+func (o *GetModelManifestParams) SetModelVersion(modelVersion *string) {
+	o.ModelVersion = modelVersion
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetModelManifestParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -137,17 +135,25 @@ func (o *GetModelManifestParams) WriteToRequest(r runtime.ClientRequest, reg str
 	}
 	var res []error
 
-	if o.Body == nil {
-		o.Body = new(models.DlframeworkGetModelManifestRequest)
-	}
-
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
-	}
-
 	// path param model_name
 	if err := r.SetPathParam("model_name", o.ModelName); err != nil {
 		return err
+	}
+
+	if o.ModelVersion != nil {
+
+		// query param model_version
+		var qrModelVersion string
+		if o.ModelVersion != nil {
+			qrModelVersion = *o.ModelVersion
+		}
+		qModelVersion := qrModelVersion
+		if qModelVersion != "" {
+			if err := r.SetQueryParam("model_version", qModelVersion); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {

@@ -89,7 +89,7 @@ func (m *JobDef) MarshalTo(dAtA []byte) (int, error) {
 		i += copy(dAtA[i:], m.Name)
 	}
 	if len(m.Tasks) > 0 {
-		for k := range m.Tasks {
+		for k, _ := range m.Tasks {
 			dAtA[i] = 0x12
 			i++
 			v := m.Tasks[k]

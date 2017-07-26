@@ -29,7 +29,7 @@ func NewGetModelManifest(ctx *middleware.Context, handler GetModelManifestHandle
 	return &GetModelManifest{Context: ctx, Handler: handler}
 }
 
-/*GetModelManifest swagger:route POST /v1/model/{model_name}/info Registry getModelManifest
+/*GetModelManifest swagger:route GET /v1/model/{model_name}/info Registry getModelManifest
 
 GetModelManifest get model manifest API
 

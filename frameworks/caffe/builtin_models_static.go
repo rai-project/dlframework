@@ -203,9 +203,9 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"bvlc_alexnet.yml":                 bvlc_alexnetYml,
-	"bvlc_googlenet.yml":               bvlc_googlenetYml,
-	"bvlc_reference_caffenet.yml":      bvlc_reference_caffenetYml,
+	"bvlc_alexnet.yml": bvlc_alexnetYml,
+	"bvlc_googlenet.yml": bvlc_googlenetYml,
+	"bvlc_reference_caffenet.yml": bvlc_reference_caffenetYml,
 	"bvlc_reference_rcnn_ilsvrc13.yml": bvlc_reference_rcnn_ilsvrc13Yml,
 }
 
@@ -248,12 +248,11 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
-
 var _bintree = &bintree{nil, map[string]*bintree{
-	"bvlc_alexnet.yml":                 {bvlc_alexnetYml, map[string]*bintree{}},
-	"bvlc_googlenet.yml":               {bvlc_googlenetYml, map[string]*bintree{}},
-	"bvlc_reference_caffenet.yml":      {bvlc_reference_caffenetYml, map[string]*bintree{}},
-	"bvlc_reference_rcnn_ilsvrc13.yml": {bvlc_reference_rcnn_ilsvrc13Yml, map[string]*bintree{}},
+	"bvlc_alexnet.yml": &bintree{bvlc_alexnetYml, map[string]*bintree{}},
+	"bvlc_googlenet.yml": &bintree{bvlc_googlenetYml, map[string]*bintree{}},
+	"bvlc_reference_caffenet.yml": &bintree{bvlc_reference_caffenetYml, map[string]*bintree{}},
+	"bvlc_reference_rcnn_ilsvrc13.yml": &bintree{bvlc_reference_rcnn_ilsvrc13Yml, map[string]*bintree{}},
 }}
 
 // RestoreAsset restores an asset under the given directory
@@ -302,3 +301,4 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
+

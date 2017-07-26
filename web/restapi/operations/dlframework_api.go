@@ -286,20 +286,20 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	}
 	o.handlers["GET"]["/v1/frameworks"] = registry.NewGetFrameworkManifests(o.context, o.RegistryGetFrameworkManifestsHandler)
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/framework/{framework_name}/model/{model_name}/info"] = registry.NewGetFrameworkModelManifest(o.context, o.RegistryGetFrameworkModelManifestHandler)
+	o.handlers["GET"]["/v1/framework/{framework_name}/model/{model_name}/info"] = registry.NewGetFrameworkModelManifest(o.context, o.RegistryGetFrameworkModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/framework/{framework_name}/models"] = registry.NewGetFrameworkModels(o.context, o.RegistryGetFrameworkModelsHandler)
 
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/model/{model_name}/info"] = registry.NewGetModelManifest(o.context, o.RegistryGetModelManifestHandler)
+	o.handlers["GET"]["/v1/model/{model_name}/info"] = registry.NewGetModelManifest(o.context, o.RegistryGetModelManifestHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

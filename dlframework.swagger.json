@@ -47,7 +47,7 @@
       }
     },
     "/v1/framework/{framework_name}/model/{model_name}/info": {
-      "post": {
+      "get": {
         "operationId": "GetFrameworkModelManifest",
         "responses": {
           "200": {
@@ -71,12 +71,16 @@
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkModelManifestRequest"
-            }
+            "name": "framework_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -169,7 +173,7 @@
       }
     },
     "/v1/model/{model_name}/info": {
-      "post": {
+      "get": {
         "operationId": "GetModelManifest",
         "responses": {
           "200": {
@@ -187,12 +191,10 @@
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestRequest"
-            }
+            "name": "model_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [

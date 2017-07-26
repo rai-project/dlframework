@@ -1,7 +1,7 @@
-package dlframework
+package dlframework 
 
 const (
-	dlframework_swagger = `{
+dlframework_swagger = `{
   "swagger": "2.0",
   "info": {
     "title": "CarML DLFramework",
@@ -50,7 +50,7 @@ const (
       }
     },
     "/v1/framework/{framework_name}/model/{model_name}/info": {
-      "post": {
+      "get": {
         "operationId": "GetFrameworkModelManifest",
         "responses": {
           "200": {
@@ -74,12 +74,16 @@ const (
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkModelManifestRequest"
-            }
+            "name": "framework_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -172,7 +176,7 @@ const (
       }
     },
     "/v1/model/{model_name}/info": {
-      "post": {
+      "get": {
         "operationId": "GetModelManifest",
         "responses": {
           "200": {
@@ -190,12 +194,10 @@ const (
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestRequest"
-            }
+            "name": "model_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
@@ -500,7 +502,7 @@ const (
   }
 }
 `
-	swagger_info = `{
+swagger_info = `{
   "info": {
     "title": "CarML DLFramework",
     "version": "1.0.0",

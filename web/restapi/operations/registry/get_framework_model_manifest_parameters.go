@@ -6,7 +6,6 @@ package registry
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
 	"net/http"
 
 	"github.com/go-openapi/errors"
@@ -14,8 +13,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkModelManifestParams creates a new GetFrameworkModelManifestParams object
@@ -36,19 +33,22 @@ type GetFrameworkModelManifestParams struct {
 
 	/*
 	  Required: true
-	  In: body
-	*/
-	Body *models.DlframeworkGetFrameworkModelManifestRequest
-	/*
-	  Required: true
 	  In: path
 	*/
 	FrameworkName string
+	/*
+	  In: query
+	*/
+	FrameworkVersion *string
 	/*
 	  Required: true
 	  In: path
 	*/
 	ModelName string
+	/*
+	  In: query
+	*/
+	ModelVersion *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -57,37 +57,25 @@ func (o *GetFrameworkModelManifestParams) BindRequest(r *http.Request, route *mi
 	var res []error
 	o.HTTPRequest = r
 
-	if runtime.HasBody(r) {
-		defer r.Body.Close()
-		var body models.DlframeworkGetFrameworkModelManifestRequest
-		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
-
-		} else {
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			if len(res) == 0 {
-				o.Body = &body
-			}
-		}
-
-	} else {
-		res = append(res, errors.Required("body", "body"))
-	}
+	qs := runtime.Values(r.URL.Query())
 
 	rFrameworkName, rhkFrameworkName, _ := route.Params.GetOK("framework_name")
 	if err := o.bindFrameworkName(rFrameworkName, rhkFrameworkName, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
+	qFrameworkVersion, qhkFrameworkVersion, _ := qs.GetOK("framework_version")
+	if err := o.bindFrameworkVersion(qFrameworkVersion, qhkFrameworkVersion, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
 	rModelName, rhkModelName, _ := route.Params.GetOK("model_name")
 	if err := o.bindModelName(rModelName, rhkModelName, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qModelVersion, qhkModelVersion, _ := qs.GetOK("model_version")
+	if err := o.bindModelVersion(qModelVersion, qhkModelVersion, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -108,6 +96,20 @@ func (o *GetFrameworkModelManifestParams) bindFrameworkName(rawData []string, ha
 	return nil
 }
 
+func (o *GetFrameworkModelManifestParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	o.FrameworkVersion = &raw
+
+	return nil
+}
+
 func (o *GetFrameworkModelManifestParams) bindModelName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
@@ -115,6 +117,20 @@ func (o *GetFrameworkModelManifestParams) bindModelName(rawData []string, hasKey
 	}
 
 	o.ModelName = raw
+
+	return nil
+}
+
+func (o *GetFrameworkModelManifestParams) bindModelVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	o.ModelVersion = &raw
 
 	return nil
 }

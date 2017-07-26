@@ -184,14 +184,12 @@ service Registry {
   rpc GetFrameworkModelManifest(GetFrameworkModelManifestRequest)
       returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/framework/{framework_name}/model/{model_name}/info",
-      body : "*"
+      get : "/v1/framework/{framework_name}/model/{model_name}/info"
     };
   }
   rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {
     option (google.api.http) = {
-      post : "/v1/model/{model_name}/info",
-      body : "*"
+      get : "/v1/model/{model_name}/info"
     };
   }
 }

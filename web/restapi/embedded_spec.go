@@ -60,7 +60,7 @@ func init() {
       }
     },
     "/v1/framework/{framework_name}/model/{model_name}/info": {
-      "post": {
+      "get": {
         "tags": [
           "Registry"
         ],
@@ -79,12 +79,14 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkModelManifestRequest"
-            }
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_version",
+            "in": "query"
           }
         ],
         "responses": {
@@ -177,7 +179,7 @@ func init() {
       }
     },
     "/v1/model/{model_name}/info": {
-      "post": {
+      "get": {
         "tags": [
           "Registry"
         ],
@@ -190,12 +192,9 @@ func init() {
             "required": true
           },
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestRequest"
-            }
+            "type": "string",
+            "name": "model_version",
+            "in": "query"
           }
         ],
         "responses": {

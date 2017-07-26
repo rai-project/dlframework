@@ -29,7 +29,7 @@ func NewGetFrameworkModelManifest(ctx *middleware.Context, handler GetFrameworkM
 	return &GetFrameworkModelManifest{Context: ctx, Handler: handler}
 }
 
-/*GetFrameworkModelManifest swagger:route POST /v1/framework/{framework_name}/model/{model_name}/info Registry getFrameworkModelManifest
+/*GetFrameworkModelManifest swagger:route GET /v1/framework/{framework_name}/model/{model_name}/info Registry getFrameworkModelManifest
 
 GetFrameworkModelManifest get framework model manifest API
 

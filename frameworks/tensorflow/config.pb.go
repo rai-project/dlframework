@@ -990,7 +990,7 @@ func (m *ConfigProto) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if len(m.DeviceCount) > 0 {
-		for k := range m.DeviceCount {
+		for k, _ := range m.DeviceCount {
 			dAtA[i] = 0xa
 			i++
 			v := m.DeviceCount[k]

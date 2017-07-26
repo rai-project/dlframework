@@ -115,13 +115,13 @@ func request_Registry_GetModelManifests_0(ctx context.Context, marshaler runtime
 
 }
 
+var (
+	filter_Registry_GetFrameworkModelManifest_0 = &utilities.DoubleArray{Encoding: map[string]int{"framework_name": 0, "model_name": 1}, Base: []int{1, 1, 2, 0, 0}, Check: []int{0, 1, 1, 2, 3}}
+)
+
 func request_Registry_GetFrameworkModelManifest_0(ctx context.Context, marshaler runtime.Marshaler, client RegistryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetFrameworkModelManifestRequest
 	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -152,18 +152,22 @@ func request_Registry_GetFrameworkModelManifest_0(ctx context.Context, marshaler
 		return nil, metadata, err
 	}
 
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_GetFrameworkModelManifest_0); err != nil {
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
 	msg, err := client.GetFrameworkModelManifest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
+var (
+	filter_Registry_GetModelManifest_0 = &utilities.DoubleArray{Encoding: map[string]int{"model_name": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
 func request_Registry_GetModelManifest_0(ctx context.Context, marshaler runtime.Marshaler, client RegistryClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetModelManifestRequest
 	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
-		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -181,6 +185,10 @@ func request_Registry_GetModelManifest_0(ctx context.Context, marshaler runtime.
 
 	if err != nil {
 		return nil, metadata, err
+	}
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_GetModelManifest_0); err != nil {
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.GetModelManifest(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -372,7 +380,7 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 
 	})
 
-	mux.Handle("POST", pattern_Registry_GetFrameworkModelManifest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Registry_GetFrameworkModelManifest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -400,7 +408,7 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 
 	})
 
-	mux.Handle("POST", pattern_Registry_GetModelManifest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Registry_GetModelManifest_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {

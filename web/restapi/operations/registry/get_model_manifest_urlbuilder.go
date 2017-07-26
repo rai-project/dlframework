@@ -16,6 +16,8 @@ import (
 type GetModelManifestURL struct {
 	ModelName string
 
+	ModelVersion *string
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -50,6 +52,18 @@ func (o *GetModelManifestURL) Build() (*url.URL, error) {
 	}
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var modelVersion string
+	if o.ModelVersion != nil {
+		modelVersion = *o.ModelVersion
+	}
+	if modelVersion != "" {
+		qs.Set("model_version", modelVersion)
+	}
+
+	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

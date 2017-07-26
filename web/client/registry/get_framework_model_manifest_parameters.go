@@ -16,8 +16,6 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/rai-project/dlframework/web/models"
 )
 
 // NewGetFrameworkModelManifestParams creates a new GetFrameworkModelManifestParams object
@@ -64,12 +62,14 @@ for the get framework model manifest operation typically these are written to a 
 */
 type GetFrameworkModelManifestParams struct {
 
-	/*Body*/
-	Body *models.DlframeworkGetFrameworkModelManifestRequest
 	/*FrameworkName*/
 	FrameworkName string
+	/*FrameworkVersion*/
+	FrameworkVersion *string
 	/*ModelName*/
 	ModelName string
+	/*ModelVersion*/
+	ModelVersion *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -109,17 +109,6 @@ func (o *GetFrameworkModelManifestParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) WithBody(body *models.DlframeworkGetFrameworkModelManifestRequest) *GetFrameworkModelManifestParams {
-	o.SetBody(body)
-	return o
-}
-
-// SetBody adds the body to the get framework model manifest params
-func (o *GetFrameworkModelManifestParams) SetBody(body *models.DlframeworkGetFrameworkModelManifestRequest) {
-	o.Body = body
-}
-
 // WithFrameworkName adds the frameworkName to the get framework model manifest params
 func (o *GetFrameworkModelManifestParams) WithFrameworkName(frameworkName string) *GetFrameworkModelManifestParams {
 	o.SetFrameworkName(frameworkName)
@@ -129,6 +118,17 @@ func (o *GetFrameworkModelManifestParams) WithFrameworkName(frameworkName string
 // SetFrameworkName adds the frameworkName to the get framework model manifest params
 func (o *GetFrameworkModelManifestParams) SetFrameworkName(frameworkName string) {
 	o.FrameworkName = frameworkName
+}
+
+// WithFrameworkVersion adds the frameworkVersion to the get framework model manifest params
+func (o *GetFrameworkModelManifestParams) WithFrameworkVersion(frameworkVersion *string) *GetFrameworkModelManifestParams {
+	o.SetFrameworkVersion(frameworkVersion)
+	return o
+}
+
+// SetFrameworkVersion adds the frameworkVersion to the get framework model manifest params
+func (o *GetFrameworkModelManifestParams) SetFrameworkVersion(frameworkVersion *string) {
+	o.FrameworkVersion = frameworkVersion
 }
 
 // WithModelName adds the modelName to the get framework model manifest params
@@ -142,6 +142,17 @@ func (o *GetFrameworkModelManifestParams) SetModelName(modelName string) {
 	o.ModelName = modelName
 }
 
+// WithModelVersion adds the modelVersion to the get framework model manifest params
+func (o *GetFrameworkModelManifestParams) WithModelVersion(modelVersion *string) *GetFrameworkModelManifestParams {
+	o.SetModelVersion(modelVersion)
+	return o
+}
+
+// SetModelVersion adds the modelVersion to the get framework model manifest params
+func (o *GetFrameworkModelManifestParams) SetModelVersion(modelVersion *string) {
+	o.ModelVersion = modelVersion
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetFrameworkModelManifestParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -150,22 +161,46 @@ func (o *GetFrameworkModelManifestParams) WriteToRequest(r runtime.ClientRequest
 	}
 	var res []error
 
-	if o.Body == nil {
-		o.Body = new(models.DlframeworkGetFrameworkModelManifestRequest)
-	}
-
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
-	}
-
 	// path param framework_name
 	if err := r.SetPathParam("framework_name", o.FrameworkName); err != nil {
 		return err
 	}
 
+	if o.FrameworkVersion != nil {
+
+		// query param framework_version
+		var qrFrameworkVersion string
+		if o.FrameworkVersion != nil {
+			qrFrameworkVersion = *o.FrameworkVersion
+		}
+		qFrameworkVersion := qrFrameworkVersion
+		if qFrameworkVersion != "" {
+			if err := r.SetQueryParam("framework_version", qFrameworkVersion); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// path param model_name
 	if err := r.SetPathParam("model_name", o.ModelName); err != nil {
 		return err
+	}
+
+	if o.ModelVersion != nil {
+
+		// query param model_version
+		var qrModelVersion string
+		if o.ModelVersion != nil {
+			qrModelVersion = *o.ModelVersion
+		}
+		qModelVersion := qrModelVersion
+		if qModelVersion != "" {
+			if err := r.SetQueryParam("model_version", qModelVersion); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {
