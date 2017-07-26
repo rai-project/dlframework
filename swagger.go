@@ -1,7 +1,7 @@
-package dlframework 
+package dlframework
 
 const (
-dlframework_swagger = `{
+	dlframework_swagger = `{
   "swagger": "2.0",
   "info": {
     "title": "CarML DLFramework",
@@ -500,7 +500,7 @@ dlframework_swagger = `{
   }
 }
 `
-swagger_info = `{
+	swagger_info = `{
   "info": {
     "title": "CarML DLFramework",
     "version": "1.0.0",
