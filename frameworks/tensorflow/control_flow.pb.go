@@ -230,7 +230,7 @@ func (m *ValuesDef) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.ExternalValues) > 0 {
-		for k, _ := range m.ExternalValues {
+		for k := range m.ExternalValues {
 			dAtA[i] = 0x12
 			i++
 			v := m.ExternalValues[k]

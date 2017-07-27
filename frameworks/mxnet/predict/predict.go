@@ -88,16 +88,7 @@ func (p *ImagePredictor) GetFeaturesUrl() string {
 	if !ok {
 		return ""
 	}
-	pfeatsVal := pfeats.Value
-	if pfeatsVal == nil {
-		return ""
-	}
-	data, ok := pfeatsVal.Fields["data"]
-	if !ok {
-		return ""
-	}
-	str := data.GetStringValue()
-	return str
+	return pfeats.Value
 }
 
 func (p *ImagePredictor) GetGraphPath() string {
