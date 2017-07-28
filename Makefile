@@ -76,18 +76,6 @@ clean-frameworks: clean-mxnet clean-caffe clean-tensorflow
 
 generate-frameworks: generate-mxnet generate-caffe generate-tensorflow
 
-linux-brew:
-	test -d $HOME/.linuxbrew/bin || git clone https://github.com/Linuxbrew/brew.git $HOME/.linuxbrew
-	PATH="$HOME/.linuxbrew/bin:$PATH"
-	echo 'export PATH="$HOME/.linuxbrew/bin:$PATH"' >>~/.bash_profile
-	export MANPATH="$(brew --prefix)/share/man:$MANPATH"
-	export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
-	brew --version
-  # Install Buck
-	brew tap facebook/fb
-	brew install buck
-	buck --version
-
 install-proto:
 	./scripts/install-protobuf.sh
 
