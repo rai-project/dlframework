@@ -2,7 +2,6 @@ package agent
 
 import (
 	"bytes"
-	"encoding/base64"
 	"path"
 	"strings"
 	"sync"
@@ -28,16 +27,6 @@ type Base struct {
 
 func toPath(s string) string {
 	return strings.Replace(s, ":", "/", -1)
-}
-
-func encode0(src []byte) []byte {
-	enc := base64.StdEncoding
-	buf := make([]byte, enc.EncodedLen(len(src)))
-	enc.Encode(buf, src)
-	return buf
-}
-func encode(src []byte) []byte {
-	return src
 }
 
 func (b *Base) PublishInRegistery(prefix string) error {
@@ -96,7 +85,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			if !found {
 				frameworkLines = append(frameworkLines, cn)
 				newVal := strings.TrimSpace(strings.Join(frameworkLines, "\n"))
-				rgs.AtomicPut(frameworksKey, encode([]byte(newVal)), kv, nil)
+				rgs.AtomicPut(frameworksKey, []byte(newVal), kv, nil)
 			}
 		}()
 	}
@@ -112,7 +101,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		if err != nil {
 			return
 		}
-		if err := rgs.Put(key, encode(bts.Bytes()), &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
+		if err := rgs.Put(key, bts.Bytes(), &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
 			return
 		}
 	}()
@@ -135,7 +124,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 				return
 			}
 			key := path.Join(prefix, toPath(mn), "info")
-			rgs.Put(key, encode(bts.Bytes()), &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
+			rgs.Put(key, bts.Bytes(), &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
 		}(model)
 	}
 
