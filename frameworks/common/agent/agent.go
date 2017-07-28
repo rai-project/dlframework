@@ -1,7 +1,6 @@
 package agent
 
 import (
-	"bytes"
 	"path"
 	"strings"
 	"sync"
@@ -12,13 +11,10 @@ import (
 	dl "github.com/rai-project/dlframework"
 	store "github.com/rai-project/libkv/store"
 	"github.com/rai-project/registry"
-
-	"github.com/gogo/protobuf/jsonpb"
 )
 
 var (
-	DefaultTTL       = time.Hour
-	DefaultMarshaler = &jsonpb.Marshaler{}
+	DefaultTTL = time.Hour
 )
 
 type Base struct {
@@ -30,7 +26,8 @@ func toPath(s string) string {
 }
 
 func (b *Base) PublishInRegistery(prefix string) error {
-	marshaler := DefaultMarshaler
+	marshaler := registry.Config.Serializer
+
 	rgs, err := registry.New()
 	if err != nil {
 		return err
@@ -96,12 +93,11 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		rgs.Put(key, nil, &store.WriteOptions{TTL: DefaultTTL, IsDir: true})
 
 		key = path.Join(key, "info")
-		bts := new(bytes.Buffer)
-		err := marshaler.Marshal(bts, &framework)
+		bts, err := marshaler.Marshal(&framework)
 		if err != nil {
 			return
 		}
-		if err := rgs.Put(key, bts.Bytes(), &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
+		if err := rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false}); err != nil {
 			return
 		}
 	}()
@@ -116,15 +112,12 @@ func (b *Base) PublishInRegistery(prefix string) error {
 				pp.Println(err)
 				return
 			}
-			bts := new(bytes.Buffer)
-			err = marshaler.Marshal(bts, &model)
-			// bts, err := model.Marshal()
+			bts, err := marshaler.Marshal(&model)
 			if err != nil {
-				pp.Println(err)
 				return
 			}
 			key := path.Join(prefix, toPath(mn), "info")
-			rgs.Put(key, bts.Bytes(), &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
+			rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
 		}(model)
 	}
 
