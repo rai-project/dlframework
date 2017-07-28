@@ -3,9 +3,10 @@ package predict
 import (
 	"io"
 
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
-	"github.com/spf13/cast"
 )
 
 type Predictor interface {
@@ -44,18 +45,9 @@ func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
 		return nil, errors.New("invalid image dimensions")
 	}
 
-	slice, err := cast.ToSliceE(pdimsVal)
-	if err != nil {
+	var dims []int32
+	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
 		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
-	}
-
-	dims := []int32{}
-	for _, v := range slice {
-		val, err := cast.ToInt32E(v)
-		if err != nil {
-			return nil, errors.Errorf("unable to get image mean %v as an integer slice", pdimsVal)
-		}
-		dims = append(dims, val)
 	}
 	return dims, nil
 }
@@ -77,23 +69,14 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 		return nil, errors.New("invalid image dimensions")
 	}
 
-	slice, err := cast.ToSliceE(pdimsVal)
-	if err != nil {
-		val, err := cast.ToFloat32E(pdimsVal)
-		if err != nil {
-			return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
-		}
-		log.Debugf("using %v,%v,%v as the mean image", val, val, val)
-		return []float32{val, val, val}, nil
+	var vals []float32
+	if err := yaml.Unmarshal([]byte(pdimsVal), &vals); err == nil {
+		return vals, nil
+	}
+	var val float32
+	if err := yaml.Unmarshal([]byte(pdimsVal), &val); err != nil {
+		return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
 	}
 
-	dims := []float32{}
-	for _, v := range slice {
-		f, err := cast.ToFloat32E(v)
-		if err != nil {
-			return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
-		}
-		dims = append(dims, f)
-	}
-	return dims, nil
+	return []float32{val, val, val}, nil
 }

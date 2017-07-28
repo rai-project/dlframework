@@ -16,7 +16,7 @@ func XXXTestPredictLoad(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, model)
 
-	predictor, err := New(model)
+	predictor, err := New(*model)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, predictor)
 
@@ -36,7 +36,7 @@ func TestPredictInference(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, model)
 
-	predictor, err := New(model)
+	predictor, err := New(*model)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, predictor)
 	defer predictor.Close()

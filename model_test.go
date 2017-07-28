@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	yaml "gopkg.in/yaml.v1"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const exampleModel = `name: Inception

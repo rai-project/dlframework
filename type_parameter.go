@@ -2,28 +2,35 @@ package dlframework
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 
+	"github.com/k0kubun/pp"
 	"github.com/spf13/cast"
 )
 
 func (param *ModelManifest_Type_Parameter) MarshalYAML() (interface{}, error) {
+	pp.Println(param)
 	return cast.ToStringE(param.Value)
 }
 
 func (param *ModelManifest_Type_Parameter) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	toListString := func(v interface{}) string {
+		return fmt.Sprintf("[%s]", strings.Join(cast.ToStringSlice(v), ","))
+	}
 	var stringSlice []string
 	if err := unmarshal(&stringSlice); err == nil {
-		param.Value = cast.ToString(stringSlice)
+		param.Value = toListString(stringSlice)
 		return nil
 	}
 	var int32Slice []int32
 	if err := unmarshal(&int32Slice); err == nil {
-		param.Value = cast.ToString(int32Slice)
+		param.Value = toListString(int32Slice)
 		return nil
 	}
 	var float32Slice []float32
 	if err := unmarshal(&float32Slice); err == nil {
-		param.Value = cast.ToString(float32Slice)
+		param.Value = toListString(float32Slice)
 		return nil
 	}
 
