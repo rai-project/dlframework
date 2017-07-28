@@ -188,7 +188,7 @@ func (m *DeviceProperties) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintDeviceProperties(dAtA, i, uint64(m.NumCores))
 	}
 	if len(m.Environment) > 0 {
-		for k := range m.Environment {
+		for k, _ := range m.Environment {
 			dAtA[i] = 0x32
 			i++
 			v := m.Environment[k]

@@ -220,7 +220,7 @@ func (m *FunctionDef) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.Ret) > 0 {
-		for k := range m.Ret {
+		for k, _ := range m.Ret {
 			dAtA[i] = 0x22
 			i++
 			v := m.Ret[k]
@@ -237,7 +237,7 @@ func (m *FunctionDef) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if len(m.Attr) > 0 {
-		for k := range m.Attr {
+		for k, _ := range m.Attr {
 			dAtA[i] = 0x2a
 			i++
 			v := m.Attr[k]
