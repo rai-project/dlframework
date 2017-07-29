@@ -19,79 +19,7 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/framework/{framework_name}/info": {
-      "get": {
-        "operationId": "GetFrameworkManifest",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFrameworkManifest"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "framework_version",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Registry"
-        ]
-      }
-    },
-    "/v1/framework/{framework_name}/model/{model_name}/info": {
-      "get": {
-        "operationId": "GetFrameworkModelManifest",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkModelManifest"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "framework_version",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "model_version",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Registry"
-        ]
-      }
-    },
-    "/v1/framework/{framework_name}/model/{model_name}/predict": {
+    "/v1/predict": {
       "post": {
         "operationId": "Predict",
         "responses": {
@@ -103,18 +31,6 @@ const (
           }
         },
         "parameters": [
-          {
-            "name": "framework_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "model_name",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -129,22 +45,22 @@ const (
         ]
       }
     },
-    "/v1/framework/{framework_name}/models": {
+    "/v1/registry/frameworks": {
       "get": {
-        "operationId": "GetFrameworkModels",
+        "operationId": "Frameworks",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
+              "$ref": "#/definitions/dlframeworkFrameworksResponse"
             }
           }
         },
         "parameters": [
           {
             "name": "framework_name",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
@@ -159,38 +75,34 @@ const (
         ]
       }
     },
-    "/v1/frameworks": {
+    "/v1/registry/models": {
       "get": {
-        "operationId": "GetFrameworkManifests",
+        "operationId": "Models",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkGetFrameworkManifestsResponse"
-            }
-          }
-        },
-        "tags": [
-          "Registry"
-        ]
-      }
-    },
-    "/v1/model/{model_name}/info": {
-      "get": {
-        "operationId": "GetModelManifest",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkModelManifest"
+              "$ref": "#/definitions/dlframeworkModelsResponse"
             }
           }
         },
         "parameters": [
           {
+            "name": "framework_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "model_name",
-            "in": "path",
-            "required": true,
+            "in": "query",
+            "required": false,
             "type": "string"
           },
           {
@@ -200,22 +112,6 @@ const (
             "type": "string"
           }
         ],
-        "tags": [
-          "Registry"
-        ]
-      }
-    },
-    "/v1/models": {
-      "get": {
-        "operationId": "GetModelManifests",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkGetModelManifestsResponse"
-            }
-          }
-        },
         "tags": [
           "Registry"
         ]
@@ -289,7 +185,7 @@ const (
         }
       }
     },
-    "dlframeworkGetFrameworkManifestRequest": {
+    "dlframeworkFrameworksRequest": {
       "type": "object",
       "properties": {
         "framework_name": {
@@ -300,52 +196,13 @@ const (
         }
       }
     },
-    "dlframeworkGetFrameworkManifestsResponse": {
+    "dlframeworkFrameworksResponse": {
       "type": "object",
       "properties": {
         "manifests": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
-          }
-        }
-      }
-    },
-    "dlframeworkGetFrameworkModelManifestRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkGetModelManifestRequest": {
-      "type": "object",
-      "properties": {
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkGetModelManifestsResponse": {
-      "type": "object",
-      "properties": {
-        "manifests": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkModelManifest"
           }
         }
       }
@@ -435,8 +292,33 @@ const (
         }
       }
     },
-    "dlframeworkNull": {
-      "type": "object"
+    "dlframeworkModelsRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkModelsResponse": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkModelManifest"
+          }
+        }
+      }
     },
     "dlframeworkPredictRequest": {
       "type": "object",

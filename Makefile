@@ -36,19 +36,21 @@ generate-proto:
 	jq -s '.[0] * .[1]' dlframework.swagger.json.tmp swagger_info.json > dlframework.swagger.json
 	rm -fr dlframework.swagger.json.tmp
 	go run scripts/includetext.go
+	gofmt -s -w *pb.go *pb.gw.go *pb_test.go swagger.go
 
-generate: generate-proto generate-frameworks generate-swagger
+generate: generate-proto generate-swagger
 
-generate-swagger: clean-web
-	swagger generate server -f dlframework.swagger.json -t web -A dlframework
-	swagger generate client -f dlframework.swagger.json -t web -A dlframework
-	swagger generate support -f dlframework.swagger.json -t web -A dlframework
+generate-swagger: clean-httpapi
+	swagger generate server -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate client -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate support -f dlframework.swagger.json -t httpapi -A dlframework
+	gofmt -s -w httpapi
 
-clean: clean-web clean-frameworks
+clean: clean-httpapi
 	rm -fr *pb.go *pb.gw.go *pb_test.go swagger.go
 
-clean-web:
-	rm -fr web
+clean-httpapi:
+	rm -fr httpapi
 
 clean-mxnet:
 	rm -fr frameworks/mxnet/builtin_models_static.go frameworks/mxnet/*pb.go

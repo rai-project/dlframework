@@ -91,17 +91,19 @@ message ModelManifest {
       [ (gogoproto.moretags) = "yaml:\"attributes,omitempty\"" ];
 }
 
-message GetModelManifestsResponse {
-  repeated ModelManifest manifests = 1
-      [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
+message FrameworksRequest {
+  string framework_name = 1
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 2
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
 }
 
-message GetFrameworkManifestsResponse {
+message FrameworksResponse {
   repeated FrameworkManifest manifests = 1
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
-message GetFrameworkModelManifestRequest {
+message ModelsRequest {
   string framework_name = 1
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
   string framework_version = 2
@@ -112,21 +114,10 @@ message GetFrameworkModelManifestRequest {
       [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
 }
 
-message GetModelManifestRequest {
-  string model_name = 1
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 2
-      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+message ModelsResponse {
+  repeated ModelManifest manifests = 1
+      [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
-
-message GetFrameworkManifestRequest {
-  string framework_name = 1
-      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 2
-      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-}
-
-message Null {}
 
 message PredictRequest {
   string model_name = 1
@@ -159,44 +150,21 @@ message PredictResponse {
 }
 
 service Registry {
-  rpc GetFrameworkManifests(Null) returns (GetFrameworkManifestsResponse) {
+  rpc Frameworks(FrameworksRequest) returns (FrameworksResponse) {
     option (google.api.http) = {
-      get : "/v1/frameworks",
+      get : "/v1/registry/frameworks",
     };
   }
-  rpc GetFrameworkManifest(GetFrameworkManifestRequest)
-      returns (FrameworkManifest) {
+  rpc Models(ModelsRequest) returns (ModelsResponse) {
     option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/info"
-    };
-  }
-  rpc GetFrameworkModels(GetFrameworkManifestRequest)
-      returns (GetModelManifestsResponse) {
-    option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/models"
-    };
-  }
-  rpc GetModelManifests(Null) returns (GetModelManifestsResponse) {
-    option (google.api.http) = {
-      get : "/v1/models",
-    };
-  }
-  rpc GetFrameworkModelManifest(GetFrameworkModelManifestRequest)
-      returns (ModelManifest) {
-    option (google.api.http) = {
-      get : "/v1/framework/{framework_name}/model/{model_name}/info"
-    };
-  }
-  rpc GetModelManifest(GetModelManifestRequest) returns (ModelManifest) {
-    option (google.api.http) = {
-      get : "/v1/model/{model_name}/info"
+      get : "/v1/registry/models",
     };
   }
 }
 service Predictor {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
-      post : "/v1/framework/{framework_name}/model/{model_name}/predict",
+      post : "/v1/predict",
       body : "*"
     };
   }
