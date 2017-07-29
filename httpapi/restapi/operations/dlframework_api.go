@@ -38,11 +38,17 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		RegistryFrameworksHandler: registry.FrameworksHandlerFunc(func(params registry.FrameworksParams) middleware.Responder {
-			return middleware.NotImplemented("operation RegistryFrameworks has not yet been implemented")
+		RegistryFrameworkAgentsHandler: registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryFrameworkAgents has not yet been implemented")
 		}),
-		RegistryModelsHandler: registry.ModelsHandlerFunc(func(params registry.ModelsParams) middleware.Responder {
-			return middleware.NotImplemented("operation RegistryModels has not yet been implemented")
+		RegistryFrameworkManifestsHandler: registry.FrameworkManifestsHandlerFunc(func(params registry.FrameworkManifestsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryFrameworkManifests has not yet been implemented")
+		}),
+		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
+		}),
+		RegistryModelManifestsHandler: registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
+			return middleware.NotImplemented("operation RegistryModelManifests has not yet been implemented")
 		}),
 		PredictorPredictHandler: predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictorPredict has not yet been implemented")
@@ -76,10 +82,14 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// RegistryFrameworksHandler sets the operation handler for the frameworks operation
-	RegistryFrameworksHandler registry.FrameworksHandler
-	// RegistryModelsHandler sets the operation handler for the models operation
-	RegistryModelsHandler registry.ModelsHandler
+	// RegistryFrameworkAgentsHandler sets the operation handler for the framework agents operation
+	RegistryFrameworkAgentsHandler registry.FrameworkAgentsHandler
+	// RegistryFrameworkManifestsHandler sets the operation handler for the framework manifests operation
+	RegistryFrameworkManifestsHandler registry.FrameworkManifestsHandler
+	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
+	RegistryModelAgentsHandler registry.ModelAgentsHandler
+	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
+	RegistryModelManifestsHandler registry.ModelManifestsHandler
 	// PredictorPredictHandler sets the operation handler for the predict operation
 	PredictorPredictHandler predictor.PredictHandler
 
@@ -145,12 +155,20 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.RegistryFrameworksHandler == nil {
-		unregistered = append(unregistered, "registry.FrameworksHandler")
+	if o.RegistryFrameworkAgentsHandler == nil {
+		unregistered = append(unregistered, "registry.FrameworkAgentsHandler")
 	}
 
-	if o.RegistryModelsHandler == nil {
-		unregistered = append(unregistered, "registry.ModelsHandler")
+	if o.RegistryFrameworkManifestsHandler == nil {
+		unregistered = append(unregistered, "registry.FrameworkManifestsHandler")
+	}
+
+	if o.RegistryModelAgentsHandler == nil {
+		unregistered = append(unregistered, "registry.ModelAgentsHandler")
+	}
+
+	if o.RegistryModelManifestsHandler == nil {
+		unregistered = append(unregistered, "registry.ModelManifestsHandler")
 	}
 
 	if o.PredictorPredictHandler == nil {
@@ -243,12 +261,22 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/frameworks"] = registry.NewFrameworks(o.context, o.RegistryFrameworksHandler)
+	o.handlers["GET"]["/v1/registry/frameworks/agent"] = registry.NewFrameworkAgents(o.context, o.RegistryFrameworkAgentsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/models"] = registry.NewModels(o.context, o.RegistryModelsHandler)
+	o.handlers["GET"]["/v1/registry/frameworks/manifest"] = registry.NewFrameworkManifests(o.context, o.RegistryFrameworkManifestsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/registry/models/agent"] = registry.NewModelAgents(o.context, o.RegistryModelAgentsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/v1/registry/models/manifest"] = registry.NewModelManifests(o.context, o.RegistryModelManifestsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

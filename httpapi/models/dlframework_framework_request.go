@@ -12,25 +12,19 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkModelsRequest dlframework models request
-// swagger:model dlframeworkModelsRequest
-type DlframeworkModelsRequest struct {
+// DlframeworkFrameworkRequest dlframework framework request
+// swagger:model dlframeworkFrameworkRequest
+type DlframeworkFrameworkRequest struct {
 
 	// framework name
 	FrameworkName string `json:"framework_name,omitempty"`
 
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// model name
-	ModelName string `json:"model_name,omitempty"`
-
-	// model version
-	ModelVersion string `json:"model_version,omitempty"`
 }
 
-// Validate validates this dlframework models request
-func (m *DlframeworkModelsRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework framework request
+func (m *DlframeworkFrameworkRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -40,7 +34,7 @@ func (m *DlframeworkModelsRequest) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkModelsRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkFrameworkRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -48,8 +42,8 @@ func (m *DlframeworkModelsRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkModelsRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkModelsRequest
+func (m *DlframeworkFrameworkRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkFrameworkRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -56,12 +56,12 @@ func init() {
         }
       }
     },
-    "/v1/registry/frameworks": {
+    "/v1/registry/frameworks/agent": {
       "get": {
         "tags": [
           "Registry"
         ],
-        "operationId": "Frameworks",
+        "operationId": "FrameworkAgents",
         "parameters": [
           {
             "type": "string",
@@ -77,18 +77,45 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "$ref": "#/definitions/dlframeworkFrameworksResponse"
+              "$ref": "#/definitions/dlframeworkAgents"
             }
           }
         }
       }
     },
-    "/v1/registry/models": {
+    "/v1/registry/frameworks/manifest": {
       "get": {
         "tags": [
           "Registry"
         ],
-        "operationId": "Models",
+        "operationId": "FrameworkManifests",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v1/registry/models/agent": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "ModelAgents",
         "parameters": [
           {
             "type": "string",
@@ -114,7 +141,44 @@ func init() {
         "responses": {
           "200": {
             "schema": {
-              "$ref": "#/definitions/dlframeworkModelsResponse"
+              "$ref": "#/definitions/dlframeworkAgents"
+            }
+          }
+        }
+      }
+    },
+    "/v1/registry/models/manifest": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "ModelManifests",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
           }
         }
@@ -145,6 +209,25 @@ func init() {
       "properties": {
         "value": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgent": {
+      "type": "object",
+      "properties": {
+        "todo": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgents": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkAgent"
+          }
         }
       }
     },
@@ -188,18 +271,7 @@ func init() {
         }
       }
     },
-    "dlframeworkFrameworksRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkFrameworksResponse": {
+    "dlframeworkFrameworkManifestsResponse": {
       "type": "object",
       "properties": {
         "manifests": {
@@ -207,6 +279,17 @@ func init() {
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
           }
+        }
+      }
+    },
+    "dlframeworkFrameworkRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
         }
       }
     },
@@ -295,7 +378,18 @@ func init() {
         }
       }
     },
-    "dlframeworkModelsRequest": {
+    "dlframeworkModelManifestsResponse": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkModelManifest"
+          }
+        }
+      }
+    },
+    "dlframeworkModelRequest": {
       "type": "object",
       "properties": {
         "framework_name": {
@@ -309,17 +403,6 @@ func init() {
         },
         "model_version": {
           "type": "string"
-        }
-      }
-    },
-    "dlframeworkModelsResponse": {
-      "type": "object",
-      "properties": {
-        "manifests": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkModelManifest"
-          }
         }
       }
     },

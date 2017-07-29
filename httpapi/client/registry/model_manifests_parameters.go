@@ -18,49 +18,49 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewModelsParams creates a new ModelsParams object
+// NewModelManifestsParams creates a new ModelManifestsParams object
 // with the default values initialized.
-func NewModelsParams() *ModelsParams {
+func NewModelManifestsParams() *ModelManifestsParams {
 	var ()
-	return &ModelsParams{
+	return &ModelManifestsParams{
 
 		timeout: cr.DefaultTimeout,
 	}
 }
 
-// NewModelsParamsWithTimeout creates a new ModelsParams object
+// NewModelManifestsParamsWithTimeout creates a new ModelManifestsParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewModelsParamsWithTimeout(timeout time.Duration) *ModelsParams {
+func NewModelManifestsParamsWithTimeout(timeout time.Duration) *ModelManifestsParams {
 	var ()
-	return &ModelsParams{
+	return &ModelManifestsParams{
 
 		timeout: timeout,
 	}
 }
 
-// NewModelsParamsWithContext creates a new ModelsParams object
+// NewModelManifestsParamsWithContext creates a new ModelManifestsParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewModelsParamsWithContext(ctx context.Context) *ModelsParams {
+func NewModelManifestsParamsWithContext(ctx context.Context) *ModelManifestsParams {
 	var ()
-	return &ModelsParams{
+	return &ModelManifestsParams{
 
 		Context: ctx,
 	}
 }
 
-// NewModelsParamsWithHTTPClient creates a new ModelsParams object
+// NewModelManifestsParamsWithHTTPClient creates a new ModelManifestsParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewModelsParamsWithHTTPClient(client *http.Client) *ModelsParams {
+func NewModelManifestsParamsWithHTTPClient(client *http.Client) *ModelManifestsParams {
 	var ()
-	return &ModelsParams{
+	return &ModelManifestsParams{
 		HTTPClient: client,
 	}
 }
 
-/*ModelsParams contains all the parameters to send to the API endpoint
-for the models operation typically these are written to a http.Request
+/*ModelManifestsParams contains all the parameters to send to the API endpoint
+for the model manifests operation typically these are written to a http.Request
 */
-type ModelsParams struct {
+type ModelManifestsParams struct {
 
 	/*FrameworkName*/
 	FrameworkName *string
@@ -76,85 +76,85 @@ type ModelsParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the models params
-func (o *ModelsParams) WithTimeout(timeout time.Duration) *ModelsParams {
+// WithTimeout adds the timeout to the model manifests params
+func (o *ModelManifestsParams) WithTimeout(timeout time.Duration) *ModelManifestsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the models params
-func (o *ModelsParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the model manifests params
+func (o *ModelManifestsParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the models params
-func (o *ModelsParams) WithContext(ctx context.Context) *ModelsParams {
+// WithContext adds the context to the model manifests params
+func (o *ModelManifestsParams) WithContext(ctx context.Context) *ModelManifestsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the models params
-func (o *ModelsParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the model manifests params
+func (o *ModelManifestsParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the models params
-func (o *ModelsParams) WithHTTPClient(client *http.Client) *ModelsParams {
+// WithHTTPClient adds the HTTPClient to the model manifests params
+func (o *ModelManifestsParams) WithHTTPClient(client *http.Client) *ModelManifestsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the models params
-func (o *ModelsParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the model manifests params
+func (o *ModelManifestsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithFrameworkName adds the frameworkName to the models params
-func (o *ModelsParams) WithFrameworkName(frameworkName *string) *ModelsParams {
+// WithFrameworkName adds the frameworkName to the model manifests params
+func (o *ModelManifestsParams) WithFrameworkName(frameworkName *string) *ModelManifestsParams {
 	o.SetFrameworkName(frameworkName)
 	return o
 }
 
-// SetFrameworkName adds the frameworkName to the models params
-func (o *ModelsParams) SetFrameworkName(frameworkName *string) {
+// SetFrameworkName adds the frameworkName to the model manifests params
+func (o *ModelManifestsParams) SetFrameworkName(frameworkName *string) {
 	o.FrameworkName = frameworkName
 }
 
-// WithFrameworkVersion adds the frameworkVersion to the models params
-func (o *ModelsParams) WithFrameworkVersion(frameworkVersion *string) *ModelsParams {
+// WithFrameworkVersion adds the frameworkVersion to the model manifests params
+func (o *ModelManifestsParams) WithFrameworkVersion(frameworkVersion *string) *ModelManifestsParams {
 	o.SetFrameworkVersion(frameworkVersion)
 	return o
 }
 
-// SetFrameworkVersion adds the frameworkVersion to the models params
-func (o *ModelsParams) SetFrameworkVersion(frameworkVersion *string) {
+// SetFrameworkVersion adds the frameworkVersion to the model manifests params
+func (o *ModelManifestsParams) SetFrameworkVersion(frameworkVersion *string) {
 	o.FrameworkVersion = frameworkVersion
 }
 
-// WithModelName adds the modelName to the models params
-func (o *ModelsParams) WithModelName(modelName *string) *ModelsParams {
+// WithModelName adds the modelName to the model manifests params
+func (o *ModelManifestsParams) WithModelName(modelName *string) *ModelManifestsParams {
 	o.SetModelName(modelName)
 	return o
 }
 
-// SetModelName adds the modelName to the models params
-func (o *ModelsParams) SetModelName(modelName *string) {
+// SetModelName adds the modelName to the model manifests params
+func (o *ModelManifestsParams) SetModelName(modelName *string) {
 	o.ModelName = modelName
 }
 
-// WithModelVersion adds the modelVersion to the models params
-func (o *ModelsParams) WithModelVersion(modelVersion *string) *ModelsParams {
+// WithModelVersion adds the modelVersion to the model manifests params
+func (o *ModelManifestsParams) WithModelVersion(modelVersion *string) *ModelManifestsParams {
 	o.SetModelVersion(modelVersion)
 	return o
 }
 
-// SetModelVersion adds the modelVersion to the models params
-func (o *ModelsParams) SetModelVersion(modelVersion *string) {
+// SetModelVersion adds the modelVersion to the model manifests params
+func (o *ModelManifestsParams) SetModelVersion(modelVersion *string) {
 	o.ModelVersion = modelVersion
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *ModelsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *ModelManifestsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err

@@ -15,18 +15,18 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewFrameworksParams creates a new FrameworksParams object
+// NewFrameworkManifestsParams creates a new FrameworkManifestsParams object
 // with the default values initialized.
-func NewFrameworksParams() FrameworksParams {
+func NewFrameworkManifestsParams() FrameworkManifestsParams {
 	var ()
-	return FrameworksParams{}
+	return FrameworkManifestsParams{}
 }
 
-// FrameworksParams contains all the bound params for the frameworks operation
+// FrameworkManifestsParams contains all the bound params for the framework manifests operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters Frameworks
-type FrameworksParams struct {
+// swagger:parameters FrameworkManifests
+type FrameworkManifestsParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request
@@ -43,7 +43,7 @@ type FrameworksParams struct {
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *FrameworksParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *FrameworkManifestsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
@@ -65,7 +65,7 @@ func (o *FrameworksParams) BindRequest(r *http.Request, route *middleware.Matche
 	return nil
 }
 
-func (o *FrameworksParams) bindFrameworkName(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *FrameworkManifestsParams) bindFrameworkName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
@@ -79,7 +79,7 @@ func (o *FrameworksParams) bindFrameworkName(rawData []string, hasKey bool, form
 	return nil
 }
 
-func (o *FrameworksParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *FrameworkManifestsParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

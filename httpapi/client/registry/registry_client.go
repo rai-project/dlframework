@@ -25,58 +25,114 @@ type Client struct {
 }
 
 /*
-Frameworks frameworks API
+FrameworkAgents framework agents API
 */
-func (a *Client) Frameworks(params *FrameworksParams) (*FrameworksOK, error) {
+func (a *Client) FrameworkAgents(params *FrameworkAgentsParams) (*FrameworkAgentsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewFrameworksParams()
+		params = NewFrameworkAgentsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Frameworks",
+		ID:                 "FrameworkAgents",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/frameworks",
+		PathPattern:        "/v1/registry/frameworks/agent",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
 		Params:             params,
-		Reader:             &FrameworksReader{formats: a.formats},
+		Reader:             &FrameworkAgentsReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*FrameworksOK), nil
+	return result.(*FrameworkAgentsOK), nil
 
 }
 
 /*
-Models models API
+FrameworkManifests framework manifests API
 */
-func (a *Client) Models(params *ModelsParams) (*ModelsOK, error) {
+func (a *Client) FrameworkManifests(params *FrameworkManifestsParams) (*FrameworkManifestsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewModelsParams()
+		params = NewFrameworkManifestsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Models",
+		ID:                 "FrameworkManifests",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/models",
+		PathPattern:        "/v1/registry/frameworks/manifest",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
 		Params:             params,
-		Reader:             &ModelsReader{formats: a.formats},
+		Reader:             &FrameworkManifestsReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ModelsOK), nil
+	return result.(*FrameworkManifestsOK), nil
+
+}
+
+/*
+ModelAgents model agents API
+*/
+func (a *Client) ModelAgents(params *ModelAgentsParams) (*ModelAgentsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModelAgentsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModelAgents",
+		Method:             "GET",
+		PathPattern:        "/v1/registry/models/agent",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ModelAgentsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModelAgentsOK), nil
+
+}
+
+/*
+ModelManifests model manifests API
+*/
+func (a *Client) ModelManifests(params *ModelManifestsParams) (*ModelManifestsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewModelManifestsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "ModelManifests",
+		Method:             "GET",
+		PathPattern:        "/v1/registry/models/manifest",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ModelManifestsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ModelManifestsOK), nil
 
 }
 

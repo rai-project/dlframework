@@ -38,11 +38,17 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.RegistryFrameworksHandler = registry.FrameworksHandlerFunc(func(params registry.FrameworksParams) middleware.Responder {
-		return middleware.NotImplemented("operation registry.Frameworks has not yet been implemented")
+	api.RegistryFrameworkAgentsHandler = registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.FrameworkAgents has not yet been implemented")
 	})
-	api.RegistryModelsHandler = registry.ModelsHandlerFunc(func(params registry.ModelsParams) middleware.Responder {
-		return middleware.NotImplemented("operation registry.Models has not yet been implemented")
+	api.RegistryFrameworkManifestsHandler = registry.FrameworkManifestsHandlerFunc(func(params registry.FrameworkManifestsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.FrameworkManifests has not yet been implemented")
+	})
+	api.RegistryModelAgentsHandler = registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.ModelAgents has not yet been implemented")
+	})
+	api.RegistryModelManifestsHandler = registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
+		return middleware.NotImplemented("operation registry.ModelManifests has not yet been implemented")
 	})
 	api.PredictorPredictHandler = predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
 		return middleware.NotImplemented("operation predictor.Predict has not yet been implemented")

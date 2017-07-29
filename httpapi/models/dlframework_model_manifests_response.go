@@ -14,16 +14,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkFrameworksResponse dlframework frameworks response
-// swagger:model dlframeworkFrameworksResponse
-type DlframeworkFrameworksResponse struct {
+// DlframeworkModelManifestsResponse dlframework model manifests response
+// swagger:model dlframeworkModelManifestsResponse
+type DlframeworkModelManifestsResponse struct {
 
 	// manifests
-	Manifests []*DlframeworkFrameworkManifest `json:"manifests"`
+	Manifests []*DlframeworkModelManifest `json:"manifests"`
 }
 
-// Validate validates this dlframework frameworks response
-func (m *DlframeworkFrameworksResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework model manifests response
+func (m *DlframeworkModelManifestsResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateManifests(formats); err != nil {
@@ -37,7 +37,7 @@ func (m *DlframeworkFrameworksResponse) Validate(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *DlframeworkFrameworksResponse) validateManifests(formats strfmt.Registry) error {
+func (m *DlframeworkModelManifestsResponse) validateManifests(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Manifests) { // not required
 		return nil
@@ -65,7 +65,7 @@ func (m *DlframeworkFrameworksResponse) validateManifests(formats strfmt.Registr
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkFrameworksResponse) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkModelManifestsResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -73,8 +73,8 @@ func (m *DlframeworkFrameworksResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkFrameworksResponse) UnmarshalBinary(b []byte) error {
-	var res DlframeworkFrameworksResponse
+func (m *DlframeworkModelManifestsResponse) UnmarshalBinary(b []byte) error {
+	var res DlframeworkModelManifestsResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

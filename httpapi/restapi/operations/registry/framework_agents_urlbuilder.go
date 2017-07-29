@@ -11,8 +11,8 @@ import (
 	golangswaggerpaths "path"
 )
 
-// FrameworksURL generates an URL for the frameworks operation
-type FrameworksURL struct {
+// FrameworkAgentsURL generates an URL for the framework agents operation
+type FrameworkAgentsURL struct {
 	FrameworkName    *string
 	FrameworkVersion *string
 
@@ -24,7 +24,7 @@ type FrameworksURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *FrameworksURL) WithBasePath(bp string) *FrameworksURL {
+func (o *FrameworkAgentsURL) WithBasePath(bp string) *FrameworkAgentsURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -32,15 +32,15 @@ func (o *FrameworksURL) WithBasePath(bp string) *FrameworksURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *FrameworksURL) SetBasePath(bp string) {
+func (o *FrameworkAgentsURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *FrameworksURL) Build() (*url.URL, error) {
+func (o *FrameworkAgentsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/registry/frameworks"
+	var _path = "/v1/registry/frameworks/agent"
 
 	_basePath := o._basePath
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
@@ -69,7 +69,7 @@ func (o *FrameworksURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *FrameworksURL) Must(u *url.URL, err error) *url.URL {
+func (o *FrameworkAgentsURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -80,17 +80,17 @@ func (o *FrameworksURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *FrameworksURL) String() string {
+func (o *FrameworkAgentsURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *FrameworksURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *FrameworkAgentsURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on FrameworksURL")
+		return nil, errors.New("scheme is required for a full url on FrameworkAgentsURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on FrameworksURL")
+		return nil, errors.New("host is required for a full url on FrameworkAgentsURL")
 	}
 
 	base, err := o.Build()
@@ -104,6 +104,6 @@ func (o *FrameworksURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *FrameworksURL) StringFull(scheme, host string) string {
+func (o *FrameworkAgentsURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

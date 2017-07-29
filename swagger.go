@@ -45,14 +45,14 @@ const (
         ]
       }
     },
-    "/v1/registry/frameworks": {
+    "/v1/registry/frameworks/agent": {
       "get": {
-        "operationId": "Frameworks",
+        "operationId": "FrameworkAgents",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFrameworksResponse"
+              "$ref": "#/definitions/dlframeworkAgents"
             }
           }
         },
@@ -75,14 +75,86 @@ const (
         ]
       }
     },
-    "/v1/registry/models": {
+    "/v1/registry/frameworks/manifest": {
       "get": {
-        "operationId": "Models",
+        "operationId": "FrameworkManifests",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkModelsResponse"
+              "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "framework_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Registry"
+        ]
+      }
+    },
+    "/v1/registry/models/agent": {
+      "get": {
+        "operationId": "ModelAgents",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkAgents"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "framework_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "framework_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "model_name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "model_version",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Registry"
+        ]
+      }
+    },
+    "/v1/registry/models/manifest": {
+      "get": {
+        "operationId": "ModelManifests",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
           }
         },
@@ -145,6 +217,25 @@ const (
         }
       }
     },
+    "dlframeworkAgent": {
+      "type": "object",
+      "properties": {
+        "todo": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgents": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkAgent"
+          }
+        }
+      }
+    },
     "dlframeworkContainerHardware": {
       "type": "object",
       "properties": {
@@ -185,18 +276,7 @@ const (
         }
       }
     },
-    "dlframeworkFrameworksRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkFrameworksResponse": {
+    "dlframeworkFrameworkManifestsResponse": {
       "type": "object",
       "properties": {
         "manifests": {
@@ -204,6 +284,17 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
           }
+        }
+      }
+    },
+    "dlframeworkFrameworkRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
         }
       }
     },
@@ -292,7 +383,18 @@ const (
         }
       }
     },
-    "dlframeworkModelsRequest": {
+    "dlframeworkModelManifestsResponse": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkModelManifest"
+          }
+        }
+      }
+    },
+    "dlframeworkModelRequest": {
       "type": "object",
       "properties": {
         "framework_name": {
@@ -306,17 +408,6 @@ const (
         },
         "model_version": {
           "type": "string"
-        }
-      }
-    },
-    "dlframeworkModelsResponse": {
-      "type": "object",
-      "properties": {
-        "manifests": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkModelManifest"
-          }
         }
       }
     },
