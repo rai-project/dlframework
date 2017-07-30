@@ -8,32 +8,19 @@ import (
 type Registry struct {
 }
 
-func (c *Registry) GetFrameworkManifests(ctx context.Context, ignore *dlframework.Null) (*dlframework.GetFrameworkManifestsResponse, error) {
-	panic("GetFrameworkManifests")
+func (c *Registry) FrameworkManifests(context.Context, *dlframework.FrameworkRequest) (*dlframework.FrameworkManifestsResponse, error) {
+	panic("FrameworkManifests")
 	return nil, nil
 }
-
-func (c *Registry) GetFrameworkManifest(ctx context.Context, req *dlframework.GetFrameworkManifestRequest) (*dlframework.FrameworkManifest, error) {
-	panic("GetFrameworkManifest")
+func (c *Registry) FrameworkAgents(context.Context, *dlframework.FrameworkRequest) (*dlframework.Agents, error) {
+	panic("FrameworkAgents")
 	return nil, nil
 }
-
-func (c *Registry) GetFrameworkModels(ctx context.Context, req *dlframework.GetFrameworkManifestRequest) (*dlframework.GetModelManifestsResponse, error) {
-	panic("GetFrameworkModels")
+func (c *Registry) ModelManifests(context.Context, *dlframework.ModelRequest) (*dlframework.ModelManifestsResponse, error) {
+	panic("ModelManifests")
 	return nil, nil
 }
-
-func (c *Registry) GetModelManifests(ctx context.Context, ignore *dlframework.Null) (*dlframework.GetModelManifestsResponse, error) {
-	panic("GetModelManifests")
-	return nil, nil
-}
-
-func (c *Registry) GetFrameworkModelManifest(ctx context.Context, req *dlframework.GetFrameworkModelManifestRequest) (*dlframework.ModelManifest, error) {
-	panic("GetFrameworkModelManifest")
-	return nil, nil
-}
-
-func (c *Registry) GetModelManifest(ctx context.Context, req *dlframework.GetModelManifestRequest) (*dlframework.ModelManifest, error) {
-	panic("GetModelManifest")
+func (c *Registry) ModelAgents(context.Context, *dlframework.ModelRequest) (*dlframework.Agents, error) {
+	panic("ModelAgents")
 	return nil, nil
 }

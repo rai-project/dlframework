@@ -140,7 +140,7 @@ func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 
 func FindFramework(name string) (*FrameworkManifest, error) {
 	var framework *FrameworkManifest
-	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
+	frameworkRegistry.Range(func(key0 interface{}, value interface{}) bool {
 		key, ok := key0.(string)
 		if !ok {
 			return true
