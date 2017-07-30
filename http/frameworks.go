@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"path"
 	"runtime"
 	"sort"
@@ -14,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
-	"github.com/rai-project/dlframework/httpapi/models"
+	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	kv "github.com/rai-project/registry"
 	"github.com/rai-project/serializer"
 )
@@ -25,7 +24,7 @@ type frameworksTy struct {
 
 var frameworks frameworksTy
 
-func (f frameworksTy) manifests() ([]*models.DlframeworkFrameworkManifest, error) {
+func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, error) {
 	rgs, err := kv.New()
 	if err != nil {
 		return nil, err
@@ -34,7 +33,7 @@ func (f frameworksTy) manifests() ([]*models.DlframeworkFrameworkManifest, error
 
 	var manifestsLock sync.Mutex
 	var wg sync.WaitGroup
-	manifests := []*models.DlframeworkFrameworkManifest{}
+	manifests := []*webmodels.DlframeworkFrameworkManifest{}
 
 	poolSize := runtime.NumCPU()
 	pool, err := tunny.CreatePool(poolSize, func(object interface{}) interface{} {
@@ -46,19 +45,24 @@ func (f frameworksTy) manifests() ([]*models.DlframeworkFrameworkManifest, error
 		if err != nil {
 			return err
 		}
+
 		registryValue := e.Value
+		if registryValue == nil || len(registryValue) == 0 {
+			return errors.Errorf("invalid value for key=%s", e.Key)
+		}
+
 		framework := new(dlframework.FrameworkManifest)
 		if err := f.serializer.Unmarshal(registryValue, framework); err != nil {
 			return err
 		}
-		res := new(models.DlframeworkFrameworkManifest)
+		res := new(webmodels.DlframeworkFrameworkManifest)
 		if err := copier.Copy(res, framework); err != nil {
 			return err
 		}
 
 		manifestsLock.Lock()
 		defer manifestsLock.Unlock()
-		fmt.Println(e.Key)
+
 		manifests = append(manifests, res)
 		return nil
 	}).Open()
@@ -79,8 +83,8 @@ func (f frameworksTy) manifests() ([]*models.DlframeworkFrameworkManifest, error
 		return nil, err
 	}
 	for _, framework := range frameworks {
-		frameworkName, frameworkVersion := framework[0], framework[1]
 		wg.Add(1)
+		frameworkName, frameworkVersion := framework[0], framework[1]
 		key := path.Join(prefixKey, frameworkName, frameworkVersion, "info")
 		pool.SendWorkAsync(key, func(interface{}, error) {
 			wg.Done()
@@ -91,16 +95,16 @@ func (f frameworksTy) manifests() ([]*models.DlframeworkFrameworkManifest, error
 }
 
 func (frameworksTy) filter(
-	manifests []*models.DlframeworkFrameworkManifest,
+	manifests []*webmodels.DlframeworkFrameworkManifest,
 	frameworkName,
 	frameworkVersionString string,
-) ([]*models.DlframeworkFrameworkManifest, error) {
+) ([]*webmodels.DlframeworkFrameworkManifest, error) {
 	frameworkName = strings.ToLower(frameworkName)
 	frameworkVersionString = strings.ToLower(frameworkVersionString)
 
-	candidates := []*models.DlframeworkFrameworkManifest{}
+	candidates := []*webmodels.DlframeworkFrameworkManifest{}
 	for _, manifest := range manifests {
-		if strings.ToLower(manifest.Name) == frameworkName {
+		if frameworkName == "*" || strings.ToLower(manifest.Name) == frameworkName {
 			candidates = append(candidates, manifest)
 		}
 	}
@@ -126,7 +130,7 @@ func (frameworksTy) filter(
 
 	if frameworkVersionString == "latest" {
 		sort.Slice(candidates, sortByVersion)
-		return []*models.DlframeworkFrameworkManifest{candidates[0]}, nil
+		return []*webmodels.DlframeworkFrameworkManifest{candidates[0]}, nil
 	}
 
 	frameworkVersion, err := semver.NewConstraint(frameworkVersionString)
@@ -134,7 +138,7 @@ func (frameworksTy) filter(
 		return nil, err
 	}
 
-	res := []*models.DlframeworkFrameworkManifest{}
+	res := []*webmodels.DlframeworkFrameworkManifest{}
 	for _, manifest := range manifests {
 
 		c, err := semver.NewVersion(manifest.Version)
@@ -151,7 +155,7 @@ func (frameworksTy) filter(
 	}
 	sort.Slice(res, sortByVersion)
 
-	return []*models.DlframeworkFrameworkManifest{res[0]}, nil
+	return []*webmodels.DlframeworkFrameworkManifest{res[0]}, nil
 }
 
 func (f frameworksTy) processFrameworkNames(buf []byte) ([][]string, error) {

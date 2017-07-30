@@ -9,7 +9,7 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 )
 
-func configureAPI(api *operations.DlframeworkAPI) http.Handler {
+func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.ServeError = ServeError
 	api.Logger = log.Debugf
 
