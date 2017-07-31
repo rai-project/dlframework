@@ -16,8 +16,11 @@ import (
 // swagger:model dlframeworkAgent
 type DlframeworkAgent struct {
 
-	// todo
-	Todo string `json:"todo,omitempty"`
+	// host
+	Host string `json:"host,omitempty"`
+
+	// port
+	Port string `json:"port,omitempty"`
 }
 
 // Validate validates this dlframework agent

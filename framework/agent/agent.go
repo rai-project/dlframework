@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/k0kubun/pp"
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
 	store "github.com/rai-project/libkv/store"
@@ -21,8 +20,42 @@ func toPath(s string) string {
 	return strings.Replace(s, ":", "/", -1)
 }
 
-func (b *Base) PublishInRegistery(prefix string) error {
+func (b *Base) PublishInPredictor(host, prefix string) error {
+
+	ttl := registry.Config.Timeout
+	marshaler := registry.Config.Serializer
+
+	rgs, err := registry.New()
+	if err != nil {
+		return err
+	}
+	defer rgs.Close()
+
 	var wg sync.WaitGroup
+	models := b.Framework.Models()
+	wg.Add(len(models))
+	for _, model := range models {
+		go func(model dl.ModelManifest) {
+			defer wg.Done()
+			mn, err := model.CanonicalName()
+			if err != nil {
+				return
+			}
+			bts, err := marshaler.Marshal(&model)
+			if err != nil {
+				return
+			}
+			key := path.Join(prefix, toPath(mn), "agent-"+host)
+			rgs.Put(key, bts, &store.WriteOptions{TTL: ttl, IsDir: false})
+		}(model)
+	}
+
+	wg.Wait()
+
+	return nil
+}
+
+func (b *Base) PublishInRegistery(prefix string) error {
 
 	framework := b.Framework
 	cn, err := framework.CanonicalName()
@@ -87,6 +120,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		return err
 	}
 
+	var wg sync.WaitGroup
 	models := framework.Models()
 	wg.Add(len(models))
 	for _, model := range models {
@@ -94,7 +128,6 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			defer wg.Done()
 			mn, err := model.CanonicalName()
 			if err != nil {
-				pp.Println(err)
 				return
 			}
 			bts, err := marshaler.Marshal(&model)

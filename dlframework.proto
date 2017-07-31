@@ -103,7 +103,10 @@ message FrameworkManifestsResponse {
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
-message Agent { string todo = 1; }
+message Agent {
+  string host = 1 [ (gogoproto.moretags) = "yaml:\"host,omitempty\"" ];
+  string port = 2 [ (gogoproto.moretags) = "yaml:\"port,omitempty\"" ];
+}
 
 message Agents {
   repeated Agent agents = 1

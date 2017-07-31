@@ -13,6 +13,7 @@ import (
 )
 
 type Predictor struct {
+	Host string
 	Base
 }
 
@@ -56,5 +57,5 @@ func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictReques
 }
 
 func (p *Predictor) PublishInRegistery() error {
-	return p.Base.PublishInRegistery("predictor")
+	return p.Base.PublishInPredictor(p.Host, "predictor")
 }

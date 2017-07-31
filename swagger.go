@@ -220,7 +220,10 @@ const (
     "dlframeworkAgent": {
       "type": "object",
       "properties": {
-        "todo": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
           "type": "string"
         }
       }
