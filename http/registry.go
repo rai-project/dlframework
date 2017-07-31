@@ -4,9 +4,17 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/pkg/errors"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 )
+
+func getParam(val *string, defaultValue string) string {
+	if val == nil || *val == "" {
+		return defaultValue
+	}
+	return *val
+}
 
 func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams) middleware.Responder {
 
@@ -15,18 +23,16 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 		return NewError("FrameworkManifests", err)
 	}
 
-	frameworkName := "*"
-	if params.FrameworkName != nil && *params.FrameworkName != "" {
-		frameworkName = *params.FrameworkName
+	if len(manifests) == 0 {
+		return NewError("FrameworkManifests",
+			errors.New("no frameworks found"),
+		)
 	}
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersion := "*"
-	if params.FrameworkVersion != nil && *params.FrameworkVersion != "" {
-		frameworkName = *params.FrameworkVersion
-	}
-	frameworkVersion = strings.ToLower(frameworkVersion)
 
-	manifests, err = frameworks.filter(manifests, frameworkName, frameworkVersion)
+	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
+
+	manifests, err = frameworks.filterManifests(manifests, frameworkName, frameworkVersion)
 	if err != nil {
 		return NewError("FrameworkManifests", err)
 	}
@@ -39,34 +45,24 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 
 func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middleware.Responder {
 
-	frameworkName := "*"
-	if params.FrameworkName != nil && *params.FrameworkName != "" {
-		frameworkName = *params.FrameworkName
-	}
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersion := "*"
-	if params.FrameworkVersion != nil && *params.FrameworkVersion != "" {
-		frameworkName = *params.FrameworkVersion
-	}
-	frameworkVersion = strings.ToLower(frameworkVersion)
+	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
 
 	manifests, err := models.manifests(frameworkName, frameworkVersion)
 	if err != nil {
-		return NewError("FrameworkManifests", err)
+		return NewError("ModelManifests", err)
 	}
 
-	modelName := "*"
-	if params.ModelName != nil && *params.ModelName != "" {
-		modelName = *params.ModelName
+	if len(manifests) == 0 {
+		return NewError("ModelManifests",
+			errors.Errorf("no models found for the framework %s:%s", frameworkName, frameworkVersion),
+		)
 	}
-	modelName = strings.ToLower(modelName)
-	modelVersion := "*"
-	if params.ModelVersion != nil && *params.ModelVersion != "" {
-		modelVersion = *params.ModelVersion
-	}
-	modelVersion = strings.ToLower(modelVersion)
 
-	manifests, err = models.filter(manifests, modelName, modelVersion)
+	modelName := strings.ToLower(getParam(params.ModelName, "*"))
+	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
+
+	manifests, err = models.filterManifests(manifests, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelManifests", err)
 	}
@@ -78,9 +74,36 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 }
 
 func RegistryFrameworkAgentsHandler(params registry.FrameworkAgentsParams) middleware.Responder {
-	return middleware.NotImplemented("operation registry.FrameworkAgents has not yet been implemented")
+	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
+	modelName := "*"
+	modelVersion := "*"
+
+	agents, err := models.agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	if err != nil {
+		return NewError("ModelAgents", err)
+	}
+
+	return registry.NewFrameworkAgentsOK().
+		WithPayload(&webmodels.DlframeworkAgents{
+			Agents: agents,
+		})
 }
 
 func RegistryModelAgentsHandler(params registry.ModelAgentsParams) middleware.Responder {
-	return middleware.NotImplemented("operation registry.ModelAgents has not yet been implemented")
+
+	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
+	modelName := strings.ToLower(getParam(params.ModelName, "*"))
+	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
+
+	agents, err := models.agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	if err != nil {
+		return NewError("ModelAgents", err)
+	}
+
+	return registry.NewModelAgentsOK().
+		WithPayload(&webmodels.DlframeworkAgents{
+			Agents: agents,
+		})
 }

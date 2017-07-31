@@ -33,7 +33,7 @@ func (m modelsTy) manifests(frameworkName, frameworkVersion string) ([]*webmodel
 	if err != nil {
 		return nil, err
 	}
-	fs, err = frameworks.filter(fs, frameworkName, frameworkVersion)
+	fs, err = frameworks.filterManifests(fs, frameworkName, frameworkVersion)
 	rgs, err := kv.New()
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func (m modelsTy) allmanifests() ([]*webmodels.DlframeworkModelManifest, error) 
 	return m.manifests("*", "*")
 }
 
-func (modelsTy) filter(
+func (modelsTy) filterManifests(
 	manifests []*webmodels.DlframeworkModelManifest,
 	modelName,
 	modelVersionString string,

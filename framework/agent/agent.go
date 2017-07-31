@@ -31,6 +31,10 @@ func (b *Base) PublishInPredictor(host, prefix string) error {
 	}
 	defer rgs.Close()
 
+	prefix = path.Join(config.App.Name, prefix)
+
+	rgs.Put(prefix, nil, &store.WriteOptions{IsDir: true})
+
 	var wg sync.WaitGroup
 	models := b.Framework.Models()
 	wg.Add(len(models))

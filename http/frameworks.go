@@ -94,7 +94,7 @@ func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, er
 	return manifests, nil
 }
 
-func (frameworksTy) filter(
+func (frameworksTy) filterManifests(
 	manifests []*webmodels.DlframeworkFrameworkManifest,
 	frameworkName,
 	frameworkVersionString string,
