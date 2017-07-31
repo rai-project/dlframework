@@ -92,7 +92,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 		key := path.Join(prefix, toPath(cn))
 		rgs.Put(key, nil, &store.WriteOptions{TTL: DefaultTTL, IsDir: true})
 
-		key = path.Join(key, "info")
+		key = path.Join(key, "manifest.json")
 		bts, err := marshaler.Marshal(&framework)
 		if err != nil {
 			return
@@ -116,7 +116,7 @@ func (b *Base) PublishInRegistery(prefix string) error {
 			if err != nil {
 				return
 			}
-			key := path.Join(prefix, toPath(mn), "info")
+			key := path.Join(prefix, toPath(mn), "manifest.json")
 			rgs.Put(key, bts, &store.WriteOptions{TTL: DefaultTTL, IsDir: false})
 		}(model)
 	}

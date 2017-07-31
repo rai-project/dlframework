@@ -51,6 +51,10 @@ func (m modelsTy) manifests(frameworkName, frameworkVersion string) ([]*webmodel
 			return errors.New("invalid key type. expecting a string type")
 		}
 
+		if path.Base(key) != "manifest.json" {
+			return errors.New("skipping non manifest files")
+		}
+
 		e, err := rgs.Get(key)
 		if err != nil {
 			return err
@@ -101,6 +105,7 @@ func (m modelsTy) manifests(frameworkName, frameworkVersion string) ([]*webmodel
 	}
 
 	wg.Wait()
+
 	return manifests, nil
 }
 
@@ -122,6 +127,7 @@ func (modelsTy) filter(
 			candidates = append(candidates, manifest)
 		}
 	}
+
 	if len(candidates) == 0 {
 		return nil, errors.Errorf("model %s not found", modelName)
 	}
@@ -130,20 +136,22 @@ func (modelsTy) filter(
 		return candidates, nil
 	}
 
-	sortByVersion := func(ii, jj int) bool {
-		f1, e1 := semver.NewVersion(candidates[ii].Version)
-		if e1 != nil {
-			return false
+	sortByVersion := func(elems []*webmodels.DlframeworkModelManifest) func(ii, jj int) bool {
+		return func(ii, jj int) bool {
+			f1, e1 := semver.NewVersion(elems[ii].Version)
+			if e1 != nil {
+				return false
+			}
+			f2, e2 := semver.NewVersion(elems[jj].Version)
+			if e2 != nil {
+				return false
+			}
+			return f1.LessThan(f2)
 		}
-		f2, e2 := semver.NewVersion(candidates[jj].Version)
-		if e2 != nil {
-			return false
-		}
-		return f1.LessThan(f2)
 	}
 
 	if modelVersionString == "latest" {
-		sort.Slice(candidates, sortByVersion)
+		sort.Slice(candidates, sortByVersion(candidates))
 		return []*webmodels.DlframeworkModelManifest{candidates[0]}, nil
 	}
 
@@ -167,7 +175,7 @@ func (modelsTy) filter(
 	if len(res) == 0 {
 		return nil, errors.Errorf("model %s=%s not found", modelName, modelVersionString)
 	}
-	sort.Slice(res, sortByVersion)
+	sort.Slice(res, sortByVersion(res))
 
 	return []*webmodels.DlframeworkModelManifest{res[0]}, nil
 }

@@ -85,7 +85,7 @@ func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, er
 	for _, framework := range frameworks {
 		wg.Add(1)
 		frameworkName, frameworkVersion := framework[0], framework[1]
-		key := path.Join(prefixKey, frameworkName, frameworkVersion, "info")
+		key := path.Join(prefixKey, frameworkName, frameworkVersion, "manifest.json")
 		pool.SendWorkAsync(key, func(interface{}, error) {
 			wg.Done()
 		})
