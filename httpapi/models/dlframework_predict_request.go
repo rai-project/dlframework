@@ -33,9 +33,6 @@ type DlframeworkPredictRequest struct {
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
-
-	// url
-	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this dlframework predict request

@@ -431,9 +431,6 @@ func init() {
         },
         "model_version": {
           "type": "string"
-        },
-        "url": {
-          "type": "string"
         }
       }
     },

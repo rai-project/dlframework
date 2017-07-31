@@ -139,10 +139,7 @@ message PredictRequest {
   string framework_version = 4
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
   int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-  oneof input {
-    bytes data = 6 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
-    string url = 7 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
-  };
+  bytes data = 6 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
 }
 
 message PredictionFeature {

@@ -436,9 +436,6 @@ const (
         "data": {
           "type": "string",
           "format": "byte"
-        },
-        "url": {
-          "type": "string"
         }
       }
     },

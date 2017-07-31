@@ -2,13 +2,16 @@ package agent
 
 import (
 	"bytes"
+	"encoding/base64"
 	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
+	"github.com/rai-project/utils"
 	context "golang.org/x/net/context"
 )
 
@@ -34,13 +37,29 @@ func (p *Predictor) FindFrameworkModel(ctx context.Context, req *dl.PredictReque
 	return framework, model, nil
 }
 
+// isBase64 tests a string to determine if it is a base64 or not.
+func isBase64(toTest string) bool {
+	_, err := base64.StdEncoding.DecodeString(toTest)
+	return err == nil
+}
+
 func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictRequest) (io.ReadCloser, error) {
-	if req.GetUrl() != "" {
+	var data string
+
+	if bts, err := base64.StdEncoding.DecodeString(string(req.Data)); err == nil {
+		data = string(bts)
+	} else {
+		data = string(req.Data)
+	}
+
+	pp.Println("url = ", data)
+
+	if utils.IsURL(data) {
 		targetDir, err := UploadDir()
 		if err != nil {
 			return nil, err
 		}
-		path, err := downloadmanager.Download(req.GetUrl(), targetDir)
+		path, err := downloadmanager.Download(data, targetDir)
 		if err != nil {
 			return nil, err
 		}
@@ -50,10 +69,10 @@ func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictReques
 		}
 		return f, nil
 	}
-	if req.GetData() != nil {
-		return ioutil.NopCloser(bytes.NewBuffer(req.GetData())), nil
+	if data != "" {
+		return ioutil.NopCloser(bytes.NewBufferString(data)), nil
 	}
-	return nil, errors.New("invalid input")
+	return nil, errors.Errorf("invalid input data to InputReaderCloser")
 }
 
 func (p *Predictor) PublishInRegistery() error {
