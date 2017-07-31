@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
@@ -52,14 +51,12 @@ func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictReques
 		data = string(req.Data)
 	}
 
-	pp.Println("url = ", data)
-
 	if utils.IsURL(data) {
 		targetDir, err := UploadDir()
 		if err != nil {
 			return nil, err
 		}
-		path, err := downloadmanager.Download(data, targetDir)
+		path, err := downloadmanager.DownloadInto(data, targetDir)
 		if err != nil {
 			return nil, err
 		}
