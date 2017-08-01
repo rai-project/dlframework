@@ -366,6 +366,10 @@ const (
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "hidden": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },

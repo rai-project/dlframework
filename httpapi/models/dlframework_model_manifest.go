@@ -43,6 +43,9 @@ type DlframeworkModelManifest struct {
 	// framework
 	Framework *DlframeworkFrameworkManifest `json:"framework,omitempty"`
 
+	// hidden
+	Hidden bool `json:"hidden,omitempty"`
+
 	// inputs
 	Inputs []*DlframeworkModelManifestType `json:"inputs"`
 

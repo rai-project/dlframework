@@ -329,6 +329,10 @@ func init() {
         "framework": {
           "$ref": "#/definitions/dlframeworkFrameworkManifest"
         },
+        "hidden": {
+          "type": "boolean",
+          "format": "boolean"
+        },
         "inputs": {
           "type": "array",
           "items": {

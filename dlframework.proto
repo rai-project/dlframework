@@ -89,6 +89,7 @@ message ModelManifest {
   Model model = 16 [ (gogoproto.moretags) = "yaml:\"model,omitempty\"" ];
   map<string, string> attributes = 17
       [ (gogoproto.moretags) = "yaml:\"attributes,omitempty\"" ];
+  bool hidden = 18 [ (gogoproto.moretags) = "yaml:\"hidden,omitempty\"" ];
 }
 
 message FrameworkRequest {
