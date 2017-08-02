@@ -1,8 +1,10 @@
 package http
 
 import (
+	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -17,6 +19,23 @@ func getParam(val *string, defaultValue string) string {
 }
 
 func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams) middleware.Responder {
+
+	sort := func(manifests []*webmodels.DlframeworkFrameworkManifest) []*webmodels.DlframeworkFrameworkManifest {
+		sort.Slice(manifests, func(i int, j int) bool {
+			a := manifests[i]
+			b := manifests[j]
+			if a.Name < b.Name {
+				return true
+			}
+			aVersion, _ := semver.NewVersion(a.Version)
+			bVersion, _ := semver.NewVersion(b.Version)
+			if aVersion.LessThan(bVersion) {
+				return true
+			}
+			return false
+		})
+		return manifests
+	}
 
 	manifests, err := frameworks.manifests()
 	if err != nil {
@@ -39,11 +58,31 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 
 	return registry.NewFrameworkManifestsOK().
 		WithPayload(&webmodels.DlframeworkFrameworkManifestsResponse{
-			Manifests: manifests,
+			Manifests: sort(manifests),
 		})
 }
 
 func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middleware.Responder {
+
+	sort := func(manifests []*webmodels.DlframeworkModelManifest) []*webmodels.DlframeworkModelManifest {
+		sort.Slice(manifests, func(i int, j int) bool {
+			a := manifests[i]
+			b := manifests[j]
+			if a.Name < b.Name {
+				return true
+			}
+			if a.Framework.Name < b.Framework.Name {
+				return true
+			}
+			aVersion, _ := semver.NewVersion(a.Version)
+			bVersion, _ := semver.NewVersion(b.Version)
+			if aVersion.LessThan(bVersion) {
+				return true
+			}
+			return false
+		})
+		return manifests
+	}
 
 	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
 	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
@@ -69,7 +108,7 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 
 	return registry.NewModelManifestsOK().
 		WithPayload(&webmodels.DlframeworkModelManifestsResponse{
-			Manifests: manifests,
+			Manifests: sort(manifests),
 		})
 }
 
