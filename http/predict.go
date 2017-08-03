@@ -66,7 +66,7 @@ func PredictorPredictHandler(params predictor.PredictParams) middleware.Responde
 		ModelVersion:     modelVersion,
 		FrameworkName:    frameworkName,
 		FrameworkVersion: frameworkVersion,
-		Limit:            10,
+		Limit:            params.Body.Limit,
 		Data:             data,
 	})
 
