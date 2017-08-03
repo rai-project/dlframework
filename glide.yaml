@@ -45,7 +45,6 @@ import:
 - package: github.com/rai-project/downloadmanager
 - package: github.com/rai-project/grpc
 - package: github.com/rai-project/libkv
-  version: ~0.2.14
   subpackages:
   - store
 - package: github.com/rai-project/lock
