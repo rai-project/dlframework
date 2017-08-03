@@ -30,8 +30,14 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 				return aName < bName
 			}
 			if a.Version != b.Version {
-				aVersion, _ := semver.NewVersion(a.Version)
-				bVersion, _ := semver.NewVersion(b.Version)
+				aVersion, err := semver.NewVersion(a.Version)
+				if err != nil {
+					return false
+				}
+				bVersion, err := semver.NewVersion(b.Version)
+				if err != nil {
+					return true
+				}
 				return aVersion.LessThan(bVersion)
 			}
 			return false
@@ -81,8 +87,14 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 				return aName < bName
 			}
 			if a.Version != b.Version {
-				aVersion, _ := semver.NewVersion(a.Version)
-				bVersion, _ := semver.NewVersion(b.Version)
+				aVersion, err := semver.NewVersion(a.Version)
+				if err != nil {
+					return false
+				}
+				bVersion, err := semver.NewVersion(b.Version)
+				if err != nil {
+					return true
+				}
 				return aVersion.LessThan(bVersion)
 			}
 			return false
