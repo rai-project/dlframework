@@ -5,15 +5,15 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/jinzhu/copier"
-	"github.com/rai-project/grpc"
-
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/jinzhu/copier"
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predictor"
-	context "golang.org/x/net/context"
+	"github.com/rai-project/grpc"
+	"golang.org/x/net/context"
 )
 
 func getBody(s, defaultValue string) string {
@@ -45,7 +45,13 @@ func PredictorPredictHandler(params predictor.PredictParams) middleware.Responde
 	agent := agents[rand.Intn(len(agents))]
 	serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
 
-	conn, err := grpc.Dial(dl.PredictorServiceDescription, serverAddress)
+	span, ctx := opentracing.StartSpanFromContext(params.HTTPRequest.Context(), "predictor")
+	defer span.Finish()
+
+	params.HTTPRequest = params.HTTPRequest.WithContext(ctx)
+
+	ctx = context.WithValue(ctx, "TracingSpan", span)
+	conn, err := grpc.DialContext(ctx, dl.PredictorServiceDescription, serverAddress)
 	if err != nil {
 		return NewError("Predictor", errors.Wrapf(err, "unable to dial %s", serverAddress))
 	}
@@ -53,8 +59,6 @@ func PredictorPredictHandler(params predictor.PredictParams) middleware.Responde
 	defer conn.Close()
 
 	client := dl.NewPredictorClient(conn)
-
-	ctx := context.Background()
 
 	data, err := params.Body.Data.MarshalText()
 	if err != nil {
