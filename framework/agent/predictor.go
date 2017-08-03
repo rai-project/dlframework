@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
@@ -45,6 +46,11 @@ func isBase64(toTest string) bool {
 func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictRequest) (io.ReadCloser, error) {
 	var data string
 
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "InputReaderCloser"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
+	}
+
 	if bts, err := base64.StdEncoding.DecodeString(string(req.Data)); err == nil {
 		data = string(bts)
 	} else {
@@ -56,7 +62,7 @@ func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictReques
 		if err != nil {
 			return nil, err
 		}
-		path, err := downloadmanager.DownloadInto(data, targetDir)
+		path, err := downloadmanager.DownloadInto(ctx, data, targetDir)
 		if err != nil {
 			return nil, err
 		}

@@ -3,6 +3,7 @@ package predict
 import (
 	"io"
 
+	"golang.org/x/net/context"
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/pkg/errors"
@@ -11,11 +12,11 @@ import (
 
 type Predictor interface {
 	// Downloads the features / symbol file / weights
-	Download() error
+	Download(ctx context.Context) error
 	// Preprocess the data
-	Preprocess(data interface{}) (interface{}, error)
+	Preprocess(ctx context.Context, data interface{}) (interface{}, error)
 	// Returns the features
-	Predict(data interface{}) (*dlframework.PredictionFeatures, error)
+	Predict(ctx context.Context, data interface{}) (*dlframework.PredictionFeatures, error)
 
 	io.Closer
 }
