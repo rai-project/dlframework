@@ -4,17 +4,8 @@ import:
   version: ~1.3.1
 - package: github.com/Unknwon/com
   version: ~1.0.0
-- package: github.com/anthonynsimon/bild
-  version: ~0.10.0
-  subpackages:
-  - parallel
-  - transform
-- package: github.com/awalterschulze/gographviz
-  version: ~2.0.0
 - package: github.com/chewxy/hm
 - package: github.com/elazarl/go-bindata-assetfs
-- package: github.com/fatih/color
-  version: ~1.5.0
 - package: github.com/go-openapi/errors
 - package: github.com/go-openapi/loads
 - package: github.com/go-openapi/runtime
@@ -38,12 +29,14 @@ import:
   subpackages:
   - proto
 - package: github.com/grpc-ecosystem/grpc-gateway
-  version: ~1.2.2
+  version: master
   subpackages:
   - runtime
   - utilities
+- package: github.com/jeffail/tunny
 - package: github.com/jessevdk/go-flags
   version: ~1.3.0
+- package: github.com/jinzhu/copier
 - package: github.com/k0kubun/pp
   version: ~2.3.0
 - package: github.com/pkg/errors
@@ -55,22 +48,17 @@ import:
   version: ~0.2.14
   subpackages:
   - store
+- package: github.com/rai-project/lock
+  subpackages:
+  - registry
 - package: github.com/rai-project/logger
 - package: github.com/rai-project/registry
+- package: github.com/rai-project/serializer
 - package: github.com/rai-project/utils
-- package: github.com/rai-project/uuid
 - package: github.com/sirupsen/logrus
   version: ^1.0.0
-- package: github.com/songtianyi/go-mxnet-predictor
-  subpackages:
-  - mxnet
-- package: github.com/spf13/cobra
-- package: github.com/spf13/viper
-- package: github.com/tensorflow/tensorflow
-  version: ~1.3.0-rc0
-  subpackages:
-  - tensorflow/go
-  - tensorflow/go/op
+- package: github.com/spf13/cast
+  version: ~1.1.0
 - package: github.com/tylerb/graceful
   version: ~1.2.15
 - package: golang.org/x/net
@@ -83,15 +71,11 @@ import:
   subpackages:
   - googleapis/api/annotations
 - package: google.golang.org/grpc
-  version: ~1.5.0
+  version: ~1.5.1
   subpackages:
   - codes
   - grpclog
-  - status
-- package: gopkg.in/fatih/set.v0
-  version: ~0.1.0
 - package: gopkg.in/yaml.v2
-- package: github.com/GeertJohan/go.rice
 - package: github.com/stretchr/testify
   version: ~1.1.4
   subpackages:
