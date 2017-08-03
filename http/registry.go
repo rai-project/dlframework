@@ -24,8 +24,10 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 		sort.Slice(manifests, func(i int, j int) bool {
 			a := manifests[i]
 			b := manifests[j]
-			if a.Name != b.Name {
-				return a.Name < b.Name
+			aName := strings.ToLower(a.Name)
+			bName := strings.ToLower(b.Name)
+			if aName != bName {
+				return aName < bName
 			}
 			if a.Version != b.Version {
 				aVersion, _ := semver.NewVersion(a.Version)
@@ -68,11 +70,15 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 		sort.Slice(manifests, func(i int, j int) bool {
 			a := manifests[i]
 			b := manifests[j]
-			if a.Framework.Name != b.Framework.Name {
-				return a.Framework.Name < b.Framework.Name
+			aFrameworkName := strings.ToLower(a.Framework.Name)
+			bFrameworkName := strings.ToLower(b.Framework.Name)
+			if aFrameworkName != bFrameworkName {
+				return aFrameworkName < bFrameworkName
 			}
-			if a.Name != b.Name {
-				return a.Name < b.Name
+			aName := strings.ToLower(a.Name)
+			bName := strings.ToLower(b.Name)
+			if aName != bName {
+				return aName < bName
 			}
 			if a.Version != b.Version {
 				aVersion, _ := semver.NewVersion(a.Version)
