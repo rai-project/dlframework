@@ -29,7 +29,7 @@ import:
   subpackages:
   - proto
 - package: github.com/grpc-ecosystem/grpc-gateway
-  version: master
+  version: ~1.2.2
   subpackages:
   - runtime
   - utilities
