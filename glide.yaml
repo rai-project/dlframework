@@ -26,6 +26,7 @@ import:
   - sortkeys
   - types
 - package: github.com/golang/protobuf
+  version: master
   subpackages:
   - proto
 - package: github.com/grpc-ecosystem/grpc-gateway
