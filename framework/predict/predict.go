@@ -8,6 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
+	"github.com/rai-project/utils"
 )
 
 type Predictor interface {
@@ -53,7 +54,14 @@ func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
 	return dims, nil
 }
 
-func (p ImagePredictor) GetMeanImage() ([]float32, error) {
+func NoMeanImageURLProcessor(ctx context.Context, url string) ([]float32, error) {
+	return nil, errors.New("mean image url processor disabled")
+}
+
+func (p ImagePredictor) GetMeanImage(
+	ctx context.Context,
+	urlProcessor func(ctx context.Context, url string) ([]float32, error),
+) ([]float32, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -68,6 +76,9 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 	pdimsVal := pdims.Value
 	if pdimsVal == "" {
 		return nil, errors.New("invalid image dimensions")
+	}
+	if utils.IsURL(pdimsVal) {
+		return urlProcessor(ctx, pdimsVal)
 	}
 
 	var vals []float32
