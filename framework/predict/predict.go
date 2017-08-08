@@ -68,26 +68,28 @@ func (p ImagePredictor) GetMeanImage(
 	if typeParameters == nil {
 		return nil, errors.New("invalid type paramters")
 	}
-	pdims, ok := typeParameters["mean"]
+	pmean, ok := typeParameters["mean"]
 	if !ok {
 		log.Debug("using 0,0,0 as the mean image")
 		return []float32{0, 0, 0}, nil
 	}
-	pdimsVal := pdims.Value
-	if pdimsVal == "" {
-		return nil, errors.New("invalid image dimensions")
+
+	pmeanVal := pmean.Value
+	if pmeanVal == "" {
+		return nil, errors.New("invalid mean image")
 	}
-	if utils.IsURL(pdimsVal) {
-		return urlProcessor(ctx, pdimsVal)
+
+	if utils.IsURL(pmeanVal) {
+		return urlProcessor(ctx, pmeanVal)
 	}
 
 	var vals []float32
-	if err := yaml.Unmarshal([]byte(pdimsVal), &vals); err == nil {
+	if err := yaml.Unmarshal([]byte(pmeanVal), &vals); err == nil {
 		return vals, nil
 	}
 	var val float32
-	if err := yaml.Unmarshal([]byte(pdimsVal), &val); err != nil {
-		return nil, errors.Errorf("unable to get image mean %v as a float or slice", pdimsVal)
+	if err := yaml.Unmarshal([]byte(pmeanVal), &val); err != nil {
+		return nil, errors.Errorf("unable to get image mean %v as a float or slice", pmeanVal)
 	}
 
 	return []float32{val, val, val}, nil
