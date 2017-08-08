@@ -195,7 +195,7 @@ func (m *ModelManifest) WorkDir() (string, error) {
 	}
 	cannonicalName = strings.Replace(cannonicalName, ":", "_", -1)
 	cannonicalName = strings.Replace(cannonicalName, " ", "_", -1)
-	workDir := filepath.Join(config.App.TempDir, cannonicalName)
+	workDir := filepath.Join(config.App.TempDir, "dlframework", cannonicalName)
 	if !com.IsDir(workDir) {
 		if err := os.MkdirAll(workDir, 0700); err != nil {
 			return "", errors.Wrapf(err, "failed to create model work directory %v", workDir)
