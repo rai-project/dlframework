@@ -6,9 +6,12 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
+	"strings"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
 	"github.com/rai-project/utils"
@@ -55,6 +58,25 @@ func (p *Predictor) InputReaderCloser(ctx context.Context, req *dl.PredictReques
 		data = string(bts)
 	} else {
 		data = string(req.Data)
+	}
+
+	if strings.HasPrefix(data, "dataset://") {
+		pth := strings.TrimPrefix(data, "dataset://")
+		category, rest := path.Split(pth)
+		name, rest := path.Split(rest)
+		dataset, err := dldataset.Get(category, name)
+		if err != nil {
+			return nil, err
+		}
+		label, err := dataset.Get(ctx, rest)
+		if err != nil {
+			return nil, err
+		}
+		reader, err := label.Data()
+		if err != nil {
+			return nil, err
+		}
+		return ioutil.NopCloser(reader), nil
 	}
 
 	if utils.IsURL(data) {

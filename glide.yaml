@@ -54,6 +54,7 @@ import:
 - package: github.com/rai-project/logger
 - package: github.com/rai-project/registry
 - package: github.com/rai-project/serializer
+- package: github.com/rai-project/dldataset
 - package: github.com/rai-project/utils
 - package: github.com/sirupsen/logrus
   version: ^1.0.0
