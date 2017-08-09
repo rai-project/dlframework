@@ -48,27 +48,35 @@ func Register(framework dlframework.FrameworkManifest, a *assetfs.AssetFS) error
 				log.WithField("asset", asset).WithError(err).Error("failed to unmarshal model")
 				return
 			}
+			if model.GetName() == "" {
+				log.WithField("asset", asset).WithField("name", model.GetName()).Error("empty model name")
+				return
+			}
 			if model.GetFramework().GetName() != framework.GetName() {
-				log.WithField("asset", asset).Error("empty model name")
+				log.WithField("asset", asset).
+					WithField("model_framework_name", model.GetFramework().GetName()).
+					WithField("framework_name", framework.GetName()).
+					Error("empty framework name")
 				return
 			}
 			modelFrameworkConstraint, err := semver.NewConstraint(model.GetFramework().GetVersion())
 			if err != nil {
-				log.WithField("modelFrameworkConstraint", model.GetFramework().GetVersion()).
+				log.WithField("model_framework_constraint", model.GetFramework().GetVersion()).
 					Error("failed to create model constraints")
 				return
 			}
 			check := modelFrameworkConstraint.Check(frameworkVersion)
 			if !check {
 				log.WithField("frameworkVersion", frameworkVersion).
-					WithField("modelFrameworkConstraint", model.GetFramework().GetVersion()).
+					WithField("model_framework_constraint", model.GetFramework().GetVersion()).
 					Error("failed to satisfy framework constraints")
 				return
 			}
 
 			if err := model.Register(); err != nil {
 				log.WithField("frameworkVersion", frameworkVersion).
-					WithField("modelFrameworkConstraint", model.GetFramework().GetVersion()).
+					WithField("model_name", model.GetName()).
+					WithField("model_framework_constraint", model.GetFramework().GetVersion()).
 					Error("failed to register model")
 				continue
 			}
