@@ -116,20 +116,22 @@ func (frameworksTy) filterManifests(
 		return candidates, nil
 	}
 
-	sortByVersion := func(ii, jj int) bool {
-		f1, e1 := semver.NewVersion(candidates[ii].Version)
-		if e1 != nil {
-			return false
+	sortByVersion := func(lst []*webmodels.DlframeworkFrameworkManifest) func(ii, jj int) bool {
+		return func(ii, jj int) bool {
+			f1, e1 := semver.NewVersion(lst[ii].Version)
+			if e1 != nil {
+				return false
+			}
+			f2, e2 := semver.NewVersion(lst[jj].Version)
+			if e2 != nil {
+				return false
+			}
+			return f1.LessThan(f2)
 		}
-		f2, e2 := semver.NewVersion(candidates[jj].Version)
-		if e2 != nil {
-			return false
-		}
-		return f1.LessThan(f2)
 	}
 
 	if frameworkVersionString == "latest" {
-		sort.Slice(candidates, sortByVersion)
+		sort.Slice(candidates, sortByVersion(candidates))
 		return []*webmodels.DlframeworkFrameworkManifest{candidates[0]}, nil
 	}
 
@@ -153,7 +155,7 @@ func (frameworksTy) filterManifests(
 	if len(res) == 0 {
 		return nil, errors.Errorf("framework %s=%s not found", frameworkName, frameworkVersionString)
 	}
-	sort.Slice(res, sortByVersion)
+	sort.Slice(res, sortByVersion(res))
 
 	return []*webmodels.DlframeworkFrameworkManifest{res[0]}, nil
 }
