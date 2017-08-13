@@ -1,149 +1,222 @@
 package agent
 
 import (
+	"bytes"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 	"path"
 	"strings"
-	"sync"
 
-	"github.com/rai-project/config"
+	opentracing "github.com/opentracing/opentracing-go"
+	"github.com/pkg/errors"
+	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
-	store "github.com/rai-project/libkv/store"
-	lock "github.com/rai-project/lock/registry"
+	"github.com/rai-project/downloadmanager"
+	"github.com/rai-project/utils"
+	context "golang.org/x/net/context"
+
+	"image"
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
+
+	"google.golang.org/grpc"
+
+	rgrpc "github.com/rai-project/grpc"
+	"github.com/rai-project/mxnet"
 	"github.com/rai-project/registry"
+
+	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/uuid"
 )
 
-type Base struct {
-	Framework dl.FrameworkManifest
+type Agent struct {
+	Base
+	predictor predict.Predictor
+	options   *Options
 }
 
-func toPath(s string) string {
-	return strings.Replace(s, ":", "/", -1)
+func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
+	options, err := NewOptions()
+	if err != nil {
+		return nil, err
+	}
+	for _, opt := range opts {
+		opt(options)
+	}
+	framework, err := predictor.GetFramework()
+	if err != nil {
+		return nil, err
+	}
+	return &Agent{
+		Base: Base{
+			Framework: framework,
+		},
+		predictor: predictor,
+		options:   options,
+	}, nil
 }
 
-func (b *Base) PublishInPredictor(host, prefix string) error {
-
-	ttl := registry.Config.Timeout
-	marshaler := registry.Config.Serializer
-
-	rgs, err := registry.New()
+func (p *Agent) Predict(ctx context.Context, req *dl.PredictRequest) (*dl.PredictResponse, error) {
+	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
-		return err
-	}
-	defer rgs.Close()
-
-	prefix = path.Join(config.App.Name, prefix)
-
-	rgs.Put(prefix, nil, &store.WriteOptions{IsDir: true})
-
-	var wg sync.WaitGroup
-	models := b.Framework.Models()
-	wg.Add(len(models))
-	for _, model := range models {
-		go func(model dl.ModelManifest) {
-			defer wg.Done()
-			mn, err := model.CanonicalName()
-			if err != nil {
-				return
-			}
-			bts, err := marshaler.Marshal(&model)
-			if err != nil {
-				return
-			}
-			key := path.Join(prefix, toPath(mn), "agent-"+host)
-			rgs.Put(key, bts, &store.WriteOptions{TTL: ttl, IsDir: false})
-		}(model)
+		return nil, err
 	}
 
-	wg.Wait()
+	predictor, err := p.predictor.Load(ctx, *model)
+	if err != nil {
+		return nil, err
+	}
+	defer predictor.Close()
+	if err := predictor.Download(ctx); err != nil {
+		return nil, err
+	}
 
-	return nil
+	reader, err := p.ReadInput(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	var img image.Image
+
+	func() {
+		if span, newCtx := opentracing.StartSpanFromContext(ctx, "DecodeImage"); span != nil {
+			ctx = newCtx
+			defer span.Finish()
+		}
+		img, _, err = image.Decode(reader)
+	}()
+	if err != nil {
+		return nil, errors.Wrapf(err, "unable to read input as image")
+	}
+
+	data, err := predictor.Preprocess(ctx, img)
+	if err != nil {
+		return nil, err
+	}
+
+	probs, err := predictor.Predict(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+
+	probs.Sort()
+
+	if req.GetLimit() != 0 {
+		trunc := probs.Take(int(req.GetLimit()))
+		probs = &trunc
+	}
+
+	return &dl.PredictResponse{
+		Id:       uuid.NewV4(),
+		Features: *probs,
+		Error:    nil,
+	}, nil
 }
 
-func (b *Base) PublishInRegistery(prefix string) error {
-
-	framework := b.Framework
-	cn, err := framework.CanonicalName()
+func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictRequest) (*dl.FrameworkManifest, *dl.ModelManifest, error) {
+	framework, err := dl.FindFramework(req.GetFrameworkName() + ":" + req.GetFrameworkVersion())
 	if err != nil {
-		return err
+		return nil, nil, err
+	}
+	model, err := framework.FindModel(req.GetModelName() + ":" + req.GetModelVersion())
+	if err != nil {
+		return nil, nil, err
 	}
 
-	ttl := registry.Config.Timeout
-	marshaler := registry.Config.Serializer
+	return framework, model, nil
+}
 
-	rgs, err := registry.New()
-	if err != nil {
-		return err
+func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadCloser, error) {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "ReadInput"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
 	}
-	defer rgs.Close()
 
-	prefix = path.Join(config.App.Name, prefix)
+	data := tryBase64Decode(req.Data)
 
-	rgs.Put(prefix, nil, &store.WriteOptions{IsDir: true})
+	if data == "" {
+		return nil, errors.Errorf("invalid empty input data to ReadInput")
+	}
 
-	locker := lock.New(rgs)
-	locker.Lock(prefix)
-	defer locker.Unlock(prefix)
-
-	frameworksKey := path.Join(prefix, "frameworks")
-
-	kv, err := rgs.Get(frameworksKey)
-	if err != nil {
-		if ok, e := rgs.Exists(frameworksKey); e == nil && ok {
-			log.WithError(err).Errorf("cannot get value for key %v", frameworksKey)
-			return err
+	if strings.HasPrefix(data, "dataset://") {
+		pth := strings.TrimPrefix(data, "dataset://")
+		category, rest := path.Split(pth)
+		name, rest := path.Split(rest)
+		dataset, err := dldataset.Get(category, name)
+		if err != nil {
+			return nil, err
 		}
-		kv = &store.KVPair{
-			Key:   frameworksKey,
-			Value: []byte{},
+		label, err := dataset.Get(ctx, rest)
+		if err != nil {
+			return nil, err
 		}
-	}
-	found := false
-	val := strings.TrimSpace(string(kv.Value))
-	frameworkLines := strings.Split(val, "\n")
-	for _, name := range frameworkLines {
-		if name == cn {
-			found = true
-			break
+		reader, err := label.Data()
+		if err != nil {
+			return nil, err
 		}
-	}
-	if !found {
-		frameworkLines = append(frameworkLines, cn)
-		newVal := strings.TrimSpace(strings.Join(frameworkLines, "\n"))
-		rgs.AtomicPut(frameworksKey, []byte(newVal), kv, nil)
+		return ioutil.NopCloser(reader), nil
 	}
 
-	key := path.Join(prefix, toPath(cn))
-	rgs.Put(key, nil, &store.WriteOptions{TTL: ttl, IsDir: true})
-
-	key = path.Join(key, "manifest.json")
-	bts, err := marshaler.Marshal(&framework)
-	if err != nil {
-		return err
-	}
-	if err := rgs.Put(key, bts, &store.WriteOptions{TTL: ttl, IsDir: false}); err != nil {
-		return err
-	}
-
-	var wg sync.WaitGroup
-	models := framework.Models()
-	wg.Add(len(models))
-	for _, model := range models {
-		go func(model dl.ModelManifest) {
-			defer wg.Done()
-			mn, err := model.CanonicalName()
-			if err != nil {
-				return
-			}
-			bts, err := marshaler.Marshal(&model)
-			if err != nil {
-				return
-			}
-			key := path.Join(prefix, toPath(mn), "manifest.json")
-			rgs.Put(key, bts, &store.WriteOptions{TTL: ttl, IsDir: false})
-		}(model)
+	if utils.IsURL(data) {
+		targetDir, err := UploadDir()
+		if err != nil {
+			return nil, err
+		}
+		path, err := downloadmanager.DownloadInto(ctx, data, targetDir)
+		if err != nil {
+			return nil, err
+		}
+		f, err := os.Open(path)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to open file %v", path)
+		}
+		return f, nil
 	}
 
-	wg.Wait()
+	return ioutil.NopCloser(bytes.NewBufferString(data)), nil
+}
 
-	return nil
+func (p *Agent) RegisterManifests() (*grpc.Server, error) {
+	log.Info("populating registry")
+
+	var grpcServer *grpc.Server
+	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
+	svr := &Registry{
+		Base: Base{
+			Framework: mxnet.FrameworkManifest,
+		},
+	}
+	go func() {
+		utils.Every(
+			registry.Config.Timeout/2,
+			func() {
+				svr.PublishInRegistery()
+			},
+		)
+	}()
+	dl.RegisterRegistryServer(grpcServer, svr)
+	return grpcServer, nil
+}
+
+func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
+
+	grpcServer := rgrpc.NewServer(dl.PredictorServiceDescription)
+
+	host := fmt.Sprintf("%s:%d", p.options.host, p.options.port)
+	log.Info("registering predictor service at ", host)
+
+	go func() {
+		utils.Every(
+			registry.Config.Timeout/2,
+			func() {
+				p.Base.PublishInPredictor(host, "predictor")
+			},
+		)
+	}()
+	dl.RegisterPredictorServer(grpcServer, p)
+	return grpcServer, nil
 }

@@ -12,6 +12,10 @@ import (
 )
 
 type Predictor interface {
+	// Gets framework information
+	GetFramework() (dlframework.FrameworkManifest, error)
+	// Load model from manifest
+	Load(ctx context.Context, model dlframework.ModelManifest) (Predictor, error)
 	// Downloads the features / symbol file / weights
 	Download(ctx context.Context) error
 	// Preprocess the data
@@ -29,6 +33,10 @@ type Base struct {
 
 type ImagePredictor struct {
 	Base
+}
+
+func (p Base) GetFramework() (dlframework.FrameworkManifest, error) {
+	return p.Framework, nil
 }
 
 func (p ImagePredictor) GetImageDimensions() ([]int32, error) {

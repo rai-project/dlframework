@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"encoding/base64"
 	"os"
 	"path/filepath"
 
@@ -17,4 +18,18 @@ func UploadDir() (string, error) {
 		}
 	}
 	return dir, nil
+}
+
+// isBase64 tests a string to determine if it is a base64 or not.
+func isBase64(toTest string) bool {
+	_, err := base64.StdEncoding.DecodeString(toTest)
+	return err == nil
+}
+
+func tryBase64Decode(input []byte) string {
+	decoded, err := base64.StdEncoding.DecodeString(string(input))
+	if err != nil {
+		return string(input)
+	}
+	return string(decoded)
 }

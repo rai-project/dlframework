@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/k0kubun/pp"
 	"github.com/spf13/cast"
 )
 
 func (param *ModelManifest_Type_Parameter) MarshalYAML() (interface{}, error) {
-	pp.Println(param)
 	return cast.ToStringE(param.Value)
 }
 
