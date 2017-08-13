@@ -25,7 +25,6 @@ import (
 	"google.golang.org/grpc"
 
 	rgrpc "github.com/rai-project/grpc"
-	"github.com/rai-project/mxnet"
 	"github.com/rai-project/registry"
 
 	"github.com/rai-project/dlframework/framework/predict"
@@ -187,7 +186,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
 	svr := &Registry{
 		Base: Base{
-			Framework: mxnet.FrameworkManifest,
+			Framework: p.Base.Framework,
 		},
 	}
 	go func() {
