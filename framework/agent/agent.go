@@ -6,12 +6,12 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"path"
 	"strings"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
+	_ "github.com/rai-project/dldataset/vision"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
 	"github.com/rai-project/utils"
@@ -143,12 +143,17 @@ func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadC
 
 	if strings.HasPrefix(data, "dataset://") {
 		pth := strings.TrimPrefix(data, "dataset://")
-		category, rest := path.Split(pth)
-		name, rest := path.Split(rest)
+		sep := strings.SplitAfterN(pth, "/", 3)
+		category := sep[0]
+		name := sep[1]
+		rest := sep[2]
+
 		dataset, err := dldataset.Get(category, name)
 		if err != nil {
 			return nil, err
 		}
+		dataset.Download(ctx)
+
 		label, err := dataset.Get(ctx, rest)
 		if err != nil {
 			return nil, err
