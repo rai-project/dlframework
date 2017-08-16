@@ -158,6 +158,31 @@ func (p ImagePredictor) GetMeanImage(
 	return []float32{val, val, val}, nil
 }
 
+func (p ImagePredictor) GetScale() (float32, error) {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return 1.0, errors.New("invalid type paramters")
+	}
+	pscale, ok := typeParameters["scale"]
+	if !ok {
+		log.Debug("no scaling")
+		return 1.0, nil
+	}
+	pscaleVal := pscale.Value
+	if pscaleVal == "" {
+		return 1.0, errors.New("invalid scale value")
+	}
+
+	var val float32
+	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
+		return 1.0, errors.Errorf("unable to get scale %v as a float", pscaleVal)
+	}
+
+	return val, nil
+}
+
 func NoMeanImageURLProcessor(ctx context.Context, url string) ([]float32, error) {
 	return nil, errors.New("mean image url processor disabled")
 }

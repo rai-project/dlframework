@@ -177,7 +177,7 @@ func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadC
 		if err != nil {
 			return nil, err
 		}
-		path, err := downloadmanager.DownloadInto(ctx, data, targetDir)
+		path, err := downloadmanager.DownloadInto(data, targetDir)
 		if err != nil {
 			return nil, err
 		}
