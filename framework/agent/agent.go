@@ -152,7 +152,11 @@ func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadC
 		if err != nil {
 			return nil, err
 		}
-		dataset.Download(ctx)
+
+		err = dataset.Download(ctx)
+		if err != nil {
+			return nil, err
+		}
 
 		label, err := dataset.Get(ctx, rest)
 		if err != nil {
