@@ -20,7 +20,13 @@ RUN cp /go/bin/* .
 FROM ubuntu:latest AS protobuf
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
-    && apt-get install -y wget unzip \
+    && apt-get install -y     \
+                wget             \
+                libjpeg-turbo    \
+                libvips          \
+                libpng           \
+                libopenblas-dev  \
+                unzip            \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
