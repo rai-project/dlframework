@@ -79,23 +79,23 @@ func (p ImagePredictor) GetFeaturesUrl() string {
 func (p ImagePredictor) GetGraphPath() string {
 	model := p.Model
 	graphPath := filepath.Base(model.GetModel().GetGraphPath())
-	return filepath.Join(p.WorkDir, graphPath)
+	return cleanPath(filepath.Join(p.WorkDir, graphPath))
 }
 
 func (p ImagePredictor) GetWeightsPath() string {
 	model := p.Model
 	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
-	return filepath.Join(p.WorkDir, graphPath)
+	return cleanPath(filepath.Join(p.WorkDir, graphPath))
 }
 
 func (p ImagePredictor) GetFeaturesPath() string {
 	model := p.Model
-	return filepath.Join(p.WorkDir, model.GetName()+".features")
+	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".features"))
 }
 
 func (p ImagePredictor) GetMeanPath() string {
 	model := p.Model
-	return filepath.Join(p.WorkDir, model.GetName()+".mean")
+	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
 func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
@@ -160,4 +160,11 @@ func (p ImagePredictor) GetMeanImage(
 
 func NoMeanImageURLProcessor(ctx context.Context, url string) ([]float32, error) {
 	return nil, errors.New("mean image url processor disabled")
+}
+
+func cleanPath(path string) string {
+	path = strings.Replace(path, ":", "_", -1)
+	path = strings.Replace(path, " ", "_", -1)
+	path = strings.Replace(path, "-", "_", -1)
+	return strings.ToLower(path)
 }
