@@ -144,6 +144,9 @@ func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadC
 	if strings.HasPrefix(data, "dataset://") {
 		pth := strings.TrimPrefix(data, "dataset://")
 		sep := strings.SplitAfterN(pth, "/", 3)
+		if len(sep) != 3 {
+			return nil, errors.Errorf("the dataset path %s is not formatted correctly expected datasets://category/name/file_path", data)
+		}
 		category := sep[0]
 		name := sep[1]
 		rest := sep[2]
