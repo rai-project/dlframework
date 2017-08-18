@@ -8,10 +8,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/k0kubun/pp"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
-	_ "github.com/rai-project/dldataset/vision"
+	// _ "github.com/rai-project/dldataset/vision"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/downloadmanager"
 	"github.com/rai-project/utils"
@@ -165,11 +166,15 @@ func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadC
 		if err != nil {
 			return nil, err
 		}
-		reader, err := label.Data()
+		iface, err := label.Data()
 		if err != nil {
 			return nil, err
 		}
-		return ioutil.NopCloser(reader), nil
+		if reader, ok := iface.(io.Reader); ok {
+			return ioutil.NopCloser(reader), nil
+		}
+		pp.Println("TODO.. we need to still support images as output...")
+		return nil, errors.New("unhandeled dataset input...")
 	}
 
 	if utils.IsURL(data) {
