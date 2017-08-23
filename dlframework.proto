@@ -1,5 +1,16 @@
 syntax = "proto3";
 
+// CarML DLFramework
+//
+// CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing
+// people to develop and deploy machine learning models. It allows machine
+// learning (ML) developers to publish and evaluate their models, users to
+// experiment with different models and frameworks through a web user
+// interface or a REST api, and system architects to capture system resource
+// usage to inform future system and hardware configuration.
+
+package carml.org.dlframework;
+
 import "google/api/annotations.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
@@ -16,16 +27,6 @@ option (gogoproto.sizer_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 
 option go_package = "dlframework";
-
-// CarML DLFramework
-//
-// CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing
-// people to develop and deploy machine learning models. It allows machine
-// learning (ML) developers to publish and evaluate their models, users to
-// experiment with different models and frameworks through a web user
-// interface or a REST api, and system architects to capture system resource
-// usage to inform future system and hardware configuration.
-package carml.org.dlframework;
 
 message ErrorStatus {
   bool ok = 1 [ (gogoproto.moretags) = "yaml:\"ok,omitempty\"" ];

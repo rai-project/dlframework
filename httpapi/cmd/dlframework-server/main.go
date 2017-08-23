@@ -28,8 +28,8 @@ func main() {
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "CarML DLFramework"
-	parser.LongDescription = "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing\npeople to develop and deploy machine learning models. It allows machine\nlearning (ML) developers to publish and evaluate their models, users to\nexperiment with different models and frameworks through a web user\ninterface or a REST api, and system architects to capture system resource\nusage to inform future system and hardware configuration."
+	parser.ShortDescription = "dlframework.proto"
+	parser.LongDescription = swaggerSpec.Spec().Info.Description
 
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {

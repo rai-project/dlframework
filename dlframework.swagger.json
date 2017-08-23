@@ -1,9 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "CarML DLFramework",
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing\npeople to develop and deploy machine learning models. It allows machine\nlearning (ML) developers to publish and evaluate their models, users to\nexperiment with different models and frameworks through a web user\ninterface or a REST api, and system architects to capture system resource\nusage to inform future system and hardware configuration.",
-    "version": "1.0.0"
+    "title": "dlframework.proto",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Abdul Dakkak, Cheng Li",
+      "url": "https://github.com/rai-project/carml"
+    }
   },
   "schemes": [
     "http",
@@ -565,5 +568,9 @@
         }
       }
     }
+  },
+  "host": "localhost",
+  "externalDocs": {
+    "url": "https://rai-project.github.io/carml"
   }
 }

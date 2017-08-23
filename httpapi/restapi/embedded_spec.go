@@ -26,10 +26,14 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing\npeople to develop and deploy machine learning models. It allows machine\nlearning (ML) developers to publish and evaluate their models, users to\nexperiment with different models and frameworks through a web user\ninterface or a REST api, and system architects to capture system resource\nusage to inform future system and hardware configuration.",
-    "title": "CarML DLFramework",
+    "title": "dlframework.proto",
+    "contact": {
+      "name": "Abdul Dakkak, Cheng Li",
+      "url": "https://github.com/rai-project/carml"
+    },
     "version": "1.0.0"
   },
+  "host": "localhost",
   "paths": {
     "/v1/predict/dataset": {
       "post": {
@@ -564,6 +568,9 @@ func init() {
         }
       }
     }
+  },
+  "externalDocs": {
+    "url": "https://rai-project.github.io/carml"
   }
 }`))
 }

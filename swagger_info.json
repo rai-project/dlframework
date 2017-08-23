@@ -1,5 +1,13 @@
 {
 	"info": {
-		"version": "1.0.0"
+		"version": "1.0.0",
+		"contact": {
+			"name": "Abdul Dakkak, Cheng Li",
+			"url": "https://github.com/rai-project/carml"
+		}
+	},
+	"host": "localhost",
+	"externalDocs": {
+		"url": "https://rai-project.github.io/carml"
 	}
 }
