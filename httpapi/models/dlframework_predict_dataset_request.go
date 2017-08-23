@@ -16,38 +16,68 @@ import (
 // swagger:model dlframeworkPredictDatasetRequest
 type DlframeworkPredictDatasetRequest struct {
 
-	// dataset category
-	DatasetCategory string `json:"dataset_category,omitempty"`
+	// dataset
+	Dataset *PredictDatasetRequestDataset `json:"dataset,omitempty"`
 
-	// dataset name
-	DatasetName string `json:"dataset_name,omitempty"`
-
-	// framework name
-	FrameworkName string `json:"framework_name,omitempty"`
-
-	// framework version
-	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// limit
-	Limit int32 `json:"limit,omitempty"`
-
-	// model name
-	ModelName string `json:"model_name,omitempty"`
-
-	// model version
-	ModelVersion string `json:"model_version,omitempty"`
-
-	// request id
-	RequestID string `json:"request_id,omitempty"`
+	// options
+	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
 // Validate validates this dlframework predict dataset request
 func (m *DlframeworkPredictDatasetRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateDataset(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DlframeworkPredictDatasetRequest) validateDataset(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Dataset) { // not required
+		return nil
+	}
+
+	if m.Dataset != nil {
+
+		if err := m.Dataset.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("dataset")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkPredictDatasetRequest) validateOptions(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Options) { // not required
+		return nil
+	}
+
+	if m.Options != nil {
+
+		if err := m.Options.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

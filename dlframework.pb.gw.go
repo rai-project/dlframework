@@ -96,107 +96,45 @@ func request_Registry_ModelAgents_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func request_Predictor_URLs_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_URLsClient, runtime.ServerMetadata, error) {
+	var protoReq PredictURLsRequest
 	var metadata runtime.ServerMetadata
-	stream, err := client.URLs(ctx)
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	stream, err := client.URLs(ctx, &protoReq)
 	if err != nil {
-		grpclog.Printf("Failed to start streaming: %v", err)
 		return nil, metadata, err
 	}
-	dec := marshaler.NewDecoder(req.Body)
-	handleSend := func() error {
-		var protoReq PredictURLRequest
-		err = dec.Decode(&protoReq)
-		if err == io.EOF {
-			return err
-		}
-		if err != nil {
-			grpclog.Printf("Failed to decode request: %v", err)
-			return err
-		}
-		if err = stream.Send(&protoReq); err != nil {
-			grpclog.Printf("Failed to send request: %v", err)
-			return err
-		}
-		return nil
-	}
-	if err := handleSend(); err != nil {
-		if cerr := stream.CloseSend(); cerr != nil {
-			grpclog.Printf("Failed to terminate client stream: %v", cerr)
-		}
-		if err == io.EOF {
-			return stream, metadata, nil
-		}
-		return nil, metadata, err
-	}
-	go func() {
-		for {
-			if err := handleSend(); err != nil {
-				break
-			}
-		}
-		if err := stream.CloseSend(); err != nil {
-			grpclog.Printf("Failed to terminate client stream: %v", err)
-		}
-	}()
 	header, err := stream.Header()
 	if err != nil {
-		grpclog.Printf("Failed to get header from client: %v", err)
 		return nil, metadata, err
 	}
 	metadata.HeaderMD = header
 	return stream, metadata, nil
+
 }
 
 func request_Predictor_Images_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_ImagesClient, runtime.ServerMetadata, error) {
+	var protoReq PredictImagesRequest
 	var metadata runtime.ServerMetadata
-	stream, err := client.Images(ctx)
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, grpc.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	stream, err := client.Images(ctx, &protoReq)
 	if err != nil {
-		grpclog.Printf("Failed to start streaming: %v", err)
 		return nil, metadata, err
 	}
-	dec := marshaler.NewDecoder(req.Body)
-	handleSend := func() error {
-		var protoReq PredictImageRequest
-		err = dec.Decode(&protoReq)
-		if err == io.EOF {
-			return err
-		}
-		if err != nil {
-			grpclog.Printf("Failed to decode request: %v", err)
-			return err
-		}
-		if err = stream.Send(&protoReq); err != nil {
-			grpclog.Printf("Failed to send request: %v", err)
-			return err
-		}
-		return nil
-	}
-	if err := handleSend(); err != nil {
-		if cerr := stream.CloseSend(); cerr != nil {
-			grpclog.Printf("Failed to terminate client stream: %v", cerr)
-		}
-		if err == io.EOF {
-			return stream, metadata, nil
-		}
-		return nil, metadata, err
-	}
-	go func() {
-		for {
-			if err := handleSend(); err != nil {
-				break
-			}
-		}
-		if err := stream.CloseSend(); err != nil {
-			grpclog.Printf("Failed to terminate client stream: %v", err)
-		}
-	}()
 	header, err := stream.Header()
 	if err != nil {
-		grpclog.Printf("Failed to get header from client: %v", err)
 		return nil, metadata, err
 	}
 	metadata.HeaderMD = header
 	return stream, metadata, nil
+
 }
 
 func request_Predictor_Dataset_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_DatasetClient, runtime.ServerMetadata, error) {

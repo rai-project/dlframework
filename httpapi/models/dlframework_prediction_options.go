@@ -12,24 +12,18 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictImageRequest dlframework predict image request
-// swagger:model dlframeworkPredictImageRequest
-type DlframeworkPredictImageRequest struct {
+// DlframeworkPredictionOptions dlframework prediction options
+// swagger:model dlframeworkPredictionOptions
+type DlframeworkPredictionOptions struct {
+
+	// feature limit
+	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
 	// framework name
 	FrameworkName string `json:"framework_name,omitempty"`
 
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// Base64 encoded image
-	Image strfmt.Base64 `json:"image,omitempty"`
-
-	// input id
-	InputID string `json:"input_id,omitempty"`
-
-	// limit
-	Limit int32 `json:"limit,omitempty"`
 
 	// model name
 	ModelName string `json:"model_name,omitempty"`
@@ -41,8 +35,8 @@ type DlframeworkPredictImageRequest struct {
 	RequestID string `json:"request_id,omitempty"`
 }
 
-// Validate validates this dlframework predict image request
-func (m *DlframeworkPredictImageRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework prediction options
+func (m *DlframeworkPredictionOptions) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -52,7 +46,7 @@ func (m *DlframeworkPredictImageRequest) Validate(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictImageRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkPredictionOptions) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -60,8 +54,8 @@ func (m *DlframeworkPredictImageRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictImageRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictImageRequest
+func (m *DlframeworkPredictionOptions) UnmarshalBinary(b []byte) error {
+	var res DlframeworkPredictionOptions
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

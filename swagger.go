@@ -52,7 +52,7 @@ const (
     },
     "/v1/predict/images": {
       "post": {
-        "summary": "Image method receives a stream of images and runs\nthe predictor on all the images.",
+        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
         "description": "The result is a prediction feature stream for each image.",
         "operationId": "Images",
         "responses": {
@@ -66,11 +66,10 @@ const (
         "parameters": [
           {
             "name": "body",
-            "description": "(streaming inputs)",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictImageRequest"
+              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
             }
           }
         ],
@@ -95,11 +94,10 @@ const (
         "parameters": [
           {
             "name": "body",
-            "description": "(streaming inputs)",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLRequest"
+              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
             }
           }
         ],
@@ -269,6 +267,48 @@ const (
         "is_archive": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "PredictDatasetRequestDataset": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "PredictImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
+        },
+        "preprocessed": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Preprocessed is set to true to disable preprocessing.\nIf enabled then the image is assumed to be rescaled and\nencoded as an array of float32 values"
+        }
+      }
+    },
+    "PredictURLsRequestURL": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -472,92 +512,40 @@ const (
     "dlframeworkPredictDatasetRequest": {
       "type": "object",
       "properties": {
-        "request_id": {
-          "type": "string"
+        "dataset": {
+          "$ref": "#/definitions/PredictDatasetRequestDataset"
         },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "dataset_category": {
-          "type": "string"
-        },
-        "dataset_name": {
-          "type": "string"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
-    "dlframeworkPredictImageRequest": {
+    "dlframeworkPredictImagesRequest": {
       "type": "object",
       "properties": {
-        "request_id": {
-          "type": "string"
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PredictImagesRequestImage"
+          },
+          "title": "A list of Base64 encoded images"
         },
-        "input_id": {
-          "type": "string"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "image": {
-          "type": "string",
-          "format": "byte",
-          "title": "Base64 encoded image"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
-    "dlframeworkPredictURLRequest": {
+    "dlframeworkPredictURLsRequest": {
       "type": "object",
       "properties": {
-        "request_id": {
-          "type": "string"
+        "urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PredictURLsRequestURL"
+          }
         },
-        "input_id": {
-          "type": "string"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "url": {
-          "type": "string"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
@@ -591,6 +579,30 @@ const (
         },
         "feature": {
           "$ref": "#/definitions/dlframeworkPredictionFeature"
+        }
+      }
+    },
+    "dlframeworkPredictionOptions": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "feature_limit": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     }

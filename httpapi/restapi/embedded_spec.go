@@ -69,16 +69,15 @@ func init() {
         "tags": [
           "Predictor"
         ],
-        "summary": "Image method receives a stream of images and runs\nthe predictor on all the images.",
+        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
         "operationId": "Images",
         "parameters": [
           {
-            "description": "(streaming inputs)",
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictImageRequest"
+              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
             }
           }
         ],
@@ -102,12 +101,11 @@ func init() {
         "operationId": "URLs",
         "parameters": [
           {
-            "description": "(streaming inputs)",
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLRequest"
+              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
             }
           }
         ],
@@ -265,6 +263,48 @@ func init() {
           "format": "boolean"
         },
         "weights_path": {
+          "type": "string"
+        }
+      }
+    },
+    "PredictDatasetRequestDataset": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "PredictImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "image": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
+        },
+        "preprocessed": {
+          "type": "boolean",
+          "format": "boolean",
+          "title": "Preprocessed is set to true to disable preprocessing.\nIf enabled then the image is assumed to be rescaled and\nencoded as an array of float32 values"
+        }
+      }
+    },
+    "PredictURLsRequestURL": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "url": {
           "type": "string"
         }
       }
@@ -469,92 +509,40 @@ func init() {
     "dlframeworkPredictDatasetRequest": {
       "type": "object",
       "properties": {
-        "dataset_category": {
-          "type": "string"
+        "dataset": {
+          "$ref": "#/definitions/PredictDatasetRequestDataset"
         },
-        "dataset_name": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "request_id": {
-          "type": "string"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
-    "dlframeworkPredictImageRequest": {
+    "dlframeworkPredictImagesRequest": {
       "type": "object",
       "properties": {
-        "framework_name": {
-          "type": "string"
+        "images": {
+          "type": "array",
+          "title": "A list of Base64 encoded images",
+          "items": {
+            "$ref": "#/definitions/PredictImagesRequestImage"
+          }
         },
-        "framework_version": {
-          "type": "string"
-        },
-        "image": {
-          "type": "string",
-          "format": "byte",
-          "title": "Base64 encoded image"
-        },
-        "input_id": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "request_id": {
-          "type": "string"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
-    "dlframeworkPredictURLRequest": {
+    "dlframeworkPredictURLsRequest": {
       "type": "object",
       "properties": {
-        "framework_name": {
-          "type": "string"
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         },
-        "framework_version": {
-          "type": "string"
-        },
-        "input_id": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "request_id": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
+        "urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PredictURLsRequestURL"
+          }
         }
       }
     },
@@ -584,6 +572,30 @@ func init() {
           "type": "string"
         },
         "input_id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictionOptions": {
+      "type": "object",
+      "properties": {
+        "feature_limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
           "type": "string"
         },
         "request_id": {

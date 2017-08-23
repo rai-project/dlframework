@@ -55,7 +55,7 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 }
 
 /*
-Images images method receives a stream of images and runs the predictor on all the images
+Images images method receives a list base64 encoded images and runs the predictor on all the images
 
 The result is a prediction feature stream for each image.
 */
