@@ -45,6 +45,84 @@ const (
         ]
       }
     },
+    "/v1/predict/dataset": {
+      "post": {
+        "operationId": "Dataset",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictDatasetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predictor"
+        ]
+      }
+    },
+    "/v1/predict/images": {
+      "post": {
+        "operationId": "Images",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predictor"
+        ]
+      }
+    },
+    "/v1/predict/urls": {
+      "post": {
+        "operationId": "URLs",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predictor"
+        ]
+      }
+    },
     "/v1/registry/frameworks/agent": {
       "get": {
         "operationId": "FrameworkAgents",
@@ -250,18 +328,6 @@ const (
         }
       }
     },
-    "dlframeworkErrorStatus": {
-      "type": "object",
-      "properties": {
-        "ok": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "message": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkFrameworkManifest": {
       "type": "object",
       "properties": {
@@ -418,6 +484,61 @@ const (
         }
       }
     },
+    "dlframeworkPredictDatasetRequest": {
+      "type": "object",
+      "properties": {
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "dataset_category": {
+          "type": "string"
+        },
+        "dataset_name": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictImagesRequest": {
+      "type": "object",
+      "properties": {
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        }
+      }
+    },
     "dlframeworkPredictRequest": {
       "type": "object",
       "properties": {
@@ -454,9 +575,33 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkPredictionFeature"
           }
+        }
+      }
+    },
+    "dlframeworkPredictURLsRequest": {
+      "type": "object",
+      "properties": {
+        "model_name": {
+          "type": "string"
         },
-        "error": {
-          "$ref": "#/definitions/dlframeworkErrorStatus"
+        "model_version": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -473,6 +618,20 @@ const (
         "probability": {
           "type": "number",
           "format": "float"
+        }
+      }
+    },
+    "dlframeworkPredictionFeatureResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        },
+        "features": {
+          "$ref": "#/definitions/dlframeworkPredictionFeature"
         }
       }
     }

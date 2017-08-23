@@ -142,6 +142,49 @@ message PredictRequest {
   bytes data = 6 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
 }
 
+message PredictURLsRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+  string framework_name = 3
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 4
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  repeated string urls = 6 [ (gogoproto.moretags) = "yaml:\"urls,omitempty\"" ];
+}
+
+message PredictImagesRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+  string framework_name = 3
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 4
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  repeated bytes images = 6
+      [ (gogoproto.moretags) = "yaml:\"images,omitempty\"" ];
+}
+
+message PredictDatasetRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+  string framework_name = 3
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 4
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  string dataset_category = 6
+      [ (gogoproto.moretags) = "yaml:\"dataset_category,omitempty\"" ];
+  string dataset_name = 7
+      [ (gogoproto.moretags) = "yaml:\"dataset_name,omitempty\"" ];
+}
+
 message PredictionFeature {
   int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
@@ -153,7 +196,14 @@ message PredictResponse {
   string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
   repeated PredictionFeature features = 2
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
-  ErrorStatus error = 3 [ (gogoproto.moretags) = "yaml:\"error,omitempty\"" ];
+}
+
+message PredictionFeatureResponse {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  string request_id = 2
+      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
+  PredictionFeature features = 3
+      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
 }
 
 service Registry {
@@ -183,6 +233,25 @@ service Predictor {
   rpc Predict(PredictRequest) returns (PredictResponse) {
     option (google.api.http) = {
       post : "/v1/predict",
+      body : "*"
+    };
+  }
+  rpc URLs(PredictURLsRequest) returns (stream PredictionFeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/urls",
+      body : "*"
+    };
+  }
+  rpc Images(PredictImagesRequest) returns (stream PredictionFeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/images",
+      body : "*"
+    };
+  }
+  rpc Dataset(PredictDatasetRequest)
+      returns (stream PredictionFeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/dataset",
       body : "*"
     };
   }

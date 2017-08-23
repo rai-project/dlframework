@@ -25,6 +25,62 @@ type Client struct {
 }
 
 /*
+Dataset dataset API
+*/
+func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDatasetParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "Dataset",
+		Method:             "POST",
+		PathPattern:        "/v1/predict/dataset",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &DatasetReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*DatasetOK), nil
+
+}
+
+/*
+Images images API
+*/
+func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewImagesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "Images",
+		Method:             "POST",
+		PathPattern:        "/v1/predict/images",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ImagesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ImagesOK), nil
+
+}
+
+/*
 Predict predict API
 */
 func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
@@ -49,6 +105,34 @@ func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
 		return nil, err
 	}
 	return result.(*PredictOK), nil
+
+}
+
+/*
+Urls urls API
+*/
+func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUrlsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "URLs",
+		Method:             "POST",
+		PathPattern:        "/v1/predict/urls",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &UrlsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UrlsOK), nil
 
 }
 

@@ -18,9 +18,6 @@ import (
 // swagger:model dlframeworkPredictResponse
 type DlframeworkPredictResponse struct {
 
-	// error
-	Error *DlframeworkErrorStatus `json:"error,omitempty"`
-
 	// features
 	Features []*DlframeworkPredictionFeature `json:"features"`
 
@@ -32,11 +29,6 @@ type DlframeworkPredictResponse struct {
 func (m *DlframeworkPredictResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateError(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateFeatures(formats); err != nil {
 		// prop
 		res = append(res, err)
@@ -45,25 +37,6 @@ func (m *DlframeworkPredictResponse) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *DlframeworkPredictResponse) validateError(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Error) { // not required
-		return nil
-	}
-
-	if m.Error != nil {
-
-		if err := m.Error.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("error")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

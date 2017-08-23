@@ -38,11 +38,17 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		PredictorDatasetHandler: predictor.DatasetHandlerFunc(func(params predictor.DatasetParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictorDataset has not yet been implemented")
+		}),
 		RegistryFrameworkAgentsHandler: registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryFrameworkAgents has not yet been implemented")
 		}),
 		RegistryFrameworkManifestsHandler: registry.FrameworkManifestsHandlerFunc(func(params registry.FrameworkManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryFrameworkManifests has not yet been implemented")
+		}),
+		PredictorImagesHandler: predictor.ImagesHandlerFunc(func(params predictor.ImagesParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictorImages has not yet been implemented")
 		}),
 		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
@@ -52,6 +58,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		}),
 		PredictorPredictHandler: predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictorPredict has not yet been implemented")
+		}),
+		PredictorUrlsHandler: predictor.UrlsHandlerFunc(func(params predictor.UrlsParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictorUrls has not yet been implemented")
 		}),
 	}
 }
@@ -82,16 +91,22 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// PredictorDatasetHandler sets the operation handler for the dataset operation
+	PredictorDatasetHandler predictor.DatasetHandler
 	// RegistryFrameworkAgentsHandler sets the operation handler for the framework agents operation
 	RegistryFrameworkAgentsHandler registry.FrameworkAgentsHandler
 	// RegistryFrameworkManifestsHandler sets the operation handler for the framework manifests operation
 	RegistryFrameworkManifestsHandler registry.FrameworkManifestsHandler
+	// PredictorImagesHandler sets the operation handler for the images operation
+	PredictorImagesHandler predictor.ImagesHandler
 	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
 	RegistryModelManifestsHandler registry.ModelManifestsHandler
 	// PredictorPredictHandler sets the operation handler for the predict operation
 	PredictorPredictHandler predictor.PredictHandler
+	// PredictorUrlsHandler sets the operation handler for the urls operation
+	PredictorUrlsHandler predictor.UrlsHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -155,12 +170,20 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.PredictorDatasetHandler == nil {
+		unregistered = append(unregistered, "predictor.DatasetHandler")
+	}
+
 	if o.RegistryFrameworkAgentsHandler == nil {
 		unregistered = append(unregistered, "registry.FrameworkAgentsHandler")
 	}
 
 	if o.RegistryFrameworkManifestsHandler == nil {
 		unregistered = append(unregistered, "registry.FrameworkManifestsHandler")
+	}
+
+	if o.PredictorImagesHandler == nil {
+		unregistered = append(unregistered, "predictor.ImagesHandler")
 	}
 
 	if o.RegistryModelAgentsHandler == nil {
@@ -173,6 +196,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.PredictorPredictHandler == nil {
 		unregistered = append(unregistered, "predictor.PredictHandler")
+	}
+
+	if o.PredictorUrlsHandler == nil {
+		unregistered = append(unregistered, "predictor.UrlsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -258,6 +285,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/dataset"] = predictor.NewDataset(o.context, o.PredictorDatasetHandler)
+
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -267,6 +299,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/registry/frameworks/manifest"] = registry.NewFrameworkManifests(o.context, o.RegistryFrameworkManifestsHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/images"] = predictor.NewImages(o.context, o.PredictorImagesHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -282,6 +319,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v1/predict"] = predictor.NewPredict(o.context, o.PredictorPredictHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/urls"] = predictor.NewUrls(o.context, o.PredictorUrlsHandler)
 
 }
 

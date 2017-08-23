@@ -56,6 +56,84 @@ func init() {
         }
       }
     },
+    "/v1/predict/dataset": {
+      "post": {
+        "tags": [
+          "Predictor"
+        ],
+        "operationId": "Dataset",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictDatasetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v1/predict/images": {
+      "post": {
+        "tags": [
+          "Predictor"
+        ],
+        "operationId": "Images",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        }
+      }
+    },
+    "/v1/predict/urls": {
+      "post": {
+        "tags": [
+          "Predictor"
+        ],
+        "operationId": "URLs",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+            }
+          }
+        }
+      }
+    },
     "/v1/registry/frameworks/agent": {
       "get": {
         "tags": [
@@ -245,18 +323,6 @@ func init() {
         }
       }
     },
-    "dlframeworkErrorStatus": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        },
-        "ok": {
-          "type": "boolean",
-          "format": "boolean"
-        }
-      }
-    },
     "dlframeworkFrameworkManifest": {
       "type": "object",
       "properties": {
@@ -413,6 +479,61 @@ func init() {
         }
       }
     },
+    "dlframeworkPredictDatasetRequest": {
+      "type": "object",
+      "properties": {
+        "dataset_category": {
+          "type": "string"
+        },
+        "dataset_name": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictImagesRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkPredictRequest": {
       "type": "object",
       "properties": {
@@ -441,9 +562,6 @@ func init() {
     "dlframeworkPredictResponse": {
       "type": "object",
       "properties": {
-        "error": {
-          "$ref": "#/definitions/dlframeworkErrorStatus"
-        },
         "features": {
           "type": "array",
           "items": {
@@ -452,6 +570,33 @@ func init() {
         },
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictURLsRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -468,6 +613,20 @@ func init() {
         "probability": {
           "type": "number",
           "format": "float"
+        }
+      }
+    },
+    "dlframeworkPredictionFeatureResponse": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "$ref": "#/definitions/dlframeworkPredictionFeature"
+        },
+        "id": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
         }
       }
     }
