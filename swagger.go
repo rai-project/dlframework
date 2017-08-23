@@ -24,8 +24,8 @@ const (
   "paths": {
     "/v1/predict/dataset": {
       "post": {
-        "summary": "Echo method receives a simple message and returns it.",
-        "description": "The message posted as the id parameter will also be\nreturned.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "description": "The result is a prediction feature stream.",
         "operationId": "Dataset",
         "responses": {
           "200": {
@@ -52,6 +52,8 @@ const (
     },
     "/v1/predict/images": {
       "post": {
+        "summary": "Image method receives a stream of images and runs\nthe predictor on all the images.",
+        "description": "The result is a prediction feature stream for each image.",
         "operationId": "Images",
         "responses": {
           "200": {
@@ -79,6 +81,8 @@ const (
     },
     "/v1/predict/urls": {
       "post": {
+        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "description": "The result is a prediction feature stream for each url.",
         "operationId": "URLs",
         "responses": {
           "200": {
@@ -468,6 +472,9 @@ const (
     "dlframeworkPredictDatasetRequest": {
       "type": "object",
       "properties": {
+        "request_id": {
+          "type": "string"
+        },
         "model_name": {
           "type": "string"
         },
@@ -495,6 +502,12 @@ const (
     "dlframeworkPredictImageRequest": {
       "type": "object",
       "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "input_id": {
+          "type": "string"
+        },
         "model_name": {
           "type": "string"
         },
@@ -513,13 +526,20 @@ const (
         },
         "image": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "Base64 encoded image"
         }
       }
     },
     "dlframeworkPredictURLRequest": {
       "type": "object",
       "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "input_id": {
+          "type": "string"
+        },
         "model_name": {
           "type": "string"
         },
@@ -566,7 +586,10 @@ const (
         "request_id": {
           "type": "string"
         },
-        "features": {
+        "input_id": {
+          "type": "string"
+        },
+        "feature": {
           "$ref": "#/definitions/dlframeworkPredictionFeature"
         }
       }

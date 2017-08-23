@@ -36,6 +36,9 @@ type DlframeworkPredictDatasetRequest struct {
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
+
+	// request id
+	RequestID string `json:"request_id,omitempty"`
 }
 
 // Validate validates this dlframework predict dataset request

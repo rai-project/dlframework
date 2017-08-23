@@ -22,8 +22,11 @@ type DlframeworkPredictImageRequest struct {
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
 
-	// image
+	// Base64 encoded image
 	Image strfmt.Base64 `json:"image,omitempty"`
+
+	// input id
+	InputID string `json:"input_id,omitempty"`
 
 	// limit
 	Limit int32 `json:"limit,omitempty"`
@@ -33,6 +36,9 @@ type DlframeworkPredictImageRequest struct {
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
+
+	// request id
+	RequestID string `json:"request_id,omitempty"`
 }
 
 // Validate validates this dlframework predict image request

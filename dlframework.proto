@@ -138,58 +138,54 @@ message ModelManifestsResponse {
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
-message PredictRequest {
-  string model_name = 1
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 2
-      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
-  string framework_name = 3
-      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 4
-      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-  bytes data = 6 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
-}
-
 message PredictURLRequest {
-  string model_name = 1
+  string request_id = 1
+      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
+  string input_id = 2 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
+  string model_name = 3
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 2
+  string model_version = 4
       [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
-  string framework_name = 3
+  string framework_name = 5
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 4
+  string framework_version = 6
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-  string url = 6 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
+  int32 limit = 7 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  string url = 8 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
 }
 
 message PredictImageRequest {
-  string model_name = 1
+  string request_id = 1
+      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
+  string input_id = 2 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
+  string model_name = 3
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 2
+  string model_version = 4
       [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
-  string framework_name = 3
+  string framework_name = 5
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 4
+  string framework_version = 6
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-  bytes image = 6 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+  int32 limit = 7 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  // Base64 encoded image
+  bytes image = 8 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
 }
 
 message PredictDatasetRequest {
-  string model_name = 1
+  string request_id = 1
+      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
+  string model_name = 2
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 2
+  string model_version = 3
       [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
-  string framework_name = 3
+  string framework_name = 4
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 4
+  string framework_version = 5
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  int32 limit = 5 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
-  string dataset_category = 6
+  int32 limit = 6 [ (gogoproto.moretags) = "yaml:\"limit,omitempty\"" ];
+  string dataset_category = 7
       [ (gogoproto.moretags) = "yaml:\"dataset_category,omitempty\"" ];
-  string dataset_name = 7
+  string dataset_name = 8
       [ (gogoproto.moretags) = "yaml:\"dataset_name,omitempty\"" ];
 }
 
@@ -200,18 +196,13 @@ message PredictionFeature {
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
 }
 
-message PredictResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  repeated PredictionFeature features = 2
-      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
-}
-
 message PredictionFeatureResponse {
   string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
   string request_id = 2
       [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
-  PredictionFeature features = 3
-      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
+  string input_id = 3 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
+  PredictionFeature feature = 4
+      [ (gogoproto.moretags) = "yaml:\"feature,omitempty\"" ];
 }
 
 service Registry {
@@ -238,6 +229,10 @@ service Registry {
   }
 }
 service Predictor {
+  // Image method receives a stream of urls and runs
+  // the predictor on all the urls. The
+  //
+  // The result is a prediction feature stream for each url.
   rpc URLs(stream PredictURLRequest)
       returns (stream PredictionFeatureResponse) {
     option (google.api.http) = {
@@ -245,6 +240,10 @@ service Predictor {
       body : "*"
     };
   }
+  // Image method receives a stream of images and runs
+  // the predictor on all the images.
+  //
+  // The result is a prediction feature stream for each image.
   rpc Images(stream PredictImageRequest)
       returns (stream PredictionFeatureResponse) {
     option (google.api.http) = {
@@ -252,10 +251,10 @@ service Predictor {
       body : "*"
     };
   }
-  // Echo method receives a simple message and returns it.
+  // Dataset method receives a single dataset and runs
+  // the predictor on all elements of the dataset.
   //
-  // The message posted as the id parameter will also be
-  // returned.
+  // The result is a prediction feature stream.
   rpc Dataset(PredictDatasetRequest)
       returns (stream PredictionFeatureResponse) {
     option (google.api.http) = {

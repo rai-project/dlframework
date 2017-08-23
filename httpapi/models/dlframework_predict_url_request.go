@@ -22,6 +22,9 @@ type DlframeworkPredictURLRequest struct {
 	// framework version
 	FrameworkVersion string `json:"framework_version,omitempty"`
 
+	// input id
+	InputID string `json:"input_id,omitempty"`
+
 	// limit
 	Limit int32 `json:"limit,omitempty"`
 
@@ -30,6 +33,9 @@ type DlframeworkPredictURLRequest struct {
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
+
+	// request id
+	RequestID string `json:"request_id,omitempty"`
 
 	// url
 	URL string `json:"url,omitempty"`

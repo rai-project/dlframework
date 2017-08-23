@@ -31,7 +31,10 @@ func NewImages(ctx *middleware.Context, handler ImagesHandler) *Images {
 
 /*Images swagger:route POST /v1/predict/images Predictor images
 
-Images images API
+Image method receives a stream of images and runs
+the predictor on all the images.
+
+The result is a prediction feature stream for each image.
 
 */
 type Images struct {

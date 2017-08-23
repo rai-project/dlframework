@@ -31,7 +31,10 @@ func NewUrls(ctx *middleware.Context, handler UrlsHandler) *Urls {
 
 /*Urls swagger:route POST /v1/predict/urls Predictor urls
 
-Urls urls API
+Image method receives a stream of urls and runs
+the predictor on all the urls. The
+
+The result is a prediction feature stream for each url.
 
 */
 type Urls struct {

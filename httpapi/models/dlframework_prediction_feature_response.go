@@ -16,11 +16,14 @@ import (
 // swagger:model dlframeworkPredictionFeatureResponse
 type DlframeworkPredictionFeatureResponse struct {
 
-	// features
-	Features *DlframeworkPredictionFeature `json:"features,omitempty"`
+	// feature
+	Feature *DlframeworkPredictionFeature `json:"feature,omitempty"`
 
 	// id
 	ID string `json:"id,omitempty"`
+
+	// input id
+	InputID string `json:"input_id,omitempty"`
 
 	// request id
 	RequestID string `json:"request_id,omitempty"`
@@ -30,7 +33,7 @@ type DlframeworkPredictionFeatureResponse struct {
 func (m *DlframeworkPredictionFeatureResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateFeatures(formats); err != nil {
+	if err := m.validateFeature(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -41,17 +44,17 @@ func (m *DlframeworkPredictionFeatureResponse) Validate(formats strfmt.Registry)
 	return nil
 }
 
-func (m *DlframeworkPredictionFeatureResponse) validateFeatures(formats strfmt.Registry) error {
+func (m *DlframeworkPredictionFeatureResponse) validateFeature(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Features) { // not required
+	if swag.IsZero(m.Feature) { // not required
 		return nil
 	}
 
-	if m.Features != nil {
+	if m.Feature != nil {
 
-		if err := m.Features.Validate(formats); err != nil {
+		if err := m.Feature.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("features")
+				return ve.ValidateName("feature")
 			}
 			return err
 		}

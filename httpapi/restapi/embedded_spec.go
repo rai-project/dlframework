@@ -37,11 +37,11 @@ func init() {
   "paths": {
     "/v1/predict/dataset": {
       "post": {
-        "description": "The message posted as the id parameter will also be\nreturned.",
+        "description": "The result is a prediction feature stream.",
         "tags": [
           "Predictor"
         ],
-        "summary": "Echo method receives a simple message and returns it.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
         "operationId": "Dataset",
         "parameters": [
           {
@@ -65,9 +65,11 @@ func init() {
     },
     "/v1/predict/images": {
       "post": {
+        "description": "The result is a prediction feature stream for each image.",
         "tags": [
           "Predictor"
         ],
+        "summary": "Image method receives a stream of images and runs\nthe predictor on all the images.",
         "operationId": "Images",
         "parameters": [
           {
@@ -92,9 +94,11 @@ func init() {
     },
     "/v1/predict/urls": {
       "post": {
+        "description": "The result is a prediction feature stream for each url.",
         "tags": [
           "Predictor"
         ],
+        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
         "operationId": "URLs",
         "parameters": [
           {
@@ -486,6 +490,9 @@ func init() {
         },
         "model_version": {
           "type": "string"
+        },
+        "request_id": {
+          "type": "string"
         }
       }
     },
@@ -500,7 +507,11 @@ func init() {
         },
         "image": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "title": "Base64 encoded image"
+        },
+        "input_id": {
+          "type": "string"
         },
         "limit": {
           "type": "integer",
@@ -510,6 +521,9 @@ func init() {
           "type": "string"
         },
         "model_version": {
+          "type": "string"
+        },
+        "request_id": {
           "type": "string"
         }
       }
@@ -523,6 +537,9 @@ func init() {
         "framework_version": {
           "type": "string"
         },
+        "input_id": {
+          "type": "string"
+        },
         "limit": {
           "type": "integer",
           "format": "int32"
@@ -531,6 +548,9 @@ func init() {
           "type": "string"
         },
         "model_version": {
+          "type": "string"
+        },
+        "request_id": {
           "type": "string"
         },
         "url": {
@@ -557,10 +577,13 @@ func init() {
     "dlframeworkPredictionFeatureResponse": {
       "type": "object",
       "properties": {
-        "features": {
+        "feature": {
           "$ref": "#/definitions/dlframeworkPredictionFeature"
         },
         "id": {
+          "type": "string"
+        },
+        "input_id": {
           "type": "string"
         },
         "request_id": {

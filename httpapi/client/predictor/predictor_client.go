@@ -25,10 +25,9 @@ type Client struct {
 }
 
 /*
-Dataset echos method receives a simple message and returns it
+Dataset datasets method receives a single dataset and runs the predictor on all elements of the dataset
 
-The message posted as the id parameter will also be
-returned.
+The result is a prediction feature stream.
 */
 func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	// TODO: Validate the params before sending
@@ -56,7 +55,9 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 }
 
 /*
-Images images API
+Images images method receives a stream of images and runs the predictor on all the images
+
+The result is a prediction feature stream for each image.
 */
 func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 	// TODO: Validate the params before sending
@@ -84,7 +85,9 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 }
 
 /*
-Urls urls API
+Urls images method receives a stream of urls and runs the predictor on all the urls the
+
+The result is a prediction feature stream for each url.
 */
 func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 	// TODO: Validate the params before sending

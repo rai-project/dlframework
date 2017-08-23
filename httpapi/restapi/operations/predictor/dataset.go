@@ -31,10 +31,10 @@ func NewDataset(ctx *middleware.Context, handler DatasetHandler) *Dataset {
 
 /*Dataset swagger:route POST /v1/predict/dataset Predictor dataset
 
-Echo method receives a simple message and returns it.
+Dataset method receives a single dataset and runs
+the predictor on all elements of the dataset.
 
-The message posted as the id parameter will also be
-returned.
+The result is a prediction feature stream.
 
 */
 type Dataset struct {
