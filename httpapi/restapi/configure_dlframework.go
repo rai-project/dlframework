@@ -56,9 +56,6 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.RegistryModelManifestsHandler = registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.ModelManifests has not yet been implemented")
 	})
-	api.PredictorPredictHandler = predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
-		return middleware.NotImplemented("operation predictor.Predict has not yet been implemented")
-	})
 	api.PredictorUrlsHandler = predictor.UrlsHandlerFunc(func(params predictor.UrlsParams) middleware.Responder {
 		return middleware.NotImplemented("operation predictor.Urls has not yet been implemented")
 	})

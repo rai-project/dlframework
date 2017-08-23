@@ -5,8 +5,8 @@ const (
   "swagger": "2.0",
   "info": {
     "title": "CarML DLFramework",
-    "version": "1.0.0",
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration."
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing\npeople to develop and deploy machine learning models. It allows machine\nlearning (ML) developers to publish and evaluate their models, users to\nexperiment with different models and frameworks through a web user\ninterface or a REST api, and system architects to capture system resource\nusage to inform future system and hardware configuration.",
+    "version": "1.0.0"
   },
   "schemes": [
     "http",
@@ -19,34 +19,10 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/predict": {
-      "post": {
-        "operationId": "Predict",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predictor"
-        ]
-      }
-    },
     "/v1/predict/dataset": {
       "post": {
+        "summary": "Echo method receives a simple message and returns it.",
+        "description": "The message posted as the id parameter will also be\nreturned.",
         "operationId": "Dataset",
         "responses": {
           "200": {
@@ -85,10 +61,11 @@ const (
         "parameters": [
           {
             "name": "body",
+            "description": "(streaming inputs)",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
+              "$ref": "#/definitions/dlframeworkPredictImageRequest"
             }
           }
         ],
@@ -111,10 +88,11 @@ const (
         "parameters": [
           {
             "name": "body",
+            "description": "(streaming inputs)",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
+              "$ref": "#/definitions/dlframeworkPredictURLRequest"
             }
           }
         ],
@@ -511,7 +489,7 @@ const (
         }
       }
     },
-    "dlframeworkPredictImagesRequest": {
+    "dlframeworkPredictImageRequest": {
       "type": "object",
       "properties": {
         "model_name": {
@@ -530,55 +508,13 @@ const (
           "type": "integer",
           "format": "int32"
         },
-        "images": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "byte"
-          }
-        }
-      }
-    },
-    "dlframeworkPredictRequest": {
-      "type": "object",
-      "properties": {
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "data": {
+        "image": {
           "type": "string",
           "format": "byte"
         }
       }
     },
-    "dlframeworkPredictResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "features": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkPredictionFeature"
-          }
-        }
-      }
-    },
-    "dlframeworkPredictURLsRequest": {
+    "dlframeworkPredictURLRequest": {
       "type": "object",
       "properties": {
         "model_name": {
@@ -597,11 +533,8 @@ const (
           "type": "integer",
           "format": "int32"
         },
-        "urls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -639,11 +572,9 @@ const (
 }
 `
 	swagger_info = `{
-  "info": {
-    "title": "CarML DLFramework",
-    "version": "1.0.0",
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration."
-  }
+	"info": {
+		"version": "1.0.0"
+	}
 }
 `
 )

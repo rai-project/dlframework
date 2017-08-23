@@ -56,16 +56,18 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		RegistryModelManifestsHandler: registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelManifests has not yet been implemented")
 		}),
-		PredictorPredictHandler: predictor.PredictHandlerFunc(func(params predictor.PredictParams) middleware.Responder {
-			return middleware.NotImplemented("operation PredictorPredict has not yet been implemented")
-		}),
 		PredictorUrlsHandler: predictor.UrlsHandlerFunc(func(params predictor.UrlsParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictorUrls has not yet been implemented")
 		}),
 	}
 }
 
-/*DlframeworkAPI CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration. */
+/*DlframeworkAPI CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing
+people to develop and deploy machine learning models. It allows machine
+learning (ML) developers to publish and evaluate their models, users to
+experiment with different models and frameworks through a web user
+interface or a REST api, and system architects to capture system resource
+usage to inform future system and hardware configuration. */
 type DlframeworkAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -103,8 +105,6 @@ type DlframeworkAPI struct {
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
 	RegistryModelManifestsHandler registry.ModelManifestsHandler
-	// PredictorPredictHandler sets the operation handler for the predict operation
-	PredictorPredictHandler predictor.PredictHandler
 	// PredictorUrlsHandler sets the operation handler for the urls operation
 	PredictorUrlsHandler predictor.UrlsHandler
 
@@ -192,10 +192,6 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.RegistryModelManifestsHandler == nil {
 		unregistered = append(unregistered, "registry.ModelManifestsHandler")
-	}
-
-	if o.PredictorPredictHandler == nil {
-		unregistered = append(unregistered, "predictor.PredictHandler")
 	}
 
 	if o.PredictorUrlsHandler == nil {
@@ -314,11 +310,6 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/v1/registry/models/manifest"] = registry.NewModelManifests(o.context, o.RegistryModelManifestsHandler)
-
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/v1/predict"] = predictor.NewPredict(o.context, o.PredictorPredictHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

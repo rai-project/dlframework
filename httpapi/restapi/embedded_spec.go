@@ -26,41 +26,18 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing\npeople to develop and deploy machine learning models. It allows machine\nlearning (ML) developers to publish and evaluate their models, users to\nexperiment with different models and frameworks through a web user\ninterface or a REST api, and system architects to capture system resource\nusage to inform future system and hardware configuration.",
     "title": "CarML DLFramework",
     "version": "1.0.0"
   },
   "paths": {
-    "/v1/predict": {
-      "post": {
-        "tags": [
-          "Predictor"
-        ],
-        "operationId": "Predict",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkPredictResponse"
-            }
-          }
-        }
-      }
-    },
     "/v1/predict/dataset": {
       "post": {
+        "description": "The message posted as the id parameter will also be\nreturned.",
         "tags": [
           "Predictor"
         ],
+        "summary": "Echo method receives a simple message and returns it.",
         "operationId": "Dataset",
         "parameters": [
           {
@@ -90,11 +67,12 @@ func init() {
         "operationId": "Images",
         "parameters": [
           {
+            "description": "(streaming inputs)",
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
+              "$ref": "#/definitions/dlframeworkPredictImageRequest"
             }
           }
         ],
@@ -116,11 +94,12 @@ func init() {
         "operationId": "URLs",
         "parameters": [
           {
+            "description": "(streaming inputs)",
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
+              "$ref": "#/definitions/dlframeworkPredictURLRequest"
             }
           }
         ],
@@ -506,7 +485,7 @@ func init() {
         }
       }
     },
-    "dlframeworkPredictImagesRequest": {
+    "dlframeworkPredictImageRequest": {
       "type": "object",
       "properties": {
         "framework_name": {
@@ -515,38 +494,10 @@ func init() {
         "framework_version": {
           "type": "string"
         },
-        "images": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "byte"
-          }
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkPredictRequest": {
-      "type": "object",
-      "properties": {
-        "data": {
+        "image": {
           "type": "string",
           "format": "byte"
         },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
         "limit": {
           "type": "integer",
           "format": "int32"
@@ -559,21 +510,7 @@ func init() {
         }
       }
     },
-    "dlframeworkPredictResponse": {
-      "type": "object",
-      "properties": {
-        "features": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkPredictionFeature"
-          }
-        },
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkPredictURLsRequest": {
+    "dlframeworkPredictURLRequest": {
       "type": "object",
       "properties": {
         "framework_name": {
@@ -592,11 +529,8 @@ func init() {
         "model_version": {
           "type": "string"
         },
-        "urls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        "url": {
+          "type": "string"
         }
       }
     },

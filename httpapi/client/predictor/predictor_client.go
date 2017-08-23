@@ -25,7 +25,10 @@ type Client struct {
 }
 
 /*
-Dataset dataset API
+Dataset echos method receives a simple message and returns it
+
+The message posted as the id parameter will also be
+returned.
 */
 func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	// TODO: Validate the params before sending
@@ -77,34 +80,6 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 		return nil, err
 	}
 	return result.(*ImagesOK), nil
-
-}
-
-/*
-Predict predict API
-*/
-func (a *Client) Predict(params *PredictParams) (*PredictOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewPredictParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Predict",
-		Method:             "POST",
-		PathPattern:        "/v1/predict",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &PredictReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*PredictOK), nil
 
 }
 

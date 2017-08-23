@@ -4,6 +4,15 @@
 /*
 Package dlframework is a generated protocol buffer package.
 
+CarML DLFramework
+
+CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing
+people to develop and deploy machine learning models. It allows machine
+learning (ML) developers to publish and evaluate their models, users to
+experiment with different models and frameworks through a web user
+interface or a REST api, and system architects to capture system resource
+usage to inform future system and hardware configuration.
+
 It is generated from these files:
 	dlframework.proto
 
@@ -19,8 +28,8 @@ It has these top-level messages:
 	ModelRequest
 	ModelManifestsResponse
 	PredictRequest
-	PredictURLsRequest
-	PredictImagesRequest
+	PredictURLRequest
+	PredictImageRequest
 	PredictDatasetRequest
 	PredictionFeature
 	PredictResponse
@@ -1473,15 +1482,15 @@ func BenchmarkPredictRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequestProto(t *testing.T) {
+func TestPredictURLRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedPredictURLRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1507,10 +1516,10 @@ func TestPredictURLsRequestProto(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestMarshalTo(t *testing.T) {
+func TestPredictURLRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedPredictURLRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1520,7 +1529,7 @@ func TestPredictURLsRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1535,12 +1544,12 @@ func TestPredictURLsRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequestProtoMarshal(b *testing.B) {
+func BenchmarkPredictURLRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest, 10000)
+	pops := make([]*PredictURLRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest(popr, false)
+		pops[i] = NewPopulatedPredictURLRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1553,18 +1562,18 @@ func BenchmarkPredictURLsRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictURLsRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkPredictURLRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLsRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1575,15 +1584,15 @@ func BenchmarkPredictURLsRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequestProto(t *testing.T) {
+func TestPredictImageRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedPredictImageRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1609,10 +1618,10 @@ func TestPredictImagesRequestProto(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestMarshalTo(t *testing.T) {
+func TestPredictImageRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedPredictImageRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1622,7 +1631,7 @@ func TestPredictImagesRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1637,12 +1646,12 @@ func TestPredictImagesRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequestProtoMarshal(b *testing.B) {
+func BenchmarkPredictImageRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest, 10000)
+	pops := make([]*PredictImageRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest(popr, false)
+		pops[i] = NewPopulatedPredictImageRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1655,18 +1664,18 @@ func BenchmarkPredictImagesRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictImagesRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkPredictImageRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictImagesRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictImageRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2379,16 +2388,16 @@ func TestPredictRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictURLsRequestJSON(t *testing.T) {
+func TestPredictURLRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedPredictURLRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2400,16 +2409,16 @@ func TestPredictURLsRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictImagesRequestJSON(t *testing.T) {
+func TestPredictImageRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedPredictImageRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2981,12 +2990,12 @@ func TestPredictRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestProtoText(t *testing.T) {
+func TestPredictURLRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedPredictURLRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2998,12 +3007,12 @@ func TestPredictURLsRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestProtoCompactText(t *testing.T) {
+func TestPredictURLRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedPredictURLRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3015,12 +3024,12 @@ func TestPredictURLsRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestProtoText(t *testing.T) {
+func TestPredictImageRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedPredictImageRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3032,12 +3041,12 @@ func TestPredictImagesRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestProtoCompactText(t *testing.T) {
+func TestPredictImageRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedPredictImageRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3395,14 +3404,14 @@ func TestPredictRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictURLsRequestVerboseEqual(t *testing.T) {
+func TestPredictURLRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedPredictURLRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &PredictURLRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3410,14 +3419,14 @@ func TestPredictURLsRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictImagesRequestVerboseEqual(t *testing.T) {
+func TestPredictImageRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedPredictImageRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &PredictImageRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3667,9 +3676,9 @@ func TestPredictRequestGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestPredictURLsRequestGoString(t *testing.T) {
+func TestPredictURLRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedPredictURLRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -3680,9 +3689,9 @@ func TestPredictURLsRequestGoString(t *testing.T) {
 		panic(err)
 	}
 }
-func TestPredictImagesRequestGoString(t *testing.T) {
+func TestPredictImageRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedPredictImageRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4249,10 +4258,10 @@ func BenchmarkPredictRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequestSize(t *testing.T) {
+func TestPredictURLRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedPredictURLRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4271,12 +4280,12 @@ func TestPredictURLsRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequestSize(b *testing.B) {
+func BenchmarkPredictURLRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest, 1000)
+	pops := make([]*PredictURLRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest(popr, false)
+		pops[i] = NewPopulatedPredictURLRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4285,10 +4294,10 @@ func BenchmarkPredictURLsRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequestSize(t *testing.T) {
+func TestPredictImageRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedPredictImageRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4307,12 +4316,12 @@ func TestPredictImagesRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequestSize(b *testing.B) {
+func BenchmarkPredictImageRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest, 1000)
+	pops := make([]*PredictImageRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest(popr, false)
+		pops[i] = NewPopulatedPredictImageRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4591,18 +4600,18 @@ func TestPredictRequestStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictURLsRequestStringer(t *testing.T) {
+func TestPredictURLRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedPredictURLRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictImagesRequestStringer(t *testing.T) {
+func TestPredictImageRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedPredictImageRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
