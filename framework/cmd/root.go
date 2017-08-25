@@ -10,6 +10,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/facebookgo/freeport"
 	"github.com/fatih/color"
+	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
@@ -156,7 +157,12 @@ func Init() {
 		config.AppName("carml"),
 		config.ColorMode(true),
 	}
-	if com.IsFile(cfgFile) {
+	if c, err := homedir.Expand(cfgFile); err == nil {
+		cfgFile = c
+	}
+	if config.IsValidRemotePrefix(cfgFile) {
+		opts = append(opts, config.ConfigRemotePath(cfgFile))
+	} else if com.IsFile(cfgFile) {
 		if c, err := filepath.Abs(cfgFile); err == nil {
 			cfgFile = c
 		}
