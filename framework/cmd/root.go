@@ -58,15 +58,6 @@ func getHost() (string, error) {
 // represents the base command when called without any subcommands
 func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework.GetName()
-	predictor, err := agent.GetPredictor(framework)
-	if err != nil {
-		return nil,
-			errors.Wrapf(err,
-				"failed to get predictor for %s. make sure you have "+
-					"imported the framework's predictor package",
-				frameworkName,
-			)
-	}
 	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
@@ -88,6 +79,15 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 			portInt, err := strconv.Atoi(port)
 			if err != nil {
 				return errors.Wrapf(err, "the port %s is not a valid integer", port)
+			}
+
+			predictor, err := agent.GetPredictor(framework)
+			if err != nil {
+				return errors.Wrapf(err,
+					"failed to get predictor for %s. make sure you have "+
+						"imported the framework's predictor package",
+					frameworkName,
+				)
 			}
 
 			agnt, err := agent.New(predictor, agent.WithHost(host), agent.WithPort(portInt))
