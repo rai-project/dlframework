@@ -12,6 +12,7 @@ import (
 	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
+	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
@@ -129,6 +130,13 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 func setupFlags(cmd *cobra.Command) {
 
 	cobra.OnInitialize(initConfig)
+
+	cmd.AddCommand(raicmd.VersionCmd)
+	cmd.AddCommand(raicmd.LicenseCmd)
+	cmd.AddCommand(raicmd.EnvCmd)
+	cmd.AddCommand(raicmd.GendocCmd)
+	cmd.AddCommand(raicmd.CompletionCmd)
+	cmd.AddCommand(raicmd.BuildTimeCmd)
 
 	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	cmd.PersistentFlags().BoolVarP(&isVerbose, "verbose", "v", false, "Toggle verbose mode.")
