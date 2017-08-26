@@ -12,6 +12,7 @@ import (
 	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
+	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
@@ -28,7 +29,6 @@ var (
 	local     bool
 	appSecret string
 	cfgFile   string
-	rootCmd   *cobra.Command
 
 	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd")
 )
@@ -59,16 +59,7 @@ func getHost() (string, error) {
 // represents the base command when called without any subcommands
 func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework.GetName()
-	predictor, err := agent.GetPredictor(framework)
-	if err != nil {
-		return nil,
-			errors.Wrapf(err,
-				"failed to get predictor for %s. make sure you have "+
-					"imported the framework's predictor package",
-				frameworkName,
-			)
-	}
-	rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -89,6 +80,15 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 			portInt, err := strconv.Atoi(port)
 			if err != nil {
 				return errors.Wrapf(err, "the port %s is not a valid integer", port)
+			}
+
+			predictor, err := agent.GetPredictor(framework)
+			if err != nil {
+				return errors.Wrapf(err,
+					"failed to get predictor for %s. make sure you have "+
+						"imported the framework's predictor package",
+					frameworkName,
+				)
 			}
 
 			agnt, err := agent.New(predictor, agent.WithHost(host), agent.WithPort(portInt))
@@ -123,29 +123,38 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 			return nil
 		},
 	}
-	setupFlags()
+	setupFlags(rootCmd)
 	return rootCmd, nil
 }
 
-func setupFlags() {
+func setupFlags(cmd *cobra.Command) {
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
-	rootCmd.PersistentFlags().BoolVarP(&isVerbose, "verbose", "v", false, "Toggle verbose mode.")
-	rootCmd.PersistentFlags().BoolVarP(&isDebug, "debug", "d", false, "Toggle debug mode.")
-	rootCmd.PersistentFlags().StringVarP(&appSecret, "secret", "s", "", "The application secret.")
-	rootCmd.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
+	cobra.OnInitialize(initConfig)
+
+	cmd.AddCommand(raicmd.VersionCmd)
+	cmd.AddCommand(raicmd.LicenseCmd)
+	cmd.AddCommand(raicmd.EnvCmd)
+	cmd.AddCommand(raicmd.GendocCmd)
+	cmd.AddCommand(raicmd.CompletionCmd)
+	cmd.AddCommand(raicmd.BuildTimeCmd)
+
+	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
+	cmd.PersistentFlags().BoolVarP(&isVerbose, "verbose", "v", false, "Toggle verbose mode.")
+	cmd.PersistentFlags().BoolVarP(&isDebug, "debug", "d", false, "Toggle debug mode.")
+	cmd.PersistentFlags().StringVarP(&appSecret, "secret", "s", "", "The application secret.")
+	cmd.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	viper.BindPFlag("app.secret", rootCmd.PersistentFlags().Lookup("secret"))
-	viper.BindPFlag("app.debug", rootCmd.PersistentFlags().Lookup("debug"))
-	viper.BindPFlag("app.verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag("app.secret", cmd.PersistentFlags().Lookup("secret"))
+	viper.BindPFlag("app.debug", cmd.PersistentFlags().Lookup("debug"))
+	viper.BindPFlag("app.verbose", cmd.PersistentFlags().Lookup("verbose"))
 }
 
 // initConfig reads in config file and ENV variables if set.
-func Init() {
+func initConfig() {
 
 	log.Level = logrus.DebugLevel
 	config.AfterInit(func() {
