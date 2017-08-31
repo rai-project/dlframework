@@ -70,7 +70,7 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 
 			host, found := os.LookupEnv("HOST")
 			if !found {
-        h, err := getHost()
+				h, err := getHost()
 				if err != nil {
 					return err
 				}
@@ -91,7 +91,17 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 				)
 			}
 
-			agnt, err := agent.New(predictor, agent.WithHost(host), agent.WithPort(portInt))
+			externalHost := host
+			if e, ok := os.LookupEnv("EXTERNAL_HOST"); ok {
+				externalHost = e
+			}
+
+			externalPort := port
+			if p, ok := os.LookupEnv("EXTERNAL_PORT"); ok {
+				externalPort = p
+			}
+
+			agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
 			if err != nil {
 				return err
 			}

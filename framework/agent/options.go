@@ -30,6 +30,18 @@ func WithPort(port int) Option {
 	}
 }
 
+func WithPortString(port string) Option {
+	return func(o *Options) *Options {
+		p, err := strconv.Atoi(port)
+		if err != nil {
+			log.WithError(err).WithField("port", port).Error("unable to parse port")
+			return o
+		}
+		o.port = p
+		return o
+	}
+}
+
 func getPort() (int, error) {
 	port, found := os.LookupEnv("PORT")
 	if !found {
