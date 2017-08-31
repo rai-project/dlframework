@@ -70,7 +70,7 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 
 			host, found := os.LookupEnv("HOST")
 			if !found {
-				h, err = getHost()
+        h, err := getHost()
 				if err != nil {
 					return err
 				}
