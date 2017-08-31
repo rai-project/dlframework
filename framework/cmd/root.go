@@ -43,7 +43,7 @@ func freePort() (string, error) {
 
 func getHost() (string, error) {
 	if local {
-		return "localhost", nil
+		return utils.GetLocalIp()
 	}
 	address, err := utils.GetExternalIp()
 	if err != nil {
