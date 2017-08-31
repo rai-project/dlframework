@@ -68,9 +68,13 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 				port = p
 			}
 
-			host, err := getHost()
-			if err != nil {
-				return err
+			host, found := os.LookupEnv("HOST")
+			if !found {
+				h, err = getHost()
+				if err != nil {
+					return err
+				}
+				host = h
 			}
 
 			portInt, err := strconv.Atoi(port)
