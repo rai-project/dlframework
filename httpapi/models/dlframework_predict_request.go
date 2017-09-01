@@ -14,6 +14,7 @@ import (
 
 // DlframeworkPredictRequest dlframework predict request
 // swagger:model dlframeworkPredictRequest
+
 type DlframeworkPredictRequest struct {
 
 	// data
@@ -34,6 +35,18 @@ type DlframeworkPredictRequest struct {
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
 }
+
+/* polymorph dlframeworkPredictRequest data false */
+
+/* polymorph dlframeworkPredictRequest framework_name false */
+
+/* polymorph dlframeworkPredictRequest framework_version false */
+
+/* polymorph dlframeworkPredictRequest limit false */
+
+/* polymorph dlframeworkPredictRequest model_name false */
+
+/* polymorph dlframeworkPredictRequest model_version false */
 
 // Validate validates this dlframework predict request
 func (m *DlframeworkPredictRequest) Validate(formats strfmt.Registry) error {

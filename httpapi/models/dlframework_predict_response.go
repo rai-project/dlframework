@@ -16,6 +16,7 @@ import (
 
 // DlframeworkPredictResponse dlframework predict response
 // swagger:model dlframeworkPredictResponse
+
 type DlframeworkPredictResponse struct {
 
 	// error
@@ -27,6 +28,12 @@ type DlframeworkPredictResponse struct {
 	// id
 	ID string `json:"id,omitempty"`
 }
+
+/* polymorph dlframeworkPredictResponse error false */
+
+/* polymorph dlframeworkPredictResponse features false */
+
+/* polymorph dlframeworkPredictResponse id false */
 
 // Validate validates this dlframework predict response
 func (m *DlframeworkPredictResponse) Validate(formats strfmt.Registry) error {

@@ -290,17 +290,6 @@ const (
         }
       }
     },
-    "dlframeworkFrameworkRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkModelManifest": {
       "type": "object",
       "properties": {
@@ -398,23 +387,6 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkModelManifest"
           }
-        }
-      }
-    },
-    "dlframeworkModelRequest": {
-      "type": "object",
-      "properties": {
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        },
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
         }
       }
     },

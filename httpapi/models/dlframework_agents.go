@@ -16,11 +16,14 @@ import (
 
 // DlframeworkAgents dlframework agents
 // swagger:model dlframeworkAgents
+
 type DlframeworkAgents struct {
 
 	// agents
 	Agents []*DlframeworkAgent `json:"agents"`
 }
+
+/* polymorph dlframeworkAgents agents false */
 
 // Validate validates this dlframework agents
 func (m *DlframeworkAgents) Validate(formats strfmt.Registry) error {

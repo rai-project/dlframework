@@ -14,6 +14,7 @@ import (
 
 // DlframeworkErrorStatus dlframework error status
 // swagger:model dlframeworkErrorStatus
+
 type DlframeworkErrorStatus struct {
 
 	// message
@@ -22,6 +23,10 @@ type DlframeworkErrorStatus struct {
 	// ok
 	Ok bool `json:"ok,omitempty"`
 }
+
+/* polymorph dlframeworkErrorStatus message false */
+
+/* polymorph dlframeworkErrorStatus ok false */
 
 // Validate validates this dlframework error status
 func (m *DlframeworkErrorStatus) Validate(formats strfmt.Registry) error {

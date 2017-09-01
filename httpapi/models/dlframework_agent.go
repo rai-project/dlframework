@@ -14,6 +14,7 @@ import (
 
 // DlframeworkAgent dlframework agent
 // swagger:model dlframeworkAgent
+
 type DlframeworkAgent struct {
 
 	// host
@@ -22,6 +23,10 @@ type DlframeworkAgent struct {
 	// port
 	Port string `json:"port,omitempty"`
 }
+
+/* polymorph dlframeworkAgent host false */
+
+/* polymorph dlframeworkAgent port false */
 
 // Validate validates this dlframework agent
 func (m *DlframeworkAgent) Validate(formats strfmt.Registry) error {
