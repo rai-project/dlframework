@@ -14,7 +14,7 @@ import (
 	loads "github.com/go-openapi/loads"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
-	security "github.com/go-openapi/runtime/security"
+	"github.com/go-openapi/runtime/security"
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
@@ -249,6 +249,10 @@ func (o *DlframeworkAPI) Context() *middleware.Context {
 	}
 
 	return o.context
+}
+
+func (o *DlframeworkAPI) Authorizer() runtime.Authorizer {
+	return runtime.AuthorizerFunc(func(_ *http.Request, _ interface{}) error { return nil })
 }
 
 func (o *DlframeworkAPI) initHandlerCache() {
