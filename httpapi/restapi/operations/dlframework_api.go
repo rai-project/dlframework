@@ -252,7 +252,7 @@ func (o *DlframeworkAPI) Context() *middleware.Context {
 }
 
 func (o *DlframeworkAPI) Authorizer() runtime.Authorizer {
-	return runtime.AuthorizerFunc(func(_ *http.Request, _ interface{}) error { return nil })
+	return security.Authorized()
 }
 
 func (o *DlframeworkAPI) initHandlerCache() {
