@@ -7,7 +7,7 @@ import:
 - package: github.com/chewxy/hm
 - package: github.com/elazarl/go-bindata-assetfs
 - package: github.com/go-openapi/errors
-  package: 03cfca65330da08a5a440053faf994a3c682b5bf
+  version: 03cfca65330da08a5a440053faf994a3c682b5bf
 - package: github.com/go-openapi/loads
   version: a80dea3052f00e5f032e860dd7355cd0cc67e24d
 - package: github.com/go-openapi/runtime
