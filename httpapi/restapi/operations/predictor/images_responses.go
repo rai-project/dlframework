@@ -25,7 +25,7 @@ type ImagesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkPredictionFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
 }
 
 // NewImagesOK creates ImagesOK with default headers values
@@ -34,13 +34,13 @@ func NewImagesOK() *ImagesOK {
 }
 
 // WithPayload adds the payload to the images o k response
-func (o *ImagesOK) WithPayload(payload *models.DlframeworkPredictionFeatureResponse) *ImagesOK {
+func (o *ImagesOK) WithPayload(payload *models.DlframeworkFeatureResponse) *ImagesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the images o k response
-func (o *ImagesOK) SetPayload(payload *models.DlframeworkPredictionFeatureResponse) {
+func (o *ImagesOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
 	o.Payload = payload
 }
 

@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// PredictImagesRequestImage predict images request image
-// swagger:model PredictImagesRequestImage
+// ImagesRequestImage images request image
+// swagger:model ImagesRequestImage
 
-type PredictImagesRequestImage struct {
+type ImagesRequestImage struct {
 
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
@@ -29,14 +29,14 @@ type PredictImagesRequestImage struct {
 	Preprocessed bool `json:"preprocessed,omitempty"`
 }
 
-/* polymorph PredictImagesRequestImage id false */
+/* polymorph ImagesRequestImage id false */
 
-/* polymorph PredictImagesRequestImage image false */
+/* polymorph ImagesRequestImage image false */
 
-/* polymorph PredictImagesRequestImage preprocessed false */
+/* polymorph ImagesRequestImage preprocessed false */
 
-// Validate validates this predict images request image
-func (m *PredictImagesRequestImage) Validate(formats strfmt.Registry) error {
+// Validate validates this images request image
+func (m *ImagesRequestImage) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -46,7 +46,7 @@ func (m *PredictImagesRequestImage) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *PredictImagesRequestImage) MarshalBinary() ([]byte, error) {
+func (m *ImagesRequestImage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -54,8 +54,8 @@ func (m *PredictImagesRequestImage) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *PredictImagesRequestImage) UnmarshalBinary(b []byte) error {
-	var res PredictImagesRequestImage
+func (m *ImagesRequestImage) UnmarshalBinary(b []byte) error {
+	var res ImagesRequestImage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -47,7 +47,7 @@ func NewUrlsOK() *UrlsOK {
 (streaming responses)
 */
 type UrlsOK struct {
-	Payload *models.DlframeworkPredictionFeatureResponse
+	Payload *models.DlframeworkFeatureResponse
 }
 
 func (o *UrlsOK) Error() string {
@@ -56,7 +56,7 @@ func (o *UrlsOK) Error() string {
 
 func (o *UrlsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkPredictionFeatureResponse)
+	o.Payload = new(models.DlframeworkFeatureResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

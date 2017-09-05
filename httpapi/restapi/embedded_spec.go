@@ -35,6 +35,33 @@ func init() {
   },
   "host": "localhost",
   "paths": {
+    "/v1/predict/clear": {
+      "post": {
+        "description": "The result is a prediction feature stream.",
+        "tags": [
+          "Predictor"
+        ],
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "operationId": "Clear",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkClearRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkClearResponse"
+            }
+          }
+        }
+      }
+    },
     "/v1/predict/dataset": {
       "post": {
         "description": "The result is a prediction feature stream.",
@@ -49,7 +76,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictDatasetRequest"
+              "$ref": "#/definitions/dlframeworkDatasetRequest"
             }
           }
         ],
@@ -57,7 +84,7 @@ func init() {
           "200": {
             "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
           }
         }
@@ -77,7 +104,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictImagesRequest"
+              "$ref": "#/definitions/dlframeworkImagesRequest"
             }
           }
         ],
@@ -85,7 +112,7 @@ func init() {
           "200": {
             "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
           }
         }
@@ -105,7 +132,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictURLsRequest"
+              "$ref": "#/definitions/dlframeworkURLsRequest"
             }
           }
         ],
@@ -113,7 +140,7 @@ func init() {
           "200": {
             "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictionFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
           }
         }
@@ -249,25 +276,7 @@ func init() {
     }
   },
   "definitions": {
-    "ModelManifestModel": {
-      "type": "object",
-      "properties": {
-        "base_url": {
-          "type": "string"
-        },
-        "graph_path": {
-          "type": "string"
-        },
-        "is_archive": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "weights_path": {
-          "type": "string"
-        }
-      }
-    },
-    "PredictDatasetRequestDataset": {
+    "DatasetRequestDataset": {
       "type": "object",
       "properties": {
         "category": {
@@ -278,7 +287,7 @@ func init() {
         }
       }
     },
-    "PredictImagesRequestImage": {
+    "ImagesRequestImage": {
       "type": "object",
       "properties": {
         "id": {
@@ -297,14 +306,20 @@ func init() {
         }
       }
     },
-    "PredictURLsRequestURL": {
+    "ModelManifestModel": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "title": "An id used to identify the output feature: maps to input_id for output"
+        "base_url": {
+          "type": "string"
         },
-        "url": {
+        "graph_path": {
+          "type": "string"
+        },
+        "is_archive": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "weights_path": {
           "type": "string"
         }
       }
@@ -313,6 +328,18 @@ func init() {
       "type": "object",
       "properties": {
         "value": {
+          "type": "string"
+        }
+      }
+    },
+    "URLsRequestURL": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "url": {
           "type": "string"
         }
       }
@@ -339,6 +366,22 @@ func init() {
         }
       }
     },
+    "dlframeworkClearRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkClearResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkContainerHardware": {
       "type": "object",
       "properties": {
@@ -346,6 +389,50 @@ func init() {
           "type": "string"
         },
         "gpu": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkDatasetRequest": {
+      "type": "object",
+      "properties": {
+        "dataset": {
+          "$ref": "#/definitions/DatasetRequestDataset"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "dlframeworkFeatureResponse": {
+      "type": "object",
+      "properties": {
+        "feature": {
+          "$ref": "#/definitions/dlframeworkFeature"
+        },
+        "id": {
+          "type": "string"
+        },
+        "input_id": {
+          "type": "string"
+        },
+        "request_id": {
           "type": "string"
         }
       }
@@ -375,6 +462,21 @@ func init() {
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
           }
+        }
+      }
+    },
+    "dlframeworkImagesRequest": {
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "title": "A list of Base64 encoded images",
+          "items": {
+            "$ref": "#/definitions/ImagesRequestImage"
+          }
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
@@ -478,79 +580,6 @@ func init() {
         }
       }
     },
-    "dlframeworkPredictDatasetRequest": {
-      "type": "object",
-      "properties": {
-        "dataset": {
-          "$ref": "#/definitions/PredictDatasetRequestDataset"
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
-    },
-    "dlframeworkPredictImagesRequest": {
-      "type": "object",
-      "properties": {
-        "images": {
-          "type": "array",
-          "title": "A list of Base64 encoded images",
-          "items": {
-            "$ref": "#/definitions/PredictImagesRequestImage"
-          }
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
-    },
-    "dlframeworkPredictURLsRequest": {
-      "type": "object",
-      "properties": {
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        },
-        "urls": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PredictURLsRequestURL"
-          }
-        }
-      }
-    },
-    "dlframeworkPredictionFeature": {
-      "type": "object",
-      "properties": {
-        "index": {
-          "type": "string",
-          "format": "int64"
-        },
-        "name": {
-          "type": "string"
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
-        }
-      }
-    },
-    "dlframeworkPredictionFeatureResponse": {
-      "type": "object",
-      "properties": {
-        "feature": {
-          "$ref": "#/definitions/dlframeworkPredictionFeature"
-        },
-        "id": {
-          "type": "string"
-        },
-        "input_id": {
-          "type": "string"
-        },
-        "request_id": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkPredictionOptions": {
       "type": "object",
       "properties": {
@@ -572,6 +601,20 @@ func init() {
         },
         "request_id": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkURLsRequest": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/URLsRequestURL"
+          }
         }
       }
     }

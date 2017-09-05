@@ -36,7 +36,7 @@ type ImagesParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.DlframeworkPredictImagesRequest
+	Body *models.DlframeworkImagesRequest
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -47,7 +47,7 @@ func (o *ImagesParams) BindRequest(r *http.Request, route *middleware.MatchedRou
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.DlframeworkPredictImagesRequest
+		var body models.DlframeworkImagesRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body"))

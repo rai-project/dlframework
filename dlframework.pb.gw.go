@@ -97,7 +97,7 @@ func request_Registry_ModelAgents_0(ctx context.Context, marshaler runtime.Marsh
 }
 
 func request_Predictor_URLs_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_URLsClient, runtime.ServerMetadata, error) {
-	var protoReq PredictURLsRequest
+	var protoReq URLsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
@@ -118,7 +118,7 @@ func request_Predictor_URLs_0(ctx context.Context, marshaler runtime.Marshaler, 
 }
 
 func request_Predictor_Images_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_ImagesClient, runtime.ServerMetadata, error) {
-	var protoReq PredictImagesRequest
+	var protoReq ImagesRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
@@ -139,7 +139,7 @@ func request_Predictor_Images_0(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func request_Predictor_Dataset_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (Predictor_DatasetClient, runtime.ServerMetadata, error) {
-	var protoReq PredictDatasetRequest
+	var protoReq DatasetRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
@@ -156,6 +156,19 @@ func request_Predictor_Dataset_0(ctx context.Context, marshaler runtime.Marshale
 	}
 	metadata.HeaderMD = header
 	return stream, metadata, nil
+
+}
+
+func request_Predictor_Clear_0(ctx context.Context, marshaler runtime.Marshaler, client PredictorClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ClearRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.Clear(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
@@ -445,6 +458,35 @@ func RegisterPredictorHandler(ctx context.Context, mux *runtime.ServeMux, conn *
 
 	})
 
+	mux.Handle("POST", pattern_Predictor_Clear_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(ctx)
+		defer cancel()
+		if cn, ok := w.(http.CloseNotifier); ok {
+			go func(done <-chan struct{}, closed <-chan bool) {
+				select {
+				case <-done:
+				case <-closed:
+					cancel()
+				}
+			}(ctx.Done(), cn.CloseNotify())
+		}
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Predictor_Clear_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Predictor_Clear_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -454,6 +496,8 @@ var (
 	pattern_Predictor_Images_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "images"}, ""))
 
 	pattern_Predictor_Dataset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "dataset"}, ""))
+
+	pattern_Predictor_Clear_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "clear"}, ""))
 )
 
 var (
@@ -462,4 +506,6 @@ var (
 	forward_Predictor_Images_0 = runtime.ForwardResponseStream
 
 	forward_Predictor_Dataset_0 = runtime.ForwardResponseStream
+
+	forward_Predictor_Clear_0 = runtime.ForwardResponseMessage
 )

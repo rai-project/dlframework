@@ -25,7 +25,7 @@ type DatasetOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkPredictionFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
 }
 
 // NewDatasetOK creates DatasetOK with default headers values
@@ -34,13 +34,13 @@ func NewDatasetOK() *DatasetOK {
 }
 
 // WithPayload adds the payload to the dataset o k response
-func (o *DatasetOK) WithPayload(payload *models.DlframeworkPredictionFeatureResponse) *DatasetOK {
+func (o *DatasetOK) WithPayload(payload *models.DlframeworkFeatureResponse) *DatasetOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the dataset o k response
-func (o *DatasetOK) SetPayload(payload *models.DlframeworkPredictionFeatureResponse) {
+func (o *DatasetOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
 	o.Payload = payload
 }
 

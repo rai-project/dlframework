@@ -25,6 +25,36 @@ type Client struct {
 }
 
 /*
+Clear datasets method receives a single dataset and runs the predictor on all elements of the dataset
+
+The result is a prediction feature stream.
+*/
+func (a *Client) Clear(params *ClearParams) (*ClearOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewClearParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "Clear",
+		Method:             "POST",
+		PathPattern:        "/v1/predict/clear",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &ClearReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*ClearOK), nil
+
+}
+
+/*
 Dataset datasets method receives a single dataset and runs the predictor on all elements of the dataset
 
 The result is a prediction feature stream.

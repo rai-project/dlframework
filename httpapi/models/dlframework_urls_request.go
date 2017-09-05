@@ -14,24 +14,24 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictUrlsRequest dlframework predict urls request
-// swagger:model dlframeworkPredictURLsRequest
+// DlframeworkUrlsRequest dlframework urls request
+// swagger:model dlframeworkURLsRequest
 
-type DlframeworkPredictUrlsRequest struct {
+type DlframeworkUrlsRequest struct {
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 
 	// urls
-	Urls []*PredictUrlsRequestURL `json:"urls"`
+	Urls []*UrlsRequestURL `json:"urls"`
 }
 
-/* polymorph dlframeworkPredictURLsRequest options false */
+/* polymorph dlframeworkURLsRequest options false */
 
-/* polymorph dlframeworkPredictURLsRequest urls false */
+/* polymorph dlframeworkURLsRequest urls false */
 
-// Validate validates this dlframework predict urls request
-func (m *DlframeworkPredictUrlsRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework urls request
+func (m *DlframeworkUrlsRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOptions(formats); err != nil {
@@ -50,7 +50,7 @@ func (m *DlframeworkPredictUrlsRequest) Validate(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *DlframeworkPredictUrlsRequest) validateOptions(formats strfmt.Registry) error {
+func (m *DlframeworkUrlsRequest) validateOptions(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Options) { // not required
 		return nil
@@ -69,7 +69,7 @@ func (m *DlframeworkPredictUrlsRequest) validateOptions(formats strfmt.Registry)
 	return nil
 }
 
-func (m *DlframeworkPredictUrlsRequest) validateUrls(formats strfmt.Registry) error {
+func (m *DlframeworkUrlsRequest) validateUrls(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Urls) { // not required
 		return nil
@@ -97,7 +97,7 @@ func (m *DlframeworkPredictUrlsRequest) validateUrls(formats strfmt.Registry) er
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictUrlsRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkUrlsRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -105,8 +105,8 @@ func (m *DlframeworkPredictUrlsRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictUrlsRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictUrlsRequest
+func (m *DlframeworkUrlsRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkUrlsRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

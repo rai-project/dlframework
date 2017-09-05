@@ -65,7 +65,7 @@ for the dataset operation typically these are written to a http.Request
 type DatasetParams struct {
 
 	/*Body*/
-	Body *models.DlframeworkPredictDatasetRequest
+	Body *models.DlframeworkDatasetRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *DatasetParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the dataset params
-func (o *DatasetParams) WithBody(body *models.DlframeworkPredictDatasetRequest) *DatasetParams {
+func (o *DatasetParams) WithBody(body *models.DlframeworkDatasetRequest) *DatasetParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the dataset params
-func (o *DatasetParams) SetBody(body *models.DlframeworkPredictDatasetRequest) {
+func (o *DatasetParams) SetBody(body *models.DlframeworkDatasetRequest) {
 	o.Body = body
 }
 
@@ -125,7 +125,7 @@ func (o *DatasetParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 	var res []error
 
 	if o.Body == nil {
-		o.Body = new(models.DlframeworkPredictDatasetRequest)
+		o.Body = new(models.DlframeworkDatasetRequest)
 	}
 
 	if err := r.SetBodyParam(o.Body); err != nil {

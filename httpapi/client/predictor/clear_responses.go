@@ -16,17 +16,17 @@ import (
 	"github.com/rai-project/dlframework/httpapi/models"
 )
 
-// ImagesReader is a Reader for the Images structure.
-type ImagesReader struct {
+// ClearReader is a Reader for the Clear structure.
+type ClearReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *ImagesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *ClearReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 
 	case 200:
-		result := NewImagesOK()
+		result := NewClearOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -37,26 +37,26 @@ func (o *ImagesReader) ReadResponse(response runtime.ClientResponse, consumer ru
 	}
 }
 
-// NewImagesOK creates a ImagesOK with default headers values
-func NewImagesOK() *ImagesOK {
-	return &ImagesOK{}
+// NewClearOK creates a ClearOK with default headers values
+func NewClearOK() *ClearOK {
+	return &ClearOK{}
 }
 
-/*ImagesOK handles this case with default header values.
+/*ClearOK handles this case with default header values.
 
-(streaming responses)
+ClearOK clear o k
 */
-type ImagesOK struct {
-	Payload *models.DlframeworkFeatureResponse
+type ClearOK struct {
+	Payload *models.DlframeworkClearResponse
 }
 
-func (o *ImagesOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/images][%d] imagesOK  %+v", 200, o.Payload)
+func (o *ClearOK) Error() string {
+	return fmt.Sprintf("[POST /v1/predict/clear][%d] clearOK  %+v", 200, o.Payload)
 }
 
-func (o *ImagesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *ClearOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkFeatureResponse)
+	o.Payload = new(models.DlframeworkClearResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

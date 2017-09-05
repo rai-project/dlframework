@@ -38,6 +38,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		PredictorClearHandler: predictor.ClearHandlerFunc(func(params predictor.ClearParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictorClear has not yet been implemented")
+		}),
 		PredictorDatasetHandler: predictor.DatasetHandlerFunc(func(params predictor.DatasetParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictorDataset has not yet been implemented")
 		}),
@@ -88,6 +91,8 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// PredictorClearHandler sets the operation handler for the clear operation
+	PredictorClearHandler predictor.ClearHandler
 	// PredictorDatasetHandler sets the operation handler for the dataset operation
 	PredictorDatasetHandler predictor.DatasetHandler
 	// RegistryFrameworkAgentsHandler sets the operation handler for the framework agents operation
@@ -163,6 +168,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.PredictorClearHandler == nil {
+		unregistered = append(unregistered, "predictor.ClearHandler")
 	}
 
 	if o.PredictorDatasetHandler == nil {
@@ -275,6 +284,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/clear"] = predictor.NewClear(o.context, o.PredictorClearHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

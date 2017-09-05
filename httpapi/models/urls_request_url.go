@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// PredictUrlsRequestURL predict urls request URL
-// swagger:model PredictURLsRequestURL
+// UrlsRequestURL urls request URL
+// swagger:model URLsRequestURL
 
-type PredictUrlsRequestURL struct {
+type UrlsRequestURL struct {
 
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
@@ -24,12 +24,12 @@ type PredictUrlsRequestURL struct {
 	URL string `json:"url,omitempty"`
 }
 
-/* polymorph PredictURLsRequestURL id false */
+/* polymorph URLsRequestURL id false */
 
-/* polymorph PredictURLsRequestURL url false */
+/* polymorph URLsRequestURL url false */
 
-// Validate validates this predict urls request URL
-func (m *PredictUrlsRequestURL) Validate(formats strfmt.Registry) error {
+// Validate validates this urls request URL
+func (m *UrlsRequestURL) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -39,7 +39,7 @@ func (m *PredictUrlsRequestURL) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *PredictUrlsRequestURL) MarshalBinary() ([]byte, error) {
+func (m *UrlsRequestURL) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -47,8 +47,8 @@ func (m *PredictUrlsRequestURL) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *PredictUrlsRequestURL) UnmarshalBinary(b []byte) error {
-	var res PredictUrlsRequestURL
+func (m *UrlsRequestURL) UnmarshalBinary(b []byte) error {
+	var res UrlsRequestURL
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

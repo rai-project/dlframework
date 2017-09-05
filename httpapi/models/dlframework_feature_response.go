@@ -12,13 +12,13 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictionFeatureResponse dlframework prediction feature response
-// swagger:model dlframeworkPredictionFeatureResponse
+// DlframeworkFeatureResponse dlframework feature response
+// swagger:model dlframeworkFeatureResponse
 
-type DlframeworkPredictionFeatureResponse struct {
+type DlframeworkFeatureResponse struct {
 
 	// feature
-	Feature *DlframeworkPredictionFeature `json:"feature,omitempty"`
+	Feature *DlframeworkFeature `json:"feature,omitempty"`
 
 	// id
 	ID string `json:"id,omitempty"`
@@ -30,16 +30,16 @@ type DlframeworkPredictionFeatureResponse struct {
 	RequestID string `json:"request_id,omitempty"`
 }
 
-/* polymorph dlframeworkPredictionFeatureResponse feature false */
+/* polymorph dlframeworkFeatureResponse feature false */
 
-/* polymorph dlframeworkPredictionFeatureResponse id false */
+/* polymorph dlframeworkFeatureResponse id false */
 
-/* polymorph dlframeworkPredictionFeatureResponse input_id false */
+/* polymorph dlframeworkFeatureResponse input_id false */
 
-/* polymorph dlframeworkPredictionFeatureResponse request_id false */
+/* polymorph dlframeworkFeatureResponse request_id false */
 
-// Validate validates this dlframework prediction feature response
-func (m *DlframeworkPredictionFeatureResponse) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework feature response
+func (m *DlframeworkFeatureResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateFeature(formats); err != nil {
@@ -53,7 +53,7 @@ func (m *DlframeworkPredictionFeatureResponse) Validate(formats strfmt.Registry)
 	return nil
 }
 
-func (m *DlframeworkPredictionFeatureResponse) validateFeature(formats strfmt.Registry) error {
+func (m *DlframeworkFeatureResponse) validateFeature(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Feature) { // not required
 		return nil
@@ -73,7 +73,7 @@ func (m *DlframeworkPredictionFeatureResponse) validateFeature(formats strfmt.Re
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictionFeatureResponse) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkFeatureResponse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -81,8 +81,8 @@ func (m *DlframeworkPredictionFeatureResponse) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictionFeatureResponse) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictionFeatureResponse
+func (m *DlframeworkFeatureResponse) UnmarshalBinary(b []byte) error {
+	var res DlframeworkFeatureResponse
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

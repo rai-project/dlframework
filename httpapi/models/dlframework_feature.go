@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictionFeature dlframework prediction feature
-// swagger:model dlframeworkPredictionFeature
+// DlframeworkFeature dlframework feature
+// swagger:model dlframeworkFeature
 
-type DlframeworkPredictionFeature struct {
+type DlframeworkFeature struct {
 
 	// index
 	Index int64 `json:"index,omitempty"`
@@ -27,14 +27,14 @@ type DlframeworkPredictionFeature struct {
 	Probability float32 `json:"probability,omitempty"`
 }
 
-/* polymorph dlframeworkPredictionFeature index false */
+/* polymorph dlframeworkFeature index false */
 
-/* polymorph dlframeworkPredictionFeature name false */
+/* polymorph dlframeworkFeature name false */
 
-/* polymorph dlframeworkPredictionFeature probability false */
+/* polymorph dlframeworkFeature probability false */
 
-// Validate validates this dlframework prediction feature
-func (m *DlframeworkPredictionFeature) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework feature
+func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -44,7 +44,7 @@ func (m *DlframeworkPredictionFeature) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictionFeature) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkFeature) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -52,8 +52,8 @@ func (m *DlframeworkPredictionFeature) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictionFeature) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictionFeature
+func (m *DlframeworkFeature) UnmarshalBinary(b []byte) error {
+	var res DlframeworkFeature
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// PredictDatasetRequestDataset predict dataset request dataset
-// swagger:model PredictDatasetRequestDataset
+// DatasetRequestDataset dataset request dataset
+// swagger:model DatasetRequestDataset
 
-type PredictDatasetRequestDataset struct {
+type DatasetRequestDataset struct {
 
 	// category
 	Category string `json:"category,omitempty"`
@@ -24,12 +24,12 @@ type PredictDatasetRequestDataset struct {
 	Name string `json:"name,omitempty"`
 }
 
-/* polymorph PredictDatasetRequestDataset category false */
+/* polymorph DatasetRequestDataset category false */
 
-/* polymorph PredictDatasetRequestDataset name false */
+/* polymorph DatasetRequestDataset name false */
 
-// Validate validates this predict dataset request dataset
-func (m *PredictDatasetRequestDataset) Validate(formats strfmt.Registry) error {
+// Validate validates this dataset request dataset
+func (m *DatasetRequestDataset) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -39,7 +39,7 @@ func (m *PredictDatasetRequestDataset) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *PredictDatasetRequestDataset) MarshalBinary() ([]byte, error) {
+func (m *DatasetRequestDataset) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -47,8 +47,8 @@ func (m *PredictDatasetRequestDataset) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *PredictDatasetRequestDataset) UnmarshalBinary(b []byte) error {
-	var res PredictDatasetRequestDataset
+func (m *DatasetRequestDataset) UnmarshalBinary(b []byte) error {
+	var res DatasetRequestDataset
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

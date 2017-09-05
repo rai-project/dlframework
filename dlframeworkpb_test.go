@@ -19,11 +19,13 @@ It has these top-level messages:
 	ModelRequest
 	ModelManifestsResponse
 	PredictionOptions
-	PredictURLsRequest
-	PredictImagesRequest
-	PredictDatasetRequest
-	PredictionFeature
-	PredictionFeatureResponse
+	URLsRequest
+	ImagesRequest
+	DatasetRequest
+	Feature
+	FeatureResponse
+	ClearRequest
+	ClearResponse
 */
 package dlframework
 
@@ -1472,15 +1474,15 @@ func BenchmarkPredictionOptionsProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequestProto(t *testing.T) {
+func TestURLsRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedURLsRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1506,10 +1508,10 @@ func TestPredictURLsRequestProto(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestMarshalTo(t *testing.T) {
+func TestURLsRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedURLsRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1519,7 +1521,7 @@ func TestPredictURLsRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1534,12 +1536,12 @@ func TestPredictURLsRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequestProtoMarshal(b *testing.B) {
+func BenchmarkURLsRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest, 10000)
+	pops := make([]*URLsRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest(popr, false)
+		pops[i] = NewPopulatedURLsRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1552,18 +1554,18 @@ func BenchmarkPredictURLsRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictURLsRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkURLsRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLsRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedURLsRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1574,15 +1576,15 @@ func BenchmarkPredictURLsRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequest_URLProto(t *testing.T) {
+func TestURLsRequest_URLProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, false)
+	p := NewPopulatedURLsRequest_URL(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1608,10 +1610,10 @@ func TestPredictURLsRequest_URLProto(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequest_URLMarshalTo(t *testing.T) {
+func TestURLsRequest_URLMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, false)
+	p := NewPopulatedURLsRequest_URL(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1621,7 +1623,7 @@ func TestPredictURLsRequest_URLMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1636,12 +1638,12 @@ func TestPredictURLsRequest_URLMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequest_URLProtoMarshal(b *testing.B) {
+func BenchmarkURLsRequest_URLProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest_URL, 10000)
+	pops := make([]*URLsRequest_URL, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest_URL(popr, false)
+		pops[i] = NewPopulatedURLsRequest_URL(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1654,18 +1656,18 @@ func BenchmarkPredictURLsRequest_URLProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictURLsRequest_URLProtoUnmarshal(b *testing.B) {
+func BenchmarkURLsRequest_URLProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictURLsRequest_URL(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedURLsRequest_URL(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1676,15 +1678,15 @@ func BenchmarkPredictURLsRequest_URLProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequestProto(t *testing.T) {
+func TestImagesRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedImagesRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1710,10 +1712,10 @@ func TestPredictImagesRequestProto(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestMarshalTo(t *testing.T) {
+func TestImagesRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedImagesRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1723,7 +1725,7 @@ func TestPredictImagesRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1738,12 +1740,12 @@ func TestPredictImagesRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequestProtoMarshal(b *testing.B) {
+func BenchmarkImagesRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest, 10000)
+	pops := make([]*ImagesRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest(popr, false)
+		pops[i] = NewPopulatedImagesRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1756,18 +1758,18 @@ func BenchmarkPredictImagesRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictImagesRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkImagesRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictImagesRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedImagesRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1778,15 +1780,15 @@ func BenchmarkPredictImagesRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequest_ImageProto(t *testing.T) {
+func TestImagesRequest_ImageProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, false)
+	p := NewPopulatedImagesRequest_Image(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1812,10 +1814,10 @@ func TestPredictImagesRequest_ImageProto(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequest_ImageMarshalTo(t *testing.T) {
+func TestImagesRequest_ImageMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, false)
+	p := NewPopulatedImagesRequest_Image(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1825,7 +1827,7 @@ func TestPredictImagesRequest_ImageMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1840,12 +1842,12 @@ func TestPredictImagesRequest_ImageMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequest_ImageProtoMarshal(b *testing.B) {
+func BenchmarkImagesRequest_ImageProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest_Image, 10000)
+	pops := make([]*ImagesRequest_Image, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest_Image(popr, false)
+		pops[i] = NewPopulatedImagesRequest_Image(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1858,18 +1860,18 @@ func BenchmarkPredictImagesRequest_ImageProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictImagesRequest_ImageProtoUnmarshal(b *testing.B) {
+func BenchmarkImagesRequest_ImageProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictImagesRequest_Image(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedImagesRequest_Image(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1880,15 +1882,15 @@ func BenchmarkPredictImagesRequest_ImageProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictDatasetRequestProto(t *testing.T) {
+func TestDatasetRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, false)
+	p := NewPopulatedDatasetRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1914,10 +1916,10 @@ func TestPredictDatasetRequestProto(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequestMarshalTo(t *testing.T) {
+func TestDatasetRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, false)
+	p := NewPopulatedDatasetRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -1927,7 +1929,7 @@ func TestPredictDatasetRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1942,12 +1944,12 @@ func TestPredictDatasetRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictDatasetRequestProtoMarshal(b *testing.B) {
+func BenchmarkDatasetRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictDatasetRequest, 10000)
+	pops := make([]*DatasetRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictDatasetRequest(popr, false)
+		pops[i] = NewPopulatedDatasetRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -1960,18 +1962,18 @@ func BenchmarkPredictDatasetRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictDatasetRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkDatasetRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictDatasetRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedDatasetRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1982,15 +1984,15 @@ func BenchmarkPredictDatasetRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictDatasetRequest_DatasetProto(t *testing.T) {
+func TestDatasetRequest_DatasetProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+	p := NewPopulatedDatasetRequest_Dataset(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2016,10 +2018,10 @@ func TestPredictDatasetRequest_DatasetProto(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequest_DatasetMarshalTo(t *testing.T) {
+func TestDatasetRequest_DatasetMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+	p := NewPopulatedDatasetRequest_Dataset(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -2029,7 +2031,7 @@ func TestPredictDatasetRequest_DatasetMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2044,12 +2046,12 @@ func TestPredictDatasetRequest_DatasetMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictDatasetRequest_DatasetProtoMarshal(b *testing.B) {
+func BenchmarkDatasetRequest_DatasetProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictDatasetRequest_Dataset, 10000)
+	pops := make([]*DatasetRequest_Dataset, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+		pops[i] = NewPopulatedDatasetRequest_Dataset(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2062,18 +2064,18 @@ func BenchmarkPredictDatasetRequest_DatasetProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictDatasetRequest_DatasetProtoUnmarshal(b *testing.B) {
+func BenchmarkDatasetRequest_DatasetProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictDatasetRequest_Dataset(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedDatasetRequest_Dataset(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2084,15 +2086,15 @@ func BenchmarkPredictDatasetRequest_DatasetProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictionFeatureProto(t *testing.T) {
+func TestFeatureProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, false)
+	p := NewPopulatedFeature(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2118,10 +2120,10 @@ func TestPredictionFeatureProto(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureMarshalTo(t *testing.T) {
+func TestFeatureMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, false)
+	p := NewPopulatedFeature(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -2131,7 +2133,7 @@ func TestPredictionFeatureMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2146,12 +2148,12 @@ func TestPredictionFeatureMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictionFeatureProtoMarshal(b *testing.B) {
+func BenchmarkFeatureProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictionFeature, 10000)
+	pops := make([]*Feature, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictionFeature(popr, false)
+		pops[i] = NewPopulatedFeature(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2164,18 +2166,18 @@ func BenchmarkPredictionFeatureProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictionFeatureProtoUnmarshal(b *testing.B) {
+func BenchmarkFeatureProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictionFeature(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedFeature(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2186,15 +2188,15 @@ func BenchmarkPredictionFeatureProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictionFeatureResponseProto(t *testing.T) {
+func TestFeatureResponseProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, false)
+	p := NewPopulatedFeatureResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2220,10 +2222,10 @@ func TestPredictionFeatureResponseProto(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureResponseMarshalTo(t *testing.T) {
+func TestFeatureResponseMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, false)
+	p := NewPopulatedFeatureResponse(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -2233,7 +2235,7 @@ func TestPredictionFeatureResponseMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2248,12 +2250,12 @@ func TestPredictionFeatureResponseMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictionFeatureResponseProtoMarshal(b *testing.B) {
+func BenchmarkFeatureResponseProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictionFeatureResponse, 10000)
+	pops := make([]*FeatureResponse, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedPredictionFeatureResponse(popr, false)
+		pops[i] = NewPopulatedFeatureResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2266,18 +2268,222 @@ func BenchmarkPredictionFeatureResponseProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkPredictionFeatureResponseProtoUnmarshal(b *testing.B) {
+func BenchmarkFeatureResponseProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictionFeatureResponse(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedFeatureResponse(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += len(datas[i%10000])
+		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
+			panic(err)
+		}
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestClearRequestProto(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	littlefuzz := make([]byte, len(dAtA))
+	copy(littlefuzz, dAtA)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+	if len(littlefuzz) > 0 {
+		fuzzamount := 100
+		for i := 0; i < fuzzamount; i++ {
+			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
+			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
+		}
+		// shouldn't panic
+		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
+	}
+}
+
+func TestClearRequestMarshalTo(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, false)
+	size := p.Size()
+	dAtA := make([]byte, size)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	_, err := p.MarshalTo(dAtA)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func BenchmarkClearRequestProtoMarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*ClearRequest, 10000)
+	for i := 0; i < 10000; i++ {
+		pops[i] = NewPopulatedClearRequest(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
+		if err != nil {
+			panic(err)
+		}
+		total += len(dAtA)
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func BenchmarkClearRequestProtoUnmarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	datas := make([][]byte, 10000)
+	for i := 0; i < 10000; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedClearRequest(popr, false))
+		if err != nil {
+			panic(err)
+		}
+		datas[i] = dAtA
+	}
+	msg := &ClearRequest{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += len(datas[i%10000])
+		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
+			panic(err)
+		}
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestClearResponseProto(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	littlefuzz := make([]byte, len(dAtA))
+	copy(littlefuzz, dAtA)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+	if len(littlefuzz) > 0 {
+		fuzzamount := 100
+		for i := 0; i < fuzzamount; i++ {
+			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
+			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
+		}
+		// shouldn't panic
+		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
+	}
+}
+
+func TestClearResponseMarshalTo(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, false)
+	size := p.Size()
+	dAtA := make([]byte, size)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	_, err := p.MarshalTo(dAtA)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func BenchmarkClearResponseProtoMarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*ClearResponse, 10000)
+	for i := 0; i < 10000; i++ {
+		pops[i] = NewPopulatedClearResponse(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
+		if err != nil {
+			panic(err)
+		}
+		total += len(dAtA)
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func BenchmarkClearResponseProtoUnmarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	datas := make([][]byte, 10000)
+	for i := 0; i < 10000; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedClearResponse(popr, false))
+		if err != nil {
+			panic(err)
+		}
+		datas[i] = dAtA
+	}
+	msg := &ClearResponse{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2582,16 +2788,16 @@ func TestPredictionOptionsJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictURLsRequestJSON(t *testing.T) {
+func TestURLsRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedURLsRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2603,16 +2809,16 @@ func TestPredictURLsRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictURLsRequest_URLJSON(t *testing.T) {
+func TestURLsRequest_URLJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, true)
+	p := NewPopulatedURLsRequest_URL(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2624,16 +2830,16 @@ func TestPredictURLsRequest_URLJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictImagesRequestJSON(t *testing.T) {
+func TestImagesRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedImagesRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2645,16 +2851,16 @@ func TestPredictImagesRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictImagesRequest_ImageJSON(t *testing.T) {
+func TestImagesRequest_ImageJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, true)
+	p := NewPopulatedImagesRequest_Image(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2666,16 +2872,16 @@ func TestPredictImagesRequest_ImageJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictDatasetRequestJSON(t *testing.T) {
+func TestDatasetRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, true)
+	p := NewPopulatedDatasetRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2687,16 +2893,16 @@ func TestPredictDatasetRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictDatasetRequest_DatasetJSON(t *testing.T) {
+func TestDatasetRequest_DatasetJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, true)
+	p := NewPopulatedDatasetRequest_Dataset(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2708,16 +2914,16 @@ func TestPredictDatasetRequest_DatasetJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictionFeatureJSON(t *testing.T) {
+func TestFeatureJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, true)
+	p := NewPopulatedFeature(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2729,16 +2935,58 @@ func TestPredictionFeatureJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestPredictionFeatureResponseJSON(t *testing.T) {
+func TestFeatureResponseJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, true)
+	p := NewPopulatedFeatureResponse(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
+	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
+	}
+}
+func TestClearRequestJSON(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, true)
+	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
+	jsondata, err := marshaler.MarshalToString(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearRequest{}
+	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
+	}
+}
+func TestClearResponseJSON(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, true)
+	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
+	jsondata, err := marshaler.MarshalToString(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &ClearResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -3226,12 +3474,12 @@ func TestPredictionOptionsProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestProtoText(t *testing.T) {
+func TestURLsRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedURLsRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3243,12 +3491,12 @@ func TestPredictURLsRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequestProtoCompactText(t *testing.T) {
+func TestURLsRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedURLsRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3260,12 +3508,12 @@ func TestPredictURLsRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequest_URLProtoText(t *testing.T) {
+func TestURLsRequest_URLProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, true)
+	p := NewPopulatedURLsRequest_URL(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3277,12 +3525,12 @@ func TestPredictURLsRequest_URLProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictURLsRequest_URLProtoCompactText(t *testing.T) {
+func TestURLsRequest_URLProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, true)
+	p := NewPopulatedURLsRequest_URL(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3294,12 +3542,12 @@ func TestPredictURLsRequest_URLProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestProtoText(t *testing.T) {
+func TestImagesRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedImagesRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3311,12 +3559,12 @@ func TestPredictImagesRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequestProtoCompactText(t *testing.T) {
+func TestImagesRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedImagesRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3328,12 +3576,12 @@ func TestPredictImagesRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequest_ImageProtoText(t *testing.T) {
+func TestImagesRequest_ImageProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, true)
+	p := NewPopulatedImagesRequest_Image(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3345,12 +3593,12 @@ func TestPredictImagesRequest_ImageProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictImagesRequest_ImageProtoCompactText(t *testing.T) {
+func TestImagesRequest_ImageProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, true)
+	p := NewPopulatedImagesRequest_Image(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3362,12 +3610,12 @@ func TestPredictImagesRequest_ImageProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequestProtoText(t *testing.T) {
+func TestDatasetRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, true)
+	p := NewPopulatedDatasetRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3379,12 +3627,12 @@ func TestPredictDatasetRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequestProtoCompactText(t *testing.T) {
+func TestDatasetRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, true)
+	p := NewPopulatedDatasetRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3396,12 +3644,12 @@ func TestPredictDatasetRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequest_DatasetProtoText(t *testing.T) {
+func TestDatasetRequest_DatasetProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, true)
+	p := NewPopulatedDatasetRequest_Dataset(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3413,12 +3661,12 @@ func TestPredictDatasetRequest_DatasetProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictDatasetRequest_DatasetProtoCompactText(t *testing.T) {
+func TestDatasetRequest_DatasetProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, true)
+	p := NewPopulatedDatasetRequest_Dataset(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3430,12 +3678,12 @@ func TestPredictDatasetRequest_DatasetProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureProtoText(t *testing.T) {
+func TestFeatureProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, true)
+	p := NewPopulatedFeature(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3447,12 +3695,12 @@ func TestPredictionFeatureProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureProtoCompactText(t *testing.T) {
+func TestFeatureProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, true)
+	p := NewPopulatedFeature(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3464,12 +3712,12 @@ func TestPredictionFeatureProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureResponseProtoText(t *testing.T) {
+func TestFeatureResponseProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, true)
+	p := NewPopulatedFeatureResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3481,12 +3729,80 @@ func TestPredictionFeatureResponseProtoText(t *testing.T) {
 	}
 }
 
-func TestPredictionFeatureResponseProtoCompactText(t *testing.T) {
+func TestFeatureResponseProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, true)
+	p := NewPopulatedFeatureResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestClearRequestProtoText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
+	msg := &ClearRequest{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestClearRequestProtoCompactText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
+	msg := &ClearRequest{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestClearResponseProtoText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
+	msg := &ClearResponse{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestClearResponseProtoCompactText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
+	msg := &ClearResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3708,14 +4024,14 @@ func TestPredictionOptionsVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictURLsRequestVerboseEqual(t *testing.T) {
+func TestURLsRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedURLsRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictURLsRequest{}
+	msg := &URLsRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3723,14 +4039,14 @@ func TestPredictURLsRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictURLsRequest_URLVerboseEqual(t *testing.T) {
+func TestURLsRequest_URLVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest_URL(popr, false)
+	p := NewPopulatedURLsRequest_URL(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictURLsRequest_URL{}
+	msg := &URLsRequest_URL{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3738,14 +4054,14 @@ func TestPredictURLsRequest_URLVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictImagesRequestVerboseEqual(t *testing.T) {
+func TestImagesRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedImagesRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictImagesRequest{}
+	msg := &ImagesRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3753,14 +4069,14 @@ func TestPredictImagesRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictImagesRequest_ImageVerboseEqual(t *testing.T) {
+func TestImagesRequest_ImageVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest_Image(popr, false)
+	p := NewPopulatedImagesRequest_Image(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictImagesRequest_Image{}
+	msg := &ImagesRequest_Image{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3768,14 +4084,14 @@ func TestPredictImagesRequest_ImageVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictDatasetRequestVerboseEqual(t *testing.T) {
+func TestDatasetRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest(popr, false)
+	p := NewPopulatedDatasetRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictDatasetRequest{}
+	msg := &DatasetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3783,14 +4099,14 @@ func TestPredictDatasetRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictDatasetRequest_DatasetVerboseEqual(t *testing.T) {
+func TestDatasetRequest_DatasetVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+	p := NewPopulatedDatasetRequest_Dataset(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictDatasetRequest_Dataset{}
+	msg := &DatasetRequest_Dataset{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3798,14 +4114,14 @@ func TestPredictDatasetRequest_DatasetVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictionFeatureVerboseEqual(t *testing.T) {
+func TestFeatureVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeature(popr, false)
+	p := NewPopulatedFeature(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictionFeature{}
+	msg := &Feature{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -3813,14 +4129,44 @@ func TestPredictionFeatureVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestPredictionFeatureResponseVerboseEqual(t *testing.T) {
+func TestFeatureResponseVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeatureResponse(popr, false)
+	p := NewPopulatedFeatureResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &PredictionFeatureResponse{}
+	msg := &FeatureResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		panic(err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
+	}
+}
+func TestClearRequestVerboseEqual(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearRequest(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	msg := &ClearRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		panic(err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
+	}
+}
+func TestClearResponseVerboseEqual(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearResponse(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	msg := &ClearResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -4010,9 +4356,9 @@ func TestPredictionOptionsGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictURLsRequestGoString(t *testing.T) {
+func TestURLsRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedURLsRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4023,9 +4369,9 @@ func TestPredictURLsRequestGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictURLsRequest_URLGoString(t *testing.T) {
+func TestURLsRequest_URLGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest_URL(popr, false)
+	p := NewPopulatedURLsRequest_URL(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4036,9 +4382,9 @@ func TestPredictURLsRequest_URLGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictImagesRequestGoString(t *testing.T) {
+func TestImagesRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedImagesRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4049,9 +4395,9 @@ func TestPredictImagesRequestGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictImagesRequest_ImageGoString(t *testing.T) {
+func TestImagesRequest_ImageGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest_Image(popr, false)
+	p := NewPopulatedImagesRequest_Image(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4062,9 +4408,9 @@ func TestPredictImagesRequest_ImageGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictDatasetRequestGoString(t *testing.T) {
+func TestDatasetRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest(popr, false)
+	p := NewPopulatedDatasetRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4075,9 +4421,9 @@ func TestPredictDatasetRequestGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictDatasetRequest_DatasetGoString(t *testing.T) {
+func TestDatasetRequest_DatasetGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+	p := NewPopulatedDatasetRequest_Dataset(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4088,9 +4434,9 @@ func TestPredictDatasetRequest_DatasetGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictionFeatureGoString(t *testing.T) {
+func TestFeatureGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeature(popr, false)
+	p := NewPopulatedFeature(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4101,9 +4447,35 @@ func TestPredictionFeatureGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestPredictionFeatureResponseGoString(t *testing.T) {
+func TestFeatureResponseGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeatureResponse(popr, false)
+	p := NewPopulatedFeatureResponse(popr, false)
+	s1 := p.GoString()
+	s2 := fmt.Sprintf("%#v", p)
+	if s1 != s2 {
+		t.Fatalf("GoString want %v got %v", s1, s2)
+	}
+	_, err := go_parser.ParseExpr(s1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+func TestClearRequestGoString(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearRequest(popr, false)
+	s1 := p.GoString()
+	s2 := fmt.Sprintf("%#v", p)
+	if s1 != s2 {
+		t.Fatalf("GoString want %v got %v", s1, s2)
+	}
+	_, err := go_parser.ParseExpr(s1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+func TestClearResponseGoString(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearResponse(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4618,10 +4990,10 @@ func BenchmarkPredictionOptionsSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequestSize(t *testing.T) {
+func TestURLsRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest(popr, true)
+	p := NewPopulatedURLsRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4640,12 +5012,12 @@ func TestPredictURLsRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequestSize(b *testing.B) {
+func BenchmarkURLsRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest, 1000)
+	pops := make([]*URLsRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest(popr, false)
+		pops[i] = NewPopulatedURLsRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4654,10 +5026,10 @@ func BenchmarkPredictURLsRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictURLsRequest_URLSize(t *testing.T) {
+func TestURLsRequest_URLSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictURLsRequest_URL(popr, true)
+	p := NewPopulatedURLsRequest_URL(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4676,12 +5048,12 @@ func TestPredictURLsRequest_URLSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictURLsRequest_URLSize(b *testing.B) {
+func BenchmarkURLsRequest_URLSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictURLsRequest_URL, 1000)
+	pops := make([]*URLsRequest_URL, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictURLsRequest_URL(popr, false)
+		pops[i] = NewPopulatedURLsRequest_URL(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4690,10 +5062,10 @@ func BenchmarkPredictURLsRequest_URLSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequestSize(t *testing.T) {
+func TestImagesRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest(popr, true)
+	p := NewPopulatedImagesRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4712,12 +5084,12 @@ func TestPredictImagesRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequestSize(b *testing.B) {
+func BenchmarkImagesRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest, 1000)
+	pops := make([]*ImagesRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest(popr, false)
+		pops[i] = NewPopulatedImagesRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4726,10 +5098,10 @@ func BenchmarkPredictImagesRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictImagesRequest_ImageSize(t *testing.T) {
+func TestImagesRequest_ImageSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictImagesRequest_Image(popr, true)
+	p := NewPopulatedImagesRequest_Image(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4748,12 +5120,12 @@ func TestPredictImagesRequest_ImageSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictImagesRequest_ImageSize(b *testing.B) {
+func BenchmarkImagesRequest_ImageSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictImagesRequest_Image, 1000)
+	pops := make([]*ImagesRequest_Image, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictImagesRequest_Image(popr, false)
+		pops[i] = NewPopulatedImagesRequest_Image(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4762,10 +5134,10 @@ func BenchmarkPredictImagesRequest_ImageSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictDatasetRequestSize(t *testing.T) {
+func TestDatasetRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest(popr, true)
+	p := NewPopulatedDatasetRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4784,12 +5156,12 @@ func TestPredictDatasetRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictDatasetRequestSize(b *testing.B) {
+func BenchmarkDatasetRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictDatasetRequest, 1000)
+	pops := make([]*DatasetRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictDatasetRequest(popr, false)
+		pops[i] = NewPopulatedDatasetRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4798,10 +5170,10 @@ func BenchmarkPredictDatasetRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictDatasetRequest_DatasetSize(t *testing.T) {
+func TestDatasetRequest_DatasetSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, true)
+	p := NewPopulatedDatasetRequest_Dataset(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4820,12 +5192,12 @@ func TestPredictDatasetRequest_DatasetSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictDatasetRequest_DatasetSize(b *testing.B) {
+func BenchmarkDatasetRequest_DatasetSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictDatasetRequest_Dataset, 1000)
+	pops := make([]*DatasetRequest_Dataset, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+		pops[i] = NewPopulatedDatasetRequest_Dataset(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4834,10 +5206,10 @@ func BenchmarkPredictDatasetRequest_DatasetSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictionFeatureSize(t *testing.T) {
+func TestFeatureSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeature(popr, true)
+	p := NewPopulatedFeature(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4856,12 +5228,12 @@ func TestPredictionFeatureSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictionFeatureSize(b *testing.B) {
+func BenchmarkFeatureSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictionFeature, 1000)
+	pops := make([]*Feature, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictionFeature(popr, false)
+		pops[i] = NewPopulatedFeature(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -4870,10 +5242,10 @@ func BenchmarkPredictionFeatureSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestPredictionFeatureResponseSize(t *testing.T) {
+func TestFeatureResponseSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedPredictionFeatureResponse(popr, true)
+	p := NewPopulatedFeatureResponse(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -4892,12 +5264,84 @@ func TestPredictionFeatureResponseSize(t *testing.T) {
 	}
 }
 
-func BenchmarkPredictionFeatureResponseSize(b *testing.B) {
+func BenchmarkFeatureResponseSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*PredictionFeatureResponse, 1000)
+	pops := make([]*FeatureResponse, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedPredictionFeatureResponse(popr, false)
+		pops[i] = NewPopulatedFeatureResponse(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += pops[i%1000].Size()
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestClearRequestSize(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearRequest(popr, true)
+	size2 := github_com_gogo_protobuf_proto.Size(p)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	size := p.Size()
+	if len(dAtA) != size {
+		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
+	}
+	if size2 != size {
+		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
+	}
+	size3 := github_com_gogo_protobuf_proto.Size(p)
+	if size3 != size {
+		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
+	}
+}
+
+func BenchmarkClearRequestSize(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*ClearRequest, 1000)
+	for i := 0; i < 1000; i++ {
+		pops[i] = NewPopulatedClearRequest(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += pops[i%1000].Size()
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestClearResponseSize(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedClearResponse(popr, true)
+	size2 := github_com_gogo_protobuf_proto.Size(p)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	size := p.Size()
+	if len(dAtA) != size {
+		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
+	}
+	if size2 != size {
+		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
+	}
+	size3 := github_com_gogo_protobuf_proto.Size(p)
+	if size3 != size {
+		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
+	}
+}
+
+func BenchmarkClearResponseSize(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*ClearResponse, 1000)
+	for i := 0; i < 1000; i++ {
+		pops[i] = NewPopulatedClearResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -5032,72 +5476,90 @@ func TestPredictionOptionsStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictURLsRequestStringer(t *testing.T) {
+func TestURLsRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest(popr, false)
+	p := NewPopulatedURLsRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictURLsRequest_URLStringer(t *testing.T) {
+func TestURLsRequest_URLStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictURLsRequest_URL(popr, false)
+	p := NewPopulatedURLsRequest_URL(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictImagesRequestStringer(t *testing.T) {
+func TestImagesRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest(popr, false)
+	p := NewPopulatedImagesRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictImagesRequest_ImageStringer(t *testing.T) {
+func TestImagesRequest_ImageStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictImagesRequest_Image(popr, false)
+	p := NewPopulatedImagesRequest_Image(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictDatasetRequestStringer(t *testing.T) {
+func TestDatasetRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest(popr, false)
+	p := NewPopulatedDatasetRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictDatasetRequest_DatasetStringer(t *testing.T) {
+func TestDatasetRequest_DatasetStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictDatasetRequest_Dataset(popr, false)
+	p := NewPopulatedDatasetRequest_Dataset(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictionFeatureStringer(t *testing.T) {
+func TestFeatureStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeature(popr, false)
+	p := NewPopulatedFeature(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestPredictionFeatureResponseStringer(t *testing.T) {
+func TestFeatureResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedPredictionFeatureResponse(popr, false)
+	p := NewPopulatedFeatureResponse(popr, false)
+	s1 := p.String()
+	s2 := fmt.Sprintf("%v", p)
+	if s1 != s2 {
+		t.Fatalf("String want %v got %v", s1, s2)
+	}
+}
+func TestClearRequestStringer(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearRequest(popr, false)
+	s1 := p.String()
+	s2 := fmt.Sprintf("%v", p)
+	if s1 != s2 {
+		t.Fatalf("String want %v got %v", s1, s2)
+	}
+}
+func TestClearResponseStringer(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedClearResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

@@ -153,7 +153,7 @@ message PredictionOptions {
       [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
 }
 
-message PredictURLsRequest {
+message URLsRequest {
   message URL {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
@@ -164,7 +164,7 @@ message PredictURLsRequest {
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
-message PredictImagesRequest {
+message ImagesRequest {
   message Image {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
@@ -183,7 +183,7 @@ message PredictImagesRequest {
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
-message PredictDatasetRequest {
+message DatasetRequest {
   message Dataset {
     string category = 1
         [ (gogoproto.moretags) = "yaml:\"category,omitempty\"" ];
@@ -194,20 +194,27 @@ message PredictDatasetRequest {
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
-message PredictionFeature {
+message Feature {
   int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   float probability = 3
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
 }
 
-message PredictionFeatureResponse {
+message FeatureResponse {
   string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
   string request_id = 2
       [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
   string input_id = 3 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
-  PredictionFeature feature = 4
-      [ (gogoproto.moretags) = "yaml:\"feature,omitempty\"" ];
+  Feature feature = 4 [ (gogoproto.moretags) = "yaml:\"feature,omitempty\"" ];
+}
+
+message ClearRequest {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+}
+
+message ClearResponse {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
 }
 
 service Registry {
@@ -238,7 +245,7 @@ service Predictor {
   // the predictor on all the urls. The
   //
   // The result is a prediction feature stream for each url.
-  rpc URLs(PredictURLsRequest) returns (stream PredictionFeatureResponse) {
+  rpc URLs(URLsRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
       post : "/v1/predict/urls",
       body : "*"
@@ -248,7 +255,7 @@ service Predictor {
   // the predictor on all the images.
   //
   // The result is a prediction feature stream for each image.
-  rpc Images(PredictImagesRequest) returns (stream PredictionFeatureResponse) {
+  rpc Images(ImagesRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
       post : "/v1/predict/images",
       body : "*"
@@ -258,10 +265,20 @@ service Predictor {
   // the predictor on all elements of the dataset.
   //
   // The result is a prediction feature stream.
-  rpc Dataset(PredictDatasetRequest)
-      returns (stream PredictionFeatureResponse) {
+  rpc Dataset(DatasetRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
       post : "/v1/predict/dataset",
+      body : "*"
+    };
+  }
+
+  // Dataset method receives a single dataset and runs
+  // the predictor on all elements of the dataset.
+  //
+  // The result is a prediction feature stream.
+  rpc Clear(ClearRequest) returns (ClearResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/clear",
       body : "*"
     };
   }

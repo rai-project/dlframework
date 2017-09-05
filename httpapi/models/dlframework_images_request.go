@@ -14,24 +14,24 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictImagesRequest dlframework predict images request
-// swagger:model dlframeworkPredictImagesRequest
+// DlframeworkImagesRequest dlframework images request
+// swagger:model dlframeworkImagesRequest
 
-type DlframeworkPredictImagesRequest struct {
+type DlframeworkImagesRequest struct {
 
 	// A list of Base64 encoded images
-	Images []*PredictImagesRequestImage `json:"images"`
+	Images []*ImagesRequestImage `json:"images"`
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
-/* polymorph dlframeworkPredictImagesRequest images false */
+/* polymorph dlframeworkImagesRequest images false */
 
-/* polymorph dlframeworkPredictImagesRequest options false */
+/* polymorph dlframeworkImagesRequest options false */
 
-// Validate validates this dlframework predict images request
-func (m *DlframeworkPredictImagesRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework images request
+func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateImages(formats); err != nil {
@@ -50,7 +50,7 @@ func (m *DlframeworkPredictImagesRequest) Validate(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *DlframeworkPredictImagesRequest) validateImages(formats strfmt.Registry) error {
+func (m *DlframeworkImagesRequest) validateImages(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Images) { // not required
 		return nil
@@ -77,7 +77,7 @@ func (m *DlframeworkPredictImagesRequest) validateImages(formats strfmt.Registry
 	return nil
 }
 
-func (m *DlframeworkPredictImagesRequest) validateOptions(formats strfmt.Registry) error {
+func (m *DlframeworkImagesRequest) validateOptions(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Options) { // not required
 		return nil
@@ -97,7 +97,7 @@ func (m *DlframeworkPredictImagesRequest) validateOptions(formats strfmt.Registr
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictImagesRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkImagesRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -105,8 +105,8 @@ func (m *DlframeworkPredictImagesRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictImagesRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictImagesRequest
+func (m *DlframeworkImagesRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkImagesRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

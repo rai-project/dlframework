@@ -25,7 +25,7 @@ type UrlsOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkPredictionFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
 }
 
 // NewUrlsOK creates UrlsOK with default headers values
@@ -34,13 +34,13 @@ func NewUrlsOK() *UrlsOK {
 }
 
 // WithPayload adds the payload to the urls o k response
-func (o *UrlsOK) WithPayload(payload *models.DlframeworkPredictionFeatureResponse) *UrlsOK {
+func (o *UrlsOK) WithPayload(payload *models.DlframeworkFeatureResponse) *UrlsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the urls o k response
-func (o *UrlsOK) SetPayload(payload *models.DlframeworkPredictionFeatureResponse) {
+func (o *UrlsOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
 	o.Payload = payload
 }
 

@@ -38,6 +38,9 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.PredictorClearHandler = predictor.ClearHandlerFunc(func(params predictor.ClearParams) middleware.Responder {
+		return middleware.NotImplemented("operation predictor.Clear has not yet been implemented")
+	})
 	api.PredictorDatasetHandler = predictor.DatasetHandlerFunc(func(params predictor.DatasetParams) middleware.Responder {
 		return middleware.NotImplemented("operation predictor.Dataset has not yet been implemented")
 	})

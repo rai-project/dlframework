@@ -65,7 +65,7 @@ for the images operation typically these are written to a http.Request
 type ImagesParams struct {
 
 	/*Body*/
-	Body *models.DlframeworkPredictImagesRequest
+	Body *models.DlframeworkImagesRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *ImagesParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the images params
-func (o *ImagesParams) WithBody(body *models.DlframeworkPredictImagesRequest) *ImagesParams {
+func (o *ImagesParams) WithBody(body *models.DlframeworkImagesRequest) *ImagesParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the images params
-func (o *ImagesParams) SetBody(body *models.DlframeworkPredictImagesRequest) {
+func (o *ImagesParams) SetBody(body *models.DlframeworkImagesRequest) {
 	o.Body = body
 }
 
@@ -125,7 +125,7 @@ func (o *ImagesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 	var res []error
 
 	if o.Body == nil {
-		o.Body = new(models.DlframeworkPredictImagesRequest)
+		o.Body = new(models.DlframeworkImagesRequest)
 	}
 
 	if err := r.SetBodyParam(o.Body); err != nil {

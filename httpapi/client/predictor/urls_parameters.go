@@ -65,7 +65,7 @@ for the urls operation typically these are written to a http.Request
 type UrlsParams struct {
 
 	/*Body*/
-	Body *models.DlframeworkPredictUrlsRequest
+	Body *models.DlframeworkUrlsRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *UrlsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the urls params
-func (o *UrlsParams) WithBody(body *models.DlframeworkPredictUrlsRequest) *UrlsParams {
+func (o *UrlsParams) WithBody(body *models.DlframeworkUrlsRequest) *UrlsParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the urls params
-func (o *UrlsParams) SetBody(body *models.DlframeworkPredictUrlsRequest) {
+func (o *UrlsParams) SetBody(body *models.DlframeworkUrlsRequest) {
 	o.Body = body
 }
 
@@ -125,7 +125,7 @@ func (o *UrlsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry
 	var res []error
 
 	if o.Body == nil {
-		o.Body = new(models.DlframeworkPredictUrlsRequest)
+		o.Body = new(models.DlframeworkUrlsRequest)
 	}
 
 	if err := r.SetBodyParam(o.Body); err != nil {

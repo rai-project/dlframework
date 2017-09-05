@@ -47,7 +47,7 @@ func NewDatasetOK() *DatasetOK {
 (streaming responses)
 */
 type DatasetOK struct {
-	Payload *models.DlframeworkPredictionFeatureResponse
+	Payload *models.DlframeworkFeatureResponse
 }
 
 func (o *DatasetOK) Error() string {
@@ -56,7 +56,7 @@ func (o *DatasetOK) Error() string {
 
 func (o *DatasetOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkPredictionFeatureResponse)
+	o.Payload = new(models.DlframeworkFeatureResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

@@ -12,24 +12,24 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkPredictDatasetRequest dlframework predict dataset request
-// swagger:model dlframeworkPredictDatasetRequest
+// DlframeworkDatasetRequest dlframework dataset request
+// swagger:model dlframeworkDatasetRequest
 
-type DlframeworkPredictDatasetRequest struct {
+type DlframeworkDatasetRequest struct {
 
 	// dataset
-	Dataset *PredictDatasetRequestDataset `json:"dataset,omitempty"`
+	Dataset *DatasetRequestDataset `json:"dataset,omitempty"`
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
-/* polymorph dlframeworkPredictDatasetRequest dataset false */
+/* polymorph dlframeworkDatasetRequest dataset false */
 
-/* polymorph dlframeworkPredictDatasetRequest options false */
+/* polymorph dlframeworkDatasetRequest options false */
 
-// Validate validates this dlframework predict dataset request
-func (m *DlframeworkPredictDatasetRequest) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework dataset request
+func (m *DlframeworkDatasetRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDataset(formats); err != nil {
@@ -48,7 +48,7 @@ func (m *DlframeworkPredictDatasetRequest) Validate(formats strfmt.Registry) err
 	return nil
 }
 
-func (m *DlframeworkPredictDatasetRequest) validateDataset(formats strfmt.Registry) error {
+func (m *DlframeworkDatasetRequest) validateDataset(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Dataset) { // not required
 		return nil
@@ -67,7 +67,7 @@ func (m *DlframeworkPredictDatasetRequest) validateDataset(formats strfmt.Regist
 	return nil
 }
 
-func (m *DlframeworkPredictDatasetRequest) validateOptions(formats strfmt.Registry) error {
+func (m *DlframeworkDatasetRequest) validateOptions(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Options) { // not required
 		return nil
@@ -87,7 +87,7 @@ func (m *DlframeworkPredictDatasetRequest) validateOptions(formats strfmt.Regist
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkPredictDatasetRequest) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkDatasetRequest) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -95,8 +95,8 @@ func (m *DlframeworkPredictDatasetRequest) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkPredictDatasetRequest) UnmarshalBinary(b []byte) error {
-	var res DlframeworkPredictDatasetRequest
+func (m *DlframeworkDatasetRequest) UnmarshalBinary(b []byte) error {
+	var res DlframeworkDatasetRequest
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
