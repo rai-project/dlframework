@@ -221,6 +221,13 @@ func (o *DlframeworkAPI) AuthenticatorsFor(schemes map[string]spec.SecuritySchem
 
 }
 
+// Authorizer returns the registered authorizer
+func (o *DlframeworkAPI) Authorizer() runtime.Authorizer {
+
+	return nil
+
+}
+
 // ConsumersFor gets the consumers for the specified media types
 func (o *DlframeworkAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 
