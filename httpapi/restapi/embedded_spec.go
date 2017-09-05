@@ -37,11 +37,10 @@ func init() {
   "paths": {
     "/v1/predict/clear": {
       "post": {
-        "description": "The result is a prediction feature stream.",
         "tags": [
           "Predictor"
         ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "summary": "Clear method clears the internal cache of the predictors",
         "operationId": "Clear",
         "parameters": [
           {
@@ -371,6 +370,9 @@ func init() {
       "properties": {
         "id": {
           "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
@@ -423,8 +425,11 @@ func init() {
     "dlframeworkFeatureResponse": {
       "type": "object",
       "properties": {
-        "feature": {
-          "$ref": "#/definitions/dlframeworkFeature"
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFeature"
+          }
         },
         "id": {
           "type": "string"

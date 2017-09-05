@@ -206,11 +206,14 @@ message FeatureResponse {
   string request_id = 2
       [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
   string input_id = 3 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
-  Feature feature = 4 [ (gogoproto.moretags) = "yaml:\"feature,omitempty\"" ];
+  repeated Feature features = 4
+      [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
 }
 
 message ClearRequest {
   string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  PredictionOptions options = 2
+      [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
 message ClearResponse {
@@ -272,10 +275,7 @@ service Predictor {
     };
   }
 
-  // Dataset method receives a single dataset and runs
-  // the predictor on all elements of the dataset.
-  //
-  // The result is a prediction feature stream.
+  // Clear method clears the internal cache of the predictors
   rpc Clear(ClearRequest) returns (ClearResponse) {
     option (google.api.http) = {
       post : "/v1/predict/clear",

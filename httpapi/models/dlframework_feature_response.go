@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -17,8 +19,8 @@ import (
 
 type DlframeworkFeatureResponse struct {
 
-	// feature
-	Feature *DlframeworkFeature `json:"feature,omitempty"`
+	// features
+	Features []*DlframeworkFeature `json:"features"`
 
 	// id
 	ID string `json:"id,omitempty"`
@@ -30,7 +32,7 @@ type DlframeworkFeatureResponse struct {
 	RequestID string `json:"request_id,omitempty"`
 }
 
-/* polymorph dlframeworkFeatureResponse feature false */
+/* polymorph dlframeworkFeatureResponse features false */
 
 /* polymorph dlframeworkFeatureResponse id false */
 
@@ -42,7 +44,7 @@ type DlframeworkFeatureResponse struct {
 func (m *DlframeworkFeatureResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateFeature(formats); err != nil {
+	if err := m.validateFeatures(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -53,20 +55,28 @@ func (m *DlframeworkFeatureResponse) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkFeatureResponse) validateFeature(formats strfmt.Registry) error {
+func (m *DlframeworkFeatureResponse) validateFeatures(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Feature) { // not required
+	if swag.IsZero(m.Features) { // not required
 		return nil
 	}
 
-	if m.Feature != nil {
+	for i := 0; i < len(m.Features); i++ {
 
-		if err := m.Feature.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("feature")
-			}
-			return err
+		if swag.IsZero(m.Features[i]) { // not required
+			continue
 		}
+
+		if m.Features[i] != nil {
+
+			if err := m.Features[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("features" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

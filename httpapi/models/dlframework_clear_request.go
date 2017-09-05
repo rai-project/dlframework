@@ -19,17 +19,46 @@ type DlframeworkClearRequest struct {
 
 	// id
 	ID string `json:"id,omitempty"`
+
+	// options
+	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
 /* polymorph dlframeworkClearRequest id false */
+
+/* polymorph dlframeworkClearRequest options false */
 
 // Validate validates this dlframework clear request
 func (m *DlframeworkClearRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DlframeworkClearRequest) validateOptions(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Options) { // not required
+		return nil
+	}
+
+	if m.Options != nil {
+
+		if err := m.Options.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

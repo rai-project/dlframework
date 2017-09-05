@@ -21,8 +21,7 @@
   "paths": {
     "/v1/predict/clear": {
       "post": {
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
-        "description": "The result is a prediction feature stream.",
+        "summary": "Clear method clears the internal cache of the predictors",
         "operationId": "Clear",
         "responses": {
           "200": {
@@ -372,6 +371,9 @@
       "properties": {
         "id": {
           "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
@@ -433,8 +435,11 @@
         "input_id": {
           "type": "string"
         },
-        "feature": {
-          "$ref": "#/definitions/dlframeworkFeature"
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFeature"
+          }
         }
       }
     },
