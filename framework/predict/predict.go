@@ -23,13 +23,16 @@ type Predictor interface {
 	// Downloads the features / symbol file / weights
 	Download(ctx context.Context) error
 	// Returns the features
-	PredictURL(ctx context.Context, url string) (chan<- dlframework.PredictionFeature, error)
+	PredictURL(ctx context.Context, url string) (chan<- dlframework.Feature, error)
 	// Returns the features
-	PredictImage(ctx context.Context, image image.Image) (chan<- dlframework.PredictionFeatures, error)
+	PredictImage(ctx context.Context, image image.Image) (chan<- dlframework.Feature, error)
 	// Returns the features
-	PredictDataset(ctx context.Context, dataset dldataset.Dataset) (chan<- dlframework.PredictionFeatures, error)
+	PredictDataset(ctx context.Context, dataset dldataset.Dataset) (chan<- dlframework.Feature, error)
 	// Preprocess image
 	PreprocessImage(ctx context.Context, image image.Image) (image.Image, error)
+
+	// Clears the internal state of a predictor
+	Clear(ctx context.Context) error
 
 	io.Closer
 }
