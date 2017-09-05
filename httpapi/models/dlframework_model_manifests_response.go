@@ -16,11 +16,14 @@ import (
 
 // DlframeworkModelManifestsResponse dlframework model manifests response
 // swagger:model dlframeworkModelManifestsResponse
+
 type DlframeworkModelManifestsResponse struct {
 
 	// manifests
 	Manifests []*DlframeworkModelManifest `json:"manifests"`
 }
+
+/* polymorph dlframeworkModelManifestsResponse manifests false */
 
 // Validate validates this dlframework model manifests response
 func (m *DlframeworkModelManifestsResponse) Validate(formats strfmt.Registry) error {

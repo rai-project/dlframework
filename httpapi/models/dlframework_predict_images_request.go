@@ -16,6 +16,7 @@ import (
 
 // DlframeworkPredictImagesRequest dlframework predict images request
 // swagger:model dlframeworkPredictImagesRequest
+
 type DlframeworkPredictImagesRequest struct {
 
 	// A list of Base64 encoded images
@@ -24,6 +25,10 @@ type DlframeworkPredictImagesRequest struct {
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
+
+/* polymorph dlframeworkPredictImagesRequest images false */
+
+/* polymorph dlframeworkPredictImagesRequest options false */
 
 // Validate validates this dlframework predict images request
 func (m *DlframeworkPredictImagesRequest) Validate(formats strfmt.Registry) error {

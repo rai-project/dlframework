@@ -43,11 +43,7 @@ func freePort() (string, error) {
 
 func getHost() (string, error) {
 	if local {
-		address, err := utils.GetLocalIp()
-		if err != nil {
-			return "", err
-		}
-		return address, nil
+		return utils.GetLocalIp()
 	}
 	address, err := utils.GetExternalIp()
 	if err != nil {
@@ -72,9 +68,13 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 				port = p
 			}
 
-			host, err := getHost()
-			if err != nil {
-				return err
+			host, found := os.LookupEnv("HOST")
+			if !found {
+				h, err := getHost()
+				if err != nil {
+					return err
+				}
+				host = h
 			}
 
 			portInt, err := strconv.Atoi(port)
@@ -91,7 +91,17 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 				)
 			}
 
-			agnt, err := agent.New(predictor, agent.WithHost(host), agent.WithPort(portInt))
+			externalHost := host
+			if e, ok := os.LookupEnv("EXTERNAL_HOST"); ok {
+				externalHost = e
+			}
+
+			externalPort := port
+			if p, ok := os.LookupEnv("EXTERNAL_PORT"); ok {
+				externalPort = p
+			}
+
+			agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
 			if err != nil {
 				return err
 			}

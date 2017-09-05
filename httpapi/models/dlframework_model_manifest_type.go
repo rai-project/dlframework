@@ -15,6 +15,7 @@ import (
 
 // DlframeworkModelManifestType dlframework model manifest type
 // swagger:model dlframeworkModelManifestType
+
 type DlframeworkModelManifestType struct {
 
 	// description
@@ -26,6 +27,12 @@ type DlframeworkModelManifestType struct {
 	// type
 	Type string `json:"type,omitempty"`
 }
+
+/* polymorph dlframeworkModelManifestType description false */
+
+/* polymorph dlframeworkModelManifestType parameters false */
+
+/* polymorph dlframeworkModelManifestType type false */
 
 // Validate validates this dlframework model manifest type
 func (m *DlframeworkModelManifestType) Validate(formats strfmt.Registry) error {

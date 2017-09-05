@@ -15,6 +15,7 @@ import (
 
 // DlframeworkFrameworkManifest dlframework framework manifest
 // swagger:model dlframeworkFrameworkManifest
+
 type DlframeworkFrameworkManifest struct {
 
 	// container
@@ -26,6 +27,12 @@ type DlframeworkFrameworkManifest struct {
 	// version
 	Version string `json:"version,omitempty"`
 }
+
+/* polymorph dlframeworkFrameworkManifest container false */
+
+/* polymorph dlframeworkFrameworkManifest name false */
+
+/* polymorph dlframeworkFrameworkManifest version false */
 
 // Validate validates this dlframework framework manifest
 func (m *DlframeworkFrameworkManifest) Validate(formats strfmt.Registry) error {

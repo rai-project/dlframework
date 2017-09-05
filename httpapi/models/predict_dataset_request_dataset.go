@@ -14,6 +14,7 @@ import (
 
 // PredictDatasetRequestDataset predict dataset request dataset
 // swagger:model PredictDatasetRequestDataset
+
 type PredictDatasetRequestDataset struct {
 
 	// category
@@ -22,6 +23,10 @@ type PredictDatasetRequestDataset struct {
 	// name
 	Name string `json:"name,omitempty"`
 }
+
+/* polymorph PredictDatasetRequestDataset category false */
+
+/* polymorph PredictDatasetRequestDataset name false */
 
 // Validate validates this predict dataset request dataset
 func (m *PredictDatasetRequestDataset) Validate(formats strfmt.Registry) error {

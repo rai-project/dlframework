@@ -3,22 +3,22 @@ all: generate
 fmt: ## Formats code
 	go fmt ./...
 
-install-deps: ## Gets build dependencies
-	go get github.com/jteeuwen/go-bindata/...
-	go get github.com/elazarl/go-bindata-assetfs/...
-	go get google.golang.org/grpc
-	go get github.com/gogo/protobuf/proto
-	go get github.com/gogo/protobuf/gogoproto
-	go get github.com/golang/protobuf/protoc-gen-go
-	go get github.com/gogo/protobuf/protoc-gen-gofast
-	go get github.com/gogo/protobuf/protoc-gen-gogofaster
-	go get github.com/gogo/protobuf/protoc-gen-gogoslick
-	go get -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	go get -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-	git --git-dir=$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/.git --work-tree=$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/ checkout v1.2.2
+install-deps:
+	go get -u github.com/jteeuwen/go-bindata/...
+	go get -u github.com/elazarl/go-bindata-assetfs/...
+	go get -u google.golang.org/grpc
+	go get -u github.com/gogo/protobuf/proto
+	go get -u github.com/gogo/protobuf/gogoproto
+	go get -u github.com/golang/protobuf/protoc-gen-go
+	go get -u github.com/gogo/protobuf/protoc-gen-gofast
+	go get -u github.com/gogo/protobuf/protoc-gen-gogofaster
+	go get -u github.com/gogo/protobuf/protoc-gen-gogoslick
+	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	# git --git-dir=$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/.git --work-tree=$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/ checkout v1.2.2
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-	go get github.com/go-swagger/go-swagger/cmd/swagger
+	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 glide-install: ## Performs glide install
 	glide install --force
@@ -41,6 +41,7 @@ generate-proto: ## Generates Go, GRPC Gateway and Swagger code
 generate: generate-proto generate-swagger
 
 generate-swagger: clean-httpapi ## Generates Go Swagger code
+	mkdir -p httpapi
 	swagger generate server -f dlframework.swagger.json -t httpapi -A dlframework
 	swagger generate client -f dlframework.swagger.json -t httpapi -A dlframework
 	swagger generate support -f dlframework.swagger.json -t httpapi -A dlframework

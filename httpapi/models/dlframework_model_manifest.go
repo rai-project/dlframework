@@ -17,6 +17,7 @@ import (
 
 // DlframeworkModelManifest dlframework model manifest
 // swagger:model dlframeworkModelManifest
+
 type DlframeworkModelManifest struct {
 
 	// after postprocess
@@ -73,6 +74,42 @@ type DlframeworkModelManifest struct {
 	// version
 	Version string `json:"version,omitempty"`
 }
+
+/* polymorph dlframeworkModelManifest after_postprocess false */
+
+/* polymorph dlframeworkModelManifest after_preprocess false */
+
+/* polymorph dlframeworkModelManifest attributes false */
+
+/* polymorph dlframeworkModelManifest before_postprocess false */
+
+/* polymorph dlframeworkModelManifest before_preprocess false */
+
+/* polymorph dlframeworkModelManifest container false */
+
+/* polymorph dlframeworkModelManifest description false */
+
+/* polymorph dlframeworkModelManifest framework false */
+
+/* polymorph dlframeworkModelManifest hidden false */
+
+/* polymorph dlframeworkModelManifest inputs false */
+
+/* polymorph dlframeworkModelManifest license false */
+
+/* polymorph dlframeworkModelManifest model false */
+
+/* polymorph dlframeworkModelManifest name false */
+
+/* polymorph dlframeworkModelManifest output false */
+
+/* polymorph dlframeworkModelManifest postprocess false */
+
+/* polymorph dlframeworkModelManifest preprocess false */
+
+/* polymorph dlframeworkModelManifest reference false */
+
+/* polymorph dlframeworkModelManifest version false */
 
 // Validate validates this dlframework model manifest
 func (m *DlframeworkModelManifest) Validate(formats strfmt.Registry) error {

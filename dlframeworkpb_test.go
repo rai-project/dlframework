@@ -3838,7 +3838,7 @@ func TestErrorStatusGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestContainerHardwareGoString(t *testing.T) {
@@ -3851,7 +3851,7 @@ func TestContainerHardwareGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestFrameworkManifestGoString(t *testing.T) {
@@ -3864,7 +3864,7 @@ func TestFrameworkManifestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelManifestGoString(t *testing.T) {
@@ -3877,7 +3877,7 @@ func TestModelManifestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelManifest_TypeGoString(t *testing.T) {
@@ -3890,7 +3890,7 @@ func TestModelManifest_TypeGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelManifest_Type_ParameterGoString(t *testing.T) {
@@ -3903,7 +3903,7 @@ func TestModelManifest_Type_ParameterGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelManifest_ModelGoString(t *testing.T) {
@@ -3916,7 +3916,7 @@ func TestModelManifest_ModelGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestFrameworkRequestGoString(t *testing.T) {
@@ -3929,7 +3929,7 @@ func TestFrameworkRequestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestFrameworkManifestsResponseGoString(t *testing.T) {
@@ -3942,7 +3942,7 @@ func TestFrameworkManifestsResponseGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestAgentGoString(t *testing.T) {
@@ -3955,7 +3955,7 @@ func TestAgentGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestAgentsGoString(t *testing.T) {
@@ -3968,7 +3968,7 @@ func TestAgentsGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelRequestGoString(t *testing.T) {
@@ -3981,7 +3981,7 @@ func TestModelRequestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestModelManifestsResponseGoString(t *testing.T) {
@@ -3994,7 +3994,7 @@ func TestModelManifestsResponseGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictionOptionsGoString(t *testing.T) {
@@ -4007,7 +4007,7 @@ func TestPredictionOptionsGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictURLsRequestGoString(t *testing.T) {
@@ -4020,7 +4020,7 @@ func TestPredictURLsRequestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictURLsRequest_URLGoString(t *testing.T) {
@@ -4033,7 +4033,7 @@ func TestPredictURLsRequest_URLGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictImagesRequestGoString(t *testing.T) {
@@ -4046,7 +4046,7 @@ func TestPredictImagesRequestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictImagesRequest_ImageGoString(t *testing.T) {
@@ -4059,7 +4059,7 @@ func TestPredictImagesRequest_ImageGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictDatasetRequestGoString(t *testing.T) {
@@ -4072,7 +4072,7 @@ func TestPredictDatasetRequestGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictDatasetRequest_DatasetGoString(t *testing.T) {
@@ -4085,7 +4085,7 @@ func TestPredictDatasetRequest_DatasetGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictionFeatureGoString(t *testing.T) {
@@ -4098,7 +4098,7 @@ func TestPredictionFeatureGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestPredictionFeatureResponseGoString(t *testing.T) {
@@ -4111,7 +4111,7 @@ func TestPredictionFeatureResponseGoString(t *testing.T) {
 	}
 	_, err := go_parser.ParseExpr(s1)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 }
 func TestErrorStatusSize(t *testing.T) {

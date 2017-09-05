@@ -14,6 +14,7 @@ import (
 
 // PredictImagesRequestImage predict images request image
 // swagger:model PredictImagesRequestImage
+
 type PredictImagesRequestImage struct {
 
 	// An id used to identify the output feature: maps to input_id for output
@@ -27,6 +28,12 @@ type PredictImagesRequestImage struct {
 	// encoded as an array of float32 values
 	Preprocessed bool `json:"preprocessed,omitempty"`
 }
+
+/* polymorph PredictImagesRequestImage id false */
+
+/* polymorph PredictImagesRequestImage image false */
+
+/* polymorph PredictImagesRequestImage preprocessed false */
 
 // Validate validates this predict images request image
 func (m *PredictImagesRequestImage) Validate(formats strfmt.Registry) error {

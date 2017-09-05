@@ -3,21 +3,10 @@ import:
 - package: github.com/Masterminds/semver
   version: ~1.3.1
 - package: github.com/Unknwon/com
-  version: ~1.0.0
+  version: ^1.0.0
 - package: github.com/chewxy/hm
 - package: github.com/elazarl/go-bindata-assetfs
-- package: github.com/go-openapi/errors
-- package: github.com/go-openapi/loads
-- package: github.com/go-openapi/runtime
-  subpackages:
-  - client
-  - flagext
-  - middleware
-  - security
-- package: github.com/go-openapi/spec
-- package: github.com/go-openapi/strfmt
-- package: github.com/go-openapi/swag
-- package: github.com/go-openapi/validate
+- package: github.com/go-swagger/go-swagger
 - package: github.com/gogo/protobuf
   version: ~0.4.0
   subpackages:
@@ -30,7 +19,7 @@ import:
   subpackages:
   - proto
 - package: github.com/grpc-ecosystem/grpc-gateway
-  version: ~1.2.2
+  version: master
   subpackages:
   - runtime
   - utilities

@@ -16,6 +16,7 @@ import (
 
 // DlframeworkPredictUrlsRequest dlframework predict urls request
 // swagger:model dlframeworkPredictURLsRequest
+
 type DlframeworkPredictUrlsRequest struct {
 
 	// options
@@ -24,6 +25,10 @@ type DlframeworkPredictUrlsRequest struct {
 	// urls
 	Urls []*PredictUrlsRequestURL `json:"urls"`
 }
+
+/* polymorph dlframeworkPredictURLsRequest options false */
+
+/* polymorph dlframeworkPredictURLsRequest urls false */
 
 // Validate validates this dlframework predict urls request
 func (m *DlframeworkPredictUrlsRequest) Validate(formats strfmt.Registry) error {

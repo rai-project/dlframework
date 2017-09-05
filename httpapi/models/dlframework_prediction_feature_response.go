@@ -14,6 +14,7 @@ import (
 
 // DlframeworkPredictionFeatureResponse dlframework prediction feature response
 // swagger:model dlframeworkPredictionFeatureResponse
+
 type DlframeworkPredictionFeatureResponse struct {
 
 	// feature
@@ -28,6 +29,14 @@ type DlframeworkPredictionFeatureResponse struct {
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }
+
+/* polymorph dlframeworkPredictionFeatureResponse feature false */
+
+/* polymorph dlframeworkPredictionFeatureResponse id false */
+
+/* polymorph dlframeworkPredictionFeatureResponse input_id false */
+
+/* polymorph dlframeworkPredictionFeatureResponse request_id false */
 
 // Validate validates this dlframework prediction feature response
 func (m *DlframeworkPredictionFeatureResponse) Validate(formats strfmt.Registry) error {

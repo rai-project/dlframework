@@ -14,6 +14,7 @@ import (
 
 // DlframeworkPredictDatasetRequest dlframework predict dataset request
 // swagger:model dlframeworkPredictDatasetRequest
+
 type DlframeworkPredictDatasetRequest struct {
 
 	// dataset
@@ -22,6 +23,10 @@ type DlframeworkPredictDatasetRequest struct {
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
+
+/* polymorph dlframeworkPredictDatasetRequest dataset false */
+
+/* polymorph dlframeworkPredictDatasetRequest options false */
 
 // Validate validates this dlframework predict dataset request
 func (m *DlframeworkPredictDatasetRequest) Validate(formats strfmt.Registry) error {

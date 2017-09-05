@@ -14,6 +14,7 @@ import (
 
 // PredictUrlsRequestURL predict urls request URL
 // swagger:model PredictURLsRequestURL
+
 type PredictUrlsRequestURL struct {
 
 	// An id used to identify the output feature: maps to input_id for output
@@ -22,6 +23,10 @@ type PredictUrlsRequestURL struct {
 	// url
 	URL string `json:"url,omitempty"`
 }
+
+/* polymorph PredictURLsRequestURL id false */
+
+/* polymorph PredictURLsRequestURL url false */
 
 // Validate validates this predict urls request URL
 func (m *PredictUrlsRequestURL) Validate(formats strfmt.Registry) error {

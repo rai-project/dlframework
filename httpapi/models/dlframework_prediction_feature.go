@@ -14,6 +14,7 @@ import (
 
 // DlframeworkPredictionFeature dlframework prediction feature
 // swagger:model dlframeworkPredictionFeature
+
 type DlframeworkPredictionFeature struct {
 
 	// index
@@ -25,6 +26,12 @@ type DlframeworkPredictionFeature struct {
 	// probability
 	Probability float32 `json:"probability,omitempty"`
 }
+
+/* polymorph dlframeworkPredictionFeature index false */
+
+/* polymorph dlframeworkPredictionFeature name false */
+
+/* polymorph dlframeworkPredictionFeature probability false */
 
 // Validate validates this dlframework prediction feature
 func (m *DlframeworkPredictionFeature) Validate(formats strfmt.Registry) error {
