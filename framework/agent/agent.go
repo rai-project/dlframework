@@ -8,20 +8,17 @@ import (
 	"github.com/rai-project/utils"
 	context "golang.org/x/net/context"
 
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
-
 	"google.golang.org/grpc"
 
 	rgrpc "github.com/rai-project/grpc"
+	"github.com/rai-project/pipeline"
 	"github.com/rai-project/registry"
 
 	"github.com/rai-project/dlframework/framework/predict"
 )
 
 type Agent struct {
-	Base
+	base
 	predictor predict.Predictor
 	options   *Options
 }
@@ -48,37 +45,44 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 }
 
 // Opens a predictor and returns an id where the predictor
-	// is accessible. The id can be used to perform inference
-	// requests.
-  func (p *Agent) Open(context.Context, req *dl.PredictorOpenRequest) (*dl.Predictor, error) {
-
+// is accessible. The id can be used to perform inference
+// requests.
+func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Predictor, error) {
 
 	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	predictor, err := p.predictor.Load(ctx, *model)
 	if err != nil {
-		return err
-  }
+		return nil, err
+	}
 
-  return nil, nil
-  }
+	return nil, nil
+}
 
-	// Close a predictor clear it's memory.
-  func (p *Agent) Close(context.Context, *dl.Predictor) (*dl.PredictorCloseResponse, error) {
-return nil, nil
-  }
+// Close a predictor clear it's memory.
+func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorCloseResponse, error) {
+	return nil, nil
+}
 
 // Image method receives a stream of urls and runs
 // the predictor on all the urls. The
 //
 // The result is a prediction feature stream for each url.
-func (p *Agent) URLs(req *dl.URLsRequest, resp dl.Predictor_URLsServer) error {
+func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 	ctx := resp.Context()
 
-	chain := flow.New(ctx).Then(URLRead{}).Then(DecodeImage{}).Then(Preprocess{})
+	input := make(chan interface{})
+	go func() {
+		defer close(input)
+		for _, url := range req.GetURLs() {
+			input <- *url
+		}
+	}()
+
+	pipeline := pipeline.New(ctx)
 
 	return nil
 
@@ -88,22 +92,22 @@ func (p *Agent) URLs(req *dl.URLsRequest, resp dl.Predictor_URLsServer) error {
 // the predictor on all the images.
 //
 // The result is a prediction feature stream for each image.
-func (p *Agent) Images(*dl.ImagesRequest, dl.Predictor_ImagesServer) error {
-
+func (p *Agent) Images(req *dl.ImagesRequest, svr dl.Predict_ImagesServer) error {
+	return nil
 }
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
 //
 // The result is a prediction feature stream.
-func (p *Agent) Dataset(*dl.DatasetRequest, dl.Predictor_DatasetServer) error {
+func (p *Agent) Dataset(req *dl.DatasetRequest, svr dl.Predict_DatasetServer) error {
 
+	return nil
 }
 
 // Clear method clears the internal cache of the predictors
-func (p *Agent) Reset(dl.context.Context, *dl.ResetRequest) (*dl.ResetResponse, error)
- {
-
+func (p *Agent) Reset(ctx context.Context, req *dl.ResetRequest) (*dl.ResetResponse, error) {
+	return nil, nil
 }
 
 // func (p *Agent) Predict(ctx context.Context, req *dl.PredictRequest) (*dl.PredictResponse, error) {

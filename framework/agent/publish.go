@@ -12,7 +12,7 @@ import (
 	"github.com/rai-project/registry"
 )
 
-type Base struct {
+type base struct {
 	Framework dl.FrameworkManifest
 }
 
@@ -20,7 +20,7 @@ func toPath(s string) string {
 	return strings.Replace(s, ":", "/", -1)
 }
 
-func (b *Base) PublishInPredictor(host, prefix string) error {
+func (b *base) PublishInPredictor(host, prefix string) error {
 
 	ttl := registry.Config.Timeout
 	marshaler := registry.Config.Serializer
@@ -59,7 +59,7 @@ func (b *Base) PublishInPredictor(host, prefix string) error {
 	return nil
 }
 
-func (b *Base) PublishInRegistery(prefix string) error {
+func (b *base) PublishInRegistery(prefix string) error {
 
 	framework := b.Framework
 	cn, err := framework.CanonicalName()

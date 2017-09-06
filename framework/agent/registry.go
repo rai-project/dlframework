@@ -6,7 +6,7 @@ import (
 )
 
 type Registry struct {
-	Base
+	base
 }
 
 func (c *Registry) FrameworkManifests(context.Context, *dl.FrameworkRequest) (*dl.FrameworkManifestsResponse, error) {
