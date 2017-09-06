@@ -18,14 +18,17 @@ It has these top-level messages:
 	Agents
 	ModelRequest
 	ModelManifestsResponse
+	PredictorOpenRequest
+	PredictorCloseResponse
 	PredictionOptions
+	Predictor
 	URLsRequest
 	ImagesRequest
 	DatasetRequest
 	Feature
 	FeatureResponse
-	ClearRequest
-	ClearResponse
+	ResetRequest
+	ResetResponse
 */
 package dlframework
 
@@ -1372,6 +1375,210 @@ func BenchmarkModelManifestsResponseProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
+func TestPredictorOpenRequestProto(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorOpenRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	littlefuzz := make([]byte, len(dAtA))
+	copy(littlefuzz, dAtA)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+	if len(littlefuzz) > 0 {
+		fuzzamount := 100
+		for i := 0; i < fuzzamount; i++ {
+			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
+			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
+		}
+		// shouldn't panic
+		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
+	}
+}
+
+func TestPredictorOpenRequestMarshalTo(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, false)
+	size := p.Size()
+	dAtA := make([]byte, size)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	_, err := p.MarshalTo(dAtA)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorOpenRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func BenchmarkPredictorOpenRequestProtoMarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*PredictorOpenRequest, 10000)
+	for i := 0; i < 10000; i++ {
+		pops[i] = NewPopulatedPredictorOpenRequest(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
+		if err != nil {
+			panic(err)
+		}
+		total += len(dAtA)
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func BenchmarkPredictorOpenRequestProtoUnmarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	datas := make([][]byte, 10000)
+	for i := 0; i < 10000; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictorOpenRequest(popr, false))
+		if err != nil {
+			panic(err)
+		}
+		datas[i] = dAtA
+	}
+	msg := &PredictorOpenRequest{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += len(datas[i%10000])
+		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
+			panic(err)
+		}
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestPredictorCloseResponseProto(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorCloseResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	littlefuzz := make([]byte, len(dAtA))
+	copy(littlefuzz, dAtA)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+	if len(littlefuzz) > 0 {
+		fuzzamount := 100
+		for i := 0; i < fuzzamount; i++ {
+			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
+			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
+		}
+		// shouldn't panic
+		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
+	}
+}
+
+func TestPredictorCloseResponseMarshalTo(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, false)
+	size := p.Size()
+	dAtA := make([]byte, size)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	_, err := p.MarshalTo(dAtA)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorCloseResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func BenchmarkPredictorCloseResponseProtoMarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*PredictorCloseResponse, 10000)
+	for i := 0; i < 10000; i++ {
+		pops[i] = NewPopulatedPredictorCloseResponse(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
+		if err != nil {
+			panic(err)
+		}
+		total += len(dAtA)
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func BenchmarkPredictorCloseResponseProtoUnmarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	datas := make([][]byte, 10000)
+	for i := 0; i < 10000; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictorCloseResponse(popr, false))
+		if err != nil {
+			panic(err)
+		}
+		datas[i] = dAtA
+	}
+	msg := &PredictorCloseResponse{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += len(datas[i%10000])
+		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
+			panic(err)
+		}
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
 func TestPredictionOptionsProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1464,6 +1671,108 @@ func BenchmarkPredictionOptionsProtoUnmarshal(b *testing.B) {
 		datas[i] = dAtA
 	}
 	msg := &PredictionOptions{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += len(datas[i%10000])
+		if err := github_com_gogo_protobuf_proto.Unmarshal(datas[i%10000], msg); err != nil {
+			panic(err)
+		}
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestPredictorProto(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &Predictor{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	littlefuzz := make([]byte, len(dAtA))
+	copy(littlefuzz, dAtA)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+	if len(littlefuzz) > 0 {
+		fuzzamount := 100
+		for i := 0; i < fuzzamount; i++ {
+			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
+			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
+		}
+		// shouldn't panic
+		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
+	}
+}
+
+func TestPredictorMarshalTo(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, false)
+	size := p.Size()
+	dAtA := make([]byte, size)
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	_, err := p.MarshalTo(dAtA)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &Predictor{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	for i := range dAtA {
+		dAtA[i] = byte(popr.Intn(256))
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func BenchmarkPredictorProtoMarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*Predictor, 10000)
+	for i := 0; i < 10000; i++ {
+		pops[i] = NewPopulatedPredictor(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(pops[i%10000])
+		if err != nil {
+			panic(err)
+		}
+		total += len(dAtA)
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func BenchmarkPredictorProtoUnmarshal(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	datas := make([][]byte, 10000)
+	for i := 0; i < 10000; i++ {
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedPredictor(popr, false))
+		if err != nil {
+			panic(err)
+		}
+		datas[i] = dAtA
+	}
+	msg := &Predictor{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2290,15 +2599,15 @@ func BenchmarkFeatureResponseProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestClearRequestProto(t *testing.T) {
+func TestResetRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, false)
+	p := NewPopulatedResetRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2324,10 +2633,10 @@ func TestClearRequestProto(t *testing.T) {
 	}
 }
 
-func TestClearRequestMarshalTo(t *testing.T) {
+func TestResetRequestMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, false)
+	p := NewPopulatedResetRequest(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -2337,7 +2646,7 @@ func TestClearRequestMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2352,12 +2661,12 @@ func TestClearRequestMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkClearRequestProtoMarshal(b *testing.B) {
+func BenchmarkResetRequestProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ClearRequest, 10000)
+	pops := make([]*ResetRequest, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedClearRequest(popr, false)
+		pops[i] = NewPopulatedResetRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2370,18 +2679,18 @@ func BenchmarkClearRequestProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkClearRequestProtoUnmarshal(b *testing.B) {
+func BenchmarkResetRequestProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedClearRequest(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedResetRequest(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2392,15 +2701,15 @@ func BenchmarkClearRequestProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestClearResponseProto(t *testing.T) {
+func TestResetResponseProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, false)
+	p := NewPopulatedResetResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2426,10 +2735,10 @@ func TestClearResponseProto(t *testing.T) {
 	}
 }
 
-func TestClearResponseMarshalTo(t *testing.T) {
+func TestResetResponseMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, false)
+	p := NewPopulatedResetResponse(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -2439,7 +2748,7 @@ func TestClearResponseMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -2454,12 +2763,12 @@ func TestClearResponseMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkClearResponseProtoMarshal(b *testing.B) {
+func BenchmarkResetResponseProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ClearResponse, 10000)
+	pops := make([]*ResetResponse, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedClearResponse(popr, false)
+		pops[i] = NewPopulatedResetResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2472,18 +2781,18 @@ func BenchmarkClearResponseProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkClearResponseProtoUnmarshal(b *testing.B) {
+func BenchmarkResetResponseProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedClearResponse(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedResetResponse(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -2767,6 +3076,48 @@ func TestModelManifestsResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
+func TestPredictorOpenRequestJSON(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, true)
+	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
+	jsondata, err := marshaler.MarshalToString(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorOpenRequest{}
+	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
+	}
+}
+func TestPredictorCloseResponseJSON(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, true)
+	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
+	jsondata, err := marshaler.MarshalToString(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &PredictorCloseResponse{}
+	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
+	}
+}
 func TestPredictionOptionsJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -2777,6 +3128,27 @@ func TestPredictionOptionsJSON(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &PredictionOptions{}
+	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
+	}
+}
+func TestPredictorJSON(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, true)
+	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
+	jsondata, err := marshaler.MarshalToString(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	msg := &Predictor{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2956,16 +3328,16 @@ func TestFeatureResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestClearRequestJSON(t *testing.T) {
+func TestResetRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, true)
+	p := NewPopulatedResetRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -2977,16 +3349,16 @@ func TestClearRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestClearResponseJSON(t *testing.T) {
+func TestResetResponseJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, true)
+	p := NewPopulatedResetResponse(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -3440,6 +3812,74 @@ func TestModelManifestsResponseProtoCompactText(t *testing.T) {
 	}
 }
 
+func TestPredictorOpenRequestProtoText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
+	msg := &PredictorOpenRequest{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestPredictorOpenRequestProtoCompactText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
+	msg := &PredictorOpenRequest{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestPredictorCloseResponseProtoText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
+	msg := &PredictorCloseResponse{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestPredictorCloseResponseProtoCompactText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
+	msg := &PredictorCloseResponse{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
 func TestPredictionOptionsProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -3463,6 +3903,40 @@ func TestPredictionOptionsProtoCompactText(t *testing.T) {
 	p := NewPopulatedPredictionOptions(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &PredictionOptions{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestPredictorProtoText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
+	msg := &Predictor{}
+	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("seed = %d, %#v !VerboseProto %#v, since %v", seed, msg, p, err)
+	}
+	if !p.Equal(msg) {
+		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
+	}
+}
+
+func TestPredictorProtoCompactText(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, true)
+	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
+	msg := &Predictor{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3746,12 +4220,12 @@ func TestFeatureResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestClearRequestProtoText(t *testing.T) {
+func TestResetRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, true)
+	p := NewPopulatedResetRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3763,12 +4237,12 @@ func TestClearRequestProtoText(t *testing.T) {
 	}
 }
 
-func TestClearRequestProtoCompactText(t *testing.T) {
+func TestResetRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, true)
+	p := NewPopulatedResetRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3780,12 +4254,12 @@ func TestClearRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestClearResponseProtoText(t *testing.T) {
+func TestResetResponseProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, true)
+	p := NewPopulatedResetResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -3797,12 +4271,12 @@ func TestClearResponseProtoText(t *testing.T) {
 	}
 }
 
-func TestClearResponseProtoCompactText(t *testing.T) {
+func TestResetResponseProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, true)
+	p := NewPopulatedResetResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -4009,6 +4483,36 @@ func TestModelManifestsResponseVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
+func TestPredictorOpenRequestVerboseEqual(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorOpenRequest(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	msg := &PredictorOpenRequest{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		panic(err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
+	}
+}
+func TestPredictorCloseResponseVerboseEqual(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorCloseResponse(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	msg := &PredictorCloseResponse{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		panic(err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
+	}
+}
 func TestPredictionOptionsVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionOptions(popr, false)
@@ -4017,6 +4521,21 @@ func TestPredictionOptionsVerboseEqual(t *testing.T) {
 		panic(err)
 	}
 	msg := &PredictionOptions{}
+	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
+		panic(err)
+	}
+	if err := p.VerboseEqual(msg); err != nil {
+		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
+	}
+}
+func TestPredictorVerboseEqual(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictor(popr, false)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	msg := &Predictor{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -4144,14 +4663,14 @@ func TestFeatureResponseVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestClearRequestVerboseEqual(t *testing.T) {
+func TestResetRequestVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearRequest(popr, false)
+	p := NewPopulatedResetRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ClearRequest{}
+	msg := &ResetRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -4159,14 +4678,14 @@ func TestClearRequestVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestClearResponseVerboseEqual(t *testing.T) {
+func TestResetResponseVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearResponse(popr, false)
+	p := NewPopulatedResetResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &ClearResponse{}
+	msg := &ResetResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -4343,9 +4862,48 @@ func TestModelManifestsResponseGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func TestPredictorOpenRequestGoString(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorOpenRequest(popr, false)
+	s1 := p.GoString()
+	s2 := fmt.Sprintf("%#v", p)
+	if s1 != s2 {
+		t.Fatalf("GoString want %v got %v", s1, s2)
+	}
+	_, err := go_parser.ParseExpr(s1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+func TestPredictorCloseResponseGoString(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorCloseResponse(popr, false)
+	s1 := p.GoString()
+	s2 := fmt.Sprintf("%#v", p)
+	if s1 != s2 {
+		t.Fatalf("GoString want %v got %v", s1, s2)
+	}
+	_, err := go_parser.ParseExpr(s1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
 func TestPredictionOptionsGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionOptions(popr, false)
+	s1 := p.GoString()
+	s2 := fmt.Sprintf("%#v", p)
+	if s1 != s2 {
+		t.Fatalf("GoString want %v got %v", s1, s2)
+	}
+	_, err := go_parser.ParseExpr(s1)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+func TestPredictorGoString(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictor(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4460,9 +5018,9 @@ func TestFeatureResponseGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestClearRequestGoString(t *testing.T) {
+func TestResetRequestGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearRequest(popr, false)
+	p := NewPopulatedResetRequest(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4473,9 +5031,9 @@ func TestClearRequestGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestClearResponseGoString(t *testing.T) {
+func TestResetResponseGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearResponse(popr, false)
+	p := NewPopulatedResetResponse(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -4954,6 +5512,78 @@ func BenchmarkModelManifestsResponseSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
+func TestPredictorOpenRequestSize(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorOpenRequest(popr, true)
+	size2 := github_com_gogo_protobuf_proto.Size(p)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	size := p.Size()
+	if len(dAtA) != size {
+		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
+	}
+	if size2 != size {
+		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
+	}
+	size3 := github_com_gogo_protobuf_proto.Size(p)
+	if size3 != size {
+		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
+	}
+}
+
+func BenchmarkPredictorOpenRequestSize(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*PredictorOpenRequest, 1000)
+	for i := 0; i < 1000; i++ {
+		pops[i] = NewPopulatedPredictorOpenRequest(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += pops[i%1000].Size()
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestPredictorCloseResponseSize(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictorCloseResponse(popr, true)
+	size2 := github_com_gogo_protobuf_proto.Size(p)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	size := p.Size()
+	if len(dAtA) != size {
+		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
+	}
+	if size2 != size {
+		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
+	}
+	size3 := github_com_gogo_protobuf_proto.Size(p)
+	if size3 != size {
+		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
+	}
+}
+
+func BenchmarkPredictorCloseResponseSize(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*PredictorCloseResponse, 1000)
+	for i := 0; i < 1000; i++ {
+		pops[i] = NewPopulatedPredictorCloseResponse(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += pops[i%1000].Size()
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
 func TestPredictionOptionsSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -4982,6 +5612,42 @@ func BenchmarkPredictionOptionsSize(b *testing.B) {
 	pops := make([]*PredictionOptions, 1000)
 	for i := 0; i < 1000; i++ {
 		pops[i] = NewPopulatedPredictionOptions(popr, false)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		total += pops[i%1000].Size()
+	}
+	b.SetBytes(int64(total / b.N))
+}
+
+func TestPredictorSize(t *testing.T) {
+	seed := time.Now().UnixNano()
+	popr := math_rand.New(math_rand.NewSource(seed))
+	p := NewPopulatedPredictor(popr, true)
+	size2 := github_com_gogo_protobuf_proto.Size(p)
+	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
+	if err != nil {
+		t.Fatalf("seed = %d, err = %v", seed, err)
+	}
+	size := p.Size()
+	if len(dAtA) != size {
+		t.Errorf("seed = %d, size %v != marshalled size %v", seed, size, len(dAtA))
+	}
+	if size2 != size {
+		t.Errorf("seed = %d, size %v != before marshal proto.Size %v", seed, size, size2)
+	}
+	size3 := github_com_gogo_protobuf_proto.Size(p)
+	if size3 != size {
+		t.Errorf("seed = %d, size %v != after marshal proto.Size %v", seed, size, size3)
+	}
+}
+
+func BenchmarkPredictorSize(b *testing.B) {
+	popr := math_rand.New(math_rand.NewSource(616))
+	total := 0
+	pops := make([]*Predictor, 1000)
+	for i := 0; i < 1000; i++ {
+		pops[i] = NewPopulatedPredictor(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -5278,10 +5944,10 @@ func BenchmarkFeatureResponseSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestClearRequestSize(t *testing.T) {
+func TestResetRequestSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearRequest(popr, true)
+	p := NewPopulatedResetRequest(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -5300,12 +5966,12 @@ func TestClearRequestSize(t *testing.T) {
 	}
 }
 
-func BenchmarkClearRequestSize(b *testing.B) {
+func BenchmarkResetRequestSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ClearRequest, 1000)
+	pops := make([]*ResetRequest, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedClearRequest(popr, false)
+		pops[i] = NewPopulatedResetRequest(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -5314,10 +5980,10 @@ func BenchmarkClearRequestSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestClearResponseSize(t *testing.T) {
+func TestResetResponseSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedClearResponse(popr, true)
+	p := NewPopulatedResetResponse(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -5336,12 +6002,12 @@ func TestClearResponseSize(t *testing.T) {
 	}
 }
 
-func BenchmarkClearResponseSize(b *testing.B) {
+func BenchmarkResetResponseSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*ClearResponse, 1000)
+	pops := make([]*ResetResponse, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedClearResponse(popr, false)
+		pops[i] = NewPopulatedResetResponse(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -5467,9 +6133,36 @@ func TestModelManifestsResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
+func TestPredictorOpenRequestStringer(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorOpenRequest(popr, false)
+	s1 := p.String()
+	s2 := fmt.Sprintf("%v", p)
+	if s1 != s2 {
+		t.Fatalf("String want %v got %v", s1, s2)
+	}
+}
+func TestPredictorCloseResponseStringer(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictorCloseResponse(popr, false)
+	s1 := p.String()
+	s2 := fmt.Sprintf("%v", p)
+	if s1 != s2 {
+		t.Fatalf("String want %v got %v", s1, s2)
+	}
+}
 func TestPredictionOptionsStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedPredictionOptions(popr, false)
+	s1 := p.String()
+	s2 := fmt.Sprintf("%v", p)
+	if s1 != s2 {
+		t.Fatalf("String want %v got %v", s1, s2)
+	}
+}
+func TestPredictorStringer(t *testing.T) {
+	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
+	p := NewPopulatedPredictor(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
@@ -5548,18 +6241,18 @@ func TestFeatureResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestClearRequestStringer(t *testing.T) {
+func TestResetRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearRequest(popr, false)
+	p := NewPopulatedResetRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestClearResponseStringer(t *testing.T) {
+func TestResetResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedClearResponse(popr, false)
+	p := NewPopulatedResetResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

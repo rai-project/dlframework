@@ -18,14 +18,17 @@
 		Agents
 		ModelRequest
 		ModelManifestsResponse
+		PredictorOpenRequest
+		PredictorCloseResponse
 		PredictionOptions
+		Predictor
 		URLsRequest
 		ImagesRequest
 		DatasetRequest
 		Feature
 		FeatureResponse
-		ClearRequest
-		ClearResponse
+		ResetRequest
+		ResetResponse
 */
 package dlframework
 
@@ -510,50 +513,66 @@ func (m *ModelManifestsResponse) GetManifests() []*ModelManifest {
 	return nil
 }
 
-type PredictionOptions struct {
-	RequestId        string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty" yaml:"request_id,omitempty"`
-	ModelName        string `protobuf:"bytes,2,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty" yaml:"model_name,omitempty"`
-	ModelVersion     string `protobuf:"bytes,3,opt,name=model_version,json=modelVersion,proto3" json:"model_version,omitempty" yaml:"model_version,omitempty"`
-	FrameworkName    string `protobuf:"bytes,4,opt,name=framework_name,json=frameworkName,proto3" json:"framework_name,omitempty" yaml:"framework_name,omitempty"`
-	FrameworkVersion string `protobuf:"bytes,5,opt,name=framework_version,json=frameworkVersion,proto3" json:"framework_version,omitempty" yaml:"framework_version,omitempty"`
-	FeatureLimit     int32  `protobuf:"varint,6,opt,name=feature_limit,json=featureLimit,proto3" json:"feature_limit,omitempty" yaml:"feature_limit,omitempty"`
+type PredictorOpenRequest struct {
+	ModelName        string `protobuf:"bytes,1,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty" yaml:"model_name,omitempty"`
+	ModelVersion     string `protobuf:"bytes,2,opt,name=model_version,json=modelVersion,proto3" json:"model_version,omitempty" yaml:"model_version,omitempty"`
+	FrameworkName    string `protobuf:"bytes,3,opt,name=framework_name,json=frameworkName,proto3" json:"framework_name,omitempty" yaml:"framework_name,omitempty"`
+	FrameworkVersion string `protobuf:"bytes,4,opt,name=framework_version,json=frameworkVersion,proto3" json:"framework_version,omitempty" yaml:"framework_version,omitempty"`
 }
 
-func (m *PredictionOptions) Reset()                    { *m = PredictionOptions{} }
-func (*PredictionOptions) ProtoMessage()               {}
-func (*PredictionOptions) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{10} }
+func (m *PredictorOpenRequest) Reset()                    { *m = PredictorOpenRequest{} }
+func (*PredictorOpenRequest) ProtoMessage()               {}
+func (*PredictorOpenRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{10} }
 
-func (m *PredictionOptions) GetRequestId() string {
-	if m != nil {
-		return m.RequestId
-	}
-	return ""
-}
-
-func (m *PredictionOptions) GetModelName() string {
+func (m *PredictorOpenRequest) GetModelName() string {
 	if m != nil {
 		return m.ModelName
 	}
 	return ""
 }
 
-func (m *PredictionOptions) GetModelVersion() string {
+func (m *PredictorOpenRequest) GetModelVersion() string {
 	if m != nil {
 		return m.ModelVersion
 	}
 	return ""
 }
 
-func (m *PredictionOptions) GetFrameworkName() string {
+func (m *PredictorOpenRequest) GetFrameworkName() string {
 	if m != nil {
 		return m.FrameworkName
 	}
 	return ""
 }
 
-func (m *PredictionOptions) GetFrameworkVersion() string {
+func (m *PredictorOpenRequest) GetFrameworkVersion() string {
 	if m != nil {
 		return m.FrameworkVersion
+	}
+	return ""
+}
+
+type PredictorCloseResponse struct {
+}
+
+func (m *PredictorCloseResponse) Reset()      { *m = PredictorCloseResponse{} }
+func (*PredictorCloseResponse) ProtoMessage() {}
+func (*PredictorCloseResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptorDlframework, []int{11}
+}
+
+type PredictionOptions struct {
+	RequestId    string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty" yaml:"request_id,omitempty"`
+	FeatureLimit int32  `protobuf:"varint,2,opt,name=feature_limit,json=featureLimit,proto3" json:"feature_limit,omitempty" yaml:"feature_limit,omitempty"`
+}
+
+func (m *PredictionOptions) Reset()                    { *m = PredictionOptions{} }
+func (*PredictionOptions) ProtoMessage()               {}
+func (*PredictionOptions) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{12} }
+
+func (m *PredictionOptions) GetRequestId() string {
+	if m != nil {
+		return m.RequestId
 	}
 	return ""
 }
@@ -565,14 +584,37 @@ func (m *PredictionOptions) GetFeatureLimit() int32 {
 	return 0
 }
 
+type Predictor struct {
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id,omitempty"`
+}
+
+func (m *Predictor) Reset()                    { *m = Predictor{} }
+func (*Predictor) ProtoMessage()               {}
+func (*Predictor) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{13} }
+
+func (m *Predictor) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
 type URLsRequest struct {
-	Urls    []*URLsRequest_URL `protobuf:"bytes,1,rep,name=urls" json:"urls,omitempty" yaml:"urls,omitempty"`
-	Options *PredictionOptions `protobuf:"bytes,2,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
+	Predictor *Predictor         `protobuf:"bytes,1,opt,name=predictor" json:"predictor,omitempty" yaml:"predictor,omitempty"`
+	Urls      []*URLsRequest_URL `protobuf:"bytes,2,rep,name=urls" json:"urls,omitempty" yaml:"urls,omitempty"`
+	Options   *PredictionOptions `protobuf:"bytes,3,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 func (m *URLsRequest) Reset()                    { *m = URLsRequest{} }
 func (*URLsRequest) ProtoMessage()               {}
-func (*URLsRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{11} }
+func (*URLsRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{14} }
+
+func (m *URLsRequest) GetPredictor() *Predictor {
+	if m != nil {
+		return m.Predictor
+	}
+	return nil
+}
 
 func (m *URLsRequest) GetUrls() []*URLsRequest_URL {
 	if m != nil {
@@ -596,7 +638,7 @@ type URLsRequest_URL struct {
 
 func (m *URLsRequest_URL) Reset()                    { *m = URLsRequest_URL{} }
 func (*URLsRequest_URL) ProtoMessage()               {}
-func (*URLsRequest_URL) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{11, 0} }
+func (*URLsRequest_URL) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{14, 0} }
 
 func (m *URLsRequest_URL) GetId() string {
 	if m != nil {
@@ -613,14 +655,22 @@ func (m *URLsRequest_URL) GetUrl() string {
 }
 
 type ImagesRequest struct {
+	Predictor *Predictor `protobuf:"bytes,1,opt,name=predictor" json:"predictor,omitempty" yaml:"predictor,omitempty"`
 	// A list of Base64 encoded images
-	Images  []*ImagesRequest_Image `protobuf:"bytes,1,rep,name=images" json:"images,omitempty" yaml:"images,omitempty"`
-	Options *PredictionOptions     `protobuf:"bytes,2,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
+	Images  []*ImagesRequest_Image `protobuf:"bytes,2,rep,name=images" json:"images,omitempty" yaml:"images,omitempty"`
+	Options *PredictionOptions     `protobuf:"bytes,3,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 func (m *ImagesRequest) Reset()                    { *m = ImagesRequest{} }
 func (*ImagesRequest) ProtoMessage()               {}
-func (*ImagesRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{12} }
+func (*ImagesRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{15} }
+
+func (m *ImagesRequest) GetPredictor() *Predictor {
+	if m != nil {
+		return m.Predictor
+	}
+	return nil
+}
 
 func (m *ImagesRequest) GetImages() []*ImagesRequest_Image {
 	if m != nil {
@@ -650,7 +700,7 @@ type ImagesRequest_Image struct {
 func (m *ImagesRequest_Image) Reset()      { *m = ImagesRequest_Image{} }
 func (*ImagesRequest_Image) ProtoMessage() {}
 func (*ImagesRequest_Image) Descriptor() ([]byte, []int) {
-	return fileDescriptorDlframework, []int{12, 0}
+	return fileDescriptorDlframework, []int{15, 0}
 }
 
 func (m *ImagesRequest_Image) GetId() string {
@@ -675,13 +725,21 @@ func (m *ImagesRequest_Image) GetPreprocessed() bool {
 }
 
 type DatasetRequest struct {
-	Dataset *DatasetRequest_Dataset `protobuf:"bytes,1,opt,name=dataset" json:"dataset,omitempty" yaml:"dataset,omitempty"`
-	Options *PredictionOptions      `protobuf:"bytes,3,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
+	Predictor *Predictor              `protobuf:"bytes,1,opt,name=predictor" json:"predictor,omitempty" yaml:"predictor,omitempty"`
+	Dataset   *DatasetRequest_Dataset `protobuf:"bytes,2,opt,name=dataset" json:"dataset,omitempty" yaml:"dataset,omitempty"`
+	Options   *PredictionOptions      `protobuf:"bytes,3,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
 }
 
 func (m *DatasetRequest) Reset()                    { *m = DatasetRequest{} }
 func (*DatasetRequest) ProtoMessage()               {}
-func (*DatasetRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{13} }
+func (*DatasetRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{16} }
+
+func (m *DatasetRequest) GetPredictor() *Predictor {
+	if m != nil {
+		return m.Predictor
+	}
+	return nil
+}
 
 func (m *DatasetRequest) GetDataset() *DatasetRequest_Dataset {
 	if m != nil {
@@ -705,7 +763,7 @@ type DatasetRequest_Dataset struct {
 func (m *DatasetRequest_Dataset) Reset()      { *m = DatasetRequest_Dataset{} }
 func (*DatasetRequest_Dataset) ProtoMessage() {}
 func (*DatasetRequest_Dataset) Descriptor() ([]byte, []int) {
-	return fileDescriptorDlframework, []int{13, 0}
+	return fileDescriptorDlframework, []int{16, 0}
 }
 
 func (m *DatasetRequest_Dataset) GetCategory() string {
@@ -730,7 +788,7 @@ type Feature struct {
 
 func (m *Feature) Reset()                    { *m = Feature{} }
 func (*Feature) ProtoMessage()               {}
-func (*Feature) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{14} }
+func (*Feature) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{17} }
 
 func (m *Feature) GetIndex() int64 {
 	if m != nil {
@@ -762,7 +820,7 @@ type FeatureResponse struct {
 
 func (m *FeatureResponse) Reset()                    { *m = FeatureResponse{} }
 func (*FeatureResponse) ProtoMessage()               {}
-func (*FeatureResponse) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{15} }
+func (*FeatureResponse) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{18} }
 
 func (m *FeatureResponse) GetId() string {
 	if m != nil {
@@ -792,42 +850,42 @@ func (m *FeatureResponse) GetFeatures() []*Feature {
 	return nil
 }
 
-type ClearRequest struct {
-	Id      string             `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id,omitempty"`
-	Options *PredictionOptions `protobuf:"bytes,2,opt,name=options" json:"options,omitempty" yaml:"options,omitempty"`
+type ResetRequest struct {
+	Predictor *Predictor `protobuf:"bytes,1,opt,name=predictor" json:"predictor,omitempty" yaml:"predictor,omitempty"`
+	Id        string     `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty" yaml:"id,omitempty"`
 }
 
-func (m *ClearRequest) Reset()                    { *m = ClearRequest{} }
-func (*ClearRequest) ProtoMessage()               {}
-func (*ClearRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{16} }
+func (m *ResetRequest) Reset()                    { *m = ResetRequest{} }
+func (*ResetRequest) ProtoMessage()               {}
+func (*ResetRequest) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{19} }
 
-func (m *ClearRequest) GetId() string {
+func (m *ResetRequest) GetPredictor() *Predictor {
 	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *ClearRequest) GetOptions() *PredictionOptions {
-	if m != nil {
-		return m.Options
+		return m.Predictor
 	}
 	return nil
 }
 
-type ClearResponse struct {
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id,omitempty"`
-}
-
-func (m *ClearResponse) Reset()                    { *m = ClearResponse{} }
-func (*ClearResponse) ProtoMessage()               {}
-func (*ClearResponse) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{17} }
-
-func (m *ClearResponse) GetId() string {
+func (m *ResetRequest) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
+}
+
+type ResetResponse struct {
+	Predictor *Predictor `protobuf:"bytes,1,opt,name=predictor" json:"predictor,omitempty" yaml:"predictor,omitempty"`
+}
+
+func (m *ResetResponse) Reset()                    { *m = ResetResponse{} }
+func (*ResetResponse) ProtoMessage()               {}
+func (*ResetResponse) Descriptor() ([]byte, []int) { return fileDescriptorDlframework, []int{20} }
+
+func (m *ResetResponse) GetPredictor() *Predictor {
+	if m != nil {
+		return m.Predictor
+	}
+	return nil
 }
 
 func init() {
@@ -844,7 +902,10 @@ func init() {
 	proto.RegisterType((*Agents)(nil), "carml.org.dlframework.Agents")
 	proto.RegisterType((*ModelRequest)(nil), "carml.org.dlframework.ModelRequest")
 	proto.RegisterType((*ModelManifestsResponse)(nil), "carml.org.dlframework.ModelManifestsResponse")
+	proto.RegisterType((*PredictorOpenRequest)(nil), "carml.org.dlframework.PredictorOpenRequest")
+	proto.RegisterType((*PredictorCloseResponse)(nil), "carml.org.dlframework.PredictorCloseResponse")
 	proto.RegisterType((*PredictionOptions)(nil), "carml.org.dlframework.PredictionOptions")
+	proto.RegisterType((*Predictor)(nil), "carml.org.dlframework.Predictor")
 	proto.RegisterType((*URLsRequest)(nil), "carml.org.dlframework.URLsRequest")
 	proto.RegisterType((*URLsRequest_URL)(nil), "carml.org.dlframework.URLsRequest.URL")
 	proto.RegisterType((*ImagesRequest)(nil), "carml.org.dlframework.ImagesRequest")
@@ -853,8 +914,8 @@ func init() {
 	proto.RegisterType((*DatasetRequest_Dataset)(nil), "carml.org.dlframework.DatasetRequest.Dataset")
 	proto.RegisterType((*Feature)(nil), "carml.org.dlframework.Feature")
 	proto.RegisterType((*FeatureResponse)(nil), "carml.org.dlframework.FeatureResponse")
-	proto.RegisterType((*ClearRequest)(nil), "carml.org.dlframework.ClearRequest")
-	proto.RegisterType((*ClearResponse)(nil), "carml.org.dlframework.ClearResponse")
+	proto.RegisterType((*ResetRequest)(nil), "carml.org.dlframework.ResetRequest")
+	proto.RegisterType((*ResetResponse)(nil), "carml.org.dlframework.ResetResponse")
 }
 func (this *ErrorStatus) VerboseEqual(that interface{}) error {
 	if that == nil {
@@ -1912,6 +1973,138 @@ func (this *ModelManifestsResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *PredictorOpenRequest) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*PredictorOpenRequest)
+	if !ok {
+		that2, ok := that.(PredictorOpenRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *PredictorOpenRequest")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *PredictorOpenRequest but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *PredictorOpenRequest but is not nil && this == nil")
+	}
+	if this.ModelName != that1.ModelName {
+		return fmt.Errorf("ModelName this(%v) Not Equal that(%v)", this.ModelName, that1.ModelName)
+	}
+	if this.ModelVersion != that1.ModelVersion {
+		return fmt.Errorf("ModelVersion this(%v) Not Equal that(%v)", this.ModelVersion, that1.ModelVersion)
+	}
+	if this.FrameworkName != that1.FrameworkName {
+		return fmt.Errorf("FrameworkName this(%v) Not Equal that(%v)", this.FrameworkName, that1.FrameworkName)
+	}
+	if this.FrameworkVersion != that1.FrameworkVersion {
+		return fmt.Errorf("FrameworkVersion this(%v) Not Equal that(%v)", this.FrameworkVersion, that1.FrameworkVersion)
+	}
+	return nil
+}
+func (this *PredictorOpenRequest) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*PredictorOpenRequest)
+	if !ok {
+		that2, ok := that.(PredictorOpenRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.ModelName != that1.ModelName {
+		return false
+	}
+	if this.ModelVersion != that1.ModelVersion {
+		return false
+	}
+	if this.FrameworkName != that1.FrameworkName {
+		return false
+	}
+	if this.FrameworkVersion != that1.FrameworkVersion {
+		return false
+	}
+	return true
+}
+func (this *PredictorCloseResponse) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*PredictorCloseResponse)
+	if !ok {
+		that2, ok := that.(PredictorCloseResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *PredictorCloseResponse")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *PredictorCloseResponse but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *PredictorCloseResponse but is not nil && this == nil")
+	}
+	return nil
+}
+func (this *PredictorCloseResponse) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*PredictorCloseResponse)
+	if !ok {
+		that2, ok := that.(PredictorCloseResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	return true
+}
 func (this *PredictionOptions) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
@@ -1939,18 +2132,6 @@ func (this *PredictionOptions) VerboseEqual(that interface{}) error {
 	}
 	if this.RequestId != that1.RequestId {
 		return fmt.Errorf("RequestId this(%v) Not Equal that(%v)", this.RequestId, that1.RequestId)
-	}
-	if this.ModelName != that1.ModelName {
-		return fmt.Errorf("ModelName this(%v) Not Equal that(%v)", this.ModelName, that1.ModelName)
-	}
-	if this.ModelVersion != that1.ModelVersion {
-		return fmt.Errorf("ModelVersion this(%v) Not Equal that(%v)", this.ModelVersion, that1.ModelVersion)
-	}
-	if this.FrameworkName != that1.FrameworkName {
-		return fmt.Errorf("FrameworkName this(%v) Not Equal that(%v)", this.FrameworkName, that1.FrameworkName)
-	}
-	if this.FrameworkVersion != that1.FrameworkVersion {
-		return fmt.Errorf("FrameworkVersion this(%v) Not Equal that(%v)", this.FrameworkVersion, that1.FrameworkVersion)
 	}
 	if this.FeatureLimit != that1.FeatureLimit {
 		return fmt.Errorf("FeatureLimit this(%v) Not Equal that(%v)", this.FeatureLimit, that1.FeatureLimit)
@@ -1985,19 +2166,67 @@ func (this *PredictionOptions) Equal(that interface{}) bool {
 	if this.RequestId != that1.RequestId {
 		return false
 	}
-	if this.ModelName != that1.ModelName {
-		return false
-	}
-	if this.ModelVersion != that1.ModelVersion {
-		return false
-	}
-	if this.FrameworkName != that1.FrameworkName {
-		return false
-	}
-	if this.FrameworkVersion != that1.FrameworkVersion {
-		return false
-	}
 	if this.FeatureLimit != that1.FeatureLimit {
+		return false
+	}
+	return true
+}
+func (this *Predictor) VerboseEqual(that interface{}) error {
+	if that == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that == nil && this != nil")
+	}
+
+	that1, ok := that.(*Predictor)
+	if !ok {
+		that2, ok := that.(Predictor)
+		if ok {
+			that1 = &that2
+		} else {
+			return fmt.Errorf("that is not of type *Predictor")
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return nil
+		}
+		return fmt.Errorf("that is type *Predictor but is nil && this != nil")
+	} else if this == nil {
+		return fmt.Errorf("that is type *Predictor but is not nil && this == nil")
+	}
+	if this.Id != that1.Id {
+		return fmt.Errorf("Id this(%v) Not Equal that(%v)", this.Id, that1.Id)
+	}
+	return nil
+}
+func (this *Predictor) Equal(that interface{}) bool {
+	if that == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	}
+
+	that1, ok := that.(*Predictor)
+	if !ok {
+		that2, ok := that.(Predictor)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		if this == nil {
+			return true
+		}
+		return false
+	} else if this == nil {
+		return false
+	}
+	if this.Id != that1.Id {
 		return false
 	}
 	return true
@@ -2026,6 +2255,9 @@ func (this *URLsRequest) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that is type *URLsRequest but is nil && this != nil")
 	} else if this == nil {
 		return fmt.Errorf("that is type *URLsRequest but is not nil && this == nil")
+	}
+	if !this.Predictor.Equal(that1.Predictor) {
+		return fmt.Errorf("Predictor this(%v) Not Equal that(%v)", this.Predictor, that1.Predictor)
 	}
 	if len(this.Urls) != len(that1.Urls) {
 		return fmt.Errorf("Urls this(%v) Not Equal that(%v)", len(this.Urls), len(that1.Urls))
@@ -2063,6 +2295,9 @@ func (this *URLsRequest) Equal(that interface{}) bool {
 		}
 		return false
 	} else if this == nil {
+		return false
+	}
+	if !this.Predictor.Equal(that1.Predictor) {
 		return false
 	}
 	if len(this.Urls) != len(that1.Urls) {
@@ -2169,6 +2404,9 @@ func (this *ImagesRequest) VerboseEqual(that interface{}) error {
 	} else if this == nil {
 		return fmt.Errorf("that is type *ImagesRequest but is not nil && this == nil")
 	}
+	if !this.Predictor.Equal(that1.Predictor) {
+		return fmt.Errorf("Predictor this(%v) Not Equal that(%v)", this.Predictor, that1.Predictor)
+	}
 	if len(this.Images) != len(that1.Images) {
 		return fmt.Errorf("Images this(%v) Not Equal that(%v)", len(this.Images), len(that1.Images))
 	}
@@ -2205,6 +2443,9 @@ func (this *ImagesRequest) Equal(that interface{}) bool {
 		}
 		return false
 	} else if this == nil {
+		return false
+	}
+	if !this.Predictor.Equal(that1.Predictor) {
 		return false
 	}
 	if len(this.Images) != len(that1.Images) {
@@ -2317,6 +2558,9 @@ func (this *DatasetRequest) VerboseEqual(that interface{}) error {
 	} else if this == nil {
 		return fmt.Errorf("that is type *DatasetRequest but is not nil && this == nil")
 	}
+	if !this.Predictor.Equal(that1.Predictor) {
+		return fmt.Errorf("Predictor this(%v) Not Equal that(%v)", this.Predictor, that1.Predictor)
+	}
 	if !this.Dataset.Equal(that1.Dataset) {
 		return fmt.Errorf("Dataset this(%v) Not Equal that(%v)", this.Dataset, that1.Dataset)
 	}
@@ -2348,6 +2592,9 @@ func (this *DatasetRequest) Equal(that interface{}) bool {
 		}
 		return false
 	} else if this == nil {
+		return false
+	}
+	if !this.Predictor.Equal(that1.Predictor) {
 		return false
 	}
 	if !this.Dataset.Equal(that1.Dataset) {
@@ -2584,7 +2831,7 @@ func (this *FeatureResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *ClearRequest) VerboseEqual(that interface{}) error {
+func (this *ResetRequest) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
 			return nil
@@ -2592,32 +2839,32 @@ func (this *ClearRequest) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that == nil && this != nil")
 	}
 
-	that1, ok := that.(*ClearRequest)
+	that1, ok := that.(*ResetRequest)
 	if !ok {
-		that2, ok := that.(ClearRequest)
+		that2, ok := that.(ResetRequest)
 		if ok {
 			that1 = &that2
 		} else {
-			return fmt.Errorf("that is not of type *ClearRequest")
+			return fmt.Errorf("that is not of type *ResetRequest")
 		}
 	}
 	if that1 == nil {
 		if this == nil {
 			return nil
 		}
-		return fmt.Errorf("that is type *ClearRequest but is nil && this != nil")
+		return fmt.Errorf("that is type *ResetRequest but is nil && this != nil")
 	} else if this == nil {
-		return fmt.Errorf("that is type *ClearRequest but is not nil && this == nil")
+		return fmt.Errorf("that is type *ResetRequest but is not nil && this == nil")
+	}
+	if !this.Predictor.Equal(that1.Predictor) {
+		return fmt.Errorf("Predictor this(%v) Not Equal that(%v)", this.Predictor, that1.Predictor)
 	}
 	if this.Id != that1.Id {
 		return fmt.Errorf("Id this(%v) Not Equal that(%v)", this.Id, that1.Id)
 	}
-	if !this.Options.Equal(that1.Options) {
-		return fmt.Errorf("Options this(%v) Not Equal that(%v)", this.Options, that1.Options)
-	}
 	return nil
 }
-func (this *ClearRequest) Equal(that interface{}) bool {
+func (this *ResetRequest) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
 			return true
@@ -2625,9 +2872,9 @@ func (this *ClearRequest) Equal(that interface{}) bool {
 		return false
 	}
 
-	that1, ok := that.(*ClearRequest)
+	that1, ok := that.(*ResetRequest)
 	if !ok {
-		that2, ok := that.(ClearRequest)
+		that2, ok := that.(ResetRequest)
 		if ok {
 			that1 = &that2
 		} else {
@@ -2642,15 +2889,15 @@ func (this *ClearRequest) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if this.Id != that1.Id {
+	if !this.Predictor.Equal(that1.Predictor) {
 		return false
 	}
-	if !this.Options.Equal(that1.Options) {
+	if this.Id != that1.Id {
 		return false
 	}
 	return true
 }
-func (this *ClearResponse) VerboseEqual(that interface{}) error {
+func (this *ResetResponse) VerboseEqual(that interface{}) error {
 	if that == nil {
 		if this == nil {
 			return nil
@@ -2658,29 +2905,29 @@ func (this *ClearResponse) VerboseEqual(that interface{}) error {
 		return fmt.Errorf("that == nil && this != nil")
 	}
 
-	that1, ok := that.(*ClearResponse)
+	that1, ok := that.(*ResetResponse)
 	if !ok {
-		that2, ok := that.(ClearResponse)
+		that2, ok := that.(ResetResponse)
 		if ok {
 			that1 = &that2
 		} else {
-			return fmt.Errorf("that is not of type *ClearResponse")
+			return fmt.Errorf("that is not of type *ResetResponse")
 		}
 	}
 	if that1 == nil {
 		if this == nil {
 			return nil
 		}
-		return fmt.Errorf("that is type *ClearResponse but is nil && this != nil")
+		return fmt.Errorf("that is type *ResetResponse but is nil && this != nil")
 	} else if this == nil {
-		return fmt.Errorf("that is type *ClearResponse but is not nil && this == nil")
+		return fmt.Errorf("that is type *ResetResponse but is not nil && this == nil")
 	}
-	if this.Id != that1.Id {
-		return fmt.Errorf("Id this(%v) Not Equal that(%v)", this.Id, that1.Id)
+	if !this.Predictor.Equal(that1.Predictor) {
+		return fmt.Errorf("Predictor this(%v) Not Equal that(%v)", this.Predictor, that1.Predictor)
 	}
 	return nil
 }
-func (this *ClearResponse) Equal(that interface{}) bool {
+func (this *ResetResponse) Equal(that interface{}) bool {
 	if that == nil {
 		if this == nil {
 			return true
@@ -2688,9 +2935,9 @@ func (this *ClearResponse) Equal(that interface{}) bool {
 		return false
 	}
 
-	that1, ok := that.(*ClearResponse)
+	that1, ok := that.(*ResetResponse)
 	if !ok {
-		that2, ok := that.(ClearResponse)
+		that2, ok := that.(ResetResponse)
 		if ok {
 			that1 = &that2
 		} else {
@@ -2705,7 +2952,7 @@ func (this *ClearResponse) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if this.Id != that1.Id {
+	if !this.Predictor.Equal(that1.Predictor) {
 		return false
 	}
 	return true
@@ -2933,18 +3180,46 @@ func (this *ModelManifestsResponse) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *PredictionOptions) GoString() string {
+func (this *PredictorOpenRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 10)
-	s = append(s, "&dlframework.PredictionOptions{")
-	s = append(s, "RequestId: "+fmt.Sprintf("%#v", this.RequestId)+",\n")
+	s := make([]string, 0, 8)
+	s = append(s, "&dlframework.PredictorOpenRequest{")
 	s = append(s, "ModelName: "+fmt.Sprintf("%#v", this.ModelName)+",\n")
 	s = append(s, "ModelVersion: "+fmt.Sprintf("%#v", this.ModelVersion)+",\n")
 	s = append(s, "FrameworkName: "+fmt.Sprintf("%#v", this.FrameworkName)+",\n")
 	s = append(s, "FrameworkVersion: "+fmt.Sprintf("%#v", this.FrameworkVersion)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *PredictorCloseResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&dlframework.PredictorCloseResponse{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *PredictionOptions) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&dlframework.PredictionOptions{")
+	s = append(s, "RequestId: "+fmt.Sprintf("%#v", this.RequestId)+",\n")
 	s = append(s, "FeatureLimit: "+fmt.Sprintf("%#v", this.FeatureLimit)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Predictor) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&dlframework.Predictor{")
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2952,8 +3227,11 @@ func (this *URLsRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 7)
 	s = append(s, "&dlframework.URLsRequest{")
+	if this.Predictor != nil {
+		s = append(s, "Predictor: "+fmt.Sprintf("%#v", this.Predictor)+",\n")
+	}
 	if this.Urls != nil {
 		s = append(s, "Urls: "+fmt.Sprintf("%#v", this.Urls)+",\n")
 	}
@@ -2978,8 +3256,11 @@ func (this *ImagesRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 7)
 	s = append(s, "&dlframework.ImagesRequest{")
+	if this.Predictor != nil {
+		s = append(s, "Predictor: "+fmt.Sprintf("%#v", this.Predictor)+",\n")
+	}
 	if this.Images != nil {
 		s = append(s, "Images: "+fmt.Sprintf("%#v", this.Images)+",\n")
 	}
@@ -3005,8 +3286,11 @@ func (this *DatasetRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 7)
 	s = append(s, "&dlframework.DatasetRequest{")
+	if this.Predictor != nil {
+		s = append(s, "Predictor: "+fmt.Sprintf("%#v", this.Predictor)+",\n")
+	}
 	if this.Dataset != nil {
 		s = append(s, "Dataset: "+fmt.Sprintf("%#v", this.Dataset)+",\n")
 	}
@@ -3054,26 +3338,28 @@ func (this *FeatureResponse) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *ClearRequest) GoString() string {
+func (this *ResetRequest) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 6)
-	s = append(s, "&dlframework.ClearRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	if this.Options != nil {
-		s = append(s, "Options: "+fmt.Sprintf("%#v", this.Options)+",\n")
+	s = append(s, "&dlframework.ResetRequest{")
+	if this.Predictor != nil {
+		s = append(s, "Predictor: "+fmt.Sprintf("%#v", this.Predictor)+",\n")
 	}
+	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *ClearResponse) GoString() string {
+func (this *ResetResponse) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 5)
-	s = append(s, "&dlframework.ClearResponse{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "&dlframework.ResetResponse{")
+	if this.Predictor != nil {
+		s = append(s, "Predictor: "+fmt.Sprintf("%#v", this.Predictor)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3257,271 +3543,345 @@ var _Registry_serviceDesc = grpc.ServiceDesc{
 	Metadata: "dlframework.proto",
 }
 
-// Client API for Predictor service
+// Client API for Predict service
 
-type PredictorClient interface {
+type PredictClient interface {
+	// Opens a predictor and returns an id where the predictor
+	// is accessible. The id can be used to perform inference
+	// requests.
+	Open(ctx context.Context, in *PredictorOpenRequest, opts ...grpc.CallOption) (*Predictor, error)
+	// Close a predictor clear it's memory.
+	Close(ctx context.Context, in *Predictor, opts ...grpc.CallOption) (*PredictorCloseResponse, error)
 	// Image method receives a stream of urls and runs
 	// the predictor on all the urls. The
 	//
 	// The result is a prediction feature stream for each url.
-	URLs(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (Predictor_URLsClient, error)
+	URLs(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (Predict_URLsClient, error)
 	// Image method receives a list base64 encoded images and runs
 	// the predictor on all the images.
 	//
 	// The result is a prediction feature stream for each image.
-	Images(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (Predictor_ImagesClient, error)
+	Images(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (Predict_ImagesClient, error)
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
 	//
 	// The result is a prediction feature stream.
-	Dataset(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (Predictor_DatasetClient, error)
+	Dataset(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (Predict_DatasetClient, error)
 	// Clear method clears the internal cache of the predictors
-	Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error)
+	Reset(ctx context.Context, in *ResetRequest, opts ...grpc.CallOption) (*ResetResponse, error)
 }
 
-type predictorClient struct {
+type predictClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewPredictorClient(cc *grpc.ClientConn) PredictorClient {
-	return &predictorClient{cc}
+func NewPredictClient(cc *grpc.ClientConn) PredictClient {
+	return &predictClient{cc}
 }
 
-func (c *predictorClient) URLs(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (Predictor_URLsClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Predictor_serviceDesc.Streams[0], c.cc, "/carml.org.dlframework.Predictor/URLs", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &predictorURLsClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Predictor_URLsClient interface {
-	Recv() (*FeatureResponse, error)
-	grpc.ClientStream
-}
-
-type predictorURLsClient struct {
-	grpc.ClientStream
-}
-
-func (x *predictorURLsClient) Recv() (*FeatureResponse, error) {
-	m := new(FeatureResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *predictorClient) Images(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (Predictor_ImagesClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Predictor_serviceDesc.Streams[1], c.cc, "/carml.org.dlframework.Predictor/Images", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &predictorImagesClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Predictor_ImagesClient interface {
-	Recv() (*FeatureResponse, error)
-	grpc.ClientStream
-}
-
-type predictorImagesClient struct {
-	grpc.ClientStream
-}
-
-func (x *predictorImagesClient) Recv() (*FeatureResponse, error) {
-	m := new(FeatureResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *predictorClient) Dataset(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (Predictor_DatasetClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Predictor_serviceDesc.Streams[2], c.cc, "/carml.org.dlframework.Predictor/Dataset", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &predictorDatasetClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Predictor_DatasetClient interface {
-	Recv() (*FeatureResponse, error)
-	grpc.ClientStream
-}
-
-type predictorDatasetClient struct {
-	grpc.ClientStream
-}
-
-func (x *predictorDatasetClient) Recv() (*FeatureResponse, error) {
-	m := new(FeatureResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *predictorClient) Clear(ctx context.Context, in *ClearRequest, opts ...grpc.CallOption) (*ClearResponse, error) {
-	out := new(ClearResponse)
-	err := grpc.Invoke(ctx, "/carml.org.dlframework.Predictor/Clear", in, out, c.cc, opts...)
+func (c *predictClient) Open(ctx context.Context, in *PredictorOpenRequest, opts ...grpc.CallOption) (*Predictor, error) {
+	out := new(Predictor)
+	err := grpc.Invoke(ctx, "/carml.org.dlframework.Predict/Open", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for Predictor service
+func (c *predictClient) Close(ctx context.Context, in *Predictor, opts ...grpc.CallOption) (*PredictorCloseResponse, error) {
+	out := new(PredictorCloseResponse)
+	err := grpc.Invoke(ctx, "/carml.org.dlframework.Predict/Close", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-type PredictorServer interface {
+func (c *predictClient) URLs(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (Predict_URLsClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Predict_serviceDesc.Streams[0], c.cc, "/carml.org.dlframework.Predict/URLs", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &predictURLsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Predict_URLsClient interface {
+	Recv() (*FeatureResponse, error)
+	grpc.ClientStream
+}
+
+type predictURLsClient struct {
+	grpc.ClientStream
+}
+
+func (x *predictURLsClient) Recv() (*FeatureResponse, error) {
+	m := new(FeatureResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *predictClient) Images(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (Predict_ImagesClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Predict_serviceDesc.Streams[1], c.cc, "/carml.org.dlframework.Predict/Images", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &predictImagesClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Predict_ImagesClient interface {
+	Recv() (*FeatureResponse, error)
+	grpc.ClientStream
+}
+
+type predictImagesClient struct {
+	grpc.ClientStream
+}
+
+func (x *predictImagesClient) Recv() (*FeatureResponse, error) {
+	m := new(FeatureResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *predictClient) Dataset(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (Predict_DatasetClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_Predict_serviceDesc.Streams[2], c.cc, "/carml.org.dlframework.Predict/Dataset", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &predictDatasetClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Predict_DatasetClient interface {
+	Recv() (*FeatureResponse, error)
+	grpc.ClientStream
+}
+
+type predictDatasetClient struct {
+	grpc.ClientStream
+}
+
+func (x *predictDatasetClient) Recv() (*FeatureResponse, error) {
+	m := new(FeatureResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *predictClient) Reset(ctx context.Context, in *ResetRequest, opts ...grpc.CallOption) (*ResetResponse, error) {
+	out := new(ResetResponse)
+	err := grpc.Invoke(ctx, "/carml.org.dlframework.Predict/Reset", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for Predict service
+
+type PredictServer interface {
+	// Opens a predictor and returns an id where the predictor
+	// is accessible. The id can be used to perform inference
+	// requests.
+	Open(context.Context, *PredictorOpenRequest) (*Predictor, error)
+	// Close a predictor clear it's memory.
+	Close(context.Context, *Predictor) (*PredictorCloseResponse, error)
 	// Image method receives a stream of urls and runs
 	// the predictor on all the urls. The
 	//
 	// The result is a prediction feature stream for each url.
-	URLs(*URLsRequest, Predictor_URLsServer) error
+	URLs(*URLsRequest, Predict_URLsServer) error
 	// Image method receives a list base64 encoded images and runs
 	// the predictor on all the images.
 	//
 	// The result is a prediction feature stream for each image.
-	Images(*ImagesRequest, Predictor_ImagesServer) error
+	Images(*ImagesRequest, Predict_ImagesServer) error
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
 	//
 	// The result is a prediction feature stream.
-	Dataset(*DatasetRequest, Predictor_DatasetServer) error
+	Dataset(*DatasetRequest, Predict_DatasetServer) error
 	// Clear method clears the internal cache of the predictors
-	Clear(context.Context, *ClearRequest) (*ClearResponse, error)
+	Reset(context.Context, *ResetRequest) (*ResetResponse, error)
 }
 
-func RegisterPredictorServer(s *grpc.Server, srv PredictorServer) {
-	s.RegisterService(&_Predictor_serviceDesc, srv)
+func RegisterPredictServer(s *grpc.Server, srv PredictServer) {
+	s.RegisterService(&_Predict_serviceDesc, srv)
 }
 
-func _Predictor_URLs_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(URLsRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(PredictorServer).URLs(m, &predictorURLsServer{stream})
-}
-
-type Predictor_URLsServer interface {
-	Send(*FeatureResponse) error
-	grpc.ServerStream
-}
-
-type predictorURLsServer struct {
-	grpc.ServerStream
-}
-
-func (x *predictorURLsServer) Send(m *FeatureResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _Predictor_Images_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(ImagesRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(PredictorServer).Images(m, &predictorImagesServer{stream})
-}
-
-type Predictor_ImagesServer interface {
-	Send(*FeatureResponse) error
-	grpc.ServerStream
-}
-
-type predictorImagesServer struct {
-	grpc.ServerStream
-}
-
-func (x *predictorImagesServer) Send(m *FeatureResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _Predictor_Dataset_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(DatasetRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(PredictorServer).Dataset(m, &predictorDatasetServer{stream})
-}
-
-type Predictor_DatasetServer interface {
-	Send(*FeatureResponse) error
-	grpc.ServerStream
-}
-
-type predictorDatasetServer struct {
-	grpc.ServerStream
-}
-
-func (x *predictorDatasetServer) Send(m *FeatureResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func _Predictor_Clear_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ClearRequest)
+func _Predict_Open_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PredictorOpenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PredictorServer).Clear(ctx, in)
+		return srv.(PredictServer).Open(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/carml.org.dlframework.Predictor/Clear",
+		FullMethod: "/carml.org.dlframework.Predict/Open",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PredictorServer).Clear(ctx, req.(*ClearRequest))
+		return srv.(PredictServer).Open(ctx, req.(*PredictorOpenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Predictor_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "carml.org.dlframework.Predictor",
-	HandlerType: (*PredictorServer)(nil),
+func _Predict_Close_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Predictor)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PredictServer).Close(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.dlframework.Predict/Close",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PredictServer).Close(ctx, req.(*Predictor))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Predict_URLs_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(URLsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PredictServer).URLs(m, &predictURLsServer{stream})
+}
+
+type Predict_URLsServer interface {
+	Send(*FeatureResponse) error
+	grpc.ServerStream
+}
+
+type predictURLsServer struct {
+	grpc.ServerStream
+}
+
+func (x *predictURLsServer) Send(m *FeatureResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Predict_Images_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ImagesRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PredictServer).Images(m, &predictImagesServer{stream})
+}
+
+type Predict_ImagesServer interface {
+	Send(*FeatureResponse) error
+	grpc.ServerStream
+}
+
+type predictImagesServer struct {
+	grpc.ServerStream
+}
+
+func (x *predictImagesServer) Send(m *FeatureResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Predict_Dataset_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(DatasetRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PredictServer).Dataset(m, &predictDatasetServer{stream})
+}
+
+type Predict_DatasetServer interface {
+	Send(*FeatureResponse) error
+	grpc.ServerStream
+}
+
+type predictDatasetServer struct {
+	grpc.ServerStream
+}
+
+func (x *predictDatasetServer) Send(m *FeatureResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Predict_Reset_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PredictServer).Reset(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/carml.org.dlframework.Predict/Reset",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PredictServer).Reset(ctx, req.(*ResetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Predict_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "carml.org.dlframework.Predict",
+	HandlerType: (*PredictServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Clear",
-			Handler:    _Predictor_Clear_Handler,
+			MethodName: "Open",
+			Handler:    _Predict_Open_Handler,
+		},
+		{
+			MethodName: "Close",
+			Handler:    _Predict_Close_Handler,
+		},
+		{
+			MethodName: "Reset",
+			Handler:    _Predict_Reset_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "URLs",
-			Handler:       _Predictor_URLs_Handler,
+			Handler:       _Predict_URLs_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "Images",
-			Handler:       _Predictor_Images_Handler,
+			Handler:       _Predict_Images_Handler,
 			ServerStreams: true,
 		},
 		{
 			StreamName:    "Dataset",
-			Handler:       _Predictor_Dataset_Handler,
+			Handler:       _Predict_Dataset_Handler,
 			ServerStreams: true,
 		},
 	},
@@ -4166,6 +4526,66 @@ func (m *ModelManifestsResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *PredictorOpenRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PredictorOpenRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.ModelName) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.ModelName)))
+		i += copy(dAtA[i:], m.ModelName)
+	}
+	if len(m.ModelVersion) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.ModelVersion)))
+		i += copy(dAtA[i:], m.ModelVersion)
+	}
+	if len(m.FrameworkName) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.FrameworkName)))
+		i += copy(dAtA[i:], m.FrameworkName)
+	}
+	if len(m.FrameworkVersion) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.FrameworkVersion)))
+		i += copy(dAtA[i:], m.FrameworkVersion)
+	}
+	return i, nil
+}
+
+func (m *PredictorCloseResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PredictorCloseResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
 func (m *PredictionOptions) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -4187,34 +4607,34 @@ func (m *PredictionOptions) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintDlframework(dAtA, i, uint64(len(m.RequestId)))
 		i += copy(dAtA[i:], m.RequestId)
 	}
-	if len(m.ModelName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.ModelName)))
-		i += copy(dAtA[i:], m.ModelName)
-	}
-	if len(m.ModelVersion) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.ModelVersion)))
-		i += copy(dAtA[i:], m.ModelVersion)
-	}
-	if len(m.FrameworkName) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.FrameworkName)))
-		i += copy(dAtA[i:], m.FrameworkName)
-	}
-	if len(m.FrameworkVersion) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.FrameworkVersion)))
-		i += copy(dAtA[i:], m.FrameworkVersion)
-	}
 	if m.FeatureLimit != 0 {
-		dAtA[i] = 0x30
+		dAtA[i] = 0x10
 		i++
 		i = encodeVarintDlframework(dAtA, i, uint64(m.FeatureLimit))
+	}
+	return i, nil
+}
+
+func (m *Predictor) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Predictor) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
 	}
 	return i, nil
 }
@@ -4234,9 +4654,19 @@ func (m *URLsRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Predictor != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Predictor.Size()))
+		n7, err := m.Predictor.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
 	if len(m.Urls) > 0 {
 		for _, msg := range m.Urls {
-			dAtA[i] = 0xa
+			dAtA[i] = 0x12
 			i++
 			i = encodeVarintDlframework(dAtA, i, uint64(msg.Size()))
 			n, err := msg.MarshalTo(dAtA[i:])
@@ -4247,14 +4677,14 @@ func (m *URLsRequest) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Options != nil {
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintDlframework(dAtA, i, uint64(m.Options.Size()))
-		n7, err := m.Options.MarshalTo(dAtA[i:])
+		n8, err := m.Options.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n8
 	}
 	return i, nil
 }
@@ -4304,9 +4734,19 @@ func (m *ImagesRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Predictor != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Predictor.Size()))
+		n9, err := m.Predictor.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n9
+	}
 	if len(m.Images) > 0 {
 		for _, msg := range m.Images {
-			dAtA[i] = 0xa
+			dAtA[i] = 0x12
 			i++
 			i = encodeVarintDlframework(dAtA, i, uint64(msg.Size()))
 			n, err := msg.MarshalTo(dAtA[i:])
@@ -4317,14 +4757,14 @@ func (m *ImagesRequest) MarshalTo(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Options != nil {
-		dAtA[i] = 0x12
+		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintDlframework(dAtA, i, uint64(m.Options.Size()))
-		n8, err := m.Options.MarshalTo(dAtA[i:])
+		n10, err := m.Options.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n8
+		i += n10
 	}
 	return i, nil
 }
@@ -4384,25 +4824,35 @@ func (m *DatasetRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.Dataset != nil {
+	if m.Predictor != nil {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(m.Dataset.Size()))
-		n9, err := m.Dataset.MarshalTo(dAtA[i:])
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Predictor.Size()))
+		n11, err := m.Predictor.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n11
+	}
+	if m.Dataset != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Dataset.Size()))
+		n12, err := m.Dataset.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n12
 	}
 	if m.Options != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintDlframework(dAtA, i, uint64(m.Options.Size()))
-		n10, err := m.Options.MarshalTo(dAtA[i:])
+		n13, err := m.Options.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n13
 	}
 	return i, nil
 }
@@ -4519,7 +4969,7 @@ func (m *FeatureResponse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
-func (m *ClearRequest) Marshal() (dAtA []byte, err error) {
+func (m *ResetRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -4529,31 +4979,31 @@ func (m *ClearRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ClearRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *ResetRequest) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	if m.Predictor != nil {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
-	}
-	if m.Options != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(m.Options.Size()))
-		n11, err := m.Options.MarshalTo(dAtA[i:])
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Predictor.Size()))
+		n14, err := m.Predictor.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n14
+	}
+	if len(m.Id) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintDlframework(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
 	}
 	return i, nil
 }
 
-func (m *ClearResponse) Marshal() (dAtA []byte, err error) {
+func (m *ResetResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalTo(dAtA)
@@ -4563,16 +5013,20 @@ func (m *ClearResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *ClearResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *ResetResponse) MarshalTo(dAtA []byte) (int, error) {
 	var i int
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	if m.Predictor != nil {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintDlframework(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintDlframework(dAtA, i, uint64(m.Predictor.Size()))
+		n15, err := m.Predictor.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n15
 	}
 	return i, nil
 }
@@ -4797,13 +5251,27 @@ func NewPopulatedModelManifestsResponse(r randyDlframework, easy bool) *ModelMan
 	return this
 }
 
-func NewPopulatedPredictionOptions(r randyDlframework, easy bool) *PredictionOptions {
-	this := &PredictionOptions{}
-	this.RequestId = string(randStringDlframework(r))
+func NewPopulatedPredictorOpenRequest(r randyDlframework, easy bool) *PredictorOpenRequest {
+	this := &PredictorOpenRequest{}
 	this.ModelName = string(randStringDlframework(r))
 	this.ModelVersion = string(randStringDlframework(r))
 	this.FrameworkName = string(randStringDlframework(r))
 	this.FrameworkVersion = string(randStringDlframework(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedPredictorCloseResponse(r randyDlframework, easy bool) *PredictorCloseResponse {
+	this := &PredictorCloseResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedPredictionOptions(r randyDlframework, easy bool) *PredictionOptions {
+	this := &PredictionOptions{}
+	this.RequestId = string(randStringDlframework(r))
 	this.FeatureLimit = int32(r.Int31())
 	if r.Intn(2) == 0 {
 		this.FeatureLimit *= -1
@@ -4813,8 +5281,19 @@ func NewPopulatedPredictionOptions(r randyDlframework, easy bool) *PredictionOpt
 	return this
 }
 
+func NewPopulatedPredictor(r randyDlframework, easy bool) *Predictor {
+	this := &Predictor{}
+	this.Id = string(randStringDlframework(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
 func NewPopulatedURLsRequest(r randyDlframework, easy bool) *URLsRequest {
 	this := &URLsRequest{}
+	if r.Intn(10) != 0 {
+		this.Predictor = NewPopulatedPredictor(r, easy)
+	}
 	if r.Intn(10) != 0 {
 		v10 := r.Intn(5)
 		this.Urls = make([]*URLsRequest_URL, v10)
@@ -4841,6 +5320,9 @@ func NewPopulatedURLsRequest_URL(r randyDlframework, easy bool) *URLsRequest_URL
 
 func NewPopulatedImagesRequest(r randyDlframework, easy bool) *ImagesRequest {
 	this := &ImagesRequest{}
+	if r.Intn(10) != 0 {
+		this.Predictor = NewPopulatedPredictor(r, easy)
+	}
 	if r.Intn(10) != 0 {
 		v11 := r.Intn(5)
 		this.Images = make([]*ImagesRequest_Image, v11)
@@ -4872,6 +5354,9 @@ func NewPopulatedImagesRequest_Image(r randyDlframework, easy bool) *ImagesReque
 
 func NewPopulatedDatasetRequest(r randyDlframework, easy bool) *DatasetRequest {
 	this := &DatasetRequest{}
+	if r.Intn(10) != 0 {
+		this.Predictor = NewPopulatedPredictor(r, easy)
+	}
 	if r.Intn(10) != 0 {
 		this.Dataset = NewPopulatedDatasetRequest_Dataset(r, easy)
 	}
@@ -4925,20 +5410,22 @@ func NewPopulatedFeatureResponse(r randyDlframework, easy bool) *FeatureResponse
 	return this
 }
 
-func NewPopulatedClearRequest(r randyDlframework, easy bool) *ClearRequest {
-	this := &ClearRequest{}
-	this.Id = string(randStringDlframework(r))
+func NewPopulatedResetRequest(r randyDlframework, easy bool) *ResetRequest {
+	this := &ResetRequest{}
 	if r.Intn(10) != 0 {
-		this.Options = NewPopulatedPredictionOptions(r, easy)
+		this.Predictor = NewPopulatedPredictor(r, easy)
 	}
+	this.Id = string(randStringDlframework(r))
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
 }
 
-func NewPopulatedClearResponse(r randyDlframework, easy bool) *ClearResponse {
-	this := &ClearResponse{}
-	this.Id = string(randStringDlframework(r))
+func NewPopulatedResetResponse(r randyDlframework, easy bool) *ResetResponse {
+	this := &ResetResponse{}
+	if r.Intn(10) != 0 {
+		this.Predictor = NewPopulatedPredictor(r, easy)
+	}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -5308,13 +5795,9 @@ func (m *ModelManifestsResponse) Size() (n int) {
 	return n
 }
 
-func (m *PredictionOptions) Size() (n int) {
+func (m *PredictorOpenRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.RequestId)
-	if l > 0 {
-		n += 1 + l + sovDlframework(uint64(l))
-	}
 	l = len(m.ModelName)
 	if l > 0 {
 		n += 1 + l + sovDlframework(uint64(l))
@@ -5331,8 +5814,34 @@ func (m *PredictionOptions) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovDlframework(uint64(l))
 	}
+	return n
+}
+
+func (m *PredictorCloseResponse) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *PredictionOptions) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.RequestId)
+	if l > 0 {
+		n += 1 + l + sovDlframework(uint64(l))
+	}
 	if m.FeatureLimit != 0 {
 		n += 1 + sovDlframework(uint64(m.FeatureLimit))
+	}
+	return n
+}
+
+func (m *Predictor) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovDlframework(uint64(l))
 	}
 	return n
 }
@@ -5340,6 +5849,10 @@ func (m *PredictionOptions) Size() (n int) {
 func (m *URLsRequest) Size() (n int) {
 	var l int
 	_ = l
+	if m.Predictor != nil {
+		l = m.Predictor.Size()
+		n += 1 + l + sovDlframework(uint64(l))
+	}
 	if len(m.Urls) > 0 {
 		for _, e := range m.Urls {
 			l = e.Size()
@@ -5370,6 +5883,10 @@ func (m *URLsRequest_URL) Size() (n int) {
 func (m *ImagesRequest) Size() (n int) {
 	var l int
 	_ = l
+	if m.Predictor != nil {
+		l = m.Predictor.Size()
+		n += 1 + l + sovDlframework(uint64(l))
+	}
 	if len(m.Images) > 0 {
 		for _, e := range m.Images {
 			l = e.Size()
@@ -5403,6 +5920,10 @@ func (m *ImagesRequest_Image) Size() (n int) {
 func (m *DatasetRequest) Size() (n int) {
 	var l int
 	_ = l
+	if m.Predictor != nil {
+		l = m.Predictor.Size()
+		n += 1 + l + sovDlframework(uint64(l))
+	}
 	if m.Dataset != nil {
 		l = m.Dataset.Size()
 		n += 1 + l + sovDlframework(uint64(l))
@@ -5468,25 +5989,25 @@ func (m *FeatureResponse) Size() (n int) {
 	return n
 }
 
-func (m *ClearRequest) Size() (n int) {
+func (m *ResetRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
+	if m.Predictor != nil {
+		l = m.Predictor.Size()
 		n += 1 + l + sovDlframework(uint64(l))
 	}
-	if m.Options != nil {
-		l = m.Options.Size()
+	l = len(m.Id)
+	if l > 0 {
 		n += 1 + l + sovDlframework(uint64(l))
 	}
 	return n
 }
 
-func (m *ClearResponse) Size() (n int) {
+func (m *ResetResponse) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
+	if m.Predictor != nil {
+		l = m.Predictor.Size()
 		n += 1 + l + sovDlframework(uint64(l))
 	}
 	return n
@@ -5706,17 +6227,45 @@ func (this *ModelManifestsResponse) String() string {
 	}, "")
 	return s
 }
+func (this *PredictorOpenRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&PredictorOpenRequest{`,
+		`ModelName:` + fmt.Sprintf("%v", this.ModelName) + `,`,
+		`ModelVersion:` + fmt.Sprintf("%v", this.ModelVersion) + `,`,
+		`FrameworkName:` + fmt.Sprintf("%v", this.FrameworkName) + `,`,
+		`FrameworkVersion:` + fmt.Sprintf("%v", this.FrameworkVersion) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *PredictorCloseResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&PredictorCloseResponse{`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *PredictionOptions) String() string {
 	if this == nil {
 		return "nil"
 	}
 	s := strings.Join([]string{`&PredictionOptions{`,
 		`RequestId:` + fmt.Sprintf("%v", this.RequestId) + `,`,
-		`ModelName:` + fmt.Sprintf("%v", this.ModelName) + `,`,
-		`ModelVersion:` + fmt.Sprintf("%v", this.ModelVersion) + `,`,
-		`FrameworkName:` + fmt.Sprintf("%v", this.FrameworkName) + `,`,
-		`FrameworkVersion:` + fmt.Sprintf("%v", this.FrameworkVersion) + `,`,
 		`FeatureLimit:` + fmt.Sprintf("%v", this.FeatureLimit) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Predictor) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Predictor{`,
+		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -5726,6 +6275,7 @@ func (this *URLsRequest) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&URLsRequest{`,
+		`Predictor:` + strings.Replace(fmt.Sprintf("%v", this.Predictor), "Predictor", "Predictor", 1) + `,`,
 		`Urls:` + strings.Replace(fmt.Sprintf("%v", this.Urls), "URLsRequest_URL", "URLsRequest_URL", 1) + `,`,
 		`Options:` + strings.Replace(fmt.Sprintf("%v", this.Options), "PredictionOptions", "PredictionOptions", 1) + `,`,
 		`}`,
@@ -5748,6 +6298,7 @@ func (this *ImagesRequest) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&ImagesRequest{`,
+		`Predictor:` + strings.Replace(fmt.Sprintf("%v", this.Predictor), "Predictor", "Predictor", 1) + `,`,
 		`Images:` + strings.Replace(fmt.Sprintf("%v", this.Images), "ImagesRequest_Image", "ImagesRequest_Image", 1) + `,`,
 		`Options:` + strings.Replace(fmt.Sprintf("%v", this.Options), "PredictionOptions", "PredictionOptions", 1) + `,`,
 		`}`,
@@ -5771,6 +6322,7 @@ func (this *DatasetRequest) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&DatasetRequest{`,
+		`Predictor:` + strings.Replace(fmt.Sprintf("%v", this.Predictor), "Predictor", "Predictor", 1) + `,`,
 		`Dataset:` + strings.Replace(fmt.Sprintf("%v", this.Dataset), "DatasetRequest_Dataset", "DatasetRequest_Dataset", 1) + `,`,
 		`Options:` + strings.Replace(fmt.Sprintf("%v", this.Options), "PredictionOptions", "PredictionOptions", 1) + `,`,
 		`}`,
@@ -5813,23 +6365,23 @@ func (this *FeatureResponse) String() string {
 	}, "")
 	return s
 }
-func (this *ClearRequest) String() string {
+func (this *ResetRequest) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&ClearRequest{`,
+	s := strings.Join([]string{`&ResetRequest{`,
+		`Predictor:` + strings.Replace(fmt.Sprintf("%v", this.Predictor), "Predictor", "Predictor", 1) + `,`,
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
-		`Options:` + strings.Replace(fmt.Sprintf("%v", this.Options), "PredictionOptions", "PredictionOptions", 1) + `,`,
 		`}`,
 	}, "")
 	return s
 }
-func (this *ClearResponse) String() string {
+func (this *ResetResponse) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&ClearResponse{`,
-		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+	s := strings.Join([]string{`&ResetResponse{`,
+		`Predictor:` + strings.Replace(fmt.Sprintf("%v", this.Predictor), "Predictor", "Predictor", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -8132,6 +8684,222 @@ func (m *ModelManifestsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *PredictorOpenRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDlframework
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PredictorOpenRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PredictorOpenRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ModelName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ModelName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ModelVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ModelVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FrameworkName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FrameworkName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FrameworkVersion", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FrameworkVersion = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDlframework(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PredictorCloseResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDlframework
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PredictorCloseResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PredictorCloseResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDlframework(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *PredictionOptions) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -8191,122 +8959,6 @@ func (m *PredictionOptions) Unmarshal(dAtA []byte) error {
 			m.RequestId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ModelName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDlframework
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ModelName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ModelVersion", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDlframework
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ModelVersion = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FrameworkName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDlframework
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.FrameworkName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FrameworkVersion", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDlframework
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.FrameworkVersion = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field FeatureLimit", wireType)
 			}
@@ -8325,6 +8977,85 @@ func (m *PredictionOptions) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDlframework(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Predictor) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDlframework
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Predictor: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Predictor: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipDlframework(dAtA[iNdEx:])
@@ -8377,6 +9108,39 @@ func (m *URLsRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Predictor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Predictor == nil {
+				m.Predictor = &Predictor{}
+			}
+			if err := m.Predictor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Urls", wireType)
 			}
 			var msglen int
@@ -8406,7 +9170,7 @@ func (m *URLsRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
 			}
@@ -8599,6 +9363,39 @@ func (m *ImagesRequest) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Predictor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Predictor == nil {
+				m.Predictor = &Predictor{}
+			}
+			if err := m.Predictor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Images", wireType)
 			}
 			var msglen int
@@ -8628,7 +9425,7 @@ func (m *ImagesRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
 			}
@@ -8842,6 +9639,39 @@ func (m *DatasetRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Predictor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Predictor == nil {
+				m.Predictor = &Predictor{}
+			}
+			if err := m.Predictor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Dataset", wireType)
 			}
@@ -9316,7 +10146,7 @@ func (m *FeatureResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *ClearRequest) Unmarshal(dAtA []byte) error {
+func (m *ResetRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -9339,44 +10169,15 @@ func (m *ClearRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: ClearRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: ResetRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ClearRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: ResetRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowDlframework
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Options", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Predictor", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -9400,64 +10201,14 @@ func (m *ClearRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Options == nil {
-				m.Options = &PredictionOptions{}
+			if m.Predictor == nil {
+				m.Predictor = &Predictor{}
 			}
-			if err := m.Options.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Predictor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipDlframework(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthDlframework
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ClearResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowDlframework
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ClearResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ClearResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
@@ -9485,6 +10236,89 @@ func (m *ClearResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipDlframework(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ResetResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowDlframework
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ResetResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ResetResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Predictor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowDlframework
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthDlframework
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Predictor == nil {
+				m.Predictor = &Predictor{}
+			}
+			if err := m.Predictor.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -9615,131 +10449,136 @@ var (
 func init() { proto.RegisterFile("dlframework.proto", fileDescriptorDlframework) }
 
 var fileDescriptorDlframework = []byte{
-	// 2005 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0x4f, 0x8c, 0xdc, 0x56,
-	0x19, 0xaf, 0x3d, 0x7f, 0x76, 0xe7, 0x9b, 0xfd, 0xfb, 0xda, 0x24, 0xce, 0x64, 0x63, 0x6f, 0x9c,
-	0x7f, 0xcb, 0xaa, 0xd9, 0x69, 0x37, 0xfc, 0x49, 0x23, 0xa5, 0x28, 0xd3, 0xa6, 0x25, 0x28, 0x85,
-	0x65, 0x43, 0x2a, 0x51, 0x10, 0x83, 0x67, 0xe6, 0xcd, 0xac, 0xb5, 0x33, 0xb6, 0xf3, 0x6c, 0x27,
-	0x6c, 0xc5, 0xa1, 0x02, 0x24, 0x24, 0x2e, 0x20, 0x71, 0x82, 0x13, 0xe2, 0x04, 0x07, 0xb8, 0x70,
-	0xe9, 0x91, 0x13, 0xe2, 0x84, 0x90, 0xb8, 0xc0, 0xc5, 0x6a, 0x16, 0xb8, 0x23, 0x9f, 0x38, 0x21,
-	0xf4, 0xfe, 0xd8, 0xf3, 0xde, 0xcc, 0xce, 0xc6, 0xd9, 0xd2, 0x48, 0xbd, 0x8d, 0xbf, 0xff, 0xef,
-	0xfb, 0xbe, 0xf7, 0x7d, 0x3f, 0x7b, 0x60, 0xb5, 0x37, 0xec, 0x13, 0x67, 0x84, 0x1f, 0xfb, 0x64,
-	0x7f, 0x2b, 0x20, 0x7e, 0xe4, 0xa3, 0x53, 0x5d, 0x87, 0x8c, 0x86, 0x5b, 0x3e, 0x19, 0x6c, 0x49,
-	0xcc, 0xc6, 0xda, 0xc0, 0xf7, 0x07, 0x43, 0xdc, 0x74, 0x02, 0xb7, 0xe9, 0x78, 0x9e, 0x1f, 0x39,
-	0x91, 0xeb, 0x7b, 0x21, 0x57, 0x6a, 0x5c, 0x1b, 0xb8, 0xd1, 0x5e, 0xdc, 0xd9, 0xea, 0xfa, 0xa3,
-	0xe6, 0xc0, 0x1f, 0xf8, 0x4d, 0x46, 0xee, 0xc4, 0x7d, 0xf6, 0xc4, 0x1e, 0xd8, 0x2f, 0x2e, 0x6e,
-	0x7b, 0x50, 0xbf, 0x43, 0x88, 0x4f, 0xee, 0x47, 0x4e, 0x14, 0x87, 0xe8, 0x2a, 0xe8, 0xfe, 0xbe,
-	0xa1, 0xad, 0x6b, 0x1b, 0xf3, 0xad, 0x33, 0x69, 0x62, 0xbd, 0x78, 0xe0, 0x8c, 0x86, 0x37, 0x6d,
-	0x7f, 0xff, 0x65, 0x7f, 0xe4, 0x46, 0x78, 0x14, 0x44, 0x07, 0xf6, 0xae, 0xee, 0xef, 0xa3, 0xcf,
-	0xc3, 0xdc, 0x08, 0x87, 0xa1, 0x33, 0xc0, 0x86, 0xbe, 0xae, 0x6d, 0xd4, 0x5a, 0x6b, 0x69, 0x62,
-	0x19, 0x5c, 0x5a, 0x30, 0x64, 0x95, 0x4c, 0xd8, 0xde, 0x87, 0xd5, 0x37, 0x7c, 0x2f, 0x72, 0x5c,
-	0x0f, 0x93, 0x2f, 0x39, 0xa4, 0xf7, 0xd8, 0x21, 0x18, 0x6d, 0x42, 0x69, 0x10, 0xc4, 0xcc, 0x6d,
-	0xad, 0x65, 0xa4, 0x89, 0xf5, 0x12, 0x37, 0x34, 0x08, 0x62, 0xd9, 0x08, 0x15, 0xa2, 0xb2, 0xdd,
-	0x20, 0x16, 0x4e, 0x25, 0xd9, 0xee, 0x84, 0x6c, 0x37, 0x88, 0xed, 0xbf, 0xeb, 0xb0, 0xfa, 0x56,
-	0x96, 0xb7, 0x77, 0x1c, 0xcf, 0xed, 0xe3, 0x30, 0x42, 0xd7, 0xa0, 0xec, 0x39, 0x23, 0x2c, 0xdc,
-	0x9d, 0x4d, 0x13, 0xeb, 0x14, 0x37, 0x41, 0xa9, 0xb2, 0x0d, 0x26, 0x46, 0x4f, 0xfa, 0x08, 0x93,
-	0xd0, 0xf5, 0xbd, 0xe9, 0x93, 0x0a, 0x86, 0x72, 0x52, 0x41, 0x43, 0x31, 0xd4, 0xba, 0xd9, 0x49,
-	0x8d, 0xd2, 0x7a, 0x69, 0xa3, 0xbe, 0xfd, 0x85, 0xad, 0x23, 0x2b, 0xba, 0x35, 0x15, 0xe3, 0x56,
-	0x9e, 0xa3, 0x3b, 0x5e, 0x44, 0x0e, 0x5a, 0x66, 0x9a, 0x58, 0x0d, 0x71, 0xce, 0x8c, 0x23, 0x3b,
-	0x1d, 0x7b, 0x6a, 0xf4, 0x61, 0x49, 0x55, 0x46, 0x2b, 0x50, 0xda, 0xc7, 0x07, 0xfc, 0xb8, 0xbb,
-	0xf4, 0x27, 0x7a, 0x1d, 0x2a, 0x8f, 0x9c, 0x61, 0xcc, 0x4b, 0x57, 0xdf, 0xde, 0x98, 0x11, 0xd6,
-	0x54, 0xa1, 0x76, 0xb9, 0xda, 0x4d, 0xfd, 0x86, 0x66, 0xff, 0x00, 0xc1, 0xe2, 0x3b, 0x7e, 0x0f,
-	0x0f, 0x9f, 0x77, 0x5e, 0xfb, 0x50, 0xcb, 0x43, 0x34, 0x4a, 0xc7, 0x1e, 0x60, 0x2a, 0xaf, 0x72,
-	0x22, 0x73, 0x31, 0x25, 0x91, 0x39, 0x15, 0x3d, 0x94, 0xeb, 0x57, 0x66, 0xf5, 0xbb, 0x3e, 0xc3,
-	0x8f, 0x92, 0x87, 0x93, 0xd7, 0x0e, 0xb5, 0xa0, 0xde, 0xc3, 0x61, 0x97, 0xb8, 0x01, 0xbd, 0xd1,
-	0x46, 0x85, 0xa5, 0x65, 0x3d, 0x4d, 0xac, 0x35, 0xae, 0x2f, 0x31, 0x65, 0x0b, 0xb2, 0x12, 0xba,
-	0x05, 0x35, 0x82, 0xfb, 0x98, 0x60, 0xaf, 0x8b, 0x8d, 0xea, 0x7a, 0x69, 0xa3, 0xd6, 0xb2, 0xd2,
-	0xc4, 0x3a, 0xc7, 0x2d, 0xe4, 0xac, 0x50, 0x09, 0x21, 0x27, 0xd3, 0xaa, 0x0c, 0xdd, 0x2e, 0xf6,
-	0x42, 0x6c, 0xcc, 0x4d, 0x56, 0x45, 0x30, 0x94, 0xaa, 0x08, 0x1a, 0xfa, 0x36, 0x54, 0x5d, 0x2f,
-	0x88, 0xa3, 0xd0, 0x98, 0x67, 0xa9, 0xfa, 0x4c, 0xa1, 0x54, 0x7d, 0xfd, 0x20, 0xc0, 0xad, 0x73,
-	0x69, 0x62, 0x9d, 0xe1, 0x1e, 0xb8, 0x09, 0xd9, 0x81, 0xb0, 0x4a, 0xed, 0xfb, 0x71, 0x14, 0xc4,
-	0x91, 0x51, 0x63, 0x25, 0x3f, 0x99, 0x7d, 0x6e, 0x42, 0xb1, 0xcf, 0x49, 0xe8, 0x3e, 0xac, 0x76,
-	0x70, 0xdf, 0x27, 0xb8, 0x1d, 0x10, 0x1c, 0x10, 0xbf, 0x8b, 0xc3, 0xd0, 0x00, 0x96, 0x81, 0x2b,
-	0x69, 0x62, 0xd9, 0x5c, 0x7f, 0x4a, 0x44, 0x36, 0xb5, 0xc2, 0xb9, 0x3b, 0x39, 0x13, 0x7d, 0x11,
-	0x40, 0xb2, 0x56, 0x67, 0xd6, 0xa4, 0x62, 0x1c, 0x6d, 0x46, 0x52, 0x41, 0x3b, 0xb0, 0xe2, 0xf4,
-	0x23, 0x4c, 0xe4, 0xa0, 0x16, 0x98, 0x99, 0xcb, 0x69, 0x62, 0x5d, 0xe0, 0x66, 0x26, 0x25, 0x64,
-	0x63, 0xcb, 0x8c, 0x29, 0x85, 0xf4, 0x2e, 0xa0, 0xec, 0x10, 0x7e, 0x18, 0x65, 0x36, 0x17, 0x99,
-	0xcd, 0xab, 0x69, 0x62, 0x5d, 0x54, 0x0f, 0x3a, 0x96, 0x91, 0xad, 0x8a, 0x54, 0xed, 0x8c, 0xb9,
-	0xb4, 0x75, 0x65, 0x83, 0x4b, 0x93, 0xad, 0x3b, 0xc3, 0x92, 0xac, 0x44, 0x6b, 0x20, 0xce, 0x22,
-	0x59, 0x5a, 0x9e, 0xac, 0xc1, 0x94, 0x88, 0x52, 0x03, 0x7e, 0x5e, 0xc9, 0xe8, 0xb7, 0xa0, 0x32,
-	0xa2, 0x3d, 0x61, 0xac, 0xb0, 0xbe, 0xd9, 0x2c, 0xd4, 0x37, 0xec, 0xa9, 0xd5, 0x48, 0x13, 0xeb,
-	0xb4, 0x58, 0x69, 0x94, 0x20, 0x3b, 0xe2, 0x46, 0x51, 0x0c, 0xe0, 0x44, 0x11, 0x71, 0x3b, 0x71,
-	0x84, 0x43, 0x63, 0x95, 0xb5, 0xfe, 0x67, 0x0b, 0xb9, 0xb8, 0x9d, 0xab, 0xf1, 0x31, 0x21, 0xf5,
-	0xc5, 0xd8, 0xa2, 0xd2, 0x17, 0x63, 0x32, 0xba, 0x0e, 0xd5, 0x3d, 0xb7, 0xd7, 0xc3, 0x9e, 0x81,
-	0xd8, 0xaa, 0x96, 0x5a, 0x9c, 0xd3, 0x95, 0x16, 0xe7, 0xa4, 0xc6, 0x2f, 0x4b, 0x50, 0xa6, 0x17,
-	0x82, 0x0e, 0xea, 0xe8, 0x20, 0x38, 0x62, 0x50, 0x53, 0xaa, 0x32, 0xa8, 0x29, 0x61, 0x72, 0x2a,
-	0xe9, 0x27, 0x99, 0x4a, 0xef, 0x03, 0x04, 0x0e, 0xcd, 0x44, 0x84, 0x49, 0x28, 0xb6, 0xe1, 0x6b,
-	0x85, 0xaf, 0xf0, 0xd6, 0x4e, 0xae, 0x3b, 0x95, 0xac, 0xb1, 0x59, 0xf5, 0x12, 0xe5, 0xe4, 0xc6,
-	0xe7, 0xa0, 0x96, 0xeb, 0xa3, 0x8d, 0x6c, 0xf5, 0xf1, 0xc3, 0xa3, 0x34, 0xb1, 0x96, 0xb8, 0xa1,
-	0x97, 0x5d, 0x6f, 0xe8, 0x7a, 0xd8, 0x16, 0x4b, 0xae, 0x41, 0x60, 0x79, 0xc2, 0xed, 0x11, 0x9b,
-	0xf4, 0xae, 0xba, 0x49, 0xaf, 0x9f, 0xe0, 0x48, 0xd2, 0x52, 0x6d, 0xfc, 0x48, 0x87, 0x0a, 0x93,
-	0x45, 0x37, 0x60, 0xbe, 0xe3, 0x84, 0xb8, 0x1d, 0x93, 0xa1, 0x08, 0xf5, 0x7c, 0x9a, 0x58, 0x67,
-	0xc5, 0xed, 0x14, 0x1c, 0x65, 0x12, 0x53, 0xe2, 0x03, 0x32, 0x44, 0x6f, 0xc2, 0xc2, 0x63, 0xec,
-	0x0e, 0xf6, 0xa2, 0xb0, 0x1d, 0x38, 0xd1, 0x9e, 0xa8, 0xd7, 0x85, 0x34, 0xb1, 0xce, 0x73, 0x6d,
-	0x99, 0xab, 0x14, 0x4c, 0x30, 0x76, 0x9c, 0x68, 0x0f, 0xbd, 0x0e, 0x30, 0x20, 0x4e, 0xb0, 0xc7,
-	0x6d, 0x94, 0x26, 0x47, 0xd7, 0x98, 0xa7, 0xec, 0x11, 0x46, 0xce, 0xf4, 0xdd, 0xb0, 0xed, 0x90,
-	0xee, 0x9e, 0xfb, 0x08, 0x1b, 0x65, 0xd6, 0xa5, 0x92, 0xfe, 0x98, 0xa7, 0xe8, 0xbb, 0xe1, 0x6d,
-	0x4e, 0x7d, 0x5e, 0x30, 0xa6, 0x71, 0x0b, 0x96, 0x27, 0x6e, 0xe2, 0x11, 0x8e, 0x5e, 0x92, 0x1d,
-	0xd5, 0x64, 0x14, 0xf4, 0x7b, 0x0d, 0x56, 0x72, 0x94, 0xb1, 0x8b, 0x1f, 0xc6, 0x14, 0x08, 0x7d,
-	0x19, 0x96, 0x72, 0xef, 0x6d, 0x09, 0x12, 0x5d, 0x4c, 0x13, 0xcb, 0x9a, 0x00, 0x1f, 0xed, 0x49,
-	0x70, 0xb4, 0x98, 0xb3, 0xbe, 0x42, 0x51, 0xd2, 0x7d, 0x58, 0x1d, 0xcb, 0xaa, 0x78, 0x49, 0x9a,
-	0x89, 0x53, 0x22, 0xca, 0x4c, 0xcc, 0xb9, 0xef, 0x72, 0xa6, 0xfd, 0x43, 0x0d, 0x1a, 0x53, 0xd8,
-	0x28, 0xdc, 0xc5, 0x61, 0xe0, 0xd3, 0x5d, 0xde, 0x87, 0xda, 0x28, 0x23, 0x1a, 0x1a, 0xbb, 0xab,
-	0x27, 0x42, 0x58, 0xb9, 0x11, 0xa5, 0xc6, 0x39, 0xd5, 0xc6, 0x50, 0xb9, 0x3d, 0xc0, 0x1e, 0x43,
-	0x8e, 0x7b, 0x7e, 0x18, 0x4d, 0x0f, 0x24, 0x4a, 0x55, 0x06, 0x12, 0x25, 0x50, 0xf1, 0xc0, 0x27,
-	0x91, 0x48, 0x83, 0x24, 0x4e, 0xa9, 0x8a, 0x38, 0x25, 0xd8, 0xdf, 0x84, 0x2a, 0x73, 0x13, 0xa2,
-	0xaf, 0x41, 0xd5, 0x61, 0xbf, 0xc4, 0xa9, 0xd6, 0x66, 0x9c, 0x8a, 0x89, 0xcb, 0x43, 0x95, 0x6b,
-	0x29, 0x43, 0x95, 0x93, 0xec, 0x0f, 0x75, 0x58, 0x60, 0x37, 0xf6, 0xd3, 0x52, 0x7c, 0x7a, 0x33,
-	0xd9, 0xee, 0xe2, 0xc1, 0x4d, 0xdd, 0xec, 0x31, 0x4f, 0xad, 0x1a, 0x25, 0xb3, 0xa0, 0xde, 0x86,
-	0x45, 0x2e, 0x93, 0x05, 0x54, 0x66, 0x26, 0xec, 0x34, 0xb1, 0x4c, 0xd9, 0xc4, 0x11, 0xc1, 0x2c,
-	0x30, 0x4e, 0xd6, 0x85, 0xdf, 0x83, 0xd3, 0xca, 0x5c, 0x1c, 0x37, 0x60, 0x67, 0xba, 0x01, 0x2f,
-	0x15, 0x99, 0xac, 0xcf, 0xd2, 0x7c, 0x7f, 0x2c, 0xc1, 0xea, 0x0e, 0xc1, 0x3d, 0xb7, 0x4b, 0x17,
-	0xd4, 0x57, 0xd9, 0x9a, 0x0a, 0x69, 0x72, 0x08, 0x2f, 0x64, 0xdb, 0xed, 0x89, 0xca, 0x29, 0xf0,
-	0x39, 0xe3, 0x4d, 0xc0, 0x67, 0x46, 0xbe, 0xdb, 0x9b, 0x48, 0xae, 0xfe, 0xf1, 0x93, 0x5b, 0x3a,
-	0x59, 0x72, 0x8f, 0x68, 0xc3, 0xf2, 0xff, 0xb7, 0x0d, 0x2b, 0x1f, 0xb3, 0x0d, 0xdf, 0x86, 0xc5,
-	0x3e, 0x76, 0xa2, 0x98, 0xe0, 0xf6, 0xd0, 0x1d, 0xb9, 0x91, 0x51, 0x5d, 0xd7, 0x36, 0x2a, 0xf2,
-	0x49, 0x15, 0xb6, 0x72, 0x52, 0xc1, 0xb9, 0x47, 0x19, 0xf6, 0xaf, 0x74, 0xa8, 0x3f, 0xd8, 0xbd,
-	0x17, 0x66, 0x17, 0xf0, 0x01, 0x94, 0x63, 0x32, 0xcc, 0xfa, 0xe6, 0xca, 0x8c, 0xbe, 0x91, 0x34,
-	0xe8, 0x6f, 0x79, 0x8a, 0x50, 0x6d, 0x65, 0x8a, 0x50, 0x02, 0xfa, 0x0e, 0xcc, 0xf9, 0xbc, 0x49,
-	0x9e, 0xb2, 0x6e, 0xa6, 0x9a, 0x4a, 0x7e, 0x85, 0x12, 0x26, 0x94, 0xc5, 0x2d, 0x68, 0x8d, 0xf7,
-	0xa0, 0xf4, 0x60, 0xf7, 0x1e, 0xba, 0x0a, 0x7a, 0xde, 0x7a, 0xd2, 0x27, 0x18, 0xb5, 0xe5, 0x74,
-	0xb7, 0x87, 0x36, 0xa1, 0x44, 0xd1, 0xc1, 0xd4, 0x97, 0x90, 0x09, 0x60, 0x40, 0x85, 0xec, 0xff,
-	0xea, 0xb0, 0x78, 0x77, 0xe4, 0x0c, 0x70, 0x9e, 0xa6, 0x36, 0x54, 0x5d, 0x46, 0x10, 0x89, 0x9a,
-	0x05, 0x8c, 0x15, 0x2d, 0xfe, 0xa4, 0xbc, 0xb1, 0x31, 0xb6, 0xfa, 0xc6, 0xc6, 0x48, 0xcf, 0x21,
-	0x61, 0xbf, 0xd1, 0xa0, 0xc2, 0x02, 0x2a, 0x9e, 0xb3, 0x57, 0xa0, 0xc2, 0xc2, 0x63, 0x21, 0x2d,
-	0xc8, 0x08, 0x9f, 0x91, 0x15, 0x84, 0xcf, 0x28, 0xe8, 0x0e, 0x2c, 0x8c, 0x5f, 0xad, 0x70, 0x8f,
-	0x5d, 0xc8, 0x79, 0x19, 0x4e, 0xc9, 0x5c, 0xa5, 0x4b, 0x65, 0x86, 0xfd, 0x67, 0x1d, 0x96, 0xde,
-	0x74, 0x22, 0x27, 0xc4, 0x51, 0x56, 0x01, 0x0c, 0x73, 0x3d, 0x4e, 0x61, 0x91, 0xd7, 0xb7, 0xaf,
-	0xcd, 0x48, 0x90, 0xaa, 0x97, 0x3d, 0xca, 0x59, 0x12, 0x76, 0x94, 0x2c, 0x09, 0x9a, 0x5c, 0x87,
-	0xd2, 0x27, 0x53, 0x87, 0x10, 0xe6, 0x44, 0x4c, 0xe8, 0x35, 0x98, 0xef, 0x3a, 0x11, 0x1e, 0xf8,
-	0xe4, 0x60, 0x1a, 0xb6, 0x66, 0x1c, 0xd9, 0x48, 0x2e, 0x9e, 0x7f, 0x3e, 0xd2, 0x0b, 0x7d, 0x3e,
-	0xb2, 0x7f, 0xa7, 0xc1, 0xdc, 0x5b, 0x7c, 0x0e, 0xb0, 0xaa, 0x7a, 0x3d, 0xfc, 0x5d, 0xe6, 0xb2,
-	0xa4, 0x54, 0x95, 0x92, 0xd5, 0xaa, 0x52, 0xca, 0x33, 0x3a, 0x63, 0x6f, 0xb7, 0xc4, 0xef, 0x38,
-	0x1d, 0x77, 0xe8, 0x46, 0x07, 0x2c, 0x8f, 0xba, 0xf2, 0x76, 0x3b, 0x66, 0xaa, 0x6f, 0xb7, 0x63,
-	0xba, 0xfd, 0x13, 0x1d, 0x96, 0x45, 0xc0, 0xf9, 0xa2, 0x2b, 0xdc, 0xb7, 0xea, 0x5e, 0xd2, 0x9f,
-	0x79, 0x2f, 0xdd, 0x80, 0x79, 0xf6, 0x21, 0x85, 0x6a, 0x97, 0x26, 0xeb, 0x92, 0x71, 0x94, 0xe2,
-	0x32, 0xe2, 0xdd, 0x1e, 0xfa, 0x06, 0xcc, 0x8b, 0x71, 0x1b, 0x8a, 0xaf, 0x60, 0xe6, 0x2c, 0x2c,
-	0xc8, 0xc5, 0x64, 0xcb, 0x99, 0xa6, 0x52, 0xf1, 0x8c, 0x68, 0xff, 0x5c, 0x83, 0x85, 0x37, 0x86,
-	0xd8, 0x21, 0xd9, 0x8d, 0x28, 0x9c, 0x8e, 0x4f, 0x7c, 0xb6, 0xd8, 0x37, 0x60, 0x51, 0x84, 0xf6,
-	0x8c, 0xa5, 0xda, 0xfe, 0x6d, 0x19, 0xe6, 0x77, 0xf1, 0xc0, 0x0d, 0xe9, 0xbb, 0xc4, 0x2f, 0x34,
-	0x40, 0xd3, 0x48, 0x1b, 0x5d, 0x7d, 0x1a, 0x9c, 0x16, 0x19, 0x69, 0xbc, 0x5a, 0x14, 0x77, 0xe7,
-	0xe0, 0xc9, 0xde, 0xf8, 0xfe, 0x5f, 0xff, 0xf9, 0x33, 0xdd, 0x46, 0xeb, 0xcd, 0x47, 0xaf, 0x36,
-	0x89, 0x08, 0xa4, 0x99, 0xab, 0x86, 0xcd, 0x0c, 0x03, 0xa1, 0x0f, 0x34, 0x58, 0xce, 0x0d, 0x09,
-	0x88, 0x5c, 0x38, 0xb2, 0xf3, 0xc7, 0x61, 0xe7, 0xd0, 0xbe, 0xcc, 0xa2, 0xb0, 0xd0, 0xf9, 0x59,
-	0x51, 0x30, 0xfc, 0x8c, 0x7e, 0xac, 0xc1, 0x92, 0x0a, 0x02, 0xd1, 0xc5, 0xe3, 0x90, 0x5e, 0xe6,
-	0xfd, 0x5a, 0x11, 0x38, 0x38, 0xce, 0xc9, 0x25, 0x16, 0x8d, 0x89, 0xd6, 0x94, 0x68, 0x18, 0x60,
-	0x92, 0xf2, 0x11, 0x41, 0x9d, 0xe9, 0x8b, 0x54, 0x14, 0x0a, 0xe4, 0x29, 0x69, 0xb8, 0xc0, 0x1c,
-	0x9f, 0x43, 0x67, 0x8f, 0x72, 0xcc, 0x52, 0xb0, 0xfd, 0xaf, 0x12, 0xd4, 0x44, 0x9b, 0xfa, 0x04,
-	0x3d, 0x84, 0x32, 0x85, 0x26, 0xc8, 0x7e, 0x3a, 0x6e, 0x69, 0x5c, 0x39, 0xfe, 0x22, 0xe6, 0xa7,
-	0x3f, 0xc7, 0x82, 0x38, 0x65, 0xaf, 0xd0, 0x20, 0x02, 0xee, 0xaa, 0x49, 0x41, 0xcd, 0x4d, 0x6d,
-	0xf3, 0x15, 0x0d, 0x3d, 0x86, 0x2a, 0x5f, 0xf2, 0xe8, 0x52, 0x11, 0x0c, 0x50, 0xd8, 0xed, 0x79,
-	0xe6, 0xf6, 0x8c, 0x8d, 0x64, 0xb7, 0x1c, 0x1c, 0x70, 0xc7, 0xef, 0x8f, 0xf7, 0xc6, 0xe5, 0x42,
-	0xab, 0xaf, 0xb0, 0x6b, 0x93, 0xb9, 0x36, 0xec, 0x17, 0x65, 0xd7, 0x62, 0x21, 0x72, 0xdf, 0x01,
-	0x54, 0xd8, 0xfd, 0x9e, 0x59, 0x65, 0x79, 0x30, 0x35, 0x2e, 0x1d, 0x2f, 0x24, 0xbc, 0xae, 0x31,
-	0xaf, 0xa7, 0xed, 0x55, 0xd9, 0x6b, 0x97, 0x8a, 0xdc, 0xd4, 0x36, 0x5b, 0xb7, 0xfe, 0xf6, 0xc4,
-	0x7c, 0xe1, 0xa3, 0x27, 0xa6, 0xf6, 0xef, 0x27, 0xa6, 0xf6, 0x9f, 0x27, 0xa6, 0xf6, 0xc1, 0xa1,
-	0xa9, 0xfd, 0xfa, 0xd0, 0xd4, 0x3e, 0x3c, 0x34, 0xb5, 0x3f, 0x1c, 0x9a, 0xda, 0x9f, 0x0e, 0x4d,
-	0xed, 0x2f, 0x87, 0xa6, 0xf6, 0xd1, 0xa1, 0xa9, 0xfd, 0xf4, 0x1f, 0xe6, 0x0b, 0xef, 0xd5, 0x25,
-	0x57, 0x9d, 0x2a, 0xfb, 0xbf, 0xee, 0xfa, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0x86, 0xa5, 0x1b,
-	0xc1, 0x28, 0x1c, 0x00, 0x00,
+	// 2095 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x59, 0xcd, 0x6f, 0x24, 0x57,
+	0x11, 0x4f, 0xf7, 0xcc, 0xd8, 0x9e, 0x1a, 0x7f, 0xbe, 0xec, 0x47, 0xef, 0xac, 0x3d, 0xed, 0xed,
+	0xfd, 0x32, 0x26, 0xeb, 0x49, 0xbc, 0x01, 0x36, 0x2b, 0x6d, 0xd0, 0x4e, 0xb2, 0x81, 0x45, 0x1b,
+	0x62, 0x66, 0xd9, 0x48, 0x04, 0x94, 0xa1, 0x67, 0xe6, 0xcd, 0xb8, 0xe5, 0x99, 0xee, 0xde, 0xd7,
+	0xdd, 0x5e, 0x1c, 0x71, 0x88, 0x02, 0x12, 0x12, 0x17, 0x90, 0x38, 0x20, 0x21, 0x0e, 0x1c, 0xe1,
+	0x40, 0x2e, 0x5c, 0x72, 0xcc, 0x91, 0x1b, 0x48, 0x5c, 0xe0, 0xd2, 0x8a, 0x0d, 0x7f, 0x00, 0x9a,
+	0x13, 0x47, 0xf4, 0x3e, 0xba, 0xe7, 0xbd, 0xf9, 0xb0, 0x7b, 0x1d, 0xb0, 0x94, 0x9b, 0xa7, 0x3e,
+	0x7e, 0x55, 0xaf, 0xaa, 0x5e, 0xbd, 0xaa, 0x36, 0xac, 0xb4, 0x7b, 0x1d, 0x62, 0xf7, 0xf1, 0x33,
+	0x8f, 0xec, 0x6d, 0xf9, 0xc4, 0x0b, 0x3d, 0x74, 0xbe, 0x65, 0x93, 0x7e, 0x6f, 0xcb, 0x23, 0xdd,
+	0x2d, 0x89, 0x59, 0x5e, 0xed, 0x7a, 0x5e, 0xb7, 0x87, 0xab, 0xb6, 0xef, 0x54, 0x6d, 0xd7, 0xf5,
+	0x42, 0x3b, 0x74, 0x3c, 0x37, 0xe0, 0x4a, 0xe5, 0x5b, 0x5d, 0x27, 0xdc, 0x8d, 0x9a, 0x5b, 0x2d,
+	0xaf, 0x5f, 0xed, 0x7a, 0x5d, 0xaf, 0xca, 0xc8, 0xcd, 0xa8, 0xc3, 0x7e, 0xb1, 0x1f, 0xec, 0x2f,
+	0x2e, 0x6e, 0xb9, 0x50, 0x7a, 0x40, 0x88, 0x47, 0x1e, 0x87, 0x76, 0x18, 0x05, 0xe8, 0x26, 0xe8,
+	0xde, 0x9e, 0xa1, 0xad, 0x6b, 0x1b, 0x73, 0xb5, 0x8b, 0x83, 0xd8, 0x7c, 0xf1, 0xc0, 0xee, 0xf7,
+	0xee, 0x5a, 0xde, 0xde, 0x4b, 0x5e, 0xdf, 0x09, 0x71, 0xdf, 0x0f, 0x0f, 0xac, 0xba, 0xee, 0xed,
+	0xa1, 0xaf, 0xc2, 0x6c, 0x1f, 0x07, 0x81, 0xdd, 0xc5, 0x86, 0xbe, 0xae, 0x6d, 0x14, 0x6b, 0xab,
+	0x83, 0xd8, 0x34, 0xb8, 0xb4, 0x60, 0xc8, 0x2a, 0x89, 0xb0, 0xb5, 0x07, 0x2b, 0x6f, 0x78, 0x6e,
+	0x68, 0x3b, 0x2e, 0x26, 0xdf, 0xb4, 0x49, 0xfb, 0x99, 0x4d, 0x30, 0xda, 0x84, 0x5c, 0xd7, 0x8f,
+	0x98, 0xd9, 0x62, 0xcd, 0x18, 0xc4, 0xe6, 0x39, 0x0e, 0xd4, 0xf5, 0x23, 0x19, 0x84, 0x0a, 0x51,
+	0xd9, 0x96, 0x1f, 0x09, 0xa3, 0x92, 0x6c, 0x6b, 0x44, 0xb6, 0xe5, 0x47, 0xd6, 0x3f, 0x74, 0x58,
+	0x79, 0x2b, 0x89, 0xdb, 0xdb, 0xb6, 0xeb, 0x74, 0x70, 0x10, 0xa2, 0x5b, 0x90, 0x77, 0xed, 0x3e,
+	0x16, 0xe6, 0x2e, 0x0d, 0x62, 0xf3, 0x3c, 0x87, 0xa0, 0x54, 0x19, 0x83, 0x89, 0xd1, 0x93, 0xee,
+	0x63, 0x12, 0x38, 0x9e, 0x3b, 0x7e, 0x52, 0xc1, 0x50, 0x4e, 0x2a, 0x68, 0x28, 0x82, 0x62, 0x2b,
+	0x39, 0xa9, 0x91, 0x5b, 0xcf, 0x6d, 0x94, 0xb6, 0xbf, 0xb6, 0x35, 0x31, 0xa3, 0x5b, 0x63, 0x3e,
+	0x6e, 0xa5, 0x31, 0x7a, 0xe0, 0x86, 0xe4, 0xa0, 0x56, 0x19, 0xc4, 0x66, 0x59, 0x9c, 0x33, 0xe1,
+	0xc8, 0x46, 0x87, 0x96, 0xca, 0x1d, 0x58, 0x54, 0x95, 0xd1, 0x32, 0xe4, 0xf6, 0xf0, 0x01, 0x3f,
+	0x6e, 0x9d, 0xfe, 0x89, 0x5e, 0x87, 0xc2, 0xbe, 0xdd, 0x8b, 0x78, 0xea, 0x4a, 0xdb, 0x1b, 0x53,
+	0xdc, 0x1a, 0x4b, 0x54, 0x9d, 0xab, 0xdd, 0xd5, 0xef, 0x68, 0xd6, 0x4f, 0x10, 0x2c, 0xbc, 0xed,
+	0xb5, 0x71, 0xef, 0xac, 0xe3, 0xda, 0x81, 0x62, 0xea, 0xa2, 0x91, 0x3b, 0xf6, 0x00, 0x63, 0x71,
+	0x95, 0x03, 0x99, 0x8a, 0x29, 0x81, 0x4c, 0xa9, 0xe8, 0xa9, 0x9c, 0xbf, 0x3c, 0xcb, 0xdf, 0xed,
+	0x29, 0x76, 0x94, 0x38, 0x9c, 0x3e, 0x77, 0xa8, 0x06, 0xa5, 0x36, 0x0e, 0x5a, 0xc4, 0xf1, 0xe9,
+	0x8d, 0x36, 0x0a, 0x2c, 0x2c, 0xeb, 0x83, 0xd8, 0x5c, 0xe5, 0xfa, 0x12, 0x53, 0x46, 0x90, 0x95,
+	0xd0, 0x3d, 0x28, 0x12, 0xdc, 0xc1, 0x04, 0xbb, 0x2d, 0x6c, 0xcc, 0xac, 0xe7, 0x36, 0x8a, 0x35,
+	0x73, 0x10, 0x9b, 0x97, 0x39, 0x42, 0xca, 0x0a, 0x14, 0x17, 0x52, 0x32, 0xcd, 0x4a, 0xcf, 0x69,
+	0x61, 0x37, 0xc0, 0xc6, 0xec, 0x68, 0x56, 0x04, 0x43, 0xc9, 0x8a, 0xa0, 0xa1, 0xf7, 0x61, 0xc6,
+	0x71, 0xfd, 0x28, 0x0c, 0x8c, 0x39, 0x16, 0xaa, 0x2f, 0x65, 0x0a, 0xd5, 0x77, 0x0f, 0x7c, 0x5c,
+	0xbb, 0x3c, 0x88, 0xcd, 0x8b, 0xdc, 0x02, 0x87, 0x90, 0x0d, 0x08, 0x54, 0x8a, 0xef, 0x45, 0xa1,
+	0x1f, 0x85, 0x46, 0x91, 0xa5, 0xfc, 0x74, 0xf8, 0x1c, 0x42, 0xc1, 0xe7, 0x24, 0xf4, 0x18, 0x56,
+	0x9a, 0xb8, 0xe3, 0x11, 0xdc, 0xf0, 0x09, 0xf6, 0x89, 0xd7, 0xc2, 0x41, 0x60, 0x00, 0x8b, 0xc0,
+	0x8d, 0x41, 0x6c, 0x5a, 0x5c, 0x7f, 0x4c, 0x44, 0x86, 0x5a, 0xe6, 0xdc, 0x9d, 0x94, 0x89, 0xbe,
+	0x0e, 0x20, 0xa1, 0x95, 0x18, 0x9a, 0x94, 0x8c, 0xc9, 0x30, 0x92, 0x0a, 0xda, 0x81, 0x65, 0xbb,
+	0x13, 0x62, 0x22, 0x3b, 0x35, 0xcf, 0x60, 0xae, 0x0f, 0x62, 0xf3, 0x0a, 0x87, 0x19, 0x95, 0x90,
+	0xc1, 0x96, 0x18, 0x53, 0x72, 0xe9, 0x5d, 0x40, 0xc9, 0x21, 0xbc, 0x20, 0x4c, 0x30, 0x17, 0x18,
+	0xe6, 0xcd, 0x41, 0x6c, 0x5e, 0x55, 0x0f, 0x3a, 0x94, 0x91, 0x51, 0x45, 0xa8, 0x76, 0x86, 0x5c,
+	0x5a, 0xba, 0x32, 0xe0, 0xe2, 0x68, 0xe9, 0x4e, 0x41, 0x92, 0x95, 0x68, 0x0e, 0xc4, 0x59, 0x24,
+	0xa4, 0xa5, 0xd1, 0x1c, 0x8c, 0x89, 0x28, 0x39, 0xe0, 0xe7, 0x95, 0x40, 0x7f, 0x00, 0x85, 0x3e,
+	0xad, 0x09, 0x63, 0x99, 0xd5, 0xcd, 0x66, 0xa6, 0xba, 0x61, 0xbf, 0x6a, 0xe5, 0x41, 0x6c, 0x5e,
+	0x10, 0x4f, 0x1a, 0x25, 0xc8, 0x86, 0x38, 0x28, 0x8a, 0x00, 0xec, 0x30, 0x24, 0x4e, 0x33, 0x0a,
+	0x71, 0x60, 0xac, 0xb0, 0xd2, 0x7f, 0x35, 0x93, 0x89, 0xfb, 0xa9, 0x1a, 0x6f, 0x13, 0x52, 0x5d,
+	0x0c, 0x11, 0x95, 0xba, 0x18, 0x92, 0xd1, 0x6d, 0x98, 0xd9, 0x75, 0xda, 0x6d, 0xec, 0x1a, 0x88,
+	0x3d, 0xd5, 0x52, 0x89, 0x73, 0xba, 0x52, 0xe2, 0x9c, 0x54, 0xfe, 0x5d, 0x0e, 0xf2, 0xf4, 0x42,
+	0xd0, 0x46, 0x1d, 0x1e, 0xf8, 0x13, 0x1a, 0x35, 0xa5, 0x2a, 0x8d, 0x9a, 0x12, 0x46, 0xbb, 0x92,
+	0x7e, 0x9a, 0xae, 0xf4, 0x01, 0x80, 0x6f, 0xd3, 0x48, 0x84, 0x98, 0x04, 0xe2, 0x35, 0x7c, 0x2d,
+	0xf3, 0x15, 0xde, 0xda, 0x49, 0x75, 0xc7, 0x82, 0x35, 0x84, 0x55, 0x2f, 0x51, 0x4a, 0x2e, 0x7f,
+	0x05, 0x8a, 0xa9, 0x3e, 0xda, 0x48, 0x9e, 0x3e, 0x7e, 0x78, 0x34, 0x88, 0xcd, 0x45, 0x0e, 0xf4,
+	0x92, 0xe3, 0xf6, 0x1c, 0x17, 0x5b, 0xe2, 0x91, 0x2b, 0x13, 0x58, 0x1a, 0x31, 0x3b, 0xe1, 0x25,
+	0x7d, 0xa8, 0xbe, 0xa4, 0xb7, 0x4f, 0x71, 0x24, 0xe9, 0x51, 0x2d, 0xff, 0x4c, 0x87, 0x02, 0x93,
+	0x45, 0x77, 0x60, 0xae, 0x69, 0x07, 0xb8, 0x11, 0x91, 0x9e, 0x70, 0x75, 0x6d, 0x10, 0x9b, 0x97,
+	0xc4, 0xed, 0x14, 0x1c, 0xa5, 0x13, 0x53, 0xe2, 0x13, 0xd2, 0x43, 0x6f, 0xc2, 0xfc, 0x33, 0xec,
+	0x74, 0x77, 0xc3, 0xa0, 0xe1, 0xdb, 0xe1, 0xae, 0xc8, 0xd7, 0x95, 0x41, 0x6c, 0xae, 0x71, 0x6d,
+	0x99, 0xab, 0x24, 0x4c, 0x30, 0x76, 0xec, 0x70, 0x17, 0xbd, 0x0e, 0xd0, 0x25, 0xb6, 0xbf, 0xcb,
+	0x31, 0x72, 0xa3, 0xad, 0x6b, 0xc8, 0x53, 0xde, 0x11, 0x46, 0x4e, 0xf4, 0x9d, 0xa0, 0x61, 0x93,
+	0xd6, 0xae, 0xb3, 0x8f, 0x8d, 0x3c, 0xab, 0x52, 0x49, 0x7f, 0xc8, 0x53, 0xf4, 0x9d, 0xe0, 0x3e,
+	0xa7, 0x9e, 0xd5, 0x18, 0x53, 0xbe, 0x07, 0x4b, 0x23, 0x37, 0x71, 0x82, 0xa1, 0x73, 0xb2, 0xa1,
+	0xa2, 0x3c, 0x05, 0xfd, 0x49, 0x83, 0xe5, 0x74, 0xca, 0xa8, 0xe3, 0xa7, 0x11, 0x1d, 0x84, 0xbe,
+	0x05, 0x8b, 0xa9, 0xf5, 0x86, 0x34, 0x12, 0x5d, 0x1d, 0xc4, 0xa6, 0x39, 0x32, 0x7c, 0x34, 0x46,
+	0x87, 0xa3, 0x85, 0x94, 0xf5, 0x6d, 0x3a, 0x25, 0x3d, 0x86, 0x95, 0xa1, 0xac, 0x3a, 0x2f, 0x49,
+	0x3d, 0x71, 0x4c, 0x44, 0xe9, 0x89, 0x29, 0xf7, 0x5d, 0xce, 0xb4, 0x7e, 0xaa, 0x41, 0x79, 0x6c,
+	0x36, 0x0a, 0xea, 0x38, 0xf0, 0x3d, 0xfa, 0x96, 0x77, 0xa0, 0xd8, 0x4f, 0x88, 0x86, 0xc6, 0xee,
+	0xea, 0xa9, 0x26, 0xac, 0x14, 0x44, 0xc9, 0x71, 0x4a, 0xb5, 0x30, 0x14, 0xee, 0x77, 0xb1, 0xcb,
+	0x26, 0xc7, 0x5d, 0x2f, 0x08, 0xc7, 0x1b, 0x12, 0xa5, 0x2a, 0x0d, 0x89, 0x12, 0xa8, 0xb8, 0xef,
+	0x91, 0x50, 0x84, 0x41, 0x12, 0xa7, 0x54, 0x45, 0x9c, 0x12, 0xac, 0xef, 0xc3, 0x0c, 0x33, 0x13,
+	0xa0, 0xef, 0xc0, 0x8c, 0xcd, 0xfe, 0x12, 0xa7, 0x5a, 0x9d, 0x72, 0x2a, 0x26, 0x2e, 0x37, 0x55,
+	0xae, 0xa5, 0x34, 0x55, 0x4e, 0xb2, 0x3e, 0xd1, 0x61, 0x9e, 0xdd, 0xd8, 0x2f, 0x4a, 0xf2, 0xe9,
+	0xcd, 0x64, 0x6f, 0x17, 0x77, 0x6e, 0xec, 0x66, 0x0f, 0x79, 0x6a, 0xd6, 0x28, 0x99, 0x39, 0xf5,
+	0x0d, 0x58, 0xe0, 0x32, 0x89, 0x43, 0x79, 0x06, 0x61, 0x0d, 0x62, 0xb3, 0x22, 0x43, 0x4c, 0x70,
+	0x66, 0x9e, 0x71, 0x92, 0x2a, 0xfc, 0x31, 0x5c, 0x50, 0xfa, 0xe2, 0xb0, 0x00, 0x9b, 0xe3, 0x05,
+	0x78, 0x2d, 0x4b, 0x67, 0x7d, 0x9e, 0xe2, 0xfb, 0x54, 0x87, 0x73, 0x3b, 0x04, 0xb7, 0x9d, 0x56,
+	0xe8, 0x91, 0x77, 0x7c, 0xec, 0x26, 0x09, 0x54, 0xe3, 0xa3, 0x7d, 0xfe, 0xf8, 0xe8, 0xa7, 0x8b,
+	0xcf, 0x84, 0x4a, 0xca, 0xfd, 0x6f, 0x2b, 0x29, 0xff, 0x39, 0xdb, 0x88, 0x01, 0x17, 0xd2, 0x08,
+	0xbe, 0xd1, 0xf3, 0x02, 0x9c, 0x24, 0xd0, 0xfa, 0xad, 0x06, 0x2b, 0x82, 0xe5, 0x78, 0xee, 0x3b,
+	0x6c, 0x06, 0x08, 0x68, 0x64, 0x09, 0x0f, 0x72, 0xc3, 0x69, 0x8f, 0x47, 0x76, 0xc8, 0x1b, 0xd9,
+	0x4d, 0x18, 0xf9, 0x61, 0x9b, 0x46, 0xb6, 0x83, 0xed, 0x30, 0x22, 0xb8, 0xd1, 0x73, 0xfa, 0x0e,
+	0x6f, 0x00, 0x05, 0x39, 0xb2, 0x0a, 0x5b, 0x89, 0xac, 0xe0, 0x3c, 0xa2, 0x0c, 0xeb, 0x55, 0x28,
+	0xa6, 0x8e, 0xa3, 0x9b, 0xa0, 0xa7, 0xde, 0x48, 0x9f, 0x3c, 0x54, 0x2f, 0x74, 0xa7, 0x6d, 0x7d,
+	0x94, 0x83, 0xd2, 0x93, 0xfa, 0xa3, 0x20, 0x29, 0x94, 0xf7, 0xa1, 0xe8, 0x27, 0x28, 0x4c, 0xbf,
+	0xb4, 0xbd, 0x3e, 0xa5, 0x4a, 0x53, 0x6b, 0x72, 0x85, 0xa6, 0xca, 0xca, 0x71, 0x53, 0x2a, 0x7a,
+	0x02, 0xf9, 0x88, 0xf4, 0x02, 0x43, 0x67, 0x17, 0xe0, 0xc6, 0x14, 0x68, 0xc9, 0x23, 0xfa, 0xb7,
+	0xdc, 0x0e, 0xa9, 0xb6, 0xd2, 0x0e, 0x29, 0x01, 0xfd, 0x10, 0x66, 0x3d, 0x9e, 0x90, 0x13, 0xb6,
+	0xe7, 0xb1, 0x04, 0xca, 0xbb, 0xa0, 0x80, 0x50, 0x26, 0x10, 0x41, 0x2b, 0xbf, 0x07, 0xb9, 0x27,
+	0xf5, 0x47, 0x99, 0x03, 0x8b, 0x36, 0x21, 0x47, 0xc7, 0x9c, 0xb1, 0x4f, 0x3a, 0x23, 0x13, 0x0e,
+	0x15, 0xb2, 0xe2, 0x1c, 0x2c, 0x3c, 0xec, 0xdb, 0x5d, 0x7c, 0x66, 0x69, 0x68, 0xc0, 0x8c, 0xc3,
+	0x0c, 0x8a, 0x44, 0x4c, 0xdb, 0x20, 0x14, 0xaf, 0xf8, 0x2f, 0x65, 0xb5, 0x65, 0x6c, 0x75, 0xb5,
+	0x65, 0xa4, 0x33, 0x48, 0xc8, 0x1f, 0x34, 0x28, 0x30, 0x87, 0xb2, 0xe7, 0xe4, 0x65, 0x28, 0x30,
+	0xf7, 0x58, 0x56, 0xe6, 0xe5, 0x55, 0x88, 0x91, 0x95, 0x55, 0x88, 0x51, 0xd0, 0x03, 0x98, 0x1f,
+	0xee, 0xa0, 0xb8, 0xcd, 0xce, 0x32, 0x27, 0xcf, 0x9d, 0x32, 0x57, 0xb9, 0x9b, 0x32, 0xc3, 0xfa,
+	0x38, 0x07, 0x8b, 0x6f, 0xda, 0xa1, 0x1d, 0xe0, 0xf0, 0xac, 0x32, 0x8c, 0x61, 0xb6, 0xcd, 0x2d,
+	0x8a, 0x49, 0xf2, 0xd6, 0x14, 0x74, 0xd5, 0xaf, 0xe4, 0xa7, 0x9c, 0x05, 0x81, 0xa3, 0x64, 0x41,
+	0xd0, 0xce, 0x20, 0xcf, 0x01, 0xcc, 0x0a, 0x9f, 0xd0, 0x6b, 0x30, 0xd7, 0xb2, 0x43, 0xdc, 0xf5,
+	0xc8, 0xc1, 0xf8, 0xfe, 0x90, 0x70, 0x64, 0x90, 0x54, 0x3c, 0xfd, 0x8e, 0xa7, 0x67, 0xfa, 0x8e,
+	0x67, 0x7d, 0xac, 0xc1, 0xec, 0x5b, 0xbc, 0xbb, 0xb2, 0xaa, 0x71, 0xdb, 0xf8, 0x47, 0xcc, 0x64,
+	0x4e, 0xa9, 0x1a, 0x4a, 0x56, 0xab, 0x86, 0x52, 0x9e, 0xd3, 0x18, 0xfb, 0xcc, 0x40, 0xbc, 0xa6,
+	0xdd, 0x74, 0x7a, 0x4e, 0x78, 0xc0, 0xe2, 0xa8, 0x2b, 0x9f, 0x19, 0x86, 0x4c, 0xf5, 0x33, 0xc3,
+	0x90, 0x6e, 0xfd, 0x42, 0x87, 0x25, 0xe1, 0x70, 0x3a, 0x71, 0x64, 0xbe, 0x17, 0xea, 0x1b, 0xa6,
+	0x3f, 0xf7, 0x1b, 0x76, 0x07, 0xe6, 0xd8, 0x17, 0x2d, 0xaa, 0x9d, 0x1b, 0xcd, 0x4b, 0xc2, 0x51,
+	0x92, 0xcb, 0x88, 0x0f, 0xdb, 0xe8, 0x7b, 0x30, 0x27, 0x1e, 0xb1, 0x40, 0x7c, 0x8e, 0xac, 0x4c,
+	0x1b, 0xca, 0xb9, 0x98, 0x8c, 0x9c, 0x68, 0x2a, 0x19, 0x4f, 0x88, 0xd6, 0xaf, 0x35, 0x98, 0xaf,
+	0xe3, 0x33, 0xbc, 0x71, 0x3c, 0xdc, 0xfa, 0xc9, 0x6f, 0xae, 0x07, 0x0b, 0xc2, 0x31, 0x91, 0xa8,
+	0xff, 0xb3, 0x67, 0xdb, 0x7f, 0xcc, 0xc3, 0x5c, 0x1d, 0x77, 0x9d, 0x80, 0x6e, 0x82, 0xbf, 0xd1,
+	0x00, 0x8d, 0xef, 0x49, 0xe8, 0xe6, 0x49, 0xcb, 0x90, 0x08, 0x63, 0xf9, 0x95, 0xac, 0x5b, 0x53,
+	0x3a, 0xfa, 0x5a, 0x1b, 0x1f, 0xfd, 0xed, 0x5f, 0xbf, 0xd2, 0x2d, 0xb4, 0x5e, 0xdd, 0x7f, 0xa5,
+	0x4a, 0x84, 0x23, 0xd5, 0x54, 0x35, 0xa8, 0x26, 0x13, 0x2c, 0xfa, 0x50, 0x83, 0xa5, 0x14, 0x48,
+	0x2c, 0x38, 0x99, 0x3d, 0x5b, 0x3b, 0x6e, 0xf3, 0x09, 0xac, 0xeb, 0xcc, 0x0b, 0x13, 0xad, 0x4d,
+	0xf3, 0x82, 0x6d, 0x3f, 0xe8, 0xe7, 0x1a, 0x2c, 0xaa, 0x23, 0x3c, 0xba, 0x7a, 0xdc, 0x9c, 0x9e,
+	0x58, 0xbf, 0x95, 0x65, 0x98, 0x1f, 0xc6, 0xe4, 0x1a, 0xf3, 0xa6, 0x82, 0x56, 0x15, 0x6f, 0xd8,
+	0xac, 0x2c, 0xc5, 0x23, 0x84, 0x12, 0xd3, 0x17, 0xa1, 0xc8, 0xe4, 0xc8, 0x09, 0x61, 0xb8, 0xc2,
+	0x0c, 0x5f, 0x46, 0x97, 0x26, 0x19, 0x66, 0x21, 0xd8, 0xfe, 0x4b, 0x01, 0x66, 0x45, 0xa1, 0x21,
+	0x02, 0x79, 0xba, 0x48, 0xa0, 0x2f, 0x9f, 0x54, 0x90, 0xd2, 0xba, 0x51, 0x3e, 0xb1, 0x7a, 0xad,
+	0xcb, 0xcc, 0x8b, 0xf3, 0xd6, 0x32, 0xf5, 0x42, 0x54, 0x6a, 0xd5, 0xf3, 0xb1, 0x7b, 0x57, 0xdb,
+	0x44, 0xfb, 0x50, 0x60, 0xa3, 0x37, 0x3a, 0x11, 0x67, 0x6a, 0xd4, 0xa7, 0xcc, 0xf0, 0xab, 0xcc,
+	0xec, 0x05, 0x6b, 0x45, 0x36, 0xdb, 0xa2, 0x22, 0xd4, 0xee, 0x53, 0xc8, 0xd3, 0xc9, 0x13, 0x59,
+	0x27, 0x8f, 0xa5, 0xe5, 0x1b, 0xc7, 0xf7, 0xa9, 0xd4, 0xe2, 0xc4, 0x83, 0xd2, 0x99, 0xf5, 0xae,
+	0xb6, 0xf9, 0xb2, 0x86, 0x9e, 0xc1, 0x0c, 0x9f, 0xb1, 0xd0, 0xb5, 0x2c, 0x23, 0x58, 0x66, 0xb3,
+	0x6b, 0xcc, 0xec, 0x45, 0x0b, 0xc9, 0x66, 0xf9, 0x6c, 0xc6, 0x0d, 0x7f, 0x30, 0x7c, 0x56, 0xaf,
+	0x67, 0x9a, 0x0c, 0x32, 0x9b, 0xae, 0x30, 0xd3, 0x86, 0xf5, 0xa2, 0x6c, 0x5a, 0xcc, 0x0b, 0xdc,
+	0xb6, 0x0f, 0x05, 0xd6, 0x00, 0xa7, 0xd6, 0xb3, 0xdc, 0xb7, 0xcb, 0xd7, 0x8e, 0x17, 0x3a, 0x2e,
+	0xb3, 0x04, 0x73, 0x9b, 0xb5, 0x7b, 0x7f, 0x3f, 0xac, 0xbc, 0xf0, 0xd9, 0x61, 0x45, 0xfb, 0xf7,
+	0x61, 0x45, 0xfb, 0xcf, 0x61, 0x45, 0xfb, 0xf0, 0xa8, 0xa2, 0xfd, 0xfe, 0xa8, 0xa2, 0x7d, 0x72,
+	0x54, 0xd1, 0x3e, 0x3d, 0xaa, 0x68, 0x7f, 0x3e, 0xaa, 0x68, 0x7f, 0x3d, 0xaa, 0x68, 0x9f, 0x1d,
+	0x55, 0xb4, 0x5f, 0xfe, 0xb3, 0xf2, 0xc2, 0x7b, 0x25, 0xc9, 0x54, 0x73, 0x86, 0xfd, 0x5f, 0xf9,
+	0xf6, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0xb1, 0x1d, 0x12, 0x89, 0xd0, 0x1e, 0x00, 0x00,
 }

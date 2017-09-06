@@ -138,19 +138,28 @@ message ModelManifestsResponse {
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
+message PredictorOpenRequest {
+  string model_name = 1
+      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
+  string model_version = 2
+      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
+  string framework_name = 3
+      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
+  string framework_version = 4
+      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+}
+
+message PredictorCloseResponse {}
+
 message PredictionOptions {
   string request_id = 1
       [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
-  string model_name = 2
-      [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
-  string model_version = 3
-      [ (gogoproto.moretags) = "yaml:\"model_version,omitempty\"" ];
-  string framework_name = 4
-      [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
-  string framework_version = 5
-      [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  int32 feature_limit = 6
+  int32 feature_limit = 2
       [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
+}
+
+message Predictor {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
 }
 
 message URLsRequest {
@@ -159,8 +168,10 @@ message URLsRequest {
     string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
     string url = 2 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
   }
-  repeated URL urls = 1 [ (gogoproto.moretags) = "yaml:\"urls,omitempty\"" ];
-  PredictionOptions options = 2
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  repeated URL urls = 2 [ (gogoproto.moretags) = "yaml:\"urls,omitempty\"" ];
+  PredictionOptions options = 3
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
@@ -176,10 +187,12 @@ message ImagesRequest {
     bool preprocessed = 3
         [ (gogoproto.moretags) = "yaml:\"preprocessed,omitempty\"" ];
   }
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
   // A list of Base64 encoded images
-  repeated Image images = 1
+  repeated Image images = 2
       [ (gogoproto.moretags) = "yaml:\"images,omitempty\"" ];
-  PredictionOptions options = 2
+  PredictionOptions options = 3
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
@@ -189,7 +202,9 @@ message DatasetRequest {
         [ (gogoproto.moretags) = "yaml:\"category,omitempty\"" ];
     string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   }
-  Dataset dataset = 1 [ (gogoproto.moretags) = "yaml:\"dataset,omitempty\"" ];
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  Dataset dataset = 2 [ (gogoproto.moretags) = "yaml:\"dataset,omitempty\"" ];
   PredictionOptions options = 3
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
@@ -210,14 +225,15 @@ message FeatureResponse {
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
 }
 
-message ClearRequest {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  PredictionOptions options = 2
-      [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
+message ResetRequest {
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  string id = 2 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
 }
 
-message ClearResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+message ResetResponse {
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
 }
 
 service Registry {
@@ -243,7 +259,33 @@ service Registry {
     };
   }
 }
-service Predictor {
+
+service Predict {
+  // Opens a predictor and returns an id where the predictor
+  // is accessible. The id can be used to perform inference
+  // requests.
+  rpc Open(PredictorOpenRequest) returns (Predictor) {
+    option (google.api.http) = {
+      post : "/v1/predict/open",
+      body : "*"
+    };
+  }
+
+  // rpc Information(Predictor) returns (PredictorInformation) {
+  //   option (google.api.http) = {
+  //     post : "/v1/predict/information",
+  //     body : "*"
+  //   };
+  // }
+
+  // Close a predictor clear it's memory.
+  rpc Close(Predictor) returns (PredictorCloseResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/close",
+      body : "*"
+    };
+  }
+
   // Image method receives a stream of urls and runs
   // the predictor on all the urls. The
   //
@@ -276,9 +318,9 @@ service Predictor {
   }
 
   // Clear method clears the internal cache of the predictors
-  rpc Clear(ClearRequest) returns (ClearResponse) {
+  rpc Reset(ResetRequest) returns (ResetResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/clear",
+      post : "/v1/predict/reset",
       body : "*"
     };
   }

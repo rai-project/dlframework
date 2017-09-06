@@ -1,7 +1,6 @@
 package predict
 
 import (
-	"image"
 	"io"
 	"path/filepath"
 	"strings"
@@ -10,7 +9,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/pkg/errors"
-	"github.com/rai-project/dldataset"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
 )
@@ -20,19 +18,10 @@ type Predictor interface {
 	GetFramework() (dlframework.FrameworkManifest, error)
 	// Load model from manifest
 	Load(ctx context.Context, model dlframework.ModelManifest) (Predictor, error)
-	// Downloads the features / symbol file / weights
-	Download(ctx context.Context) error
 	// Returns the features
-	PredictURL(ctx context.Context, url string) (chan<- dlframework.Feature, error)
-	// Returns the features
-	PredictImage(ctx context.Context, image image.Image) (chan<- dlframework.Feature, error)
-	// Returns the features
-	PredictDataset(ctx context.Context, dataset dldataset.Dataset) (chan<- dlframework.Feature, error)
-	// Preprocess image
-	PreprocessImage(ctx context.Context, image image.Image) (image.Image, error)
-
+	Predict(ctx context.Context, data []float32) (dlframework.Features, error)
 	// Clears the internal state of a predictor
-	Clear(ctx context.Context) error
+	Reset(ctx context.Context) error
 
 	io.Closer
 }

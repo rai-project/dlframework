@@ -12,7 +12,7 @@ import (
 	graceful "github.com/tylerb/graceful"
 
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
-	"github.com/rai-project/dlframework/httpapi/restapi/operations/predictor"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 )
 
@@ -38,11 +38,11 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.PredictorClearHandler = predictor.ClearHandlerFunc(func(params predictor.ClearParams) middleware.Responder {
-		return middleware.NotImplemented("operation predictor.Clear has not yet been implemented")
+	api.PredictCloseHandler = predict.CloseHandlerFunc(func(params predict.CloseParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Close has not yet been implemented")
 	})
-	api.PredictorDatasetHandler = predictor.DatasetHandlerFunc(func(params predictor.DatasetParams) middleware.Responder {
-		return middleware.NotImplemented("operation predictor.Dataset has not yet been implemented")
+	api.PredictDatasetHandler = predict.DatasetHandlerFunc(func(params predict.DatasetParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Dataset has not yet been implemented")
 	})
 	api.RegistryFrameworkAgentsHandler = registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.FrameworkAgents has not yet been implemented")
@@ -50,8 +50,8 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.RegistryFrameworkManifestsHandler = registry.FrameworkManifestsHandlerFunc(func(params registry.FrameworkManifestsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.FrameworkManifests has not yet been implemented")
 	})
-	api.PredictorImagesHandler = predictor.ImagesHandlerFunc(func(params predictor.ImagesParams) middleware.Responder {
-		return middleware.NotImplemented("operation predictor.Images has not yet been implemented")
+	api.PredictImagesHandler = predict.ImagesHandlerFunc(func(params predict.ImagesParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Images has not yet been implemented")
 	})
 	api.RegistryModelAgentsHandler = registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.ModelAgents has not yet been implemented")
@@ -59,8 +59,14 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.RegistryModelManifestsHandler = registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.ModelManifests has not yet been implemented")
 	})
-	api.PredictorUrlsHandler = predictor.UrlsHandlerFunc(func(params predictor.UrlsParams) middleware.Responder {
-		return middleware.NotImplemented("operation predictor.Urls has not yet been implemented")
+	api.PredictOpenHandler = predict.OpenHandlerFunc(func(params predict.OpenParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Open has not yet been implemented")
+	})
+	api.PredictResetHandler = predict.ResetHandlerFunc(func(params predict.ResetParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Reset has not yet been implemented")
+	})
+	api.PredictUrlsHandler = predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}

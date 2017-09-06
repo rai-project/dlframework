@@ -35,27 +35,27 @@ func init() {
   },
   "host": "localhost",
   "paths": {
-    "/v1/predict/clear": {
+    "/v1/predict/close": {
       "post": {
         "tags": [
-          "Predictor"
+          "Predict"
         ],
-        "summary": "Clear method clears the internal cache of the predictors",
-        "operationId": "Clear",
+        "summary": "Close a predictor clear it's memory.",
+        "operationId": "Close",
         "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkClearRequest"
+              "$ref": "#/definitions/dlframeworkPredictor"
             }
           }
         ],
         "responses": {
           "200": {
             "schema": {
-              "$ref": "#/definitions/dlframeworkClearResponse"
+              "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
           }
         }
@@ -65,7 +65,7 @@ func init() {
       "post": {
         "description": "The result is a prediction feature stream.",
         "tags": [
-          "Predictor"
+          "Predict"
         ],
         "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
         "operationId": "Dataset",
@@ -93,7 +93,7 @@ func init() {
       "post": {
         "description": "The result is a prediction feature stream for each image.",
         "tags": [
-          "Predictor"
+          "Predict"
         ],
         "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
         "operationId": "Images",
@@ -117,11 +117,63 @@ func init() {
         }
       }
     },
+    "/v1/predict/open": {
+      "post": {
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Opens a predictor and returns an id where the predictor\nis accessible. The id can be used to perform inference\nrequests.",
+        "operationId": "Open",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictorOpenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictor"
+            }
+          }
+        }
+      }
+    },
+    "/v1/predict/reset": {
+      "post": {
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Clear method clears the internal cache of the predictors",
+        "operationId": "Reset",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkResetRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkResetResponse"
+            }
+          }
+        }
+      }
+    },
     "/v1/predict/urls": {
       "post": {
         "description": "The result is a prediction feature stream for each url.",
         "tags": [
-          "Predictor"
+          "Predict"
         ],
         "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
         "operationId": "URLs",
@@ -365,25 +417,6 @@ func init() {
         }
       }
     },
-    "dlframeworkClearRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
-    },
-    "dlframeworkClearResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkContainerHardware": {
       "type": "object",
       "properties": {
@@ -403,6 +436,9 @@ func init() {
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
@@ -482,6 +518,9 @@ func init() {
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
@@ -592,6 +631,25 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictorCloseResponse": {
+      "type": "object"
+    },
+    "dlframeworkPredictorOpenRequest": {
+      "type": "object",
+      "properties": {
         "framework_name": {
           "type": "string"
         },
@@ -603,9 +661,25 @@ func init() {
         },
         "model_version": {
           "type": "string"
-        },
-        "request_id": {
+        }
+      }
+    },
+    "dlframeworkResetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
           "type": "string"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkResetResponse": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
@@ -614,6 +688,9 @@ func init() {
       "properties": {
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         },
         "urls": {
           "type": "array",

@@ -22,11 +22,16 @@ type DlframeworkUrlsRequest struct {
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 
+	// predictor
+	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
+
 	// urls
 	Urls []*UrlsRequestURL `json:"urls"`
 }
 
 /* polymorph dlframeworkURLsRequest options false */
+
+/* polymorph dlframeworkURLsRequest predictor false */
 
 /* polymorph dlframeworkURLsRequest urls false */
 
@@ -35,6 +40,11 @@ func (m *DlframeworkUrlsRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validatePredictor(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -61,6 +71,25 @@ func (m *DlframeworkUrlsRequest) validateOptions(formats strfmt.Registry) error 
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkUrlsRequest) validatePredictor(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Predictor) { // not required
+		return nil
+	}
+
+	if m.Predictor != nil {
+
+		if err := m.Predictor.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("predictor")
 			}
 			return err
 		}

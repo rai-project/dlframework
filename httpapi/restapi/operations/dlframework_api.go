@@ -19,7 +19,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/rai-project/dlframework/httpapi/restapi/operations/predictor"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 )
 
@@ -38,11 +38,11 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		PredictorClearHandler: predictor.ClearHandlerFunc(func(params predictor.ClearParams) middleware.Responder {
-			return middleware.NotImplemented("operation PredictorClear has not yet been implemented")
+		PredictCloseHandler: predict.CloseHandlerFunc(func(params predict.CloseParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictClose has not yet been implemented")
 		}),
-		PredictorDatasetHandler: predictor.DatasetHandlerFunc(func(params predictor.DatasetParams) middleware.Responder {
-			return middleware.NotImplemented("operation PredictorDataset has not yet been implemented")
+		PredictDatasetHandler: predict.DatasetHandlerFunc(func(params predict.DatasetParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictDataset has not yet been implemented")
 		}),
 		RegistryFrameworkAgentsHandler: registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryFrameworkAgents has not yet been implemented")
@@ -50,8 +50,8 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		RegistryFrameworkManifestsHandler: registry.FrameworkManifestsHandlerFunc(func(params registry.FrameworkManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryFrameworkManifests has not yet been implemented")
 		}),
-		PredictorImagesHandler: predictor.ImagesHandlerFunc(func(params predictor.ImagesParams) middleware.Responder {
-			return middleware.NotImplemented("operation PredictorImages has not yet been implemented")
+		PredictImagesHandler: predict.ImagesHandlerFunc(func(params predict.ImagesParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictImages has not yet been implemented")
 		}),
 		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
@@ -59,8 +59,14 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		RegistryModelManifestsHandler: registry.ModelManifestsHandlerFunc(func(params registry.ModelManifestsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelManifests has not yet been implemented")
 		}),
-		PredictorUrlsHandler: predictor.UrlsHandlerFunc(func(params predictor.UrlsParams) middleware.Responder {
-			return middleware.NotImplemented("operation PredictorUrls has not yet been implemented")
+		PredictOpenHandler: predict.OpenHandlerFunc(func(params predict.OpenParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictOpen has not yet been implemented")
+		}),
+		PredictResetHandler: predict.ResetHandlerFunc(func(params predict.ResetParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictReset has not yet been implemented")
+		}),
+		PredictUrlsHandler: predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictUrls has not yet been implemented")
 		}),
 	}
 }
@@ -91,22 +97,26 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// PredictorClearHandler sets the operation handler for the clear operation
-	PredictorClearHandler predictor.ClearHandler
-	// PredictorDatasetHandler sets the operation handler for the dataset operation
-	PredictorDatasetHandler predictor.DatasetHandler
+	// PredictCloseHandler sets the operation handler for the close operation
+	PredictCloseHandler predict.CloseHandler
+	// PredictDatasetHandler sets the operation handler for the dataset operation
+	PredictDatasetHandler predict.DatasetHandler
 	// RegistryFrameworkAgentsHandler sets the operation handler for the framework agents operation
 	RegistryFrameworkAgentsHandler registry.FrameworkAgentsHandler
 	// RegistryFrameworkManifestsHandler sets the operation handler for the framework manifests operation
 	RegistryFrameworkManifestsHandler registry.FrameworkManifestsHandler
-	// PredictorImagesHandler sets the operation handler for the images operation
-	PredictorImagesHandler predictor.ImagesHandler
+	// PredictImagesHandler sets the operation handler for the images operation
+	PredictImagesHandler predict.ImagesHandler
 	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
 	RegistryModelManifestsHandler registry.ModelManifestsHandler
-	// PredictorUrlsHandler sets the operation handler for the urls operation
-	PredictorUrlsHandler predictor.UrlsHandler
+	// PredictOpenHandler sets the operation handler for the open operation
+	PredictOpenHandler predict.OpenHandler
+	// PredictResetHandler sets the operation handler for the reset operation
+	PredictResetHandler predict.ResetHandler
+	// PredictUrlsHandler sets the operation handler for the urls operation
+	PredictUrlsHandler predict.UrlsHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -170,12 +180,12 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.PredictorClearHandler == nil {
-		unregistered = append(unregistered, "predictor.ClearHandler")
+	if o.PredictCloseHandler == nil {
+		unregistered = append(unregistered, "predict.CloseHandler")
 	}
 
-	if o.PredictorDatasetHandler == nil {
-		unregistered = append(unregistered, "predictor.DatasetHandler")
+	if o.PredictDatasetHandler == nil {
+		unregistered = append(unregistered, "predict.DatasetHandler")
 	}
 
 	if o.RegistryFrameworkAgentsHandler == nil {
@@ -186,8 +196,8 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "registry.FrameworkManifestsHandler")
 	}
 
-	if o.PredictorImagesHandler == nil {
-		unregistered = append(unregistered, "predictor.ImagesHandler")
+	if o.PredictImagesHandler == nil {
+		unregistered = append(unregistered, "predict.ImagesHandler")
 	}
 
 	if o.RegistryModelAgentsHandler == nil {
@@ -198,8 +208,16 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "registry.ModelManifestsHandler")
 	}
 
-	if o.PredictorUrlsHandler == nil {
-		unregistered = append(unregistered, "predictor.UrlsHandler")
+	if o.PredictOpenHandler == nil {
+		unregistered = append(unregistered, "predict.OpenHandler")
+	}
+
+	if o.PredictResetHandler == nil {
+		unregistered = append(unregistered, "predict.ResetHandler")
+	}
+
+	if o.PredictUrlsHandler == nil {
+		unregistered = append(unregistered, "predict.UrlsHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -295,12 +313,12 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/clear"] = predictor.NewClear(o.context, o.PredictorClearHandler)
+	o.handlers["POST"]["/v1/predict/close"] = predict.NewClose(o.context, o.PredictCloseHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/dataset"] = predictor.NewDataset(o.context, o.PredictorDatasetHandler)
+	o.handlers["POST"]["/v1/predict/dataset"] = predict.NewDataset(o.context, o.PredictDatasetHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -315,7 +333,7 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/images"] = predictor.NewImages(o.context, o.PredictorImagesHandler)
+	o.handlers["POST"]["/v1/predict/images"] = predict.NewImages(o.context, o.PredictImagesHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -330,7 +348,17 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/urls"] = predictor.NewUrls(o.context, o.PredictorUrlsHandler)
+	o.handlers["POST"]["/v1/predict/open"] = predict.NewOpen(o.context, o.PredictOpenHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/reset"] = predict.NewReset(o.context, o.PredictResetHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/urls"] = predict.NewUrls(o.context, o.PredictUrlsHandler)
 
 }
 

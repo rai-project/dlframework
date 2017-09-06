@@ -47,14 +47,13 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 	}, nil
 }
 
-// Image method receives a stream of urls and runs
-// the predictor on all the urls. The
-//
-// The result is a prediction feature stream for each url.
-func (p *Agent) URLs(req *dl.URLsRequest, resp dl.Predictor_URLsServer) error {
-	ctx := resp.Context()
+// Opens a predictor and returns an id where the predictor
+	// is accessible. The id can be used to perform inference
+	// requests.
+  func (p *Agent) Open(context.Context, req *dl.PredictorOpenRequest) (*dl.Predictor, error) {
 
-	_, model, err := p.FindFrameworkModel(ctx, req.GetOptions())
+
+	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -62,13 +61,27 @@ func (p *Agent) URLs(req *dl.URLsRequest, resp dl.Predictor_URLsServer) error {
 	predictor, err := p.predictor.Load(ctx, *model)
 	if err != nil {
 		return err
-	}
-	defer predictor.Close()
-	if err := predictor.Download(ctx); err != nil {
-		return err
-	}
+  }
+
+  return nil, nil
+  }
+
+	// Close a predictor clear it's memory.
+  func (p *Agent) Close(context.Context, *dl.Predictor) (*dl.PredictorCloseResponse, error) {
+return nil, nil
+  }
+
+// Image method receives a stream of urls and runs
+// the predictor on all the urls. The
+//
+// The result is a prediction feature stream for each url.
+func (p *Agent) URLs(req *dl.URLsRequest, resp dl.Predictor_URLsServer) error {
+	ctx := resp.Context()
+
+	chain := flow.New(ctx).Then(URLRead{}).Then(DecodeImage{}).Then(Preprocess{})
 
 	return nil
+
 }
 
 // Image method receives a list base64 encoded images and runs
@@ -87,11 +100,9 @@ func (p *Agent) Dataset(*dl.DatasetRequest, dl.Predictor_DatasetServer) error {
 
 }
 
-// Dataset method receives a single dataset and runs
-// the predictor on all elements of the dataset.
-//
-// The result is a prediction feature stream.
-func (p *Agent) Clear(context.Context, *dl.ClearRequest) (*dl.ClearResponse, error) {
+// Clear method clears the internal cache of the predictors
+func (p *Agent) Reset(dl.context.Context, *dl.ResetRequest) (*dl.ResetResponse, error)
+ {
 
 }
 
@@ -153,7 +164,7 @@ func (p *Agent) Clear(context.Context, *dl.ClearRequest) (*dl.ClearResponse, err
 // 	}, nil
 // }
 
-func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictionOptions) (*dl.FrameworkManifest, *dl.ModelManifest, error) {
+func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.FrameworkManifest, *dl.ModelManifest, error) {
 	framework, err := dl.FindFramework(req.GetFrameworkName() + ":" + req.GetFrameworkVersion())
 	if err != nil {
 		return nil, nil, err

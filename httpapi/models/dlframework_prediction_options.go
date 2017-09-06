@@ -20,31 +20,11 @@ type DlframeworkPredictionOptions struct {
 	// feature limit
 	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
-	// framework name
-	FrameworkName string `json:"framework_name,omitempty"`
-
-	// framework version
-	FrameworkVersion string `json:"framework_version,omitempty"`
-
-	// model name
-	ModelName string `json:"model_name,omitempty"`
-
-	// model version
-	ModelVersion string `json:"model_version,omitempty"`
-
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }
 
 /* polymorph dlframeworkPredictionOptions feature_limit false */
-
-/* polymorph dlframeworkPredictionOptions framework_name false */
-
-/* polymorph dlframeworkPredictionOptions framework_version false */
-
-/* polymorph dlframeworkPredictionOptions model_name false */
-
-/* polymorph dlframeworkPredictionOptions model_version false */
 
 /* polymorph dlframeworkPredictionOptions request_id false */
 

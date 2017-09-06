@@ -24,11 +24,16 @@ type DlframeworkImagesRequest struct {
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
+
+	// predictor
+	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
 
 /* polymorph dlframeworkImagesRequest images false */
 
 /* polymorph dlframeworkImagesRequest options false */
+
+/* polymorph dlframeworkImagesRequest predictor false */
 
 // Validate validates this dlframework images request
 func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
@@ -40,6 +45,11 @@ func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validatePredictor(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -88,6 +98,25 @@ func (m *DlframeworkImagesRequest) validateOptions(formats strfmt.Registry) erro
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkImagesRequest) validatePredictor(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Predictor) { // not required
+		return nil
+	}
+
+	if m.Predictor != nil {
+
+		if err := m.Predictor.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("predictor")
 			}
 			return err
 		}

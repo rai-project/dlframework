@@ -22,15 +22,15 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/predict/clear": {
+    "/v1/predict/close": {
       "post": {
-        "summary": "Clear method clears the internal cache of the predictors",
-        "operationId": "Clear",
+        "summary": "Close a predictor clear it's memory.",
+        "operationId": "Close",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkClearResponse"
+              "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
           }
         },
@@ -40,12 +40,12 @@ const (
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkClearRequest"
+              "$ref": "#/definitions/dlframeworkPredictor"
             }
           }
         ],
         "tags": [
-          "Predictor"
+          "Predict"
         ]
       }
     },
@@ -73,7 +73,7 @@ const (
           }
         ],
         "tags": [
-          "Predictor"
+          "Predict"
         ]
       }
     },
@@ -101,7 +101,61 @@ const (
           }
         ],
         "tags": [
-          "Predictor"
+          "Predict"
+        ]
+      }
+    },
+    "/v1/predict/open": {
+      "post": {
+        "summary": "Opens a predictor and returns an id where the predictor\nis accessible. The id can be used to perform inference\nrequests.",
+        "operationId": "Open",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictor"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkPredictorOpenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
+    "/v1/predict/reset": {
+      "post": {
+        "summary": "Clear method clears the internal cache of the predictors",
+        "operationId": "Reset",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkResetResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkResetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
         ]
       }
     },
@@ -129,7 +183,7 @@ const (
           }
         ],
         "tags": [
-          "Predictor"
+          "Predict"
         ]
       }
     },
@@ -369,25 +423,6 @@ const (
         }
       }
     },
-    "dlframeworkClearRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
-    },
-    "dlframeworkClearResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkContainerHardware": {
       "type": "object",
       "properties": {
@@ -402,6 +437,9 @@ const (
     "dlframeworkDatasetRequest": {
       "type": "object",
       "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
         "dataset": {
           "$ref": "#/definitions/DatasetRequestDataset"
         },
@@ -477,6 +515,9 @@ const (
     "dlframeworkImagesRequest": {
       "type": "object",
       "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
         "images": {
           "type": "array",
           "items": {
@@ -595,6 +636,26 @@ const (
         "request_id": {
           "type": "string"
         },
+        "feature_limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "dlframeworkPredictor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictorCloseResponse": {
+      "type": "object"
+    },
+    "dlframeworkPredictorOpenRequest": {
+      "type": "object",
+      "properties": {
         "model_name": {
           "type": "string"
         },
@@ -606,16 +667,34 @@ const (
         },
         "framework_version": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkResetRequest": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         },
-        "feature_limit": {
-          "type": "integer",
-          "format": "int32"
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkResetResponse": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
     "dlframeworkURLsRequest": {
       "type": "object",
       "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
         "urls": {
           "type": "array",
           "items": {
