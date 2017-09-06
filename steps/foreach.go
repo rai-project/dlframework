@@ -12,14 +12,10 @@ type forEach struct {
 	f func(in interface{}) interface{}
 }
 
-func NewForEach(ctx context.Context, f func(in interface{}) interface{}) (pipeline.Step, error) {
+func NewForEach(f func(in interface{}) interface{}) (pipeline.Step, error) {
 	return forEach{
 		f: f,
 	}, nil
-}
-
-func (p forEach) New(ctx context.Context) (pipeline.Step, error) {
-	return p, nil
 }
 
 func (p forEach) Info() string {
@@ -29,7 +25,7 @@ func (p forEach) Info() string {
 func (p forEach) do(ctx context.Context, in0 interface{}) interface{} {
 	in, err := toSlice(in0)
 	if err != nil {
-		return errors.Errorf("expecting a slice input for CastToFloat32Slice, but got %v", in0)
+		return errors.Errorf("expecting a slice input for Spread, but got %v", in0)
 	}
 	res := make([]interface{}, len(in))
 	for ii, e := range in {

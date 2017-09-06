@@ -6,7 +6,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-type base struct{}
+type base struct {
+	spreadOutput bool
+}
 
 func (p base) do(ctx context.Context, in0 interface{}) interface{} {
 	return errors.New("the base step is not implemented")
@@ -38,12 +40,21 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				}
 
 				res := p.do(ctx, input)
-
-				if a, ok := org.(IDer); ok {
-					res = NewIDWrapper(a.GetId(), res)
+				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
+					// flatten sequence
+					for _, e := range lst {
+						if a, ok := org.(IDer); ok {
+							e = NewIDWrapper(a.GetId(), e)
+						}
+						out <- e
+					}
+				} else {
+					if a, ok := org.(IDer); ok {
+						res = NewIDWrapper(a.GetId(), res)
+					}
+					out <- res
 				}
 
-				out <- res
 			}
 		}
 	}()

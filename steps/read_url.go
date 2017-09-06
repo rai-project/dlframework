@@ -16,13 +16,8 @@ type readURL struct {
 	base
 }
 
-func NewReadURL(ctx context.Context) (pipeline.Step, error) {
-	var res readURL
-	return res.New(ctx)
-}
-
-func (p readURL) New(ctx context.Context) (pipeline.Step, error) {
-	return p, nil
+func NewReadURL() (pipeline.Step, error) {
+	return readURL{}, nil
 }
 
 func (p readURL) Info() string {

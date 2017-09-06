@@ -11,13 +11,8 @@ type castToFloat32Slice struct {
 	base
 }
 
-func NewCastToFloat32Slice(ctx context.Context) (pipeline.Step, error) {
-	var res castToFloat32Slice
-	return res.New(ctx)
-}
-
-func (p castToFloat32Slice) New(ctx context.Context) (pipeline.Step, error) {
-	return p, nil
+func NewCastToFloat32Slice() (pipeline.Step, error) {
+	return castToFloat32Slice{}, nil
 }
 
 func (p castToFloat32Slice) Info() string {
