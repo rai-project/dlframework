@@ -72,12 +72,12 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 //
 // The result is a prediction feature stream for each url.
 func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
-	ctx := resp.Context()
+	ctx := svr.Context()
 
 	input := make(chan interface{})
 	go func() {
 		defer close(input)
-		for _, url := range req.GetURLs() {
+		for _, url := range req.GetUrls() {
 			input <- *url
 		}
 	}()
