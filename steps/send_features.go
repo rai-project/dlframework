@@ -5,27 +5,33 @@ import (
 	"io"
 	"net/http"
 
-	"golang.org/x/net/context"
-
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/pipeline"
+	"golang.org/x/net/context"
 )
 
-type readURL struct {
+type sendFeature struct {
 	base
 }
 
-func NewReadURL() pipeline.Step {
-	return readURL{}
+func NewSendFeature() (pipeline.Step, error) {
+	return sendFeature{}, nil
 }
 
-func (p readURL) Info() string {
-	return "ReadURL"
+func (p sendFeature) Info() string {
+	return "SendFeature"
 }
 
-func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
-	in, ok := in0.(dl.URLsRequest_URL)
+func (p sendFeature) do(ctx context.Context, in0 interface{}) interface{} {
+
+	int16 := input
+
+	if a, ok := org.(IDer); ok {
+		in = a.GetData()
+	}
+
+	in, ok := in0.(dl.Features)
 	if !ok {
 		return errors.Errorf("expecting a string for read url Step, but got %v", in0)
 	}

@@ -12,10 +12,10 @@ type forEach struct {
 	f func(in interface{}) interface{}
 }
 
-func NewForEach(f func(in interface{}) interface{}) (pipeline.Step, error) {
+func NewForEach(f func(in interface{}) interface{}) pipeline.Step {
 	return forEach{
 		f: f,
-	}, nil
+	}
 }
 
 func (p forEach) Info() string {

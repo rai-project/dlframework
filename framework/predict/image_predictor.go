@@ -6,7 +6,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
-	"golang.org/x/net/context"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -98,7 +97,7 @@ func (p ImagePredictor) GetImageDimensions() ([]uint32, error) {
 	return dims, nil
 }
 
-func (p ImagePredictor) GetMeanImage(ctx context.Context) ([]float32, error) {
+func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()

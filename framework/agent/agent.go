@@ -2,11 +2,15 @@ package agent
 
 import (
 	"fmt"
+	"sync"
 
 	// _ "github.com/rai-project/dldataset/vision"
+	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
+	"github.com/rai-project/uuid"
 	context "golang.org/x/net/context"
+	"golang.org/x/sync/syncmap"
 
 	"google.golang.org/grpc"
 
@@ -15,12 +19,14 @@ import (
 	"github.com/rai-project/registry"
 
 	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/steps"
 )
 
 type Agent struct {
 	base
-	predictor predict.Predictor
-	options   *Options
+	loadedPredictors syncmap.Map
+	predictor        predict.Predictor
+	options          *Options
 }
 
 func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
@@ -54,17 +60,47 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		return nil, err
 	}
 
-	_, err = p.predictor.Load(ctx, *model)
+	predictor, err = p.predictor.Load(ctx, *model)
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	id := uuid.NewV4()
+	p.loadedPredictors.Store(id, predictor)
+
+	return &dl.Predictor{Id: id}, nil
+}
+
+func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.ImagePredictor, error) {
+
+	val, ok := p.loadedPredictors.Load(id)
+	if !ok {
+		return nil, errors.Errorf("predictor %v was not found", id)
+	}
+
+	predictor, ok := val.(predict.ImagePredictor)
+	if !ok {
+		return nil, errors.Errorf("predictor %v is not a valid image predictor", predictor)
+	}
+
+	return predictor, nil
 }
 
 // Close a predictor clear it's memory.
 func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorCloseResponse, error) {
-	return nil, nil
+
+	id := req.Id
+
+	predictor, err := p.getLoadedPredictor(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	predictor.Close()
+
+	loadedPredictors.Delete(id)
+
+	return &dl.PredictorCloseResponse{}, nil
 }
 
 // Image method receives a stream of urls and runs
@@ -74,6 +110,18 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 	ctx := svr.Context()
 
+	predictorId := req.GetPredictor().GetId()
+
+	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	if err != nil {
+		return err
+	}
+
+	_, model, err := predictor.Info()
+	if err != nil {
+		return err
+	}
+
 	input := make(chan interface{})
 	go func() {
 		defer close(input)
@@ -82,10 +130,41 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 		}
 	}()
 
-	pipeline := pipeline.New(ctx)
-	if pipeline != nil {
+	output := pipeline.New(ctx).
+		Then(steps.NewReadURL()).
+		Then(steps.NewReadImage()).
+		Then(steps.NewPreprocessImage(model)).
+		Then(steps.NewImagePredict(predictor)).
+		Run(input)
 
+	var wg sync.WaitGroup
+
+	for out := range output {
+		if err, ok := out.(error); ok {
+			return err
+		}
+		o, ok := out.(steps.IDer)
+		if !ok {
+			return errors.Errorf("expecting an ider type, but got %v", o)
+		}
+
+		features, ok := o.GetData().([]*Feature)
+		if !ok {
+			return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+		}
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			svr.Send(&dl.FeatureResponse{
+				Id:        uuid.NewV4(),
+				InputId:   o.GetId(),
+				RequestId: "todo-request-id",
+				Features:  features,
+			})
+		}()
 	}
+	wg.Wait()
 
 	return nil
 }

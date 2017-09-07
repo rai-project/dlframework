@@ -11,12 +11,12 @@ type spread struct {
 	base
 }
 
-func NewSpread(f func(in interface{}) interface{}) (pipeline.Step, error) {
+func NewSpread() pipeline.Step {
 	return spread{
 		base: base{
 			spreadOutput: true,
 		},
-	}, nil
+	}
 }
 
 func (p spread) Info() string {

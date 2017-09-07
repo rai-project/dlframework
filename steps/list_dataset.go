@@ -15,16 +15,16 @@ type listDataset struct {
 	dataset  dldataset.Dataset
 }
 
-func NewListDataset(category, name string) (pipeline.Step, error) {
+func NewListDataset(category, name string) pipeline.Step {
 	dataset, err := dldataset.Get(category, name)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 	return listDataset{
 		category: category,
 		name:     name,
 		dataset:  dataset,
-	}, nil
+	}
 }
 
 func (p listDataset) Info() string {
