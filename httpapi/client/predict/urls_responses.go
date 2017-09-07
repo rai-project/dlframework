@@ -44,10 +44,10 @@ func NewUrlsOK() *UrlsOK {
 
 /*UrlsOK handles this case with default header values.
 
-(streaming responses)
+UrlsOK urls o k
 */
 type UrlsOK struct {
-	Payload *models.DlframeworkFeatureResponse
+	Payload *models.DlframeworkFeaturesResponse
 }
 
 func (o *UrlsOK) Error() string {
@@ -56,7 +56,7 @@ func (o *UrlsOK) Error() string {
 
 func (o *UrlsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkFeatureResponse)
+	o.Payload = new(models.DlframeworkFeaturesResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

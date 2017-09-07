@@ -225,6 +225,11 @@ message FeatureResponse {
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
 }
 
+message FeaturesResponse {
+  repeated FeatureResponse responses = 1
+      [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
+}
+
 message ResetRequest {
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
@@ -290,7 +295,7 @@ service Predict {
   // the predictor on all the urls. The
   //
   // The result is a prediction feature stream for each url.
-  rpc URLs(URLsRequest) returns (stream FeatureResponse) {
+  rpc URLs(URLsRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/v1/predict/urls",
       body : "*"
@@ -300,7 +305,7 @@ service Predict {
   // the predictor on all the images.
   //
   // The result is a prediction feature stream for each image.
-  rpc Images(ImagesRequest) returns (stream FeatureResponse) {
+  rpc Images(ImagesRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/v1/predict/images",
       body : "*"
@@ -310,7 +315,7 @@ service Predict {
   // the predictor on all elements of the dataset.
   //
   // The result is a prediction feature stream.
-  rpc Dataset(DatasetRequest) returns (stream FeatureResponse) {
+  rpc Dataset(DatasetRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/v1/predict/dataset",
       body : "*"

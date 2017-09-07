@@ -44,10 +44,10 @@ func NewDatasetOK() *DatasetOK {
 
 /*DatasetOK handles this case with default header values.
 
-(streaming responses)
+DatasetOK dataset o k
 */
 type DatasetOK struct {
-	Payload *models.DlframeworkFeatureResponse
+	Payload *models.DlframeworkFeaturesResponse
 }
 
 func (o *DatasetOK) Error() string {
@@ -56,7 +56,7 @@ func (o *DatasetOK) Error() string {
 
 func (o *DatasetOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkFeatureResponse)
+	o.Payload = new(models.DlframeworkFeaturesResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

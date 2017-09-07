@@ -44,10 +44,10 @@ func NewImagesOK() *ImagesOK {
 
 /*ImagesOK handles this case with default header values.
 
-(streaming responses)
+ImagesOK images o k
 */
 type ImagesOK struct {
-	Payload *models.DlframeworkFeatureResponse
+	Payload *models.DlframeworkFeaturesResponse
 }
 
 func (o *ImagesOK) Error() string {
@@ -56,7 +56,7 @@ func (o *ImagesOK) Error() string {
 
 func (o *ImagesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.DlframeworkFeatureResponse)
+	o.Payload = new(models.DlframeworkFeaturesResponse)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {

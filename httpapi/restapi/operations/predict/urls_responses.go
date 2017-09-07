@@ -16,7 +16,7 @@ import (
 // UrlsOKCode is the HTTP code returned for type UrlsOK
 const UrlsOKCode int = 200
 
-/*UrlsOK (streaming responses)
+/*UrlsOK urls o k
 
 swagger:response urlsOK
 */
@@ -25,7 +25,7 @@ type UrlsOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeaturesResponse `json:"body,omitempty"`
 }
 
 // NewUrlsOK creates UrlsOK with default headers values
@@ -34,13 +34,13 @@ func NewUrlsOK() *UrlsOK {
 }
 
 // WithPayload adds the payload to the urls o k response
-func (o *UrlsOK) WithPayload(payload *models.DlframeworkFeatureResponse) *UrlsOK {
+func (o *UrlsOK) WithPayload(payload *models.DlframeworkFeaturesResponse) *UrlsOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the urls o k response
-func (o *UrlsOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
+func (o *UrlsOK) SetPayload(payload *models.DlframeworkFeaturesResponse) {
 	o.Payload = payload
 }
 

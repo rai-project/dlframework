@@ -16,7 +16,7 @@ import (
 // DatasetOKCode is the HTTP code returned for type DatasetOK
 const DatasetOKCode int = 200
 
-/*DatasetOK (streaming responses)
+/*DatasetOK dataset o k
 
 swagger:response datasetOK
 */
@@ -25,7 +25,7 @@ type DatasetOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeaturesResponse `json:"body,omitempty"`
 }
 
 // NewDatasetOK creates DatasetOK with default headers values
@@ -34,13 +34,13 @@ func NewDatasetOK() *DatasetOK {
 }
 
 // WithPayload adds the payload to the dataset o k response
-func (o *DatasetOK) WithPayload(payload *models.DlframeworkFeatureResponse) *DatasetOK {
+func (o *DatasetOK) WithPayload(payload *models.DlframeworkFeaturesResponse) *DatasetOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the dataset o k response
-func (o *DatasetOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
+func (o *DatasetOK) SetPayload(payload *models.DlframeworkFeaturesResponse) {
 	o.Payload = payload
 }
 

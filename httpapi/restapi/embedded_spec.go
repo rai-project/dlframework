@@ -81,9 +81,8 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         }
@@ -109,9 +108,8 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         }
@@ -189,9 +187,8 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         }
@@ -475,6 +472,17 @@ func init() {
         },
         "request_id": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkFeaturesResponse": {
+      "type": "object",
+      "properties": {
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFeatureResponse"
+          }
         }
       }
     },

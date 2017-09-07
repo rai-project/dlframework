@@ -16,7 +16,7 @@ import (
 // ImagesOKCode is the HTTP code returned for type ImagesOK
 const ImagesOKCode int = 200
 
-/*ImagesOK (streaming responses)
+/*ImagesOK images o k
 
 swagger:response imagesOK
 */
@@ -25,7 +25,7 @@ type ImagesOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DlframeworkFeatureResponse `json:"body,omitempty"`
+	Payload *models.DlframeworkFeaturesResponse `json:"body,omitempty"`
 }
 
 // NewImagesOK creates ImagesOK with default headers values
@@ -34,13 +34,13 @@ func NewImagesOK() *ImagesOK {
 }
 
 // WithPayload adds the payload to the images o k response
-func (o *ImagesOK) WithPayload(payload *models.DlframeworkFeatureResponse) *ImagesOK {
+func (o *ImagesOK) WithPayload(payload *models.DlframeworkFeaturesResponse) *ImagesOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the images o k response
-func (o *ImagesOK) SetPayload(payload *models.DlframeworkFeatureResponse) {
+func (o *ImagesOK) SetPayload(payload *models.DlframeworkFeaturesResponse) {
 	o.Payload = payload
 }
 

@@ -122,7 +122,7 @@ func request_Predict_Close_0(ctx context.Context, marshaler runtime.Marshaler, c
 
 }
 
-func request_Predict_URLs_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (Predict_URLsClient, runtime.ServerMetadata, error) {
+func request_Predict_URLs_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq URLsRequest
 	var metadata runtime.ServerMetadata
 
@@ -130,20 +130,12 @@ func request_Predict_URLs_0(ctx context.Context, marshaler runtime.Marshaler, cl
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.URLs(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.URLs(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
-func request_Predict_Images_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (Predict_ImagesClient, runtime.ServerMetadata, error) {
+func request_Predict_Images_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ImagesRequest
 	var metadata runtime.ServerMetadata
 
@@ -151,20 +143,12 @@ func request_Predict_Images_0(ctx context.Context, marshaler runtime.Marshaler, 
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.Images(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.Images(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
-func request_Predict_Dataset_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (Predict_DatasetClient, runtime.ServerMetadata, error) {
+func request_Predict_Dataset_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DatasetRequest
 	var metadata runtime.ServerMetadata
 
@@ -172,16 +156,8 @@ func request_Predict_Dataset_0(ctx context.Context, marshaler runtime.Marshaler,
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	stream, err := client.Dataset(ctx, &protoReq)
-	if err != nil {
-		return nil, metadata, err
-	}
-	header, err := stream.Header()
-	if err != nil {
-		return nil, metadata, err
-	}
-	metadata.HeaderMD = header
-	return stream, metadata, nil
+	msg, err := client.Dataset(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
 
 }
 
@@ -480,7 +456,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 			return
 		}
 
-		forward_Predict_URLs_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_Predict_URLs_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -509,7 +485,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 			return
 		}
 
-		forward_Predict_Images_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_Predict_Images_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -538,7 +514,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 			return
 		}
 
-		forward_Predict_Dataset_0(ctx, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+		forward_Predict_Dataset_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -593,11 +569,11 @@ var (
 
 	forward_Predict_Close_0 = runtime.ForwardResponseMessage
 
-	forward_Predict_URLs_0 = runtime.ForwardResponseStream
+	forward_Predict_URLs_0 = runtime.ForwardResponseMessage
 
-	forward_Predict_Images_0 = runtime.ForwardResponseStream
+	forward_Predict_Images_0 = runtime.ForwardResponseMessage
 
-	forward_Predict_Dataset_0 = runtime.ForwardResponseStream
+	forward_Predict_Dataset_0 = runtime.ForwardResponseMessage
 
 	forward_Predict_Reset_0 = runtime.ForwardResponseMessage
 )

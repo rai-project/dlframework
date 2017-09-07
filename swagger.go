@@ -56,9 +56,9 @@ const (
         "operationId": "Dataset",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         },
@@ -84,9 +84,9 @@ const (
         "operationId": "Images",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         },
@@ -166,9 +166,9 @@ const (
         "operationId": "URLs",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "",
             "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         },
@@ -480,6 +480,17 @@ const (
           "type": "array",
           "items": {
             "$ref": "#/definitions/dlframeworkFeature"
+          }
+        }
+      }
+    },
+    "dlframeworkFeaturesResponse": {
+      "type": "object",
+      "properties": {
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFeatureResponse"
           }
         }
       }
