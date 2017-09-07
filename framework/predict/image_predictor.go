@@ -15,8 +15,8 @@ type ImagePredictor struct {
 	WorkDir string
 }
 
-func (p Base) GetFramework() (dlframework.FrameworkManifest, error) {
-	return p.Framework, nil
+func (p Base) Info() (dlframework.FrameworkManifest, dlframework.ModelManifest, error) {
+	return p.Framework, p.Model, nil
 }
 
 func (p ImagePredictor) baseURL(model dlframework.ModelManifest) string {
