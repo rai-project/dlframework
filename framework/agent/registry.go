@@ -104,5 +104,5 @@ func (c *Registry) ModelAgents(context.Context, *dl.ModelRequest) (*dl.Agents, e
 // }
 
 func (c *Registry) PublishInRegistery() error {
-	return c.Base.PublishInRegistery("registry")
+	return c.base.PublishInRegistery("registry")
 }

@@ -75,7 +75,7 @@ func (p ImagePredictor) GetMeanPath() string {
 	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
-func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
+func (p ImagePredictor) GetImageDimensions() ([]uint32, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -91,7 +91,7 @@ func (p ImagePredictor) GetImageDimensions() ([]int32, error) {
 		return nil, errors.New("invalid image dimensions")
 	}
 
-	var dims []int32
+	var dims []uint32
 	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
 		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
 	}

@@ -31,12 +31,12 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 	for _, opt := range opts {
 		opt(options)
 	}
-	framework, err := predictor.GetFramework()
+	framework, _, err := predictor.Info()
 	if err != nil {
 		return nil, err
 	}
 	return &Agent{
-		Base: Base{
+		base: base{
 			Framework: framework,
 		},
 		predictor: predictor,
@@ -54,7 +54,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		return nil, err
 	}
 
-	predictor, err := p.predictor.Load(ctx, *model)
+	_, err = p.predictor.Load(ctx, *model)
 	if err != nil {
 		return nil, err
 	}
@@ -83,9 +83,11 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 	}()
 
 	pipeline := pipeline.New(ctx)
+	if pipeline != nil {
+
+	}
 
 	return nil
-
 }
 
 // Image method receives a list base64 encoded images and runs
@@ -253,8 +255,8 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	var grpcServer *grpc.Server
 	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
 	svr := &Registry{
-		Base: Base{
-			Framework: p.Base.Framework,
+		base: base{
+			Framework: p.base.Framework,
 		},
 	}
 	go func() {
@@ -271,7 +273,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 
 func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
 
-	grpcServer := rgrpc.NewServer(dl.PredictorServiceDescription)
+	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription)
 
 	host := fmt.Sprintf("%s:%d", p.options.host, p.options.port)
 	log.Info("registering predictor service at ", host)
@@ -280,10 +282,10 @@ func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
 		utils.Every(
 			registry.Config.Timeout/2,
 			func() {
-				p.Base.PublishInPredictor(host, "predictor")
+				p.base.PublishInPredictor(host, "predictor")
 			},
 		)
 	}()
-	dl.RegisterPredictorServer(grpcServer, p)
+	dl.RegisterPredictServer(grpcServer, p)
 	return grpcServer, nil
 }
