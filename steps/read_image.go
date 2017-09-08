@@ -1,8 +1,14 @@
 package steps
 
 import (
+	"io"
+
+	"github.com/k0kubun/pp"
+
 	"golang.org/x/net/context"
 
+	"github.com/pkg/errors"
+	"github.com/rai-project/image"
 	"github.com/rai-project/pipeline"
 )
 
@@ -21,9 +27,16 @@ func (p readImage) Info() string {
 }
 
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
-	return nil
-}
+	in, ok := in0.(io.Reader)
+	if !ok {
 
-func (p readImage) Close() error {
-	return nil
+		return errors.Errorf("expecting a *bytes.Buffer for read image Step, but got %v", in0)
+	}
+
+	image, err := image.Read(ctx, in)
+	if err != nil {
+		pp.Printf("err = %v", err)
+		return errors.Errorf("unable to read image")
+	}
+	return image
 }

@@ -53,7 +53,7 @@ func TestURLReadImage(t *testing.T) {
 	ctx := context.Background()
 	output := pipeline.New(ctx).
 		Then(NewReadURL()).
-		// Then(NewReadImage()).
+		Then(NewReadImage()).
 		Run(input)
 
 	for out := range output {
