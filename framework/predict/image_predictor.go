@@ -6,9 +6,17 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
+	"github.com/rai-project/image/types"
 	"golang.org/x/net/context"
 	yaml "gopkg.in/yaml.v2"
 )
+
+type PreprocessOptions struct {
+	MeanImage []float32
+	Size      []int
+	Scale     float32
+	ColorMode types.Mode
+}
 
 type ImagePredictor struct {
 	Base

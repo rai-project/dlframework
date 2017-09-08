@@ -6,15 +6,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/rai-project/dlframework"
-	"github.com/rai-project/image/types"
 )
-
-type PreprocessOptions struct {
-	MeanImage []float32
-	Size      []int
-	Scale     float32
-	ColorMode types.Mode
-}
 
 type Predictor interface {
 	// Gets framework and model manifests

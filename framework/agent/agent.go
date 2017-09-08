@@ -131,7 +131,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 
 	output := pipeline.New(ctx).
 		Then(steps.NewReadURL()).
-		Then(steps.NewReadImage()).
+		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewImagePredict(predictor)).
 		Run(input)
@@ -147,12 +147,12 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		}
 		o, ok := out.(steps.IDer)
 		if !ok {
-			return errors.Errorf("expecting an ider type, but got %v", o)
+			return nil, errors.Errorf("expecting an ider type, but got %v", o)
 		}
 
-		features, ok := o.GetData().([]*Feature)
+		features, ok := o.GetData().([]*dl.Feature)
 		if !ok {
-			return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
 		}
 
 		wg.Add(1)
@@ -192,7 +192,7 @@ func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.PreprocessOptions()
+	preprocessOptions, err := predictor.PreprocessOptions(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 	}()
 
 	output := pipeline.New(ctx).
-		Then(steps.NewReadImage()).
+		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewImagePredict(predictor)).
 		Run(input)
@@ -222,12 +222,12 @@ func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 		}
 		o, ok := out.(steps.IDer)
 		if !ok {
-			return errors.Errorf("expecting an ider type, but got %v", o)
+			return nil, errors.Errorf("expecting an ider type, but got %v", o)
 		}
 
-		features, ok := o.GetData().([]*Feature)
+		features, ok := o.GetData().([]*dl.Feature)
 		if !ok {
-			return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
 		}
 
 		wg.Add(1)

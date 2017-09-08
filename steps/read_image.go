@@ -3,20 +3,20 @@ package steps
 import (
 	"io"
 
-	"github.com/k0kubun/pp"
-
 	"golang.org/x/net/context"
 
 	"github.com/pkg/errors"
+	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image"
 	"github.com/rai-project/pipeline"
 )
 
 type readImage struct {
 	base
+	options predict.PreprocessOptions
 }
 
-func NewReadImage() pipeline.Step {
+func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
 	res := readImage{}
 	res.doer = res.do
 	return res
@@ -34,7 +34,6 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 
 	image, err := image.Read(ctx, in)
 	if err != nil {
-		pp.Printf("err = %v", err)
 		return errors.Errorf("unable to read image")
 	}
 
