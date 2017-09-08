@@ -12,7 +12,7 @@ import (
 type PreprocessOptions struct {
 	MeanImage  []float32
 	Size       []int
-	Scale      int
+	Scale      float32
 	ColorSpace types.Mode
 }
 
@@ -21,7 +21,7 @@ type Predictor interface {
 	Info() (dlframework.FrameworkManifest, dlframework.ModelManifest, error)
 	// Load model from manifest
 	Load(ctx context.Context, model dlframework.ModelManifest) (Predictor, error)
-	// Returns the preprocessor options
+	// Returns the preprocess options
 	PreprocessOptions(ctx context.Context) (PreprocessOptions, error)
 	// Returns the features
 	Predict(ctx context.Context, data []float32) (dlframework.Features, error)

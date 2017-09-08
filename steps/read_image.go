@@ -29,8 +29,7 @@ func (p readImage) Info() string {
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 	in, ok := in0.(io.Reader)
 	if !ok {
-
-		return errors.Errorf("expecting a *bytes.Buffer for read image Step, but got %v", in0)
+		return errors.Errorf("expecting a io.Reader for read image step, but got %v", in0)
 	}
 
 	image, err := image.Read(ctx, in)
@@ -38,5 +37,6 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		pp.Printf("err = %v", err)
 		return errors.Errorf("unable to read image")
 	}
+
 	return image
 }
