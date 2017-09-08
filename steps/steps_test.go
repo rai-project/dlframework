@@ -28,7 +28,7 @@ func TestURLRead(t *testing.T) {
 	ctx := context.Background()
 	output := pipeline.New(ctx).
 		Then(NewReadURL()).
-		Run(input)
+		Run(ctx, input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
@@ -38,8 +38,8 @@ func TestURLRead(t *testing.T) {
 
 func TestURLReadImage(t *testing.T) {
 	imgURLs := []string{
-		"https://jpeg.org/images/jpeg-home.jpg",
-		// "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+		// "https://jpeg.org/images/jpeg-home.jpg",
+		"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
 	}
 
 	input := make(chan interface{})
@@ -54,10 +54,10 @@ func TestURLReadImage(t *testing.T) {
 	output := pipeline.New(ctx).
 		Then(NewReadURL()).
 		Then(NewReadImage()).
-		Run(input)
+		Run(ctx, input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
-		assert.IsType(t, types.RGBImage{}, out)
+		assert.IsType(t, &types.RGBImage{}, out)
 	}
 }

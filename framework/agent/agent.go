@@ -54,13 +54,12 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 // is accessible. The id can be used to perform inference
 // requests.
 func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Predictor, error) {
-
 	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	predictor, err = p.predictor.Load(ctx, *model)
+	predictor, err := p.predictor.Load(ctx, *model)
 	if err != nil {
 		return nil, err
 	}
@@ -71,16 +70,15 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	return &dl.Predictor{Id: id}, nil
 }
 
-func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.ImagePredictor, error) {
-
+func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.ImagePredictor, error) {
 	val, ok := p.loadedPredictors.Load(id)
 	if !ok {
-		return nil, errors.Errorf("predictor %v was not found", id)
+		return predict.ImagePredictor{}, errors.Errorf("predictor %v was not found", id)
 	}
 
 	predictor, ok := val.(predict.ImagePredictor)
 	if !ok {
-		return nil, errors.Errorf("predictor %v is not a valid image predictor", predictor)
+		return predict.ImagePredictor{}, errors.Errorf("predictor %v is not a valid image predictor", predictor)
 	}
 
 	return predictor, nil
@@ -88,15 +86,13 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.Im
 
 // Close a predictor clear it's memory.
 func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorCloseResponse, error) {
-
 	id := req.Id
-
 	predictor, err := p.getLoadedPredictor(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	predictor.Close()
+	predictor.Reset()
 
 	loadedPredictors.Delete(id)
 
@@ -143,9 +139,9 @@ func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error
 		Run(input)
 
 	var wg sync.WaitGroup
-  var mutex sync.Mutex
+	var mutex sync.Mutex
 
-  res := &dl.FeaturesResponse{}
+	res := &dl.FeaturesResponse{}
 
 	for out := range output {
 		if err, ok := out.(error); ok {
@@ -163,15 +159,15 @@ func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error
 
 		wg.Add(1)
 		go func() {
-      defer wg.Done()
-      mutex.Lock()
-      defer mutex.Unlock()
+			defer wg.Done()
+			mutex.Lock()
+			defer mutex.Unlock()
 			res.Responses = append(res.Responses, &dl.FeatureResponse{
 				Id:        uuid.NewV4(),
 				InputId:   o.GetId(),
 				RequestId: "todo-request-id",
 				Features:  features,
-			}))
+			})
 		}()
 	}
 	wg.Wait()
@@ -186,72 +182,72 @@ func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error
 func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 	ctx := svr.Context()
 
-    predictorId := req.GetPredictor().GetId()
+	predictorId := req.GetPredictor().GetId()
 
-    predictor, err := p.getLoadedPredictor(ctx, predictorId)
-    if err != nil {
-      return nil, err
-    }
+	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	if err != nil {
+		return nil, err
+	}
 
-    _, model, err := predictor.Info()
-    if err != nil {
-      return nil, err
-    }
+	_, model, err := predictor.Info()
+	if err != nil {
+		return nil, err
+	}
 
-    preprocessOptions, err := predictor.PreprocessOptions()
-    if err != nil {
-      return nil, err
-    }
+	preprocessOptions, err := predictor.PreprocessOptions()
+	if err != nil {
+		return nil, err
+	}
 
-    input := make(chan interface{})
-    go func() {
-      defer close(input)
-      for _, img := range req.GetImages() {
-        input <- *img
-      }
-    }()
+	input := make(chan interface{})
+	go func() {
+		defer close(input)
+		for _, img := range req.GetImages() {
+			input <- *img
+		}
+	}()
 
-    output := pipeline.New(ctx).
-      Then(steps.NewReadImage()).
-      Then(steps.NewPreprocessImage(preprocessOptions)).
-      Then(steps.NewImagePredict(predictor)).
-      Run(input)
+	output := pipeline.New(ctx).
+		Then(steps.NewReadImage()).
+		Then(steps.NewPreprocessImage(preprocessOptions)).
+		Then(steps.NewImagePredict(predictor)).
+		Run(input)
 
-    var wg sync.WaitGroup
-    var mutex sync.Mutex
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
 
-    res := &dl.FeaturesResponse{}
+	res := &dl.FeaturesResponse{}
 
-    for out := range output {
-      if err, ok := out.(error); ok {
-        return nil, err
-      }
-      o, ok := out.(steps.IDer)
-      if !ok {
-        return errors.Errorf("expecting an ider type, but got %v", o)
-      }
+	for out := range output {
+		if err, ok := out.(error); ok {
+			return nil, err
+		}
+		o, ok := out.(steps.IDer)
+		if !ok {
+			return errors.Errorf("expecting an ider type, but got %v", o)
+		}
 
-      features, ok := o.GetData().([]*Feature)
-      if !ok {
-        return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
-      }
+		features, ok := o.GetData().([]*Feature)
+		if !ok {
+			return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+		}
 
-      wg.Add(1)
-      go func() {
-        defer wg.Done()
-        mutex.Lock()
-        defer mutex.Unlock()
-        res.Responses = append(res.Responses, &dl.FeatureResponse{
-          Id:        uuid.NewV4(),
-          InputId:   o.GetId(),
-          RequestId: "todo-request-id",
-          Features:  features,
-        }))
-      }()
-    }
-    wg.Wait()
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			mutex.Lock()
+			defer mutex.Unlock()
+			res.Responses = append(res.Responses, &dl.FeatureResponse{
+				Id:        uuid.NewV4(),
+				InputId:   o.GetId(),
+				RequestId: "todo-request-id",
+				Features:  features,
+			})
+		}()
+	}
+	wg.Wait()
 
-    return res, nil
+	return res, nil
 }
 
 // Dataset method receives a single dataset and runs
