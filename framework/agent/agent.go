@@ -107,24 +107,24 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 // the predictor on all the urls. The
 //
 // The result is a prediction feature stream for each url.
-func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
+func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error) {
 	ctx := svr.Context()
 
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	_, model, err := predictor.Info()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	preprocessOptions, err := predictor.PreprocessOptions()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	input := make(chan interface{})
@@ -143,10 +143,13 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 		Run(input)
 
 	var wg sync.WaitGroup
+  var mutex sync.Mutex
+
+  res := &dl.FeaturesResponse{}
 
 	for out := range output {
 		if err, ok := out.(error); ok {
-			return err
+			return nil, err
 		}
 		o, ok := out.(steps.IDer)
 		if !ok {
@@ -160,35 +163,103 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 
 		wg.Add(1)
 		go func() {
-			defer wg.Done()
-			svr.Send(&dl.FeatureResponse{
+      defer wg.Done()
+      mutex.Lock()
+      defer mutex.Unlock()
+			res.Responses = append(res.Responses, &dl.FeatureResponse{
 				Id:        uuid.NewV4(),
 				InputId:   o.GetId(),
 				RequestId: "todo-request-id",
 				Features:  features,
-			})
+			}))
 		}()
 	}
 	wg.Wait()
 
-	return nil
+	return res, nil
 }
 
 // Image method receives a list base64 encoded images and runs
 // the predictor on all the images.
 //
 // The result is a prediction feature stream for each image.
-func (p *Agent) Images(req *dl.ImagesRequest, svr dl.Predict_ImagesServer) error {
-	return nil
+func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
+	ctx := svr.Context()
+
+    predictorId := req.GetPredictor().GetId()
+
+    predictor, err := p.getLoadedPredictor(ctx, predictorId)
+    if err != nil {
+      return nil, err
+    }
+
+    _, model, err := predictor.Info()
+    if err != nil {
+      return nil, err
+    }
+
+    preprocessOptions, err := predictor.PreprocessOptions()
+    if err != nil {
+      return nil, err
+    }
+
+    input := make(chan interface{})
+    go func() {
+      defer close(input)
+      for _, img := range req.GetImages() {
+        input <- *img
+      }
+    }()
+
+    output := pipeline.New(ctx).
+      Then(steps.NewReadImage()).
+      Then(steps.NewPreprocessImage(preprocessOptions)).
+      Then(steps.NewImagePredict(predictor)).
+      Run(input)
+
+    var wg sync.WaitGroup
+    var mutex sync.Mutex
+
+    res := &dl.FeaturesResponse{}
+
+    for out := range output {
+      if err, ok := out.(error); ok {
+        return nil, err
+      }
+      o, ok := out.(steps.IDer)
+      if !ok {
+        return errors.Errorf("expecting an ider type, but got %v", o)
+      }
+
+      features, ok := o.GetData().([]*Feature)
+      if !ok {
+        return errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+      }
+
+      wg.Add(1)
+      go func() {
+        defer wg.Done()
+        mutex.Lock()
+        defer mutex.Unlock()
+        res.Responses = append(res.Responses, &dl.FeatureResponse{
+          Id:        uuid.NewV4(),
+          InputId:   o.GetId(),
+          RequestId: "todo-request-id",
+          Features:  features,
+        }))
+      }()
+    }
+    wg.Wait()
+
+    return res, nil
 }
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
 //
 // The result is a prediction feature stream.
-func (p *Agent) Dataset(req *dl.DatasetRequest, svr dl.Predict_DatasetServer) error {
-
-	return nil
+func (p *Agent) Dataset(req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
+	return nil, nil
 }
 
 // Clear method clears the internal cache of the predictors
