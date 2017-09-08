@@ -122,6 +122,11 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 		return err
 	}
 
+	preprocessOptions, err := predictor.PreprocessOptions()
+	if err != nil {
+		return err
+	}
+
 	input := make(chan interface{})
 	go func() {
 		defer close(input)
@@ -133,7 +138,7 @@ func (p *Agent) URLs(req *dl.URLsRequest, svr dl.Predict_URLsServer) error {
 	output := pipeline.New(ctx).
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage()).
-		Then(steps.NewPreprocessImage(model)).
+		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewImagePredict(predictor)).
 		Run(input)
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
+	"golang.org/x/net/context"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -150,4 +151,8 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	}
 
 	return val, nil
+}
+
+func (p ImagePredictor) PreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
+	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
