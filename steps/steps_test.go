@@ -39,7 +39,7 @@ func TestURLRead(t *testing.T) {
 func TestURLReadImage(t *testing.T) {
 	imgURLs := []string{
 		"https://jpeg.org/images/jpeg-home.jpg",
-		"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+		// "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
 	}
 
 	input := make(chan interface{})
