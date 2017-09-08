@@ -314,13 +314,24 @@ service Predict {
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.
   //
-  // The result is a prediction feature stream.
+  // The result is a prediction feature list.
   rpc Dataset(DatasetRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/v1/predict/dataset",
       body : "*"
     };
   }
+
+  // // Dataset method receives a single dataset and runs
+  // // the predictor on all elements of the dataset.
+  // //
+  // // The result is a prediction feature stream.
+  // rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
+  //   option (google.api.http) = {
+  //     post : "/v1/predict/stream/dataset",
+  //     body : "*"
+  //   };
+  // }
 
   // Clear method clears the internal cache of the predictors
   rpc Reset(ResetRequest) returns (ResetResponse) {
