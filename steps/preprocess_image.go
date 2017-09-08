@@ -46,10 +46,16 @@ func (p preprocessImage) Info() string {
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {
-	in, ok := in0.(*types.RGBImage)
-	if !ok {
-		return errors.Errorf("expecting a predict.PreprocessOptions for preprocess image step, but got %v", in0)
+	switch in0.(type) {
+	case *types.RGBImage:
+		return p.doRGBImage(ctx, in0)
+	case *types.BGRImage:
+		return p.doBGRImage(ctx, in0)
 	}
+	return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
+}
+
+func (p preprocessImage) doRGBImage(ctx context.Context, in *types.RGBImage) interface{} {
 
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
@@ -72,6 +78,39 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {
 					out[y*width+x] = (float32(b) - mean[2]) / scale
 					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
 					out[2*width*height+y*width+x] = (float32(r) - mean[0]) / scale
+				} else {
+					panic("invalid mode in preprocess image step")
+				}
+			}
+		}
+	})
+
+	return out
+}
+
+func (p preprocessImage) doBGRImage(ctx context.Context, in *types.RGBImage) interface{} {
+
+	height := in.Bounds().Dy()
+	width := in.Bounds().Dx()
+	scale := p.options.Scale
+	mode := p.options.ColorMode
+	mean := p.options.MeanImage
+
+	out := make([]float32, 3*height*width)
+	parallel.Line(height, func(start, end int) {
+		for y := start; y < end; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				if mode == types.RGBMode {
+					out[y*width+x] = (float32(b) - mean[0]) / scale
+					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+					out[2*width*height+y*width+x] = (float32(r) - mean[2]) / scale
+				} else if mode == types.BGRMode {
+					out[y*width+x] = (float32(r) - mean[2]) / scale
+					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+					out[2*width*height+y*width+x] = (float32(b) - mean[0]) / scale
 				} else {
 					panic("invalid mode in preprocess image step")
 				}
