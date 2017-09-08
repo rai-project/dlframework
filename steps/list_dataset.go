@@ -20,11 +20,13 @@ func NewListDataset(category, name string) pipeline.Step {
 	if err != nil {
 		panic(err)
 	}
-	return listDataset{
+	res := listDataset{
 		category: category,
 		name:     name,
 		dataset:  dataset,
 	}
+	res.doer = res.do
+	return res
 }
 
 func (p listDataset) Info() string {

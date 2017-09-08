@@ -13,9 +13,11 @@ type forEach struct {
 }
 
 func NewForEach(f func(in interface{}) interface{}) pipeline.Step {
-	return forEach{
+	res := forEach{
 		f: f,
 	}
+	res.doer = res.do
+	return res
 }
 
 func (p forEach) Info() string {

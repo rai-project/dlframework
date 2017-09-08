@@ -11,7 +11,9 @@ type asRGBImage struct {
 }
 
 func NewAsRGBImage() pipeline.Step {
-	return asRGBImage{}
+	res := asRGBImage{}
+	res.doer = res.do
+	return res
 }
 
 func (p asRGBImage) Info() string {

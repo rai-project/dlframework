@@ -11,7 +11,9 @@ type readImage struct {
 }
 
 func NewReadImage() pipeline.Step {
-	return readImage{}
+	res := readImage{}
+	res.doer = res.do
+	return res
 }
 
 func (p readImage) Info() string {
@@ -22,6 +24,6 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 	return nil
 }
 
-func (p readURL) Close() error {
+func (p readImage) Close() error {
 	return nil
 }

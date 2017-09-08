@@ -11,7 +11,9 @@ type asBGRImage struct {
 }
 
 func NewAsBGRImage() pipeline.Step {
-	return asBGRImage{}
+	res := asBGRImage{}
+	res.doer = res.do
+	return res
 }
 
 func (p asBGRImage) Info() string {

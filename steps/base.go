@@ -2,16 +2,11 @@ package steps
 
 import (
 	"golang.org/x/net/context"
-
-	"github.com/pkg/errors"
 )
 
 type base struct {
 	spreadOutput bool
-}
-
-func (p base) do(ctx context.Context, in0 interface{}) interface{} {
-	return errors.New("the base step is not implemented")
+	doer         func(ctx context.Context, in0 interface{}) interface{}
 }
 
 func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}) {
@@ -25,6 +20,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				// }
 				return
 			case input, open := <-in:
+				// pp.Printf("input = %v, open = %v\n", input, open)
 				if !open {
 					return
 				}
@@ -39,7 +35,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 					input = a.GetData()
 				}
 
-				res := p.do(ctx, input)
+				res := p.doer(ctx, input)
 				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
 					// flatten sequence
 					for _, e := range lst {
@@ -58,4 +54,8 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 			}
 		}
 	}()
+}
+
+func (p base) Close() error {
+	return nil
 }

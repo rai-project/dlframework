@@ -13,7 +13,9 @@ type preprocessImage struct {
 }
 
 func NewPreprocessImage() pipeline.Step {
-	return preprocessImage{}
+	res := preprocessImage{}
+	res.doer = res.do
+	return res
 }
 
 func (p preprocessImage) Info() string {

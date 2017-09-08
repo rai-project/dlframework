@@ -17,7 +17,9 @@ type readURL struct {
 }
 
 func NewReadURL() pipeline.Step {
-	return readURL{}
+	res := readURL{}
+	res.doer = res.do
+	return res
 }
 
 func (p readURL) Info() string {
@@ -26,11 +28,11 @@ func (p readURL) Info() string {
 
 func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
 	url := ""
-	switch in0.(type) {
+	switch in := in0.(type) {
 	case string:
-		url = s
+		url = in
 	case dl.URLsRequest_URL:
-		url = in.GetUrl()
+		url = in.GetData()
 	default:
 		return errors.Errorf("expecting a string for read url Step, but got %v", in0)
 	}
@@ -50,8 +52,4 @@ func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.Errorf("unable to copy body")
 	}
 	return res
-}
-
-func (p readURL) Close() error {
-	return nil
 }
