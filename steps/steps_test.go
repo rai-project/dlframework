@@ -29,7 +29,7 @@ func TestURLRead(t *testing.T) {
 	ctx := context.Background()
 	output := pipeline.New(ctx).
 		Then(NewReadURL()).
-		Run(ctx, input)
+		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
@@ -55,7 +55,7 @@ func TestURLReadImage(t *testing.T) {
 	output := pipeline.New(ctx).
 		Then(NewReadURL()).
 		Then(NewReadImage()).
-		Run(ctx, input)
+		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
@@ -82,7 +82,7 @@ func TestURLReadPreprocessImage(t *testing.T) {
 		Then(NewReadURL()).
 		Then(NewReadImage()).
 		Then(NewPreprocessImage(predict.PreprocessOptions{})).
-		Run(ctx, input)
+		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)

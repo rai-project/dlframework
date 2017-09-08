@@ -156,3 +156,7 @@ func (p ImagePredictor) GetScale() (float32, error) {
 func (p ImagePredictor) PreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
 	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
+
+func (p ImagePredictor) Reset(ctx context.Context) error {
+	return nil
+}

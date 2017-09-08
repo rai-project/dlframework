@@ -92,9 +92,9 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 		return nil, err
 	}
 
-	predictor.Reset()
+	predictor.Reset(ctx)
 
-	loadedPredictors.Delete(id)
+	p.loadedPredictors.Delete(id)
 
 	return &dl.PredictorCloseResponse{}, nil
 }
@@ -103,9 +103,7 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 // the predictor on all the urls. The
 //
 // The result is a prediction feature stream for each url.
-func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error) {
-	ctx := svr.Context()
-
+func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
@@ -118,7 +116,7 @@ func (p *Agent) URLs(context.Context, *URLsRequest) (*dl.FeaturesResponse, error
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.PreprocessOptions()
+	preprocessOptions, err := predictor.PreprocessOptions(ctx)
 	if err != nil {
 		return nil, err
 	}
