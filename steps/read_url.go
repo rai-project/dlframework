@@ -25,11 +25,17 @@ func (p readURL) Info() string {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
-	in, ok := in0.(dl.URLsRequest_URL)
-	if !ok {
+	url := ""
+	switch in0.(type) {
+	case string:
+		url = s
+	case dl.URLsRequest_URL:
+		url = in.GetUrl()
+	default:
 		return errors.Errorf("expecting a string for read url Step, but got %v", in0)
 	}
-	resp, err := http.Get(in.GetUrl())
+
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
