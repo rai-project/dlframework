@@ -32,7 +32,17 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.Errorf("expecting a io.Reader for read image step, but got %v", in0)
 	}
 
-	image, err := image.Read(ctx, in)
+	width, height := 0, 0
+	if len(options.Size) == 1 {
+		width = options.Size[0]
+		height = options.Size[0]
+	}
+	if len(options.Size) > 1 {
+		width = options.Size[0]
+		height = options.Size[1]
+	}
+
+	image, err := image.Read(in, image.Resize(width, height))
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}
