@@ -17,11 +17,11 @@ import (
 
 type ImagesRequestImage struct {
 
+	// The image is base64 encoded
+	Data strfmt.Base64 `json:"data,omitempty"`
+
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
-
-	// The image is base64 encoded
-	Image strfmt.Base64 `json:"image,omitempty"`
 
 	// Preprocessed is set to true to disable preprocessing.
 	// If enabled then the image is assumed to be rescaled and
@@ -29,9 +29,9 @@ type ImagesRequestImage struct {
 	Preprocessed bool `json:"preprocessed,omitempty"`
 }
 
-/* polymorph ImagesRequestImage id false */
+/* polymorph ImagesRequestImage data false */
 
-/* polymorph ImagesRequestImage image false */
+/* polymorph ImagesRequestImage id false */
 
 /* polymorph ImagesRequestImage preprocessed false */
 

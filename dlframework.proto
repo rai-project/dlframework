@@ -166,7 +166,7 @@ message URLsRequest {
   message URL {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-    string url = 2 [ (gogoproto.moretags) = "yaml:\"url,omitempty\"" ];
+    string data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   }
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
@@ -180,7 +180,7 @@ message ImagesRequest {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
     // The image is base64 encoded
-    bytes image = 2 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+    bytes data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
     // Preprocessed is set to true to disable preprocessing.
     // If enabled then the image is assumed to be rescaled and
     // encoded as an array of float32 values

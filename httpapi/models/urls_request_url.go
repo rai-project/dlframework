@@ -17,16 +17,16 @@ import (
 
 type UrlsRequestURL struct {
 
+	// data
+	Data string `json:"data,omitempty"`
+
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
-
-	// url
-	URL string `json:"url,omitempty"`
 }
 
-/* polymorph URLsRequestURL id false */
+/* polymorph URLsRequestURL data false */
 
-/* polymorph URLsRequestURL url false */
+/* polymorph URLsRequestURL id false */
 
 // Validate validates this urls request URL
 func (m *UrlsRequestURL) Validate(formats strfmt.Registry) error {

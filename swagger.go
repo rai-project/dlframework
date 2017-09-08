@@ -52,7 +52,7 @@ const (
     "/v1/predict/dataset": {
       "post": {
         "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
-        "description": "The result is a prediction feature stream.",
+        "description": "The result is a prediction feature list.",
         "operationId": "Dataset",
         "responses": {
           "200": {
@@ -351,7 +351,7 @@ const (
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
         },
-        "image": {
+        "data": {
           "type": "string",
           "format": "byte",
           "title": "The image is base64 encoded"
@@ -396,7 +396,7 @@ const (
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
         },
-        "url": {
+        "data": {
           "type": "string"
         }
       }

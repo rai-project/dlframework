@@ -63,7 +63,7 @@ func init() {
     },
     "/v1/predict/dataset": {
       "post": {
-        "description": "The result is a prediction feature stream.",
+        "description": "The result is a prediction feature list.",
         "tags": [
           "Predict"
         ],
@@ -338,14 +338,14 @@ func init() {
     "ImagesRequestImage": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "title": "An id used to identify the output feature: maps to input_id for output"
-        },
-        "image": {
+        "data": {
           "type": "string",
           "format": "byte",
           "title": "The image is base64 encoded"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
         },
         "preprocessed": {
           "type": "boolean",
@@ -383,12 +383,12 @@ func init() {
     "URLsRequestURL": {
       "type": "object",
       "properties": {
+        "data": {
+          "type": "string"
+        },
         "id": {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
-        },
-        "url": {
-          "type": "string"
         }
       }
     },

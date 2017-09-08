@@ -55,7 +55,7 @@ func (a *Client) Close(params *CloseParams) (*CloseOK, error) {
 /*
 Dataset datasets method receives a single dataset and runs the predictor on all elements of the dataset
 
-The result is a prediction feature stream.
+The result is a prediction feature list.
 */
 func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	// TODO: Validate the params before sending
