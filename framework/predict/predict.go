@@ -10,10 +10,10 @@ import (
 )
 
 type PreprocessOptions struct {
-	MeanImage  []float32
-	Size       []int
-	Scale      float32
-	ColorSpace types.Mode
+	MeanImage []float32
+	Size      []int
+	Scale     float32
+	ColorMode types.Mode
 }
 
 type Predictor interface {
