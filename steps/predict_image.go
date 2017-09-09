@@ -3,6 +3,7 @@ package steps
 import (
 	"golang.org/x/net/context"
 
+	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/pipeline"
 )
@@ -25,6 +26,11 @@ func (p predictImage) Info() string {
 }
 
 func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {
+	in, ok := in0.([]float32)
+	if !ok {
+		return errors.Errorf("expecting []float32 for predict image step, but got %v", in0)
+	}
+
 	return nil
 }
 

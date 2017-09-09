@@ -133,7 +133,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Then(steps.NewImagePredict(predictor)).
+		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
 	var wg sync.WaitGroup

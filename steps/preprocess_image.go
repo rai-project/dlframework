@@ -46,11 +46,11 @@ func (p preprocessImage) Info() string {
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {
-	switch in0.(type) {
+	switch in := in0.(type) {
 	case *types.RGBImage:
-		return p.doRGBImage(ctx, in0)
+		return p.doRGBImage(ctx, in)
 	case *types.BGRImage:
-		return p.doBGRImage(ctx, in0)
+		return p.doBGRImage(ctx, in)
 	}
 	return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 }
@@ -88,7 +88,7 @@ func (p preprocessImage) doRGBImage(ctx context.Context, in *types.RGBImage) int
 	return out
 }
 
-func (p preprocessImage) doBGRImage(ctx context.Context, in *types.RGBImage) interface{} {
+func (p preprocessImage) doBGRImage(ctx context.Context, in *types.BGRImage) interface{} {
 
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
