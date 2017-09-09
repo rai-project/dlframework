@@ -168,3 +168,7 @@ func (p ImagePredictor) PreprocessOptions(ctx context.Context) (PreprocessOption
 func (p ImagePredictor) Reset(ctx context.Context) error {
 	return nil
 }
+
+func (p ImagePredictor) Close() error {
+	return nil
+}

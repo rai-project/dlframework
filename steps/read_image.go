@@ -33,16 +33,16 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 	}
 
 	width, height := 0, 0
-	if len(options.Size) == 1 {
-		width = options.Size[0]
-		height = options.Size[0]
+	if len(p.options.Size) == 1 {
+		width = p.options.Size[0]
+		height = p.options.Size[0]
 	}
-	if len(options.Size) > 1 {
-		width = options.Size[0]
-		height = options.Size[1]
+	if len(p.options.Size) > 1 {
+		width = p.options.Size[0]
+		height = p.options.Size[1]
 	}
 
-	image, err := image.Read(in, image.Resize(width, height))
+	image, err := image.Read(in, image.Resized(width, height))
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}

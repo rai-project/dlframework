@@ -70,15 +70,15 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	return &dl.Predictor{Id: id}, nil
 }
 
-func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.ImagePredictor, error) {
+func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Predictor, error) {
 	val, ok := p.loadedPredictors.Load(id)
 	if !ok {
-		return predict.ImagePredictor{}, errors.Errorf("predictor %v was not found", id)
+		return nil, errors.Errorf("predictor %v was not found", id)
 	}
 
-	predictor, ok := val.(predict.ImagePredictor)
+	predictor, ok := val.(predict.Predictor)
 	if !ok {
-		return predict.ImagePredictor{}, errors.Errorf("predictor %v is not a valid image predictor", predictor)
+		return nil, errors.Errorf("predictor %v is not a valid image predictor", predictor)
 	}
 
 	return predictor, nil
@@ -107,11 +107,6 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
-	if err != nil {
-		return nil, err
-	}
-
-	_, model, err := predictor.Info()
 	if err != nil {
 		return nil, err
 	}
@@ -177,17 +172,11 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 // the predictor on all the images.
 //
 // The result is a prediction feature stream for each image.
-func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
-	ctx := svr.Context()
+func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
-	if err != nil {
-		return nil, err
-	}
-
-	_, model, err := predictor.Info()
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +197,7 @@ func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 	output := pipeline.New(ctx).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Then(steps.NewImagePredict(predictor)).
+		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
 	var wg sync.WaitGroup
@@ -252,7 +241,7 @@ func (p *Agent) Images(req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 // the predictor on all elements of the dataset.
 //
 // The result is a prediction feature stream.
-func (p *Agent) Dataset(req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
+func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
 	return nil, nil
 }
 
