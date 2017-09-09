@@ -30,6 +30,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 	if options.ColorMode != 0 {
 		mode = options.ColorMode
 	}
+
 	res.options = predict.PreprocessOptions{
 		MeanImage: mean,
 		Scale:     scale,
@@ -56,7 +57,6 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {
 }
 
 func (p preprocessImage) doRGBImage(ctx context.Context, in *types.RGBImage) interface{} {
-
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	scale := p.options.Scale
@@ -89,7 +89,6 @@ func (p preprocessImage) doRGBImage(ctx context.Context, in *types.RGBImage) int
 }
 
 func (p preprocessImage) doBGRImage(ctx context.Context, in *types.BGRImage) interface{} {
-
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	scale := p.options.Scale
