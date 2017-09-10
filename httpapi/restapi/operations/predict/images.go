@@ -34,7 +34,7 @@ func NewImages(ctx *middleware.Context, handler ImagesHandler) *Images {
 Image method receives a list base64 encoded images and runs
 the predictor on all the images.
 
-The result is a prediction feature stream for each image.
+The result is a prediction feature list for each image.
 
 */
 type Images struct {

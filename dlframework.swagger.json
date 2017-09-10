@@ -77,7 +77,7 @@
     "/v1/predict/images": {
       "post": {
         "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
-        "description": "The result is a prediction feature stream for each image.",
+        "description": "The result is a prediction feature list for each image.",
         "operationId": "Images",
         "responses": {
           "200": {
@@ -148,6 +148,90 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/dlframeworkResetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
+    "/v1/predict/stream/dataset": {
+      "post": {
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "description": "The result is a prediction feature stream.",
+        "operationId": "DatasetStream",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkDatasetRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
+    "/v1/predict/stream/images": {
+      "post": {
+        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "description": "The result is a prediction feature stream for each image.",
+        "operationId": "ImagesStream",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkImagesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
+    "/v1/predict/stream/urls": {
+      "post": {
+        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "description": "The result is a prediction feature stream for each url.",
+        "operationId": "URLsStream",
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkURLsRequest"
             }
           }
         ],

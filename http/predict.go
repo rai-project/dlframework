@@ -9,16 +9,50 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
+	"github.com/rai-project/dlframework/httpapi/client/predict"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predictor"
 	"github.com/rai-project/grpc"
 )
+
+type PredictHandler struct{
+  agents syncmap.Map
+}
 
 func getBody(s, defaultValue string) string {
 	if s == "" {
 		return defaultValue
 	}
 	return s
+}
+
+func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.Open has not yet been implemented")
+}
+
+func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.CloseHandler has not yet been implemented")
+}
+
+func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.Reset has not yet been implemented")
+}
+
+func (p *PredictHandler) getAgent(params predict.ImagesParams)  (*webmodels.DlframeworkAgent, error) {
+  return nil, nil
+}
+
+func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.Images has not yet been implemented")
+})
+
+
+func (p *PredictHandler) URLs(func(params predict.UrlsParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
+}
+
+func (p *PredictHandler) Dataset(params predict.DatasetParams) middleware.Responder {
+  return middleware.NotImplemented("operation predict.Dataset has not yet been implemented")
 }
 
 func PredictorPredictHandler(params predictor.PredictParams) middleware.Responder {

@@ -44,6 +44,9 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.PredictDatasetHandler = predict.DatasetHandlerFunc(func(params predict.DatasetParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Dataset has not yet been implemented")
 	})
+	api.PredictDatasetStreamHandler = predict.DatasetStreamHandlerFunc(func(params predict.DatasetStreamParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.DatasetStream has not yet been implemented")
+	})
 	api.RegistryFrameworkAgentsHandler = registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.FrameworkAgents has not yet been implemented")
 	})
@@ -52,6 +55,9 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	})
 	api.PredictImagesHandler = predict.ImagesHandlerFunc(func(params predict.ImagesParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Images has not yet been implemented")
+	})
+	api.PredictImagesStreamHandler = predict.ImagesStreamHandlerFunc(func(params predict.ImagesStreamParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.ImagesStream has not yet been implemented")
 	})
 	api.RegistryModelAgentsHandler = registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.ModelAgents has not yet been implemented")
@@ -67,6 +73,9 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	})
 	api.PredictUrlsHandler = predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
+	})
+	api.PredictUrlsStreamHandler = predict.UrlsStreamHandlerFunc(func(params predict.UrlsStreamParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.UrlsStream has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}

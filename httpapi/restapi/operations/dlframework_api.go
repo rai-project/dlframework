@@ -44,6 +44,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		PredictDatasetHandler: predict.DatasetHandlerFunc(func(params predict.DatasetParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictDataset has not yet been implemented")
 		}),
+		PredictDatasetStreamHandler: predict.DatasetStreamHandlerFunc(func(params predict.DatasetStreamParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictDatasetStream has not yet been implemented")
+		}),
 		RegistryFrameworkAgentsHandler: registry.FrameworkAgentsHandlerFunc(func(params registry.FrameworkAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryFrameworkAgents has not yet been implemented")
 		}),
@@ -52,6 +55,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		}),
 		PredictImagesHandler: predict.ImagesHandlerFunc(func(params predict.ImagesParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictImages has not yet been implemented")
+		}),
+		PredictImagesStreamHandler: predict.ImagesStreamHandlerFunc(func(params predict.ImagesStreamParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictImagesStream has not yet been implemented")
 		}),
 		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
@@ -67,6 +73,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		}),
 		PredictUrlsHandler: predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictUrls has not yet been implemented")
+		}),
+		PredictUrlsStreamHandler: predict.UrlsStreamHandlerFunc(func(params predict.UrlsStreamParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictUrlsStream has not yet been implemented")
 		}),
 	}
 }
@@ -101,12 +110,16 @@ type DlframeworkAPI struct {
 	PredictCloseHandler predict.CloseHandler
 	// PredictDatasetHandler sets the operation handler for the dataset operation
 	PredictDatasetHandler predict.DatasetHandler
+	// PredictDatasetStreamHandler sets the operation handler for the dataset stream operation
+	PredictDatasetStreamHandler predict.DatasetStreamHandler
 	// RegistryFrameworkAgentsHandler sets the operation handler for the framework agents operation
 	RegistryFrameworkAgentsHandler registry.FrameworkAgentsHandler
 	// RegistryFrameworkManifestsHandler sets the operation handler for the framework manifests operation
 	RegistryFrameworkManifestsHandler registry.FrameworkManifestsHandler
 	// PredictImagesHandler sets the operation handler for the images operation
 	PredictImagesHandler predict.ImagesHandler
+	// PredictImagesStreamHandler sets the operation handler for the images stream operation
+	PredictImagesStreamHandler predict.ImagesStreamHandler
 	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
@@ -117,6 +130,8 @@ type DlframeworkAPI struct {
 	PredictResetHandler predict.ResetHandler
 	// PredictUrlsHandler sets the operation handler for the urls operation
 	PredictUrlsHandler predict.UrlsHandler
+	// PredictUrlsStreamHandler sets the operation handler for the urls stream operation
+	PredictUrlsStreamHandler predict.UrlsStreamHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -188,6 +203,10 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "predict.DatasetHandler")
 	}
 
+	if o.PredictDatasetStreamHandler == nil {
+		unregistered = append(unregistered, "predict.DatasetStreamHandler")
+	}
+
 	if o.RegistryFrameworkAgentsHandler == nil {
 		unregistered = append(unregistered, "registry.FrameworkAgentsHandler")
 	}
@@ -198,6 +217,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.PredictImagesHandler == nil {
 		unregistered = append(unregistered, "predict.ImagesHandler")
+	}
+
+	if o.PredictImagesStreamHandler == nil {
+		unregistered = append(unregistered, "predict.ImagesStreamHandler")
 	}
 
 	if o.RegistryModelAgentsHandler == nil {
@@ -218,6 +241,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.PredictUrlsHandler == nil {
 		unregistered = append(unregistered, "predict.UrlsHandler")
+	}
+
+	if o.PredictUrlsStreamHandler == nil {
+		unregistered = append(unregistered, "predict.UrlsStreamHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -320,6 +347,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/v1/predict/dataset"] = predict.NewDataset(o.context, o.PredictDatasetHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/stream/dataset"] = predict.NewDatasetStream(o.context, o.PredictDatasetStreamHandler)
+
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -334,6 +366,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v1/predict/images"] = predict.NewImages(o.context, o.PredictImagesHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/stream/images"] = predict.NewImagesStream(o.context, o.PredictImagesStreamHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -359,6 +396,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/v1/predict/urls"] = predict.NewUrls(o.context, o.PredictUrlsHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/v1/predict/stream/urls"] = predict.NewUrlsStream(o.context, o.PredictUrlsStreamHandler)
 
 }
 

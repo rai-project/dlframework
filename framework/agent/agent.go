@@ -99,11 +99,55 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	return &dl.PredictorCloseResponse{}, nil
 }
 
+func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesResponse, error) {
+
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
+
+	res := &dl.FeaturesResponse{}
+
+	for out := range output {
+		if err, ok := out.(error); ok {
+			return nil, err
+		}
+		o, ok := out.(steps.IDer)
+		if !ok {
+			return nil, errors.Errorf("expecting an ider type, but got %v", o)
+		}
+
+		features, ok := o.GetData().([]*dl.Feature)
+		if !ok {
+			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+		}
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			mutex.Lock()
+			defer mutex.Unlock()
+			res.Responses = append(res.Responses, &dl.FeatureResponse{
+				Id:        uuid.NewV4(),
+				InputId:   o.GetId(),
+				RequestId: "todo-request-id",
+				Features:  features,
+			})
+		}()
+	}
+	wg.Wait()
+
+	return res, nil
+}
+
 // Image method receives a stream of urls and runs
 // the predictor on all the urls. The
 //
-// The result is a prediction feature stream for each url.
+// The result is a prediction feature list for each url.
 func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
+
+	if req.GetPredictor() == nil {
+		return nil, errors.New("request does not have a valid predictor set")
+	}
+
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
@@ -131,49 +175,26 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
-	var wg sync.WaitGroup
-	var mutex sync.Mutex
+	return p.toFeaturesResponse(output)
+}
 
-	res := &dl.FeaturesResponse{}
-
-	for out := range output {
-		if err, ok := out.(error); ok {
-			return nil, err
-		}
-		o, ok := out.(steps.IDer)
-		if !ok {
-			return nil, errors.Errorf("expecting an ider type, but got %v", o)
-		}
-
-		features, ok := o.GetData().([]*dl.Feature)
-		if !ok {
-			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
-		}
-
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			mutex.Lock()
-			defer mutex.Unlock()
-			res.Responses = append(res.Responses, &dl.FeatureResponse{
-				Id:        uuid.NewV4(),
-				InputId:   o.GetId(),
-				RequestId: "todo-request-id",
-				Features:  features,
-			})
-		}()
-	}
-	wg.Wait()
-
-	return res, nil
+// Image method receives a stream of urls and runs
+// the predictor on all the urls. The
+//
+// The result is a prediction feature stream for each url.
+func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
+	return nil
 }
 
 // Image method receives a list base64 encoded images and runs
 // the predictor on all the images.
 //
-// The result is a prediction feature stream for each image.
+// The result is a prediction feature list for each image.
 func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 
+	if req.GetPredictor() == nil {
+		return nil, errors.New("request does not have a valid predictor set")
+	}
 	predictorId := req.GetPredictor().GetId()
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
@@ -200,113 +221,37 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
-	var wg sync.WaitGroup
-	var mutex sync.Mutex
+	return p.toFeaturesResponse(output)
+}
 
-	res := &dl.FeaturesResponse{}
+// Image method receives a list base64 encoded images and runs
+// the predictor on all the images.
+//
+// The result is a prediction feature stream for each image.
+func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamServer) error {
+	return nil
+}
 
-	for out := range output {
-		if err, ok := out.(error); ok {
-			return nil, err
-		}
-		o, ok := out.(steps.IDer)
-		if !ok {
-			return nil, errors.Errorf("expecting an ider type, but got %v", o)
-		}
-
-		features, ok := o.GetData().([]*dl.Feature)
-		if !ok {
-			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
-		}
-
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			mutex.Lock()
-			defer mutex.Unlock()
-			res.Responses = append(res.Responses, &dl.FeatureResponse{
-				Id:        uuid.NewV4(),
-				InputId:   o.GetId(),
-				RequestId: "todo-request-id",
-				Features:  features,
-			})
-		}()
-	}
-	wg.Wait()
-
-	return res, nil
+// Dataset method receives a single dataset and runs
+// the predictor on all elements of the dataset.
+//
+// The result is a prediction feature list.
+func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
+	return nil, nil
 }
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
 //
 // The result is a prediction feature stream.
-func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
-	return nil, nil
+func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStreamServer) error {
+	return nil
 }
 
 // Clear method clears the internal cache of the predictors
 func (p *Agent) Reset(ctx context.Context, req *dl.ResetRequest) (*dl.ResetResponse, error) {
 	return nil, nil
 }
-
-// func (p *Agent) Predict(ctx context.Context, req *dl.PredictRequest) (*dl.PredictResponse, error) {
-// 	_, model, err := p.FindFrameworkModel(ctx, req)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	predictor, err := p.predictor.Load(ctx, *model)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer predictor.Close()
-// 	if err := predictor.Download(ctx); err != nil {
-// 		return nil, err
-// 	}
-
-// 	reader, err := p.ReadInput(ctx, req)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer reader.Close()
-
-// 	var img image.Image
-
-// 	func() {
-// 		if span, newCtx := opentracing.StartSpanFromContext(ctx, "DecodeImage"); span != nil {
-// 			ctx = newCtx
-// 			defer span.Finish()
-// 		}
-// 		img, _, err = image.Decode(reader)
-// 	}()
-// 	if err != nil {
-// 		return nil, errors.Wrapf(err, "unable to read input as image")
-// 	}
-
-// 	data, err := predictor.Preprocess(ctx, img)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	probs, err := predictor.Predict(ctx, data)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	probs.Sort()
-
-// 	if req.GetLimit() != 0 {
-// 		trunc := probs.Take(int(req.GetLimit()))
-// 		probs = &trunc
-// 	}
-
-// 	return &dl.PredictResponse{
-// 		Id:       uuid.NewV4(),
-// 		Features: *probs,
-// 		Error:    nil,
-// 	}, nil
-// }
 
 func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.FrameworkManifest, *dl.ModelManifest, error) {
 	framework, err := dl.FindFramework(req.GetFrameworkName() + ":" + req.GetFrameworkVersion())
@@ -320,72 +265,6 @@ func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictorOpenReq
 
 	return framework, model, nil
 }
-
-// func (p *Agent) ReadInput(ctx context.Context, req *dl.PredictRequest) (io.ReadCloser, error) {
-// 	if span, newCtx := opentracing.StartSpanFromContext(ctx, "ReadInput"); span != nil {
-// 		ctx = newCtx
-// 		defer span.Finish()
-// 	}
-
-// 	data := tryBase64Decode(req.Data)
-
-// 	if data == "" {
-// 		return nil, errors.Errorf("invalid empty input data to ReadInput")
-// 	}
-
-// 	if strings.HasPrefix(data, "dataset://") {
-// 		pth := strings.TrimPrefix(data, "dataset://")
-// 		sep := strings.SplitAfterN(pth, "/", 3)
-// 		if len(sep) != 3 {
-// 			return nil, errors.Errorf("the dataset path %s is not formatted correctly expected datasets://category/name/file_path", data)
-// 		}
-// 		category := sep[0]
-// 		name := sep[1]
-// 		rest := sep[2]
-
-// 		dataset, err := dldataset.Get(category, name)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		err = dataset.Download(ctx)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		label, err := dataset.Get(ctx, rest)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		iface, err := label.Data()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		if reader, ok := iface.(io.Reader); ok {
-// 			return ioutil.NopCloser(reader), nil
-// 		}
-// 		pp.Println("TODO.. we need to still support images as output...")
-// 		return nil, errors.New("unhandeled dataset input...")
-// 	}
-
-// 	if utils.IsURL(data) {
-// 		targetDir, err := UploadDir()
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		path, err := downloadmanager.DownloadInto(data, targetDir)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		f, err := os.Open(path)
-// 		if err != nil {
-// 			return nil, errors.Wrapf(err, "failed to open file %v", path)
-// 		}
-// 		return f, nil
-// 	}
-
-// 	return ioutil.NopCloser(bytes.NewBufferString(data)), nil
-// }
 
 func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	log.Info("populating registry")

@@ -301,16 +301,40 @@ service Predict {
       body : "*"
     };
   }
+
+  // Image method receives a stream of urls and runs
+  // the predictor on all the urls. The
+  //
+  // The result is a prediction feature stream for each url.
+  rpc URLsStream(URLsRequest) returns (stream FeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/stream/urls",
+      body : "*"
+    };
+  }
+
   // Image method receives a list base64 encoded images and runs
   // the predictor on all the images.
   //
-  // The result is a prediction feature stream for each image.
+  // The result is a prediction feature list for each image.
   rpc Images(ImagesRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/v1/predict/images",
       body : "*"
     };
   }
+
+  // Image method receives a list base64 encoded images and runs
+  // the predictor on all the images.
+  //
+  // The result is a prediction feature stream for each image.
+  rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/stream/images",
+      body : "*"
+    };
+  }
+
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.
   //
@@ -322,16 +346,16 @@ service Predict {
     };
   }
 
-  // // Dataset method receives a single dataset and runs
-  // // the predictor on all elements of the dataset.
-  // //
-  // // The result is a prediction feature stream.
-  // rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
-  //   option (google.api.http) = {
-  //     post : "/v1/predict/stream/dataset",
-  //     body : "*"
-  //   };
-  // }
+  // Dataset method receives a single dataset and runs
+  // the predictor on all elements of the dataset.
+  //
+  // The result is a prediction feature stream.
+  rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
+    option (google.api.http) = {
+      post : "/v1/predict/stream/dataset",
+      body : "*"
+    };
+  }
 
   // Clear method clears the internal cache of the predictors
   rpc Reset(ResetRequest) returns (ResetResponse) {
