@@ -226,7 +226,8 @@ message FeatureResponse {
 }
 
 message FeaturesResponse {
-  repeated FeatureResponse responses = 1
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  repeated FeatureResponse responses = 2
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
 }
 

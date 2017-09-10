@@ -2,9 +2,11 @@ package agent
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 
 	// _ "github.com/rai-project/dldataset/vision"
+
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
@@ -116,14 +118,26 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesRespo
 		if err, ok := out.(error); ok {
 			return nil, err
 		}
-		o, ok := out.(steps.IDer)
-		if !ok {
-			return nil, errors.Errorf("expecting an ider type, but got %v", o)
-		}
 
-		features, ok := o.GetData().([]*dl.Feature)
-		if !ok {
-			return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+		var features []*dl.Feature
+
+		inputId := "undefined-input-id"
+
+		switch out.(type) {
+		case steps.IDer:
+			var ok bool
+			o := out.(steps.IDer)
+			inputId = o.GetId()
+			features, ok = o.GetData().([]*dl.Feature)
+			if !ok {
+				return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+			}
+		case []*dl.Feature:
+			features = out.([]*dl.Feature)
+		case dl.Features:
+			features = []*dl.Feature(out.(dl.Features))
+		default:
+			return nil, errors.Errorf("expecting an ider or []*Feature type, but got %v", reflect.TypeOf(out))
 		}
 
 		wg.Add(1)
@@ -133,7 +147,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesRespo
 			defer mutex.Unlock()
 			res.Responses = append(res.Responses, &dl.FeatureResponse{
 				Id:        uuid.NewV4(),
-				InputId:   o.GetId(),
+				InputId:   inputId,
 				RequestId: "todo-request-id",
 				Features:  features,
 			})

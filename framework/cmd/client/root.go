@@ -37,8 +37,9 @@ var (
 // represents the base command when called without any subcommands
 func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Command, error) {
 	rootCmd := &cobra.Command{
-		Use:   "carml client",
-		Short: "Runs the carml client",
+		Use:          "carml client",
+		Short:        "Runs the carml client",
+		SilenceUsage: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			frameworkName := strings.ToLower(framework.FrameworkName)
 			frameworkVersion := strings.ToLower(framework.FrameworkVersion)
@@ -63,6 +64,7 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 				return errors.Wrapf(err, "unable to dial %s", serverAddress)
 			}
 			defer conn.Close()
+
 			client := dlframework.NewPredictClient(conn)
 
 			predictor, err := client.Open(ctx, &dlframework.PredictorOpenRequest{
@@ -74,6 +76,7 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 			if err != nil {
 				return errors.Wrap(err, "unable to open the predictor")
 			}
+
 			defer client.Close(ctx, predictor)
 
 			var urls []*dlframework.URLsRequest_URL

@@ -562,6 +562,9 @@ func init() {
     "dlframeworkFeaturesResponse": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "responses": {
           "type": "array",
           "items": {

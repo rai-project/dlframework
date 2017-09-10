@@ -19,9 +19,14 @@ import (
 
 type DlframeworkFeaturesResponse struct {
 
+	// id
+	ID string `json:"id,omitempty"`
+
 	// responses
 	Responses []*DlframeworkFeatureResponse `json:"responses"`
 }
+
+/* polymorph dlframeworkFeaturesResponse id false */
 
 /* polymorph dlframeworkFeaturesResponse responses false */
 

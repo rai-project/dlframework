@@ -571,6 +571,9 @@ const (
     "dlframeworkFeaturesResponse": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "responses": {
           "type": "array",
           "items": {

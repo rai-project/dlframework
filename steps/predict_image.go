@@ -31,6 +31,10 @@ func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.Errorf("expecting []float32 for predict image step, but got %v", in0)
 	}
 
+	if p.predictor == nil {
+		return errors.New("the predict image was created with a nil predictor")
+	}
+
 	features, err := p.predictor.Predict(ctx, in)
 	if err != nil {
 		return err
