@@ -1,0 +1,37 @@
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/rai-project/dlframework/framework/cmd/client"
+)
+
+var (
+	framework = client.Framework{
+		FrameworkName:    "Caffe",
+		FrameworkVersion: "1.0",
+	}
+	model = client.Model{
+		ModelName:    "SqueezeNet",
+		ModelVersion: "1.0",
+	}
+	serverAddress = "192.168.0.101:5555"
+)
+
+func main() {
+	imgURLs := []string{
+		"https://jpeg.org/images/jpeg-home.jpg",
+		"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+	}
+	rootCmd, err := client.NewRootCommand(framework, model, serverAddress, imgURLs)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
+}

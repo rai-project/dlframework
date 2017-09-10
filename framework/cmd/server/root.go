@@ -25,7 +25,7 @@ var (
 	appSecret string
 	cfgFile   string
 
-	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd")
+	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
 )
 
 func freePort() (string, error) {
