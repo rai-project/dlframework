@@ -123,19 +123,22 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesRespo
 
 		inputId := "undefined-input-id"
 
-		switch out.(type) {
+		switch o := out.(type) {
 		case steps.IDer:
-			var ok bool
-			o := out.(steps.IDer)
 			inputId = o.GetId()
-			features, ok = o.GetData().([]*dl.Feature)
-			if !ok {
-				return nil, errors.Errorf("expecting a []*Feature type, but got %v", o.GetData())
+			data := o.GetData()
+			switch e := data.(type) {
+			case []*dl.Feature:
+				features = e
+			case dl.Features:
+				features = []*dl.Feature(e)
+			default:
+				return nil, errors.Errorf("expecting a []*Feature type, but got %v", data)
 			}
 		case []*dl.Feature:
-			features = out.([]*dl.Feature)
+			features = o
 		case dl.Features:
-			features = []*dl.Feature(out.(dl.Features))
+			features = []*dl.Feature(o)
 		default:
 			return nil, errors.Errorf("expecting an ider or []*Feature type, but got %v", reflect.TypeOf(out))
 		}
@@ -184,7 +187,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 	go func() {
 		defer close(input)
 		for _, url := range req.GetUrls() {
-			input <- *url
+			input <- url
 		}
 	}()
 
@@ -231,7 +234,7 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 	go func() {
 		defer close(input)
 		for _, img := range req.GetImages() {
-			input <- *img
+			input <- img
 		}
 	}()
 

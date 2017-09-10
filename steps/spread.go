@@ -14,13 +14,10 @@ type spread struct {
 func NewSpread() pipeline.Step {
 	return spread{
 		base: base{
+			info:         "Spread",
 			spreadOutput: true,
 		},
 	}
-}
-
-func (p spread) Info() string {
-	return "Spread"
 }
 
 func (p spread) do(ctx context.Context, in0 interface{}) interface{} {

@@ -14,15 +14,15 @@ type predictImage struct {
 }
 
 func NewPredictImage(predictor predict.Predictor) pipeline.Step {
-	res := predictImage{}
+	res := predictImage{
+		base: base{
+			info: "PredictImage",
+		},
+	}
 	res.predictor = predictor
 	res.doer = res.do
 
 	return res
-}
-
-func (p predictImage) Info() string {
-	return "predictImage"
 }
 
 func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {

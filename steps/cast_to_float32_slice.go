@@ -12,11 +12,11 @@ type castToFloat32Slice struct {
 }
 
 func NewCastToFloat32Slice() pipeline.Step {
-	return castToFloat32Slice{}
-}
-
-func (p castToFloat32Slice) Info() string {
-	return "CastToFloat32Slice"
+	return castToFloat32Slice{
+		base: base{
+			info: "CastToFloat32Slice",
+		},
+	}
 }
 
 func (p castToFloat32Slice) do(ctx context.Context, in0 interface{}) interface{} {

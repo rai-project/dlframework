@@ -16,7 +16,11 @@ type preprocessImage struct {
 }
 
 func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
-	res := preprocessImage{}
+	res := preprocessImage{
+		base: base{
+			info: "PreprocessImage",
+		},
+	}
 
 	mean := []float32{0, 0, 0}
 	if len(options.MeanImage) != 0 {
@@ -40,10 +44,6 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 	res.doer = res.do
 
 	return res
-}
-
-func (p preprocessImage) Info() string {
-	return "PreprocessImage"
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {

@@ -1,12 +1,18 @@
 package steps
 
 import (
+	"github.com/rai-project/uuid"
 	"golang.org/x/net/context"
 )
 
 type base struct {
 	spreadOutput bool
+	info         string
 	doer         func(ctx context.Context, in0 interface{}) interface{}
+}
+
+func (p base) Info() string {
+	return p.info
 }
 
 func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}) {
@@ -15,9 +21,9 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 		for {
 			select {
 			case <-ctx.Done():
-				// if err := ctx.Err(); err != nil {
-				// 	out <- err
-				// }
+				if err := ctx.Err(); err != nil {
+					out <- err
+				}
 				return
 			case input, open := <-in:
 				// pp.Printf("input = %v, open = %v\n", input, open)
@@ -29,27 +35,28 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 					continue
 				}
 
-				org := input
+				var id string
 
+				org := input
 				if a, ok := org.(IDer); ok {
 					input = a.GetData()
+					id = a.GetId()
+				} else {
+					id = uuid.NewV4()
+					// pp.Println("no id for %v @ step = %v", input, p.info)
 				}
 
 				res := p.doer(ctx, input)
+
 				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
 					// flatten sequence
 					for _, e := range lst {
-						if a, ok := org.(IDer); ok {
-							e = NewIDWrapper(a.GetId(), e)
-						}
-						out <- e
+						out <- NewIDWrapper(id, e)
 					}
-				} else {
-					if a, ok := org.(IDer); ok {
-						res = NewIDWrapper(a.GetId(), res)
-					}
-					out <- res
+					continue
 				}
+
+				out <- NewIDWrapper(id, res)
 
 			}
 		}

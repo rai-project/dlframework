@@ -24,13 +24,12 @@ func NewListDataset(category, name string) pipeline.Step {
 		category: category,
 		name:     name,
 		dataset:  dataset,
+		base: base{
+			info: "ListDataset",
+		},
 	}
 	res.doer = res.do
 	return res
-}
-
-func (p listDataset) Info() string {
-	return "ListDataset"
 }
 
 func (p listDataset) do(ctx context.Context, in0 interface{}) interface{} {

@@ -17,13 +17,13 @@ type readURL struct {
 }
 
 func NewReadURL() pipeline.Step {
-	res := readURL{}
+	res := readURL{
+		base: base{
+			info: "ReadURL",
+		},
+	}
 	res.doer = res.do
 	return res
-}
-
-func (p readURL) Info() string {
-	return "ReadURL"
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
@@ -31,6 +31,11 @@ func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
 	switch in := in0.(type) {
 	case string:
 		url = in
+	case *dl.URLsRequest_URL:
+		if in == nil {
+			return errors.New("cannot read nil url")
+		}
+		url = in.GetData()
 	case dl.URLsRequest_URL:
 		url = in.GetData()
 	default:

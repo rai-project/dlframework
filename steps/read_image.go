@@ -17,13 +17,12 @@ type readImage struct {
 }
 
 func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
-	res := readImage{}
+	res := readImage{
+		base: base{
+			info: "ReadImage",
+		}}
 	res.doer = res.do
 	return res
-}
-
-func (p readImage) Info() string {
-	return "ReadImage"
 }
 
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
