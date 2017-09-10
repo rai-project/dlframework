@@ -8,15 +8,32 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/rai-project/config"
 	"github.com/rai-project/logger"
+	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd")
+	IsDebug   bool
+	IsVerbose bool
+	Local     bool
+	AppSecret string
+	CfgFile   string
+	log       *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd")
 )
 
+func GetHost() (string, error) {
+	if Local {
+		return utils.GetLocalIp()
+	}
+	address, err := utils.GetExternalIp()
+	if err != nil {
+		return "", err
+	}
+	return address, nil
+}
+
 // Init reads in config file and ENV variables if set.
-func Init(cfgFile, appSecret string) {
+func Init() {
 
 	log.Level = logrus.DebugLevel
 	config.AfterInit(func() {
@@ -27,21 +44,23 @@ func Init(cfgFile, appSecret string) {
 	opts := []config.Option{
 		config.AppName("carml"),
 		config.ColorMode(true),
+		config.DebugMode(IsDebug),
+		config.VerboseMode(IsVerbose),
 	}
-	if c, err := homedir.Expand(cfgFile); err == nil {
-		cfgFile = c
+	if c, err := homedir.Expand(CfgFile); err == nil {
+		CfgFile = c
 	}
-	if config.IsValidRemotePrefix(cfgFile) {
-		opts = append(opts, config.ConfigRemotePath(cfgFile))
-	} else if com.IsFile(cfgFile) {
-		if c, err := filepath.Abs(cfgFile); err == nil {
-			cfgFile = c
+	if config.IsValidRemotePrefix(CfgFile) {
+		opts = append(opts, config.ConfigRemotePath(CfgFile))
+	} else if com.IsFile(CfgFile) {
+		if c, err := filepath.Abs(CfgFile); err == nil {
+			CfgFile = c
 		}
-		opts = append(opts, config.ConfigFileAbsolutePath(cfgFile))
+		opts = append(opts, config.ConfigFileAbsolutePath(CfgFile))
 	}
 
-	if appSecret != "" {
-		opts = append(opts, config.AppSecret(appSecret))
+	if AppSecret != "" {
+		opts = append(opts, config.AppSecret(AppSecret))
 	}
 	config.Init(opts...)
 }

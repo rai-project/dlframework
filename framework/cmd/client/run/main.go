@@ -16,7 +16,6 @@ var (
 		ModelName:    "SqueezeNet",
 		ModelVersion: "1.0",
 	}
-	serverAddress = "192.168.0.101:5555"
 )
 
 func main() {
@@ -24,7 +23,7 @@ func main() {
 		"https://jpeg.org/images/jpeg-home.jpg",
 		"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
 	}
-	rootCmd, err := client.NewRootCommand(framework, model, serverAddress, imgURLs)
+	rootCmd, err := client.NewRootCommand(framework, model, imgURLs)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

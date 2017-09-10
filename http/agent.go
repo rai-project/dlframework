@@ -13,14 +13,14 @@ import (
 	kv "github.com/rai-project/registry"
 )
 
-func (m modelsTy) agents(frameworkName, frameworkVersion, modelName, modelVersion string) ([]*webmodels.DlframeworkAgent, error) {
+func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersion string) ([]*webmodels.DlframeworkAgent, error) {
 
 	frameworkName = strings.ToLower(frameworkName)
 	frameworkVersion = strings.ToLower(frameworkVersion)
 	modelName = strings.ToLower(modelName)
 	modelVersion = strings.ToLower(modelVersion)
 
-	manifests, err := models.manifests(frameworkName, frameworkVersion)
+	manifests, err := Models.Manifests(frameworkName, frameworkVersion)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (m modelsTy) agents(frameworkName, frameworkVersion, modelName, modelVersio
 		return nil, errors.Errorf("no models found for the framework %s:%s", frameworkName, frameworkVersion)
 	}
 
-	manifests, err = models.filterManifests(manifests, modelName, modelVersion)
+	manifests, err = Models.FilterManifests(manifests, modelName, modelVersion)
 	if err != nil {
 		return nil, err
 	}

@@ -22,18 +22,18 @@ type modelsTy struct {
 	serializer serializer.Serializer
 }
 
-var models modelsTy
+var Models modelsTy
 
-func (m modelsTy) manifests(frameworkName, frameworkVersion string) ([]*webmodels.DlframeworkModelManifest, error) {
+func (m modelsTy) Manifests(frameworkName, frameworkVersion string) ([]*webmodels.DlframeworkModelManifest, error) {
 
 	frameworkName = strings.ToLower(frameworkName)
 	frameworkVersion = strings.ToLower(frameworkVersion)
 
-	fs, err := frameworks.manifests()
+	fs, err := Frameworks.Manifests()
 	if err != nil {
 		return nil, err
 	}
-	fs, err = frameworks.filterManifests(fs, frameworkName, frameworkVersion)
+	fs, err = Frameworks.FilterManifests(fs, frameworkName, frameworkVersion)
 	rgs, err := kv.New()
 	if err != nil {
 		return nil, err
@@ -109,11 +109,11 @@ func (m modelsTy) manifests(frameworkName, frameworkVersion string) ([]*webmodel
 	return manifests, nil
 }
 
-func (m modelsTy) allmanifests() ([]*webmodels.DlframeworkModelManifest, error) {
-	return m.manifests("*", "*")
+func (m modelsTy) AllManifests() ([]*webmodels.DlframeworkModelManifest, error) {
+	return m.Manifests("*", "*")
 }
 
-func (modelsTy) filterManifests(
+func (modelsTy) FilterManifests(
 	manifests []*webmodels.DlframeworkModelManifest,
 	modelName,
 	modelVersionString string,
@@ -182,7 +182,7 @@ func (modelsTy) filterManifests(
 
 func init() {
 	config.AfterInit(func() {
-		models = modelsTy{
+		Models = modelsTy{
 			serializer: kv.Config.Serializer,
 		}
 	})

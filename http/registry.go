@@ -45,7 +45,7 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 		return manifests
 	}
 
-	manifests, err := frameworks.manifests()
+	manifests, err := Frameworks.Manifests()
 	if err != nil {
 		return NewError("FrameworkManifests", err)
 	}
@@ -59,7 +59,7 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
 	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
 
-	manifests, err = frameworks.filterManifests(manifests, frameworkName, frameworkVersion)
+	manifests, err = Frameworks.FilterManifests(manifests, frameworkName, frameworkVersion)
 	if err != nil {
 		return NewError("FrameworkManifests", err)
 	}
@@ -105,7 +105,7 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
 	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
 
-	manifests, err := models.manifests(frameworkName, frameworkVersion)
+	manifests, err := Models.Manifests(frameworkName, frameworkVersion)
 	if err != nil {
 		return NewError("ModelManifests", err)
 	}
@@ -119,7 +119,7 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 	modelName := strings.ToLower(getParam(params.ModelName, "*"))
 	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
 
-	manifests, err = models.filterManifests(manifests, modelName, modelVersion)
+	manifests, err = Models.FilterManifests(manifests, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelManifests", err)
 	}
@@ -136,7 +136,7 @@ func RegistryFrameworkAgentsHandler(params registry.FrameworkAgentsParams) middl
 	modelName := "*"
 	modelVersion := "*"
 
-	agents, err := models.agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	agents, err := Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelAgents", err)
 	}
@@ -154,7 +154,7 @@ func RegistryModelAgentsHandler(params registry.ModelAgentsParams) middleware.Re
 	modelName := strings.ToLower(getParam(params.ModelName, "*"))
 	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
 
-	agents, err := models.agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	agents, err := Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelAgents", err)
 	}

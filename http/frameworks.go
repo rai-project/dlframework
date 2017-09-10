@@ -22,9 +22,9 @@ type frameworksTy struct {
 	serializer serializer.Serializer
 }
 
-var frameworks frameworksTy
+var Frameworks frameworksTy
 
-func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, error) {
+func (f frameworksTy) Manifests() ([]*webmodels.DlframeworkFrameworkManifest, error) {
 	rgs, err := kv.New()
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, er
 	if err != nil {
 		return nil, err
 	}
-	frameworks, err := f.processFrameworkNames(frameworksValue.Value)
+	frameworks, err := f.ProcessFrameworkNames(frameworksValue.Value)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (f frameworksTy) manifests() ([]*webmodels.DlframeworkFrameworkManifest, er
 	return manifests, nil
 }
 
-func (frameworksTy) filterManifests(
+func (frameworksTy) FilterManifests(
 	manifests []*webmodels.DlframeworkFrameworkManifest,
 	frameworkName,
 	frameworkVersionString string,
@@ -160,7 +160,7 @@ func (frameworksTy) filterManifests(
 	return []*webmodels.DlframeworkFrameworkManifest{res[0]}, nil
 }
 
-func (f frameworksTy) processFrameworkNames(buf []byte) ([][]string, error) {
+func (f frameworksTy) ProcessFrameworkNames(buf []byte) ([][]string, error) {
 	lines := strings.Split(string(buf), "\n")
 	res := [][]string{}
 	for _, line := range lines {
@@ -171,7 +171,7 @@ func (f frameworksTy) processFrameworkNames(buf []byte) ([][]string, error) {
 
 func init() {
 	config.AfterInit(func() {
-		frameworks = frameworksTy{
+		Frameworks = frameworksTy{
 			serializer: kv.Config.Serializer,
 		}
 	})

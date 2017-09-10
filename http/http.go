@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
-	"github.com/rai-project/dlframework/httpapi/restapi/operations/predictor"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 )
 
@@ -21,7 +21,9 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.RegistryFrameworkManifestsHandler = registry.FrameworkManifestsHandlerFunc(RegistryFrameworkManifestsHandler)
 	api.RegistryModelAgentsHandler = registry.ModelAgentsHandlerFunc(RegistryModelAgentsHandler)
 	api.RegistryModelManifestsHandler = registry.ModelManifestsHandlerFunc(RegistryModelManifestsHandler)
-	api.PredictorPredictHandler = predictor.PredictHandlerFunc(PredictorPredictHandler)
+
+	predictHandler := &PredictHandler{}
+	api.PredictCloseHandler = predict.CloseHandlerFunc(predictHandler.Close)
 
 	api.ServerShutdown = func() {}
 
