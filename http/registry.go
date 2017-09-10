@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+	"github.com/rai-project/dlframework/registryquery"
 )
 
 func getParam(val *string, defaultValue string) string {
@@ -45,7 +46,7 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 		return manifests
 	}
 
-	manifests, err := Frameworks.Manifests()
+	manifests, err := registryquery.Frameworks.Manifests()
 	if err != nil {
 		return NewError("FrameworkManifests", err)
 	}
@@ -59,7 +60,7 @@ func RegistryFrameworkManifestsHandler(params registry.FrameworkManifestsParams)
 	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
 	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
 
-	manifests, err = Frameworks.FilterManifests(manifests, frameworkName, frameworkVersion)
+	manifests, err = registryquery.Frameworks.FilterManifests(manifests, frameworkName, frameworkVersion)
 	if err != nil {
 		return NewError("FrameworkManifests", err)
 	}
@@ -105,7 +106,7 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 	frameworkName := strings.ToLower(getParam(params.FrameworkName, "*"))
 	frameworkVersion := strings.ToLower(getParam(params.FrameworkVersion, "*"))
 
-	manifests, err := Models.Manifests(frameworkName, frameworkVersion)
+	manifests, err := registryquery.Models.Manifests(frameworkName, frameworkVersion)
 	if err != nil {
 		return NewError("ModelManifests", err)
 	}
@@ -119,7 +120,7 @@ func RegistryModelManifestsHandler(params registry.ModelManifestsParams) middlew
 	modelName := strings.ToLower(getParam(params.ModelName, "*"))
 	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
 
-	manifests, err = Models.FilterManifests(manifests, modelName, modelVersion)
+	manifests, err = registryquery.Models.FilterManifests(manifests, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelManifests", err)
 	}
@@ -136,7 +137,7 @@ func RegistryFrameworkAgentsHandler(params registry.FrameworkAgentsParams) middl
 	modelName := "*"
 	modelVersion := "*"
 
-	agents, err := Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelAgents", err)
 	}
@@ -154,7 +155,7 @@ func RegistryModelAgentsHandler(params registry.ModelAgentsParams) middleware.Re
 	modelName := strings.ToLower(getParam(params.ModelName, "*"))
 	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
 
-	agents, err := Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 	if err != nil {
 		return NewError("ModelAgents", err)
 	}
