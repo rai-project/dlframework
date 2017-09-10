@@ -27,7 +27,12 @@ type Agent struct {
 	loadedPredictors syncmap.Map
 	predictor        predict.Predictor
 	options          *Options
+	channelBuffer    int
 }
+
+var (
+	DefaultChannelBuffer = 1000
+)
 
 func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 	options, err := NewOptions()
@@ -45,8 +50,9 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 		base: base{
 			Framework: framework,
 		},
-		predictor: predictor,
-		options:   options,
+		predictor:     predictor,
+		options:       options,
+		channelBuffer: DefaultChannelBuffer,
 	}, nil
 }
 
@@ -168,7 +174,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		}
 	}()
 
-	output := pipeline.New(ctx).
+	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
@@ -215,7 +221,7 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		}
 	}()
 
-	output := pipeline.New(ctx).
+	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
