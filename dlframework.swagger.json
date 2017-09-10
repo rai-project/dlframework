@@ -542,6 +542,12 @@
         "probability": {
           "type": "number",
           "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -561,6 +567,12 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/dlframeworkFeature"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       }

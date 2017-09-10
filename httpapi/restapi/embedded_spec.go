@@ -530,6 +530,12 @@ func init() {
           "type": "string",
           "format": "int64"
         },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
         "name": {
           "type": "string"
         },
@@ -553,6 +559,12 @@ func init() {
         },
         "input_id": {
           "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "request_id": {
           "type": "string"

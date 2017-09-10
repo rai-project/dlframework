@@ -214,6 +214,8 @@ message Feature {
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   float probability = 3
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+  map<string, string> metadata = 4
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
 }
 
 message FeatureResponse {
@@ -223,6 +225,8 @@ message FeatureResponse {
   string input_id = 3 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
   repeated Feature features = 4
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
+  map<string, string> metadata = 5
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
 }
 
 message FeaturesResponse {

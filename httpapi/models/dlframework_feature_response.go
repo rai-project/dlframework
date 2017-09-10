@@ -28,6 +28,9 @@ type DlframeworkFeatureResponse struct {
 	// input id
 	InputID string `json:"input_id,omitempty"`
 
+	// metadata
+	Metadata map[string]string `json:"metadata,omitempty"`
+
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }
@@ -37,6 +40,8 @@ type DlframeworkFeatureResponse struct {
 /* polymorph dlframeworkFeatureResponse id false */
 
 /* polymorph dlframeworkFeatureResponse input_id false */
+
+/* polymorph dlframeworkFeatureResponse metadata false */
 
 /* polymorph dlframeworkFeatureResponse request_id false */
 

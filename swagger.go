@@ -545,6 +545,12 @@ const (
         "probability": {
           "type": "number",
           "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -564,6 +570,12 @@ const (
           "type": "array",
           "items": {
             "$ref": "#/definitions/dlframeworkFeature"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
           }
         }
       }

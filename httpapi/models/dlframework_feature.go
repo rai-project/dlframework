@@ -20,6 +20,9 @@ type DlframeworkFeature struct {
 	// index
 	Index int64 `json:"index,omitempty"`
 
+	// metadata
+	Metadata map[string]string `json:"metadata,omitempty"`
+
 	// name
 	Name string `json:"name,omitempty"`
 
@@ -28,6 +31,8 @@ type DlframeworkFeature struct {
 }
 
 /* polymorph dlframeworkFeature index false */
+
+/* polymorph dlframeworkFeature metadata false */
 
 /* polymorph dlframeworkFeature name false */
 
