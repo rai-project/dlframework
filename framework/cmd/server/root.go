@@ -1,22 +1,17 @@
-package cmd
+package server
 
 import (
 	"fmt"
 	"net"
 	"os"
-	"path/filepath"
 	"strconv"
 
-	"github.com/Unknwon/com"
 	"github.com/facebookgo/freeport"
-	"github.com/fatih/color"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/pkg/errors"
 	raicmd "github.com/rai-project/cmd"
-	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
-	"github.com/rai-project/logger"
+	"github.com/rai-project/dlframework/framework/cmd"
 	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -137,59 +132,33 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 	return rootCmd, nil
 }
 
-func setupFlags(cmd *cobra.Command) {
+func setupFlags(c *cobra.Command) {
 
 	cobra.OnInitialize(initConfig)
 
-	cmd.AddCommand(raicmd.VersionCmd)
-	cmd.AddCommand(raicmd.LicenseCmd)
-	cmd.AddCommand(raicmd.EnvCmd)
-	cmd.AddCommand(raicmd.GendocCmd)
-	cmd.AddCommand(raicmd.CompletionCmd)
-	cmd.AddCommand(raicmd.BuildTimeCmd)
+	c.AddCommand(raicmd.VersionCmd)
+	c.AddCommand(raicmd.LicenseCmd)
+	c.AddCommand(raicmd.EnvCmd)
+	c.AddCommand(raicmd.GendocCmd)
+	c.AddCommand(raicmd.CompletionCmd)
+	c.AddCommand(raicmd.BuildTimeCmd)
 
-	cmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
-	cmd.PersistentFlags().BoolVarP(&isVerbose, "verbose", "v", false, "Toggle verbose mode.")
-	cmd.PersistentFlags().BoolVarP(&isDebug, "debug", "d", false, "Toggle debug mode.")
-	cmd.PersistentFlags().StringVarP(&appSecret, "secret", "s", "", "The application secret.")
-	cmd.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
+	c.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
+	c.PersistentFlags().BoolVarP(&isVerbose, "verbose", "v", false, "Toggle verbose mode.")
+	c.PersistentFlags().BoolVarP(&isDebug, "debug", "d", false, "Toggle debug mode.")
+	c.PersistentFlags().StringVarP(&appSecret, "secret", "s", "", "The application secret.")
+	c.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	c.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	viper.BindPFlag("app.secret", cmd.PersistentFlags().Lookup("secret"))
-	viper.BindPFlag("app.debug", cmd.PersistentFlags().Lookup("debug"))
-	viper.BindPFlag("app.verbose", cmd.PersistentFlags().Lookup("verbose"))
+	viper.BindPFlag("app.secret", c.PersistentFlags().Lookup("secret"))
+	viper.BindPFlag("app.debug", c.PersistentFlags().Lookup("debug"))
+	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-
-	log.Level = logrus.DebugLevel
-	config.AfterInit(func() {
-		log = logger.New().WithField("pkg", "dlframework/framework/cmd")
-	})
-
-	color.NoColor = false
-	opts := []config.Option{
-		config.AppName("carml"),
-		config.ColorMode(true),
-	}
-	if c, err := homedir.Expand(cfgFile); err == nil {
-		cfgFile = c
-	}
-	if config.IsValidRemotePrefix(cfgFile) {
-		opts = append(opts, config.ConfigRemotePath(cfgFile))
-	} else if com.IsFile(cfgFile) {
-		if c, err := filepath.Abs(cfgFile); err == nil {
-			cfgFile = c
-		}
-		opts = append(opts, config.ConfigFileAbsolutePath(cfgFile))
-	}
-
-	if appSecret != "" {
-		opts = append(opts, config.AppSecret(appSecret))
-	}
-	config.Init(opts...)
+	cmd.Init(cfgFile, appSecret)
 }
