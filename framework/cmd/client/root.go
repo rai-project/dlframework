@@ -13,7 +13,7 @@ import (
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/cmd"
-	"github.com/rai-project/dlframework/http"
+	"github.com/rai-project/dlframework/registryquery"
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -46,7 +46,7 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 			modelName := strings.ToLower(model.ModelName)
 			modelVersion := strings.ToLower(model.ModelVersion)
 
-			agents, err := http.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+			agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 			if err != nil {
 				return err
 			}
