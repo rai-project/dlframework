@@ -29,18 +29,19 @@ func NewError(name string, message error) *Error {
 }
 
 func (e *Error) MarshalJSON() ([]byte, error) {
-	name := fmt.Sprintf("\"name\": \"%s\"", e.name)
-	message := fmt.Sprintf("\"message\": \"%s\"", e.message.Error())
-	code := fmt.Sprintf("\"code\": %d", e.code)
-	stackData := strings.Split(fmt.Sprintf("%+v", errors.WithStack(e.message)), "\n")
-	bts, err := json.Marshal(stackData)
+	name := fmt.Sprintf("\"name\": \"%v\"", e.name)
+	message := fmt.Sprintf("\"message\": \"%v\"", e.message)
+	code := fmt.Sprintf("\"code\": %v", e.code)
 
 	var stack string
+	stackData := strings.Split(fmt.Sprintf("%+v", errors.WithStack(e.message)), "\n")
+	bts, err := json.Marshal(stackData)
 	if err != nil {
 		stack = fmt.Sprintf("\"stack\": []")
 	} else {
 		stack = fmt.Sprintf("\"stack\": %s", string(bts))
 	}
+
 	res := fmt.Sprintf("{%s, %s, %s, %s}", name, message, code, stack)
 	return []byte(res), nil
 }
