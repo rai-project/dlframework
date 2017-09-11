@@ -169,7 +169,72 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 }
 
 func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responder {
-	return middleware.NotImplemented("operation predict.Images has not yet been implemented")
+	predictor := params.Body.Predictor
+	predictorID := predictor.ID
+
+	client, err := p.getClient(predictorID)
+	if err != nil {
+		return NewError("Predict/Images", err)
+	}
+
+	ctx := params.HTTPRequest.Context()
+
+	images := make([]*dl.ImagesRequest_Image, len(params.Body.Images))
+	for ii, image := range params.Body.Images {
+		images[ii] = &dl.ImagesRequest_Image{
+			Id:           image.ID,
+			Data:         image.Data,
+			Preprocessed: image.Preprocessed,
+		}
+	}
+
+	options := params.Body.Options
+	if options == nil {
+		options = &webmodels.DlframeworkPredictionOptions{}
+	}
+
+	ret, err := client.Images(ctx,
+		&dl.ImagesRequest{
+			Predictor: &dl.Predictor{
+				Id: predictorID,
+			},
+			Images: images,
+			Options: &dl.PredictionOptions{
+				RequestId:    options.RequestID,
+				FeatureLimit: options.FeatureLimit,
+			},
+		},
+	)
+
+	if err != nil {
+		return NewError("Predict/Images", err)
+	}
+
+	resps := make([]*webmodels.DlframeworkFeatureResponse, len(ret.Responses))
+	for ii, fr := range ret.Responses {
+		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
+		for jj, f := range fr.Features {
+			features[jj] = &webmodels.DlframeworkFeature{
+				Index:       f.Index,
+				Metadata:    f.Metadata,
+				Name:        f.Name,
+				Probability: f.Probability,
+			}
+		}
+		resps[ii] = &webmodels.DlframeworkFeatureResponse{
+			Features:  features,
+			ID:        fr.Id,
+			InputID:   fr.InputId,
+			Metadata:  fr.Metadata,
+			RequestID: fr.RequestId,
+		}
+	}
+
+	return predict.NewImagesOK().
+		WithPayload(&webmodels.DlframeworkFeaturesResponse{
+			ID:        predictorID,
+			Responses: resps,
+		})
 }
 
 func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
@@ -238,8 +303,6 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 			ID:        predictorID,
 			Responses: resps,
 		})
-
-	// return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
 }
 
 func (p *PredictHandler) Dataset(params predict.DatasetParams) middleware.Responder {
