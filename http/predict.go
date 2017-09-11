@@ -1,14 +1,26 @@
 package http
 
 import (
+	"context"
+	"fmt"
+	"math/rand"
+	"strings"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/jinzhu/copier"
+	"github.com/pkg/errors"
+	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
+	"github.com/rai-project/dlframework/registryquery"
+	"github.com/rai-project/grpc"
 	"golang.org/x/sync/syncmap"
+	gogrpc "google.golang.org/grpc"
 )
 
 type PredictHandler struct {
-	agents syncmap.Map
+	clients     syncmap.Map
+	connections syncmap.Map
 }
 
 func getBody(s, defaultValue string) string {
@@ -19,19 +31,148 @@ func getBody(s, defaultValue string) string {
 }
 
 func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
-	return middleware.NotImplemented("operation predict.Open has not yet been implemented")
+
+	frameworkName := strings.ToLower(getBody(params.Body.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getBody(params.Body.FrameworkVersion, "*"))
+	modelName := strings.ToLower(getBody(params.Body.ModelName, "*"))
+	modelVersion := strings.ToLower(getBody(params.Body.ModelVersion, "*"))
+
+	agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	if err != nil {
+		return NewError("Predict/Open", err)
+	}
+
+	if len(agents) == 0 {
+		return NewError("Predict/Open",
+			errors.Errorf("unable to find agents for framework=%s:%s model=%s:%s",
+				frameworkName, frameworkVersion, modelName, modelVersion,
+			))
+	}
+
+	agent := agents[rand.Intn(len(agents))]
+	serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
+
+	ctx := params.HTTPRequest.Context()
+	conn, err := grpc.DialContext(ctx, dl.PredictServiceDescription, serverAddress)
+	if err != nil {
+		return NewError("Predict/Open", errors.Wrapf(err, "unable to dial %s", serverAddress))
+	}
+
+	client := dl.NewPredictClient(conn)
+
+	predictor, err := client.Open(ctx, &dl.PredictorOpenRequest{
+		ModelName:        modelName,
+		ModelVersion:     modelVersion,
+		FrameworkName:    frameworkName,
+		FrameworkVersion: frameworkVersion,
+	})
+
+	if err != nil {
+		defer conn.Close()
+		return NewError("Predict/Open", errors.Wrap(err, "unable to open model"))
+	}
+
+	res := new(webmodels.DlframeworkPredictor)
+	if err := copier.Copy(res, predictor); err != nil {
+		defer client.Close(ctx, predictor)
+		defer conn.Close()
+		return NewError("Predict/Open", errors.Wrap(err, "unable to copy predict open response to webmodels"))
+	}
+
+	p.clients.Store(predictor.Id, client)
+	p.connections.Store(predictor.Id, conn)
+
+	return predict.NewOpenOK().WithPayload(res)
+}
+
+func (p *PredictHandler) getClient(id string) (dl.PredictClient, error) {
+	val, ok := p.clients.Load(id)
+	if !ok {
+		return nil, errors.New("unable to get client predictor value")
+	}
+	client, ok := val.(dl.PredictClient)
+	if !ok {
+		return nil, errors.New("unable to get client predictor connection")
+	}
+	return client, nil
+}
+
+func (p *PredictHandler) getConnection(id string) (*gogrpc.ClientConn, error) {
+	val, ok := p.connections.Load(id)
+	if !ok {
+		return nil, errors.New("unable to get connection predictor value")
+	}
+	conn, ok := val.(*gogrpc.ClientConn)
+	if !ok {
+		return nil, errors.New("unable to get connection predictor connection")
+	}
+	return conn, nil
+}
+
+func (p *PredictHandler) closeClient(ctx context.Context, id string) error {
+	client, err := p.getClient(id)
+	if err != nil {
+		return err
+	}
+	if _, err := client.Close(ctx, &dl.Predictor{Id: id}); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p *PredictHandler) closeConnection(ctx context.Context, id string) error {
+	conn, err := p.getConnection(id)
+	if err != nil {
+		return err
+	}
+	return conn.Close()
 }
 
 func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder {
-	return middleware.NotImplemented("operation predict.CloseHandler has not yet been implemented")
+	ctx := params.HTTPRequest.Context()
+	id := params.Body.ID
+
+	if err := p.closeClient(ctx, id); err != nil {
+		defer p.closeConnection(ctx, id)
+		return NewError("Predict/Close", errors.Wrap(err, "failed to close predictor client"))
+	}
+
+	if err := p.closeConnection(ctx, id); err != nil {
+		return NewError("Predict/Close", errors.Wrap(err, "failed to close grpc connection"))
+	}
+
+	var resp webmodels.DlframeworkPredictorCloseResponse
+	return predict.NewCloseOK().WithPayload(resp)
 }
 
 func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder {
-	return middleware.NotImplemented("operation predict.Reset has not yet been implemented")
-}
 
-func (p *PredictHandler) getAgent(params predict.ImagesParams) (*webmodels.DlframeworkAgent, error) {
-	return nil, nil
+	predictorId := params.Body.Predictor.ID
+
+	client, err := p.getClient(predictorId)
+	if err != nil {
+		return NewError("Predict/Reset", err)
+	}
+
+	ctx := params.HTTPRequest.Context()
+	id := params.Body.ID
+
+	resp, err := client.Reset(ctx,
+		&dl.ResetRequest{
+			Id: id,
+			Predictor: &dl.Predictor{
+				Id: predictorId,
+			},
+		},
+	)
+	if err != nil {
+		return NewError("Predict/Reset", err)
+	}
+
+	return predict.NewResetOK().
+		WithPayload(&webmodels.DlframeworkResetResponse{
+			Predictor: &webmodels.DlframeworkPredictor{ID: resp.Predictor.Id},
+		})
 }
 
 func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responder {
