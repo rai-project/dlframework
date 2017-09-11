@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -72,17 +71,12 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 		return NewError("Predict/Open", errors.Wrap(err, "unable to open model"))
 	}
 
-	res := new(webmodels.DlframeworkPredictor)
-	if err := copier.Copy(res, predictor); err != nil {
-		defer client.Close(ctx, predictor)
-		defer conn.Close()
-		return NewError("Predict/Open", errors.Wrap(err, "unable to copy predict open response to webmodels"))
-	}
-
 	p.clients.Store(predictor.Id, client)
 	p.connections.Store(predictor.Id, conn)
 
-	return predict.NewOpenOK().WithPayload(res)
+	return predict.NewOpenOK().WithPayload(&webmodels.DlframeworkPredictor{
+		ID: predictor.Id,
+	})
 }
 
 func (p *PredictHandler) getClient(id string) (dl.PredictClient, error) {
@@ -146,7 +140,6 @@ func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder 
 }
 
 func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder {
-
 	predictorId := params.Body.Predictor.ID
 
 	client, err := p.getClient(predictorId)
@@ -180,7 +173,73 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 }
 
 func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
-	return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
+	predictor := params.Body.Predictor
+	predictorID := predictor.ID
+
+	client, err := p.getClient(predictorID)
+	if err != nil {
+		return NewError("Predict/URLs", err)
+	}
+
+	ctx := params.HTTPRequest.Context()
+
+	urls := make([]*dl.URLsRequest_URL, len(params.Body.Urls))
+	for ii, url := range params.Body.Urls {
+		urls[ii] = &dl.URLsRequest_URL{
+			Id:   url.ID,
+			Data: url.Data,
+		}
+	}
+
+	options := params.Body.Options
+	if options == nil {
+		options = &webmodels.DlframeworkPredictionOptions{}
+	}
+
+	ret, err := client.URLs(ctx,
+		&dl.URLsRequest{
+			Predictor: &dl.Predictor{
+				Id: predictorID,
+			},
+			Urls: urls,
+			Options: &dl.PredictionOptions{
+				RequestId:    options.RequestID,
+				FeatureLimit: options.FeatureLimit,
+			},
+		},
+	)
+
+	if err != nil {
+		return NewError("Predict/URLs", err)
+	}
+
+	resps := make([]*webmodels.DlframeworkFeatureResponse, len(ret.Responses))
+	for ii, fr := range ret.Responses {
+		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
+		for jj, f := range fr.Features {
+			features[jj] = &webmodels.DlframeworkFeature{
+				Index:       f.Index,
+				Metadata:    f.Metadata,
+				Name:        f.Name,
+				Probability: f.Probability,
+			}
+		}
+		resps[ii] = &webmodels.DlframeworkFeatureResponse{
+			Features:  features,
+			ID:        fr.Id,
+			InputID:   fr.InputId,
+			Metadata:  fr.Metadata,
+			RequestID: fr.RequestId,
+		}
+	}
+
+	return predict.NewUrlsOK().
+		WithPayload(&webmodels.DlframeworkFeaturesResponse{
+			ID:        predictorID,
+			Responses: resps,
+		})
+
+	// return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
 }
 
 func (p *PredictHandler) Dataset(params predict.DatasetParams) middleware.Responder {
