@@ -47,29 +47,29 @@ func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 	var in io.Reader
 
-	switch e := in0.(type) {
+	switch in0 := in0.(type) {
 	case io.Reader:
-		in = e
+		in = in0
 	case dldataset.LabeledData:
-		data, err := e.Data()
+		data, err := in0.Data()
 		if err != nil {
 			return err
 		}
-		switch d := data.(type) {
+		switch data := data.(type) {
 		case *types.RGBImage:
-			img, err := image.Resize(d, p.width, p.height)
+			img, err := image.Resize(data, p.width, p.height)
 			if err != nil {
 				return err
 			}
 			return img
 		case *types.BGRImage:
-			img, err := image.Resize(d, p.width, p.height)
+			img, err := image.Resize(data, p.width, p.height)
 			if err != nil {
 				return err
 			}
 			return img
 		case io.Reader:
-			in = d
+			in = data
 		default:
 			return errors.Errorf("expecting a io.Reader or image for read image step, but got %v", in0)
 
