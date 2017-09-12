@@ -13,13 +13,15 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
+	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
+	local bool
+	log   *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
 )
 
 func freePort() (string, error) {
@@ -28,6 +30,17 @@ func freePort() (string, error) {
 		return "", err
 	}
 	return strconv.Itoa(port), nil
+}
+
+func getHost() (string, error) {
+	if local {
+		return utils.GetLocalIp()
+	}
+	address, err := utils.GetExternalIp()
+	if err != nil {
+		return "", err
+	}
+	return address, nil
 }
 
 // represents the base command when called without any subcommands
@@ -48,7 +61,7 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 
 			host, found := os.LookupEnv("HOST")
 			if !found {
-				h, err := cmd.GetHost()
+				h, err := getHost()
 				if err != nil {
 					return err
 				}
@@ -130,7 +143,7 @@ func setupFlags(c *cobra.Command) {
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
 	c.PersistentFlags().BoolVarP(&cmd.IsDebug, "debug", "d", false, "Toggle debug mode.")
 	c.PersistentFlags().StringVarP(&cmd.AppSecret, "secret", "s", "", "The application secret.")
-	c.PersistentFlags().BoolVarP(&cmd.Local, "local", "l", false, "Listen on local address.")
+	c.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

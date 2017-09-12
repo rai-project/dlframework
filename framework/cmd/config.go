@@ -8,29 +8,16 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/rai-project/config"
 	"github.com/rai-project/logger"
-	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 )
 
 var (
 	IsDebug   bool
 	IsVerbose bool
-	Local     bool
 	AppSecret string
 	CfgFile   string
 	log       *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd")
 )
-
-func GetHost() (string, error) {
-	if Local {
-		return utils.GetLocalIp()
-	}
-	address, err := utils.GetExternalIp()
-	if err != nil {
-		return "", err
-	}
-	return address, nil
-}
 
 // Init reads in config file and ENV variables if set.
 func Init() {
