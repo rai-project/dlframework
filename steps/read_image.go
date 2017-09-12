@@ -56,8 +56,18 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 			return err
 		}
 		switch d := data.(type) {
-		case *types.RGBImage, *types.BGRImage:
-			panic("TODO :: we should just do a resize")
+		case *types.RGBImage:
+			img, err := image.Resize(d, p.width, p.height)
+			if err != nil {
+				return err
+			}
+			return img
+		case *types.BGRImage:
+			img, err := image.Resize(d, p.width, p.height)
+			if err != nil {
+				return err
+			}
+			return img
 		case io.Reader:
 			in = d
 		default:
