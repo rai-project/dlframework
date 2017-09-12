@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"testing"
 
-	"golang.org/x/net/context"
-
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
@@ -26,14 +24,15 @@ func TestURLRead(t *testing.T) {
 		}
 	}()
 
-	ctx := context.Background()
-	output := pipeline.New(ctx).
+	output := pipeline.New().
 		Then(NewReadURL()).
 		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
-		assert.IsType(t, &bytes.Buffer{}, out)
+		v, ok := out.(IDer)
+		assert.True(t, ok)
+		assert.IsType(t, &bytes.Buffer{}, v.GetData())
 	}
 }
 
@@ -51,15 +50,21 @@ func TestURLReadImage(t *testing.T) {
 		}
 	}()
 
-	ctx := context.Background()
-	output := pipeline.New(ctx).
+	output := pipeline.New().
 		Then(NewReadURL()).
-		Then(NewReadImage()).
+		Then(NewReadImage(predict.PreprocessOptions{
+			MeanImage: []float32{0, 0, 0},
+			Size:      []int{224, 224},
+			Scale:     1.0,
+			ColorMode: types.RGBMode,
+		})).
 		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
-		assert.IsType(t, &types.RGBImage{}, out)
+		v, ok := out.(IDer)
+		assert.True(t, ok)
+		assert.IsType(t, &types.RGBImage{}, v.GetData())
 	}
 }
 
@@ -77,15 +82,21 @@ func TestURLReadPreprocessImage(t *testing.T) {
 		}
 	}()
 
-	ctx := context.Background()
-	output := pipeline.New(ctx).
+	output := pipeline.New().
 		Then(NewReadURL()).
-		Then(NewReadImage()).
+		Then(NewReadImage(predict.PreprocessOptions{
+			MeanImage: []float32{0, 0, 0},
+			Size:      []int{224, 224},
+			Scale:     1.0,
+			ColorMode: types.RGBMode,
+		})).
 		Then(NewPreprocessImage(predict.PreprocessOptions{})).
 		Run(input)
 
 	for out := range output {
 		assert.NotEmpty(t, out)
-		assert.IsType(t, []float32{}, out)
+		v, ok := out.(IDer)
+		assert.True(t, ok)
+		assert.IsType(t, []float32{}, v.GetData())
 	}
 }
