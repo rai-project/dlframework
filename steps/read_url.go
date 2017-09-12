@@ -28,7 +28,8 @@ func NewReadURL() pipeline.Step {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
+	span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info())
+	if span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}
@@ -46,6 +47,10 @@ func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
 		url = in.GetData()
 	default:
 		return errors.Errorf("expecting a string for read url Step, but got %v", in0)
+	}
+
+	if span != nil {
+		span.SetTag("url", url)
 	}
 
 	resp, err := http.Get(url)
