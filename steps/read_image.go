@@ -5,6 +5,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	"github.com/rai-project/dlframework/framework/predict"
@@ -45,6 +46,11 @@ func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
 }
 
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Read Image Step"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
+	}
+
 	var in io.Reader
 
 	switch in0 := in0.(type) {

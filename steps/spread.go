@@ -3,6 +3,7 @@ package steps
 import (
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/pipeline"
 )
@@ -21,6 +22,11 @@ func NewSpread() pipeline.Step {
 }
 
 func (p spread) do(ctx context.Context, in0 interface{}) interface{} {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Spread Step"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
+	}
+
 	in, err := toSlice(in0)
 	if err != nil {
 		return errors.Errorf("expecting a slice input for Spread, but got %v", in0)

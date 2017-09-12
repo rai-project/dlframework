@@ -3,6 +3,7 @@ package steps
 import (
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/pipeline"
 )
@@ -20,6 +21,11 @@ func NewCastToFloat32Slice() pipeline.Step {
 }
 
 func (p castToFloat32Slice) do(ctx context.Context, in0 interface{}) interface{} {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Cast to float32 Step"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
+	}
+
 	in, err := toSlice(in0)
 	if err != nil {
 		return errors.Errorf("expecting a slice input for CastToFloat32Slice, but got %v", in0)

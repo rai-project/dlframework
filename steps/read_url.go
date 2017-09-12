@@ -7,6 +7,7 @@ import (
 
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/pipeline"
@@ -27,6 +28,11 @@ func NewReadURL() pipeline.Step {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}) interface{} {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Read URL Step"); span != nil {
+		ctx = newCtx
+		defer span.Finish()
+	}
+
 	url := ""
 	switch in := in0.(type) {
 	case string:
