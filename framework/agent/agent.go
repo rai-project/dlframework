@@ -16,6 +16,8 @@ import (
 
 	"google.golang.org/grpc"
 
+	"github.com/rai-project/dldataset"
+	_ "github.com/rai-project/dldataset/vision"
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/registry"
@@ -260,7 +262,63 @@ func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamS
 //
 // The result is a prediction feature list.
 func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
-	return nil, nil
+
+	if req.GetPredictor() == nil {
+		return nil, errors.New("request does not have a valid predictor set")
+	}
+	predictorId := req.GetPredictor().GetId()
+
+	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	if err != nil {
+		return nil, err
+	}
+
+	preprocessOptions, err := predictor.PreprocessOptions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.GetDataset() == nil {
+		return nil, errors.New("invalid empty dataset parameter in request")
+	}
+
+	dataset, err := dldataset.Get(req.Dataset.GetCategory(), req.Dataset.GetName())
+	if err != nil {
+		return nil, err
+	}
+
+	dataset, err = dataset.New(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer dataset.Close()
+
+	if err := dataset.Download(ctx); err != nil {
+		return nil, err
+	}
+
+	elems, err := dataset.List(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	input := make(chan interface{})
+	go func() {
+		defer close(input)
+		for _, e := range elems {
+			input <- e
+		}
+	}()
+
+	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
+		Then(steps.NewGetDataset(dataset)).
+		Then(steps.NewReadImage(preprocessOptions)).
+		Then(steps.NewPreprocessImage(preprocessOptions)).
+		Then(steps.NewPredictImage(predictor)).
+		Run(input)
+
+	return p.toFeaturesResponse(output)
 }
 
 // Dataset method receives a single dataset and runs

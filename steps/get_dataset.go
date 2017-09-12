@@ -8,13 +8,13 @@ import (
 	"github.com/rai-project/pipeline"
 )
 
-type listDataset struct {
+type getDataset struct {
 	base
 	dataset dldataset.Dataset
 }
 
-func NewListDataset(dataset dldataset.Dataset) pipeline.Step {
-	res := listDataset{
+func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
+	res := getDataset{
 		dataset: dataset,
 		base: base{
 			info: "ListDataset",
@@ -24,7 +24,7 @@ func NewListDataset(dataset dldataset.Dataset) pipeline.Step {
 	return res
 }
 
-func (p listDataset) do(ctx context.Context, in0 interface{}) interface{} {
+func (p getDataset) do(ctx context.Context, in0 interface{}) interface{} {
 	lst, err := p.dataset.List(ctx)
 	if err != nil {
 		return err
@@ -32,6 +32,6 @@ func (p listDataset) do(ctx context.Context, in0 interface{}) interface{} {
 	return lst
 }
 
-func (p listDataset) Close() error {
+func (p getDataset) Close() error {
 	return nil
 }
