@@ -21,7 +21,7 @@ func NewCastToFloat32Slice() pipeline.Step {
 }
 
 func (p castToFloat32Slice) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Cast to float32 Step"); span != nil {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

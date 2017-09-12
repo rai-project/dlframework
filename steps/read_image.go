@@ -46,7 +46,7 @@ func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
 }
 
 func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Read Image Step"); span != nil {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

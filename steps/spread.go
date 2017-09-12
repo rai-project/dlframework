@@ -22,7 +22,7 @@ func NewSpread() pipeline.Step {
 }
 
 func (p spread) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Spread Step"); span != nil {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

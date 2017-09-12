@@ -27,8 +27,12 @@ func NewPredictImage(predictor predict.Predictor) pipeline.Step {
 }
 
 func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Predict Image Step"); span != nil {
+	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
 		ctx = newCtx
+		if framework, model, err := p.predictor.Info(); err == nil {
+			span.SetTag("framework", framework.MustCanonicalName())
+			span.SetTag("model", model.MustCanonicalName())
+		}
 		defer span.Finish()
 	}
 
