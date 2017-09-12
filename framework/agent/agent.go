@@ -109,12 +109,18 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	return &dl.PredictorCloseResponse{}, nil
 }
 
-func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesResponse, error) {
+func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.PredictionOptions) (*dl.FeaturesResponse, error) {
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
 	res := &dl.FeaturesResponse{}
+
+	if options == nil {
+		options = &dl.PredictionOptions{
+			RequestId: "request-id-not-found",
+		}
+	}
 
 	for out := range output {
 		if err, ok := out.(error); ok {
@@ -153,7 +159,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}) (*dl.FeaturesRespo
 			res.Responses = append(res.Responses, &dl.FeatureResponse{
 				Id:        uuid.NewV4(),
 				InputId:   inputId,
-				RequestId: "todo-request-id",
+				RequestId: options.GetRequestId(),
 				Features:  features,
 			})
 		}()
@@ -174,6 +180,9 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 	}
 
 	predictorId := req.GetPredictor().GetId()
+	if predictorId == "" {
+		return nil, errors.New("predictor id cannot be an empty string")
+	}
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
 	if err != nil {
@@ -200,7 +209,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
-	return p.toFeaturesResponse(output)
+	return p.toFeaturesResponse(output, req.GetOptions())
 }
 
 // Image method receives a stream of urls and runs
@@ -221,6 +230,9 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		return nil, errors.New("request does not have a valid predictor set")
 	}
 	predictorId := req.GetPredictor().GetId()
+	if predictorId == "" {
+		return nil, errors.New("predictor id cannot be an empty string")
+	}
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
 	if err != nil {
@@ -246,7 +258,7 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
-	return p.toFeaturesResponse(output)
+	return p.toFeaturesResponse(output, req.GetOptions())
 }
 
 // Image method receives a list base64 encoded images and runs
@@ -267,6 +279,9 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 		return nil, errors.New("request does not have a valid predictor set")
 	}
 	predictorId := req.GetPredictor().GetId()
+	if predictorId == "" {
+		return nil, errors.New("predictor id cannot be an empty string")
+	}
 
 	predictor, err := p.getLoadedPredictor(ctx, predictorId)
 	if err != nil {
@@ -318,7 +333,7 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
-	return p.toFeaturesResponse(output)
+	return p.toFeaturesResponse(output, req.GetOptions())
 }
 
 // Dataset method receives a single dataset and runs

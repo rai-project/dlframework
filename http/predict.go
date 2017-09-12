@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -168,8 +169,34 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 		})
 }
 
+func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels.DlframeworkFeatureResponse {
+	resps := make([]*webmodels.DlframeworkFeatureResponse, len(responses))
+	for ii, fr := range responses {
+		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
+		for jj, f := range fr.Features {
+			features[jj] = &webmodels.DlframeworkFeature{
+				Index:       f.Index,
+				Metadata:    f.Metadata,
+				Name:        f.Name,
+				Probability: f.Probability,
+			}
+		}
+		resps[ii] = &webmodels.DlframeworkFeatureResponse{
+			Features:  features,
+			ID:        fr.Id,
+			InputID:   fr.InputId,
+			Metadata:  fr.Metadata,
+			RequestID: fr.RequestId,
+		}
+	}
+	return resps
+}
+
 func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responder {
 	predictor := params.Body.Predictor
+	if predictor == nil {
+		return NewError("Predict/Images", errors.New("invalid nil predictor"))
+	}
 	predictorID := predictor.ID
 
 	client, err := p.getClient(predictorID)
@@ -193,6 +220,11 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 		options = &webmodels.DlframeworkPredictionOptions{}
 	}
 
+	requestID := params.HTTPRequest.Header.Get(echo.HeaderXRequestID)
+	if options.RequestID != "" {
+		requestID = options.RequestID
+	}
+
 	ret, err := client.Images(ctx,
 		&dl.ImagesRequest{
 			Predictor: &dl.Predictor{
@@ -200,7 +232,7 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 			},
 			Images: images,
 			Options: &dl.PredictionOptions{
-				RequestId:    options.RequestID,
+				RequestId:    requestID,
 				FeatureLimit: options.FeatureLimit,
 			},
 		},
@@ -210,25 +242,7 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 		return NewError("Predict/Images", err)
 	}
 
-	resps := make([]*webmodels.DlframeworkFeatureResponse, len(ret.Responses))
-	for ii, fr := range ret.Responses {
-		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
-		for jj, f := range fr.Features {
-			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       f.Index,
-				Metadata:    f.Metadata,
-				Name:        f.Name,
-				Probability: f.Probability,
-			}
-		}
-		resps[ii] = &webmodels.DlframeworkFeatureResponse{
-			Features:  features,
-			ID:        fr.Id,
-			InputID:   fr.InputId,
-			Metadata:  fr.Metadata,
-			RequestID: fr.RequestId,
-		}
-	}
+	resps := toDlframeworkFeaturesResponse(ret.Responses)
 
 	return predict.NewImagesOK().
 		WithPayload(&webmodels.DlframeworkFeaturesResponse{
@@ -239,6 +253,9 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 
 func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 	predictor := params.Body.Predictor
+	if predictor == nil {
+		return NewError("Predict/URLs", errors.New("invalid nil predictor"))
+	}
 	predictorID := predictor.ID
 
 	client, err := p.getClient(predictorID)
@@ -261,6 +278,11 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 		options = &webmodels.DlframeworkPredictionOptions{}
 	}
 
+	requestID := params.HTTPRequest.Header.Get(echo.HeaderXRequestID)
+	if options.RequestID != "" {
+		requestID = options.RequestID
+	}
+
 	ret, err := client.URLs(ctx,
 		&dl.URLsRequest{
 			Predictor: &dl.Predictor{
@@ -268,7 +290,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 			},
 			Urls: urls,
 			Options: &dl.PredictionOptions{
-				RequestId:    options.RequestID,
+				RequestId:    requestID,
 				FeatureLimit: options.FeatureLimit,
 			},
 		},
@@ -278,25 +300,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 		return NewError("Predict/URLs", err)
 	}
 
-	resps := make([]*webmodels.DlframeworkFeatureResponse, len(ret.Responses))
-	for ii, fr := range ret.Responses {
-		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
-		for jj, f := range fr.Features {
-			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       f.Index,
-				Metadata:    f.Metadata,
-				Name:        f.Name,
-				Probability: f.Probability,
-			}
-		}
-		resps[ii] = &webmodels.DlframeworkFeatureResponse{
-			Features:  features,
-			ID:        fr.Id,
-			InputID:   fr.InputId,
-			Metadata:  fr.Metadata,
-			RequestID: fr.RequestId,
-		}
-	}
+	resps := toDlframeworkFeaturesResponse(ret.Responses)
 
 	return predict.NewUrlsOK().
 		WithPayload(&webmodels.DlframeworkFeaturesResponse{
