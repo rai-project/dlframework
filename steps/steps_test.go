@@ -52,12 +52,7 @@ func TestURLReadImage(t *testing.T) {
 
 	output := pipeline.New().
 		Then(NewReadURL()).
-		Then(NewReadImage(predict.PreprocessOptions{
-			MeanImage: []float32{0, 0, 0},
-			Size:      []int{224, 224},
-			Scale:     1.0,
-			ColorMode: types.RGBMode,
-		})).
+		Then(NewReadImage(predict.PreprocessOptions{})).
 		Run(input)
 
 	for out := range output {
@@ -82,15 +77,17 @@ func TestURLReadPreprocessImage(t *testing.T) {
 		}
 	}()
 
+	opts := predict.PreprocessOptions{
+		MeanImage: []float32{0, 0, 0},
+		Size:      []int{224, 224},
+		Scale:     1.0,
+		ColorMode: types.RGBMode,
+	}
+
 	output := pipeline.New().
 		Then(NewReadURL()).
-		Then(NewReadImage(predict.PreprocessOptions{
-			MeanImage: []float32{0, 0, 0},
-			Size:      []int{224, 224},
-			Scale:     1.0,
-			ColorMode: types.RGBMode,
-		})).
-		Then(NewPreprocessImage(predict.PreprocessOptions{})).
+		Then(NewReadImage(opts)).
+		Then(NewPreprocessImage(opts)).
 		Run(input)
 
 	for out := range output {
