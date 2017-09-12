@@ -57,19 +57,21 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		}
 		switch data := data.(type) {
 		case *types.RGBImage:
-			img, err := image.Resize(data, p.width, p.height)
+			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
 			if err != nil {
 				return err
 			}
 			return img
 		case *types.BGRImage:
-			img, err := image.Resize(data, p.width, p.height)
+			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
 			if err != nil {
 				return err
 			}
 			return img
 		case io.Reader:
 			in = data
+		case types.Image:
+			return in0
 		default:
 			return errors.Errorf("expecting a io.Reader or image for read image step, but got %v", in0)
 
@@ -78,7 +80,7 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.Errorf("expecting a io.Reader or dataset element for read image step, but got %v", in0)
 	}
 
-	image, err := image.Read(in, image.Resized(p.width, p.height))
+	image, err := image.Read(in, image.Context(ctx), image.Resized(p.width, p.height))
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}
