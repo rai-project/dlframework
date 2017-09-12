@@ -3,6 +3,7 @@ package steps
 import (
 	"golang.org/x/net/context"
 
+	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	_ "github.com/rai-project/dldataset/vision"
 	"github.com/rai-project/pipeline"
@@ -17,7 +18,7 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 	res := getDataset{
 		dataset: dataset,
 		base: base{
-			info: "ListDataset",
+			info: "GetDataset",
 		},
 	}
 	res.doer = res.do
@@ -25,11 +26,17 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 }
 
 func (p getDataset) do(ctx context.Context, in0 interface{}) interface{} {
-	lst, err := p.dataset.List(ctx)
+	in, ok := in0.(string)
+	if !ok {
+		return errors.Errorf("expecting a string for get dataset step, but got %v", in0)
+	}
+
+	lbl, err := p.dataset.Get(ctx, in)
 	if err != nil {
 		return err
 	}
-	return lst
+
+	return lbl
 }
 
 func (p getDataset) Close() error {
