@@ -18,6 +18,11 @@ func (p base) Info() string {
 func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}) {
 	go func() {
 		defer close(out)
+		defer func() {
+			if r := recover(); r != nil {
+				log.WithField("step", p.Info()).Error("recovered in %+v", r)
+			}
+		}()
 		for {
 			select {
 			case <-ctx.Done():
