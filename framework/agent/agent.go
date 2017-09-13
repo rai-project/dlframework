@@ -194,7 +194,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		return nil, err
 	}
 
-	input := make(chan interface{})
+	input := make(chan interface{}, p.channelBuffer)
 	go func() {
 		defer close(input)
 		for _, url := range req.GetUrls() {
@@ -244,7 +244,7 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		return nil, err
 	}
 
-	input := make(chan interface{})
+	input := make(chan interface{}, p.channelBuffer)
 	go func() {
 		defer close(input)
 		for _, img := range req.GetImages() {
@@ -318,7 +318,7 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 		return nil, err
 	}
 
-	input := make(chan interface{})
+	input := make(chan interface{}, p.channelBuffer)
 	go func() {
 		defer close(input)
 		for _, e := range elems {
