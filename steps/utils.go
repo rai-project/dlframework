@@ -1,6 +1,7 @@
 package steps
 
 import (
+	"encoding/base64"
 	"fmt"
 	"reflect"
 
@@ -56,4 +57,20 @@ func toFloat32Slice(i interface{}) ([]float32, error) {
 	default:
 		return []float32{}, errors.Errorf("unable to cast %#v of type %T to []float32", i, i)
 	}
+}
+
+func tryBase64DecodeString(q string) []byte {
+	s, err := base64.StdEncoding.DecodeString(q)
+	if err != nil {
+		return []byte(q)
+	}
+	return s
+}
+
+func tryBase64DecodeBytes(q []byte) []byte {
+	s, err := base64.StdEncoding.DecodeString(string(q))
+	if err != nil {
+		return q
+	}
+	return s
 }
