@@ -169,11 +169,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 	return res, nil
 }
 
-// Image method receives a stream of urls and runs
-// the predictor on all the urls. The
-//
-// The result is a prediction feature list for each url.
-func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
+func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface{}, error) {
 
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
@@ -209,6 +205,19 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
+	return output, nil
+}
+
+// Image method receives a stream of urls and runs
+// the predictor on all the urls. The
+//
+// The result is a prediction feature list for each url.
+func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
+	output, err := p.urls(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	return p.toFeaturesResponse(output, req.GetOptions())
 }
 
@@ -217,14 +226,19 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 //
 // The result is a prediction feature stream for each url.
 func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
+	ctx := svr.Context()
+	output, err := p.urls(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	for o := range output {
+		svr.Send(o.(*dl.FeatureResponse))
+	}
 	return nil
 }
 
-// Image method receives a list base64 encoded images and runs
-// the predictor on all the images.
-//
-// The result is a prediction feature list for each image.
-func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
+func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan interface{}, error) {
 
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
@@ -257,6 +271,18 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
+	return output, nil
+}
+
+// Image method receives a list base64 encoded images and runs
+// the predictor on all the images.
+//
+// The result is a prediction feature list for each image.
+func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
+	output, err := p.images(ctx, req)
+	if err != nil {
+		return nil, err
+	}
 
 	return p.toFeaturesResponse(output, req.GetOptions())
 }
@@ -266,6 +292,15 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 //
 // The result is a prediction feature stream for each image.
 func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamServer) error {
+	ctx := svr.Context()
+	output, err := p.images(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	for o := range output {
+		svr.Send(o.(*dl.FeatureResponse))
+	}
 	return nil
 }
 
@@ -273,7 +308,7 @@ func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamS
 // the predictor on all elements of the dataset.
 //
 // The result is a prediction feature list.
-func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
+func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan interface{}, error) {
 
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
@@ -333,6 +368,19 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
+	return output, nil
+}
+
+// Dataset method receives a single dataset and runs
+// the predictor on all elements of the dataset.
+//
+// The result is a prediction feature list.
+func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
+	output, err := p.dataset(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	return p.toFeaturesResponse(output, req.GetOptions())
 }
 
@@ -341,6 +389,14 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 //
 // The result is a prediction feature stream.
 func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStreamServer) error {
+	ctx := svr.Context()
+	output, err := p.dataset(ctx, req)
+	if err != nil {
+		return err
+	}
+	for o := range output {
+		svr.Send(o.(*dl.FeatureResponse))
+	}
 	return nil
 }
 
