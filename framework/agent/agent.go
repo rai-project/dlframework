@@ -131,22 +131,22 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 
 		inputId := "undefined-input-id"
 
-		switch o := out.(type) {
+		switch out := out.(type) {
 		case steps.IDer:
-			inputId = o.GetId()
-			data := o.GetData()
-			switch e := data.(type) {
+			inputId = out.GetId()
+			data := out.GetData()
+			switch data := data.(type) {
 			case []*dl.Feature:
-				features = e
+				features = data
 			case dl.Features:
-				features = []*dl.Feature(e)
+				features = []*dl.Feature(data)
 			default:
 				return nil, errors.Errorf("expecting a []*Feature type, but got %v", data)
 			}
 		case []*dl.Feature:
-			features = o
+			features = out
 		case dl.Features:
-			features = []*dl.Feature(o)
+			features = []*dl.Feature(out)
 		default:
 			return nil, errors.Errorf("expecting an ider or []*Feature type, but got %v", reflect.TypeOf(out))
 		}
