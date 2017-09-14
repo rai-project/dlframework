@@ -152,20 +152,28 @@ message PredictorOpenRequest {
 message PredictorCloseResponse {}
 
 message PredictionOptions {
-  string request_id = 1
-      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
+  string request_id = 1 [
+    (gogoproto.customname) = "RequestID",
+    (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
+  ];
   int32 feature_limit = 2
       [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
 }
 
 message Predictor {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  string id = 1 [
+    (gogoproto.customname) = "ID",
+    (gogoproto.moretags) = "yaml:\"id,omitempty\""
+  ];
 }
 
 message URLsRequest {
   message URL {
     // An id used to identify the output feature: maps to input_id for output
-    string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+    string id = 1 [
+      (gogoproto.customname) = "ID",
+      (gogoproto.moretags) = "yaml:\"id,omitempty\""
+    ];
     string data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   }
   Predictor predictor = 1
@@ -178,7 +186,10 @@ message URLsRequest {
 message ImagesRequest {
   message Image {
     // An id used to identify the output feature: maps to input_id for output
-    string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+    string id = 1 [
+      (gogoproto.customname) = "ID",
+      (gogoproto.moretags) = "yaml:\"id,omitempty\""
+    ];
     // The image is base64 encoded
     bytes data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
     // Preprocessed is set to true to disable preprocessing.
@@ -219,10 +230,18 @@ message Feature {
 }
 
 message FeatureResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
-  string request_id = 2
-      [ (gogoproto.moretags) = "yaml:\"request_id,omitempty\"" ];
-  string input_id = 3 [ (gogoproto.moretags) = "yaml:\"input_id,omitempty\"" ];
+  string id = 1 [
+    (gogoproto.customname) = "ID",
+    (gogoproto.moretags) = "yaml:\"id,omitempty\""
+  ];
+  string request_id = 2 [
+    (gogoproto.customname) = "RequestID",
+    (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
+  ];
+  string input_id = 3 [
+    (gogoproto.customname) = "InputID",
+    (gogoproto.moretags) = "yaml:\"input_id,omitempty\""
+  ];
   repeated Feature features = 4
       [ (gogoproto.moretags) = "yaml:\"features,omitempty\"" ];
   map<string, string> metadata = 5
@@ -230,7 +249,10 @@ message FeatureResponse {
 }
 
 message FeaturesResponse {
-  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+  string id = 1 [
+    (gogoproto.customname) = "ID",
+    (gogoproto.moretags) = "yaml:\"id,omitempty\""
+  ];
   repeated FeatureResponse responses = 2
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
 }
@@ -242,8 +264,10 @@ message ResetRequest {
 }
 
 message ResetResponse {
-  Predictor predictor = 1
-      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  Predictor predictor = 1 [
+    (gogoproto.embed) = true,
+    (gogoproto.moretags) = "yaml:\"predictor,omitempty\""
+  ];
 }
 
 service Registry {
