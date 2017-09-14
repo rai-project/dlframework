@@ -62,7 +62,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				org := input
 				if a, ok := org.(IDer); ok {
 					input = a.GetData()
-					id = a.GetId()
+					id = a.GetID()
 				} else {
 					id = uuid.NewV4()
 					// pp.Println("no id for %v @ step = %v", input, p.info)

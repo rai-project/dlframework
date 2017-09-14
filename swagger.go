@@ -783,11 +783,11 @@ const (
     "dlframeworkResetRequest": {
       "type": "object",
       "properties": {
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        },
         "id": {
           "type": "string"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },

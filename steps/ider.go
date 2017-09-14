@@ -1,7 +1,7 @@
 package steps
 
 type IDer interface {
-	GetId() string
+	GetID() string
 	GetData() interface{}
 }
 
@@ -10,7 +10,7 @@ type IDWrapper struct {
 	data interface{}
 }
 
-func (w IDWrapper) GetId() string {
+func (w IDWrapper) GetID() string {
 	return w.ID
 }
 

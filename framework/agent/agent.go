@@ -77,7 +77,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	id := uuid.NewV4()
 	p.loadedPredictors.Store(id, predictor)
 
-	return &dl.Predictor{Id: id}, nil
+	return &dl.Predictor{ID: id}, nil
 }
 
 func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Predictor, error) {
@@ -96,7 +96,7 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Pred
 
 // Close a predictor clear it's memory.
 func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorCloseResponse, error) {
-	id := req.Id
+	id := req.ID
 	predictor, err := p.getLoadedPredictor(ctx, id)
 	if err != nil {
 		return nil, err
@@ -118,7 +118,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 
 	if options == nil {
 		options = &dl.PredictionOptions{
-			RequestId: "request-id-not-found",
+			RequestID: "request-id-not-found",
 		}
 	}
 
@@ -133,7 +133,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 
 		switch out := out.(type) {
 		case steps.IDer:
-			inputId = out.GetId()
+			inputId = out.GetID()
 			data := out.GetData()
 			switch data := data.(type) {
 			case []*dl.Feature:
@@ -157,9 +157,9 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 			mutex.Lock()
 			defer mutex.Unlock()
 			res.Responses = append(res.Responses, &dl.FeatureResponse{
-				Id:        uuid.NewV4(),
-				InputId:   inputId,
-				RequestId: options.GetRequestId(),
+				ID:        uuid.NewV4(),
+				InputID:   inputId,
+				RequestID: options.GetRequestID(),
 				Features:  features,
 			})
 		}()
@@ -175,7 +175,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, errors.New("request does not have a valid predictor set")
 	}
 
-	predictorId := req.GetPredictor().GetId()
+	predictorId := req.GetPredictor().GetID()
 	if predictorId == "" {
 		return nil, errors.New("predictor id cannot be an empty string")
 	}
@@ -243,7 +243,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
 	}
-	predictorId := req.GetPredictor().GetId()
+	predictorId := req.GetPredictor().GetID()
 	if predictorId == "" {
 		return nil, errors.New("predictor id cannot be an empty string")
 	}
@@ -313,7 +313,7 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
 	}
-	predictorId := req.GetPredictor().GetId()
+	predictorId := req.GetPredictor().GetID()
 	if predictorId == "" {
 		return nil, errors.New("predictor id cannot be an empty string")
 	}

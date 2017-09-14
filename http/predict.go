@@ -72,11 +72,11 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 		return NewError("Predict/Open", errors.Wrap(err, "unable to open model"))
 	}
 
-	p.clients.Store(predictor.Id, client)
-	p.connections.Store(predictor.Id, conn)
+	p.clients.Store(predictor.ID, client)
+	p.connections.Store(predictor.ID, conn)
 
 	return predict.NewOpenOK().WithPayload(&webmodels.DlframeworkPredictor{
-		ID: predictor.Id,
+		ID: predictor.ID,
 	})
 }
 
@@ -109,7 +109,7 @@ func (p *PredictHandler) closeClient(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
-	if _, err := client.Close(ctx, &dl.Predictor{Id: id}); err != nil {
+	if _, err := client.Close(ctx, &dl.Predictor{ID: id}); err != nil {
 		return err
 	}
 	return nil
@@ -153,9 +153,9 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 
 	resp, err := client.Reset(ctx,
 		&dl.ResetRequest{
-			Id: id,
+			ID: id,
 			Predictor: &dl.Predictor{
-				Id: predictorId,
+				ID: predictorId,
 			},
 		},
 	)
@@ -165,7 +165,7 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 
 	return predict.NewResetOK().
 		WithPayload(&webmodels.DlframeworkResetResponse{
-			Predictor: &webmodels.DlframeworkPredictor{ID: resp.Predictor.Id},
+			Predictor: &webmodels.DlframeworkPredictor{ID: resp.Predictor.ID},
 		})
 }
 
@@ -183,10 +183,10 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 		}
 		resps[ii] = &webmodels.DlframeworkFeatureResponse{
 			Features:  features,
-			ID:        fr.Id,
-			InputID:   fr.InputId,
+			ID:        fr.ID,
+			InputID:   fr.InputID,
 			Metadata:  fr.Metadata,
-			RequestID: fr.RequestId,
+			RequestID: fr.RequestID,
 		}
 	}
 	return resps
@@ -209,7 +209,7 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 	images := make([]*dl.ImagesRequest_Image, len(params.Body.Images))
 	for ii, image := range params.Body.Images {
 		images[ii] = &dl.ImagesRequest_Image{
-			Id:           image.ID,
+			ID:           image.ID,
 			Data:         image.Data,
 			Preprocessed: image.Preprocessed,
 		}
@@ -228,11 +228,11 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 	ret, err := client.Images(ctx,
 		&dl.ImagesRequest{
 			Predictor: &dl.Predictor{
-				Id: predictorID,
+				ID: predictorID,
 			},
 			Images: images,
 			Options: &dl.PredictionOptions{
-				RequestId:    requestID,
+				RequestID:    requestID,
 				FeatureLimit: options.FeatureLimit,
 			},
 		},
@@ -268,7 +268,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 	urls := make([]*dl.URLsRequest_URL, len(params.Body.Urls))
 	for ii, url := range params.Body.Urls {
 		urls[ii] = &dl.URLsRequest_URL{
-			Id:   url.ID,
+			ID:   url.ID,
 			Data: url.Data,
 		}
 	}
@@ -286,11 +286,11 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 	ret, err := client.URLs(ctx,
 		&dl.URLsRequest{
 			Predictor: &dl.Predictor{
-				Id: predictorID,
+				ID: predictorID,
 			},
 			Urls: urls,
 			Options: &dl.PredictionOptions{
-				RequestId:    requestID,
+				RequestID:    requestID,
 				FeatureLimit: options.FeatureLimit,
 			},
 		},
