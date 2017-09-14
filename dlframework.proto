@@ -168,6 +168,7 @@ message PredictionOptions {
   option (gogoproto.description) = true;
   string request_id = 1 [
     (gogoproto.customname) = "RequestID",
+    (gogoproto.jsontag) = "request_id,omitempty",
     (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
   ];
   int32 feature_limit = 2
@@ -178,6 +179,7 @@ message Predictor {
   option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
 }
@@ -187,6 +189,7 @@ message URLsRequest {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [
       (gogoproto.customname) = "ID",
+      (gogoproto.jsontag) = "id,omitempty",
       (gogoproto.moretags) = "yaml:\"id,omitempty\""
     ];
     string data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
@@ -204,6 +207,7 @@ message ImagesRequest {
     // An id used to identify the output feature: maps to input_id for output
     string id = 1 [
       (gogoproto.customname) = "ID",
+      (gogoproto.jsontag) = "id,omitempty",
       (gogoproto.moretags) = "yaml:\"id,omitempty\""
     ];
     // The image is base64 encoded
@@ -252,14 +256,17 @@ message FeatureResponse {
   option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
   string request_id = 2 [
     (gogoproto.customname) = "RequestID",
+    (gogoproto.jsontag) = "request_id,omitempty",
     (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
   ];
   string input_id = 3 [
     (gogoproto.customname) = "InputID",
+    (gogoproto.jsontag) = "input_id,omitempty",
     (gogoproto.moretags) = "yaml:\"input_id,omitempty\""
   ];
   repeated Feature features = 4
@@ -272,6 +279,7 @@ message FeaturesResponse {
   option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
   repeated FeatureResponse responses = 2
@@ -282,6 +290,7 @@ message ResetRequest {
   option (gogoproto.description) = true;
   string id = 2 [
     (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
   Predictor predictor = 1
