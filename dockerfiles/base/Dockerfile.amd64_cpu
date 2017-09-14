@@ -1,0 +1,90 @@
+FROM ubuntu:16.04
+MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
+
+# Build-time metadata as defined at http://label-schema.org
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VCS_URL
+ARG VERSION
+ARG ARCH
+ARG FRAMEWORK_VERSION
+LABEL org.carml.go-mxnet.build-date=$BUILD_DATE \
+      org.carml.go-mxnet.name="base carml image" \
+      org.carml.go-mxnet.description="" \
+      org.carml.go-mxnet.url="https://www.carml.org/" \
+      org.carml.go-mxnet.vcs-ref=$VCS_REF \
+      org.carml.go-mxnet.vcs-url=$VCS_URL \
+      org.carml.go-mxnet.vendor="CarML" \
+      org.carml.go-mxnet.arch=$ARCH \
+      org.carml.go-mxnet.version=$VERSION \
+      org.carml.go-mxnet.framework_version=$FRAMEWORK_VERSION \
+      org.carml.go-mxnet.schema-version="1.0"
+
+
+# mxnet install with cpu support
+# cannot use gcc 6 with mxnet it crashes on amd64
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        software-properties-common && \
+    add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        gcc-5 \
+        g++-5  \
+        libjpeg-turbo8-dev \
+        libturbojpeg \
+        libvips-dev \
+        libvips42 \
+        build-essential \
+        pkg-config \
+        git \
+        libopenblas-dev \
+        libopenblas-base \
+        python-dev \
+        libcurl4-openssl-dev \
+        libgtest-dev \
+        cmake \
+        wget \
+        unzip \
+        ca-certificates \
+    && \
+    rm -rf /var/lib/apt/lists/* && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
+    update-alternatives --config gcc && \
+    gcc -v
+
+#Install Go
+ENV GIMME_GO_VERSION "1.8.3"
+ENV GIMME_OS "linux"
+ENV GIMME_ARCH $ARCH
+
+LABEL org.golang.version=$GIMME_GO_VERSION
+LABEL org.golang.os=$GIMME_OS
+LABEL org.golang.arch=$GIMME_ARCH
+
+ADD https://raw.githubusercontent.com/travis-ci/gimme/master/gimme /usr/bin/gimme
+RUN chmod +x /usr/bin/gimme
+RUN gimme
+
+ENV GOROOT "/root/.gimme/versions/go${GIMME_GO_VERSION}.${GIMME_OS}.${GIMME_ARCH}"
+ENV PATH ${GOROOT}/bin:${PATH}
+
+ENV GOPATH "/go"
+ENV PATH $GOPATH/bin:$PATH
+
+#Install Go packages
+RUN go get github.com/Masterminds/glide && \
+    go get -u github.com/jteeuwen/go-bindata/... && \
+	  go get -u github.com/elazarl/go-bindata-assetfs/... && \
+	  go get -u google.golang.org/grpc && \
+	  go get -u github.com/gogo/protobuf/proto && \
+	  go get -u github.com/gogo/protobuf/gogoproto && \
+	  go get -u github.com/golang/protobuf/protoc-gen-go && \
+	  go get -u github.com/gogo/protobuf/protoc-gen-gofast && \
+	  go get -u github.com/gogo/protobuf/protoc-gen-gogofaster && \
+	  go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
+	  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+	  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+	  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+	  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+	  go get -u github.com/go-swagger/go-swagger/cmd/swagger
