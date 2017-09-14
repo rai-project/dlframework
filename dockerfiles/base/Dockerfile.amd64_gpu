@@ -19,7 +19,6 @@ LABEL org.carml.base.build-date=$BUILD_DATE \
       org.carml.base.arch=$ARCH \
       org.carml.base.gcc.version=$GCC_VERSION \
       org.carml.base.version=$VERSION \
-      org.carml.base.framework_version=$FRAMEWORK_VERSION \
       org.carml.base.schema-version="1.0"
 
 #########################################################################
@@ -54,7 +53,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \
     update-alternatives --config gcc && \
-    gcc -v
+    gcc --version
 
 #Install Go
 ENV GIMME_GO_VERSION "1.8.3"
