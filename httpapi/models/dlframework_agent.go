@@ -22,11 +22,16 @@ type DlframeworkAgent struct {
 
 	// port
 	Port string `json:"port,omitempty"`
+
+	// specification
+	Specification string `json:"specification,omitempty"`
 }
 
 /* polymorph dlframeworkAgent host false */
 
 /* polymorph dlframeworkAgent port false */
+
+/* polymorph dlframeworkAgent specification false */
 
 // Validate validates this dlframework agent
 func (m *DlframeworkAgent) Validate(formats strfmt.Registry) error {

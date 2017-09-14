@@ -14,6 +14,7 @@ package carml.org.dlframework;
 import "google/api/annotations.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+option (gogoproto.goproto_registration) = true;
 option (gogoproto.gostring_all) = true;
 option (gogoproto.equal_all) = true;
 option (gogoproto.verbose_equal_all) = true;
@@ -29,16 +30,19 @@ option (gogoproto.unmarshaler_all) = true;
 option go_package = "dlframework";
 
 message ErrorStatus {
+  option (gogoproto.description) = true;
   bool ok = 1 [ (gogoproto.moretags) = "yaml:\"ok,omitempty\"" ];
   string message = 2 [ (gogoproto.moretags) = "yaml:\"message,omitempty\"" ];
 }
 
 message ContainerHardware {
+  option (gogoproto.description) = true;
   string gpu = 1 [ (gogoproto.moretags) = "yaml:\"gpu,omitempty\"" ];
   string cpu = 2 [ (gogoproto.moretags) = "yaml:\"cpu,omitempty\"" ];
 }
 
 message FrameworkManifest {
+  option (gogoproto.description) = true;
   string name = 1 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   string version = 2 [ (gogoproto.moretags) = "yaml:\"version,omitempty\"" ];
   map<string, ContainerHardware> container = 3
@@ -101,6 +105,7 @@ message ModelManifest {
 }
 
 message FrameworkRequest {
+  option (gogoproto.description) = true;
   string framework_name = 1
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
   string framework_version = 2
@@ -108,21 +113,27 @@ message FrameworkRequest {
 }
 
 message FrameworkManifestsResponse {
+  option (gogoproto.description) = true;
   repeated FrameworkManifest manifests = 1
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
 message Agent {
+  option (gogoproto.description) = true;
   string host = 1 [ (gogoproto.moretags) = "yaml:\"host,omitempty\"" ];
   string port = 2 [ (gogoproto.moretags) = "yaml:\"port,omitempty\"" ];
+  string specification = 3
+      [ (gogoproto.moretags) = "yaml:\"specification,omitempty\"" ];
 }
 
 message Agents {
+  option (gogoproto.description) = true;
   repeated Agent agents = 1
       [ (gogoproto.moretags) = "yaml:\"agents,omitempty\"" ];
 }
 
 message ModelRequest {
+  option (gogoproto.description) = true;
   string framework_name = 1
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
   string framework_version = 2
@@ -134,11 +145,13 @@ message ModelRequest {
 }
 
 message ModelManifestsResponse {
+  option (gogoproto.description) = true;
   repeated ModelManifest manifests = 1
       [ (gogoproto.moretags) = "yaml:\"manifests,omitempty\"" ];
 }
 
 message PredictorOpenRequest {
+  option (gogoproto.description) = true;
   string model_name = 1
       [ (gogoproto.moretags) = "yaml:\"model_name,omitempty\"" ];
   string model_version = 2
@@ -152,6 +165,7 @@ message PredictorOpenRequest {
 message PredictorCloseResponse {}
 
 message PredictionOptions {
+  option (gogoproto.description) = true;
   string request_id = 1 [
     (gogoproto.customname) = "RequestID",
     (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
@@ -161,6 +175,7 @@ message PredictionOptions {
 }
 
 message Predictor {
+  option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
@@ -176,6 +191,7 @@ message URLsRequest {
     ];
     string data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   }
+  option (gogoproto.description) = true;
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
   repeated URL urls = 2 [ (gogoproto.moretags) = "yaml:\"urls,omitempty\"" ];
@@ -198,6 +214,7 @@ message ImagesRequest {
     bool preprocessed = 3
         [ (gogoproto.moretags) = "yaml:\"preprocessed,omitempty\"" ];
   }
+  option (gogoproto.description) = true;
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
   // A list of Base64 encoded images
@@ -213,6 +230,7 @@ message DatasetRequest {
         [ (gogoproto.moretags) = "yaml:\"category,omitempty\"" ];
     string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   }
+  option (gogoproto.description) = true;
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
   Dataset dataset = 2 [ (gogoproto.moretags) = "yaml:\"dataset,omitempty\"" ];
@@ -221,6 +239,7 @@ message DatasetRequest {
 }
 
 message Feature {
+  option (gogoproto.description) = true;
   int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   float probability = 3
@@ -230,6 +249,7 @@ message Feature {
 }
 
 message FeatureResponse {
+  option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
@@ -249,6 +269,7 @@ message FeatureResponse {
 }
 
 message FeaturesResponse {
+  option (gogoproto.description) = true;
   string id = 1 [
     (gogoproto.customname) = "ID",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
@@ -258,6 +279,7 @@ message FeaturesResponse {
 }
 
 message ResetRequest {
+  option (gogoproto.description) = true;
   string id = 2 [
     (gogoproto.customname) = "ID",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
@@ -267,6 +289,7 @@ message ResetRequest {
 }
 
 message ResetResponse {
+  option (gogoproto.description) = true;
   Predictor predictor = 1 [
     (gogoproto.embed) = true,
     (gogoproto.moretags) = "yaml:\"predictor,omitempty\""

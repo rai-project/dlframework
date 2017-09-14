@@ -493,6 +493,9 @@ const (
         },
         "port": {
           "type": "string"
+        },
+        "specification": {
+          "type": "string"
         }
       }
     },

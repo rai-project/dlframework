@@ -484,6 +484,9 @@ func init() {
         },
         "port": {
           "type": "string"
+        },
+        "specification": {
+          "type": "string"
         }
       }
     },
