@@ -1,11 +1,9 @@
 
 default: docker_build_cpu
 
-# Build Docker image
-build: docker_build output
+build: docker_build output ## Build Docker image
 
-# Build and push Docker image
-release: docker_build docker_push
+release: docker_build docker_push ## Build and push Docker image
 
 # Image and binary can be overidden with env vars.
 DOCKER_IMAGE ?= carml/base
@@ -53,11 +51,11 @@ BUILD_ARGS = --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		         --build-arg VCS_REF=$(GIT_COMMIT) \
 		         --build-arg ARCH=$(ARCH)
 
-docker_build_gpu: # Build GPU Docker image
+docker_build_gpu: ## Build GPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_gpu \
 		-t $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG) .
-docker_build_cpu:  # Build CPU Docker image
+docker_build_cpu:  ## Build CPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_cpu \
 		-t "$(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG)" .
@@ -65,12 +63,12 @@ docker_build_cpu:  # Build CPU Docker image
 docker_build: docker_build_cpu docker_build_gpu
 
 
-docker_push_cpu: # Tag image as latest and Push to DockerHub
+docker_push_cpu: ## Tag image as latest and Push to DockerHub
 	docker tag $(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-cpu-latest
 	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG)
 	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-latest
 
-docker_push_gpu: # Tag image as latest and Push to DockerHub
+docker_push_gpu: ## Tag image as latest and Push to DockerHub
 	docker tag $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-gpu-latest
 	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG)
 	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-latest

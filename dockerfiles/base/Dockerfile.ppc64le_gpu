@@ -21,8 +21,6 @@ LABEL org.carml.go-mxnet.build-date=$BUILD_DATE \
       org.carml.go-mxnet.schema-version="1.0"
 
 
-# mxnet install with cpu support
-# cannot use gcc 6 with mxnet it crashes on amd64
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
@@ -31,6 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && apt-get install -y --no-install-recommends \
         gcc-5 \
         g++-5  \
+        libjpeg-turbo    \
+        libvips          \
+        libpng           \
         libjpeg-turbo8-dev \
         libturbojpeg \
         libvips-dev \
@@ -44,14 +45,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libcurl4-openssl-dev \
         libgtest-dev \
         cmake \
+        curl \
         wget \
         unzip \
+        apt-transport-https \
         ca-certificates \
     && \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5 && \
     update-alternatives --config gcc && \
     gcc -v
+
+# add powerai repo
+RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubuntu/mldl-repo-network_3.4.0_ppc64el.deb -O &&
+    dpkg -i mldl-repo-network_3.4.0_ppc64el.deb &&
+    apt-get update
 
 #Install Go
 ENV GIMME_GO_VERSION "1.8.3"
