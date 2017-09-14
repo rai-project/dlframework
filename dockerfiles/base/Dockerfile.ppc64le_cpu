@@ -31,9 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get update && apt-get install -y --no-install-recommends \
         gcc-${GCC_VERSION} \
         g++-${GCC_VERSION}  \
-        libjpeg-turbo    \
         libvips          \
-        libpng           \
         libjpeg-turbo8-dev \
         libturbojpeg \
         libvips-dev \
