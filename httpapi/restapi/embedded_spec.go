@@ -444,12 +444,18 @@ func init() {
         "base_url": {
           "type": "string"
         },
+        "graph_checksum": {
+          "type": "string"
+        },
         "graph_path": {
           "type": "string"
         },
         "is_archive": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "weights_checksum": {
+          "type": "string"
         },
         "weights_path": {
           "type": "string"

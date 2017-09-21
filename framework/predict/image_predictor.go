@@ -61,15 +61,35 @@ func (p ImagePredictor) GetFeaturesUrl() string {
 	return pfeats.Value
 }
 
-func (p ImagePredictor) GetGraphPath() string {
+func (p ImagePredictor) GetWeightsChecksum() string {
 	model := p.Model
-	graphPath := filepath.Base(model.GetModel().GetGraphPath())
-	return cleanPath(filepath.Join(p.WorkDir, graphPath))
+	return model.GetModel().GetWeightsChecksum()
+}
+
+func (p ImagePredictor) GetGraphChecksum() string {
+	model := p.Model
+	return model.GetModel().GetGraphChecksum()
+}
+
+func (p ImagePredictor) GetFeaturesChecksum() string {
+	model := p.Model
+	params := model.GetOutput().GetParameters()
+	pfeats, ok := params["features_checksum"]
+	if !ok {
+		return ""
+	}
+	return pfeats.Value
 }
 
 func (p ImagePredictor) GetWeightsPath() string {
 	model := p.Model
 	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
+	return cleanPath(filepath.Join(p.WorkDir, graphPath))
+}
+
+func (p ImagePredictor) GetGraphPath() string {
+	model := p.Model
+	graphPath := filepath.Base(model.GetModel().GetGraphPath())
 	return cleanPath(filepath.Join(p.WorkDir, graphPath))
 }
 

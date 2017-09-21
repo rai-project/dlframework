@@ -462,6 +462,12 @@ const (
         "is_archive": {
           "type": "boolean",
           "format": "boolean"
+        },
+        "weights_checksum": {
+          "type": "string"
+        },
+        "graph_checksum": {
+          "type": "string"
         }
       }
     },

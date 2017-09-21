@@ -20,11 +20,17 @@ type ModelManifestModel struct {
 	// base url
 	BaseURL string `json:"base_url,omitempty"`
 
+	// graph checksum
+	GraphChecksum string `json:"graph_checksum,omitempty"`
+
 	// graph path
 	GraphPath string `json:"graph_path,omitempty"`
 
 	// is archive
 	IsArchive bool `json:"is_archive,omitempty"`
+
+	// weights checksum
+	WeightsChecksum string `json:"weights_checksum,omitempty"`
 
 	// weights path
 	WeightsPath string `json:"weights_path,omitempty"`
@@ -32,9 +38,13 @@ type ModelManifestModel struct {
 
 /* polymorph ModelManifestModel base_url false */
 
+/* polymorph ModelManifestModel graph_checksum false */
+
 /* polymorph ModelManifestModel graph_path false */
 
 /* polymorph ModelManifestModel is_archive false */
+
+/* polymorph ModelManifestModel weights_checksum false */
 
 /* polymorph ModelManifestModel weights_path false */
 
