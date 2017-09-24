@@ -292,6 +292,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 			Options: &dl.PredictionOptions{
 				RequestID:    requestID,
 				FeatureLimit: options.FeatureLimit,
+				BatchSize:    uint32(options.BatchSize),
 			},
 		},
 	)
