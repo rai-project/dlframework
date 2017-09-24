@@ -40,9 +40,12 @@ func (o *FrameworkManifestsURL) SetBasePath(bp string) {
 func (o *FrameworkManifestsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/registry/frameworks/manifest"
+	var _path = "/registry/frameworks/manifest"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)

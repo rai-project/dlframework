@@ -51,7 +51,7 @@ type ModelManifestsOK struct {
 }
 
 func (o *ModelManifestsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/registry/models/manifest][%d] modelManifestsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /registry/models/manifest][%d] modelManifestsOK  %+v", 200, o.Payload)
 }
 
 func (o *ModelManifestsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

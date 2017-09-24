@@ -42,9 +42,12 @@ func (o *ModelAgentsURL) SetBasePath(bp string) {
 func (o *ModelAgentsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/registry/models/agent"
+	var _path = "/registry/models/agent"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)

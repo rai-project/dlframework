@@ -464,23 +464,23 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 }
 
 var (
-	pattern_Predict_Open_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "open"}, ""))
+	pattern_Predict_Open_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "open"}, ""))
 
-	pattern_Predict_Close_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "close"}, ""))
+	pattern_Predict_Close_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "close"}, ""))
 
-	pattern_Predict_URLs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "urls"}, ""))
+	pattern_Predict_URLs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "urls"}, ""))
 
-	pattern_Predict_URLsStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "predict", "stream", "urls"}, ""))
+	pattern_Predict_URLsStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"predict", "stream", "urls"}, ""))
 
-	pattern_Predict_Images_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "images"}, ""))
+	pattern_Predict_Images_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "images"}, ""))
 
-	pattern_Predict_ImagesStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "predict", "stream", "images"}, ""))
+	pattern_Predict_ImagesStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"predict", "stream", "images"}, ""))
 
-	pattern_Predict_Dataset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "dataset"}, ""))
+	pattern_Predict_Dataset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "dataset"}, ""))
 
-	pattern_Predict_DatasetStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "predict", "stream", "dataset"}, ""))
+	pattern_Predict_DatasetStream_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"predict", "stream", "dataset"}, ""))
 
-	pattern_Predict_Reset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "predict", "reset"}, ""))
+	pattern_Predict_Reset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "reset"}, ""))
 )
 
 var (

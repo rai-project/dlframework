@@ -42,9 +42,12 @@ func (o *ModelManifestsURL) SetBasePath(bp string) {
 func (o *ModelManifestsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/registry/models/manifest"
+	var _path = "/registry/models/manifest"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)

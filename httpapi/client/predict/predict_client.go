@@ -36,7 +36,7 @@ func (a *Client) Close(params *CloseParams) (*CloseOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Close",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/close",
+		PathPattern:        "/predict/close",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -66,7 +66,7 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Dataset",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/dataset",
+		PathPattern:        "/predict/dataset",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -96,7 +96,7 @@ func (a *Client) DatasetStream(params *DatasetStreamParams) (*DatasetStreamOK, e
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "DatasetStream",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/stream/dataset",
+		PathPattern:        "/predict/stream/dataset",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -126,7 +126,7 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Images",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/images",
+		PathPattern:        "/predict/images",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -156,7 +156,7 @@ func (a *Client) ImagesStream(params *ImagesStreamParams) (*ImagesStreamOK, erro
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ImagesStream",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/stream/images",
+		PathPattern:        "/predict/stream/images",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -184,7 +184,7 @@ func (a *Client) Open(params *OpenParams) (*OpenOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Open",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/open",
+		PathPattern:        "/predict/open",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -212,7 +212,7 @@ func (a *Client) Reset(params *ResetParams) (*ResetOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "Reset",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/reset",
+		PathPattern:        "/predict/reset",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -242,7 +242,7 @@ func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "URLs",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/urls",
+		PathPattern:        "/predict/urls",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -272,7 +272,7 @@ func (a *Client) UrlsStream(params *UrlsStreamParams) (*UrlsStreamOK, error) {
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "URLsStream",
 		Method:             "POST",
-		PathPattern:        "/v1/predict/stream/urls",
+		PathPattern:        "/predict/stream/urls",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

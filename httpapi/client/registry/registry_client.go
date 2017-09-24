@@ -36,7 +36,7 @@ func (a *Client) FrameworkAgents(params *FrameworkAgentsParams) (*FrameworkAgent
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "FrameworkAgents",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/frameworks/agent",
+		PathPattern:        "/registry/frameworks/agent",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -64,7 +64,7 @@ func (a *Client) FrameworkManifests(params *FrameworkManifestsParams) (*Framewor
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "FrameworkManifests",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/frameworks/manifest",
+		PathPattern:        "/registry/frameworks/manifest",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -92,7 +92,7 @@ func (a *Client) ModelAgents(params *ModelAgentsParams) (*ModelAgentsOK, error) 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModelAgents",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/models/agent",
+		PathPattern:        "/registry/models/agent",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
@@ -120,7 +120,7 @@ func (a *Client) ModelManifests(params *ModelManifestsParams) (*ModelManifestsOK
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "ModelManifests",
 		Method:             "GET",
-		PathPattern:        "/v1/registry/models/manifest",
+		PathPattern:        "/registry/models/manifest",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},

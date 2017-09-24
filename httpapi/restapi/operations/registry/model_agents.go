@@ -29,7 +29,7 @@ func NewModelAgents(ctx *middleware.Context, handler ModelAgentsHandler) *ModelA
 	return &ModelAgents{Context: ctx, Handler: handler}
 }
 
-/*ModelAgents swagger:route GET /v1/registry/models/agent Registry modelAgents
+/*ModelAgents swagger:route GET /registry/models/agent Registry modelAgents
 
 ModelAgents model agents API
 

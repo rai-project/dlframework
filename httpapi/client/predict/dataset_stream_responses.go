@@ -51,7 +51,7 @@ type DatasetStreamOK struct {
 }
 
 func (o *DatasetStreamOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/stream/dataset][%d] datasetStreamOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/stream/dataset][%d] datasetStreamOK  %+v", 200, o.Payload)
 }
 
 func (o *DatasetStreamOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

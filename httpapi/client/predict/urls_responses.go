@@ -51,7 +51,7 @@ type UrlsOK struct {
 }
 
 func (o *UrlsOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/urls][%d] urlsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/urls][%d] urlsOK  %+v", 200, o.Payload)
 }
 
 func (o *UrlsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

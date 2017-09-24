@@ -51,7 +51,7 @@ type DatasetOK struct {
 }
 
 func (o *DatasetOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/dataset][%d] datasetOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/dataset][%d] datasetOK  %+v", 200, o.Payload)
 }
 
 func (o *DatasetOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

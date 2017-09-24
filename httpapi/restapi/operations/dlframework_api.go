@@ -80,7 +80,7 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 	}
 }
 
-/*DlframeworkAPI the dlframework API */
+/*DlframeworkAPI CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration. */
 type DlframeworkAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -340,67 +340,67 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/close"] = predict.NewClose(o.context, o.PredictCloseHandler)
+	o.handlers["POST"]["/predict/close"] = predict.NewClose(o.context, o.PredictCloseHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/dataset"] = predict.NewDataset(o.context, o.PredictDatasetHandler)
+	o.handlers["POST"]["/predict/dataset"] = predict.NewDataset(o.context, o.PredictDatasetHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/stream/dataset"] = predict.NewDatasetStream(o.context, o.PredictDatasetStreamHandler)
+	o.handlers["POST"]["/predict/stream/dataset"] = predict.NewDatasetStream(o.context, o.PredictDatasetStreamHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/frameworks/agent"] = registry.NewFrameworkAgents(o.context, o.RegistryFrameworkAgentsHandler)
+	o.handlers["GET"]["/registry/frameworks/agent"] = registry.NewFrameworkAgents(o.context, o.RegistryFrameworkAgentsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/frameworks/manifest"] = registry.NewFrameworkManifests(o.context, o.RegistryFrameworkManifestsHandler)
+	o.handlers["GET"]["/registry/frameworks/manifest"] = registry.NewFrameworkManifests(o.context, o.RegistryFrameworkManifestsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/images"] = predict.NewImages(o.context, o.PredictImagesHandler)
+	o.handlers["POST"]["/predict/images"] = predict.NewImages(o.context, o.PredictImagesHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/stream/images"] = predict.NewImagesStream(o.context, o.PredictImagesStreamHandler)
+	o.handlers["POST"]["/predict/stream/images"] = predict.NewImagesStream(o.context, o.PredictImagesStreamHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/models/agent"] = registry.NewModelAgents(o.context, o.RegistryModelAgentsHandler)
+	o.handlers["GET"]["/registry/models/agent"] = registry.NewModelAgents(o.context, o.RegistryModelAgentsHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/v1/registry/models/manifest"] = registry.NewModelManifests(o.context, o.RegistryModelManifestsHandler)
+	o.handlers["GET"]["/registry/models/manifest"] = registry.NewModelManifests(o.context, o.RegistryModelManifestsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/open"] = predict.NewOpen(o.context, o.PredictOpenHandler)
+	o.handlers["POST"]["/predict/open"] = predict.NewOpen(o.context, o.PredictOpenHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/reset"] = predict.NewReset(o.context, o.PredictResetHandler)
+	o.handlers["POST"]["/predict/reset"] = predict.NewReset(o.context, o.PredictResetHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/urls"] = predict.NewUrls(o.context, o.PredictUrlsHandler)
+	o.handlers["POST"]["/predict/urls"] = predict.NewUrls(o.context, o.PredictUrlsHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/v1/predict/stream/urls"] = predict.NewUrlsStream(o.context, o.PredictUrlsStreamHandler)
+	o.handlers["POST"]["/predict/stream/urls"] = predict.NewUrlsStream(o.context, o.PredictUrlsStreamHandler)
 
 }
 

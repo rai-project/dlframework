@@ -40,9 +40,12 @@ func (o *FrameworkAgentsURL) SetBasePath(bp string) {
 func (o *FrameworkAgentsURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/registry/frameworks/agent"
+	var _path = "/registry/frameworks/agent"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)

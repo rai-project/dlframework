@@ -246,13 +246,13 @@ func RegisterRegistryHandler(ctx context.Context, mux *runtime.ServeMux, conn *g
 }
 
 var (
-	pattern_Registry_FrameworkManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "registry", "frameworks", "manifest"}, ""))
+	pattern_Registry_FrameworkManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "manifest"}, ""))
 
-	pattern_Registry_FrameworkAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "registry", "frameworks", "agent"}, ""))
+	pattern_Registry_FrameworkAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "agent"}, ""))
 
-	pattern_Registry_ModelManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "registry", "models", "manifest"}, ""))
+	pattern_Registry_ModelManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "manifest"}, ""))
 
-	pattern_Registry_ModelAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "registry", "models", "agent"}, ""))
+	pattern_Registry_ModelAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "agent"}, ""))
 )
 
 var (

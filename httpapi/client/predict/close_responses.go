@@ -51,7 +51,7 @@ type CloseOK struct {
 }
 
 func (o *CloseOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/close][%d] closeOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/close][%d] closeOK  %+v", 200, o.Payload)
 }
 
 func (o *CloseOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

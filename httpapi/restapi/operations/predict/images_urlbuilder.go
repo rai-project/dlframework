@@ -35,9 +35,12 @@ func (o *ImagesURL) SetBasePath(bp string) {
 func (o *ImagesURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/predict/images"
+	var _path = "/predict/images"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &result, nil

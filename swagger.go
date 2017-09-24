@@ -4,11 +4,16 @@ const (
 	dlframework_swagger = `{
   "swagger": "2.0",
   "info": {
-    "title": "dlframework.proto",
-    "version": "1.0.0",
+    "title": "CarML DLFramework",
+    "version": "0.2.18",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
       "url": "https://github.com/rai-project/carml"
+    },
+    "license": {
+      "name": "NCSA/UIUC",
+      "url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
     }
   },
   "schemes": [
@@ -22,7 +27,7 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/predict/close": {
+    "/predict/close": {
       "post": {
         "summary": "Close a predictor clear it's memory.",
         "operationId": "Close",
@@ -49,7 +54,7 @@ const (
         ]
       }
     },
-    "/v1/predict/dataset": {
+    "/predict/dataset": {
       "post": {
         "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
         "description": "The result is a prediction feature list.",
@@ -77,7 +82,7 @@ const (
         ]
       }
     },
-    "/v1/predict/images": {
+    "/predict/images": {
       "post": {
         "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
         "description": "The result is a prediction feature list for each image.",
@@ -105,7 +110,7 @@ const (
         ]
       }
     },
-    "/v1/predict/open": {
+    "/predict/open": {
       "post": {
         "summary": "Opens a predictor and returns an id where the predictor\nis accessible. The id can be used to perform inference\nrequests.",
         "operationId": "Open",
@@ -132,7 +137,7 @@ const (
         ]
       }
     },
-    "/v1/predict/reset": {
+    "/predict/reset": {
       "post": {
         "summary": "Clear method clears the internal cache of the predictors",
         "operationId": "Reset",
@@ -159,7 +164,7 @@ const (
         ]
       }
     },
-    "/v1/predict/stream/dataset": {
+    "/predict/stream/dataset": {
       "post": {
         "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
         "description": "The result is a prediction feature stream.",
@@ -187,7 +192,7 @@ const (
         ]
       }
     },
-    "/v1/predict/stream/images": {
+    "/predict/stream/images": {
       "post": {
         "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
         "description": "The result is a prediction feature stream for each image.",
@@ -215,7 +220,7 @@ const (
         ]
       }
     },
-    "/v1/predict/stream/urls": {
+    "/predict/stream/urls": {
       "post": {
         "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
         "description": "The result is a prediction feature stream for each url.",
@@ -243,7 +248,7 @@ const (
         ]
       }
     },
-    "/v1/predict/urls": {
+    "/predict/urls": {
       "post": {
         "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
         "description": "The result is a prediction feature stream for each url.",
@@ -271,7 +276,7 @@ const (
         ]
       }
     },
-    "/v1/registry/frameworks/agent": {
+    "/registry/frameworks/agent": {
       "get": {
         "operationId": "FrameworkAgents",
         "responses": {
@@ -301,7 +306,7 @@ const (
         ]
       }
     },
-    "/v1/registry/frameworks/manifest": {
+    "/registry/frameworks/manifest": {
       "get": {
         "operationId": "FrameworkManifests",
         "responses": {
@@ -331,7 +336,7 @@ const (
         ]
       }
     },
-    "/v1/registry/models/agent": {
+    "/registry/models/agent": {
       "get": {
         "operationId": "ModelAgents",
         "responses": {
@@ -373,7 +378,7 @@ const (
         ]
       }
     },
-    "/v1/registry/models/manifest": {
+    "/registry/models/manifest": {
       "get": {
         "operationId": "ModelManifests",
         "responses": {
@@ -447,38 +452,6 @@ const (
         }
       }
     },
-    "ModelManifestModel": {
-      "type": "object",
-      "properties": {
-        "base_url": {
-          "type": "string"
-        },
-        "weights_path": {
-          "type": "string"
-        },
-        "graph_path": {
-          "type": "string"
-        },
-        "is_archive": {
-          "type": "boolean",
-          "format": "boolean"
-        },
-        "weights_checksum": {
-          "type": "string"
-        },
-        "graph_checksum": {
-          "type": "string"
-        }
-      }
-    },
-    "TypeParameter": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string"
-        }
-      }
-    },
     "URLsRequestURL": {
       "type": "object",
       "properties": {
@@ -487,42 +460,6 @@ const (
           "title": "An id used to identify the output feature: maps to input_id for output"
         },
         "data": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkAgent": {
-      "type": "object",
-      "properties": {
-        "host": {
-          "type": "string"
-        },
-        "port": {
-          "type": "string"
-        },
-        "specification": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkAgents": {
-      "type": "object",
-      "properties": {
-        "agents": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/dlframeworkAgent"
-          }
-        }
-      }
-    },
-    "dlframeworkContainerHardware": {
-      "type": "object",
-      "properties": {
-        "gpu": {
-          "type": "string"
-        },
-        "cpu": {
           "type": "string"
         }
       }
@@ -603,6 +540,168 @@ const (
         }
       }
     },
+    "dlframeworkImagesRequest": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ImagesRequestImage"
+          },
+          "title": "A list of Base64 encoded images"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkPredictionOptions": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "feature_limit": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "dlframeworkPredictor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictorCloseResponse": {
+      "type": "object"
+    },
+    "dlframeworkPredictorOpenRequest": {
+      "type": "object",
+      "properties": {
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkResetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkResetResponse": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkURLsRequest": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/URLsRequestURL"
+          }
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "ModelManifestModel": {
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "type": "string"
+        },
+        "weights_path": {
+          "type": "string"
+        },
+        "graph_path": {
+          "type": "string"
+        },
+        "is_archive": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "weights_checksum": {
+          "type": "string"
+        },
+        "graph_checksum": {
+          "type": "string"
+        }
+      }
+    },
+    "TypeParameter": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgent": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "string"
+        },
+        "specification": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgents": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkAgent"
+          }
+        }
+      }
+    },
+    "dlframeworkContainerHardware": {
+      "type": "object",
+      "properties": {
+        "gpu": {
+          "type": "string"
+        },
+        "cpu": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkFrameworkManifest": {
       "type": "object",
       "properties": {
@@ -628,24 +727,6 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
           }
-        }
-      }
-    },
-    "dlframeworkImagesRequest": {
-      "type": "object",
-      "properties": {
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        },
-        "images": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ImagesRequestImage"
-          },
-          "title": "A list of Base64 encoded images"
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
@@ -748,85 +829,10 @@ const (
           }
         }
       }
-    },
-    "dlframeworkPredictionOptions": {
-      "type": "object",
-      "properties": {
-        "request_id": {
-          "type": "string"
-        },
-        "feature_limit": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "dlframeworkPredictor": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkPredictorCloseResponse": {
-      "type": "object"
-    },
-    "dlframeworkPredictorOpenRequest": {
-      "type": "object",
-      "properties": {
-        "model_name": {
-          "type": "string"
-        },
-        "model_version": {
-          "type": "string"
-        },
-        "framework_name": {
-          "type": "string"
-        },
-        "framework_version": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkResetRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        }
-      }
-    },
-    "dlframeworkResetResponse": {
-      "type": "object",
-      "properties": {
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        }
-      }
-    },
-    "dlframeworkURLsRequest": {
-      "type": "object",
-      "properties": {
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        },
-        "urls": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/URLsRequestURL"
-          }
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
     }
   },
-  "host": "localhost",
+  "host": "carml.org",
+  "basePath": "/v1",
   "externalDocs": {
     "url": "https://rai-project.github.io/carml"
   }
@@ -834,13 +840,21 @@ const (
 `
 	swagger_info = `{
 	"info": {
-		"version": "1.0.0",
+		"title": "CarML DLFramework",
+		"description":
+			"CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+		"version": "0.2.18",
 		"contact": {
 			"name": "Abdul Dakkak, Cheng Li",
 			"url": "https://github.com/rai-project/carml"
+		},
+		"license": {
+			"name": "NCSA/UIUC",
+			"url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
 		}
 	},
-	"host": "localhost",
+	"host": "carml.org",
+	"basePath": "/v1",
 	"externalDocs": {
 		"url": "https://rai-project.github.io/carml"
 	}

@@ -29,7 +29,7 @@ func NewModelManifests(ctx *middleware.Context, handler ModelManifestsHandler) *
 	return &ModelManifests{Context: ctx, Handler: handler}
 }
 
-/*ModelManifests swagger:route GET /v1/registry/models/manifest Registry modelManifests
+/*ModelManifests swagger:route GET /registry/models/manifest Registry modelManifests
 
 ModelManifests model manifests API
 

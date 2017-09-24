@@ -51,7 +51,7 @@ type UrlsStreamOK struct {
 }
 
 func (o *UrlsStreamOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/stream/urls][%d] urlsStreamOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/stream/urls][%d] urlsStreamOK  %+v", 200, o.Payload)
 }
 
 func (o *UrlsStreamOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

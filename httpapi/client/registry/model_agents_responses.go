@@ -51,7 +51,7 @@ type ModelAgentsOK struct {
 }
 
 func (o *ModelAgentsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/registry/models/agent][%d] modelAgentsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /registry/models/agent][%d] modelAgentsOK  %+v", 200, o.Payload)
 }
 
 func (o *ModelAgentsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

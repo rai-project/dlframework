@@ -29,7 +29,7 @@ func NewFrameworkAgents(ctx *middleware.Context, handler FrameworkAgentsHandler)
 	return &FrameworkAgents{Context: ctx, Handler: handler}
 }
 
-/*FrameworkAgents swagger:route GET /v1/registry/frameworks/agent Registry frameworkAgents
+/*FrameworkAgents swagger:route GET /registry/frameworks/agent Registry frameworkAgents
 
 FrameworkAgents framework agents API
 

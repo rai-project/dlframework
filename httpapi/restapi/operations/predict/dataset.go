@@ -29,7 +29,7 @@ func NewDataset(ctx *middleware.Context, handler DatasetHandler) *Dataset {
 	return &Dataset{Context: ctx, Handler: handler}
 }
 
-/*Dataset swagger:route POST /v1/predict/dataset Predict dataset
+/*Dataset swagger:route POST /predict/dataset Predict dataset
 
 Dataset method receives a single dataset and runs
 the predictor on all elements of the dataset.

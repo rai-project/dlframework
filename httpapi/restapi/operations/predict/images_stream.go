@@ -29,7 +29,7 @@ func NewImagesStream(ctx *middleware.Context, handler ImagesStreamHandler) *Imag
 	return &ImagesStream{Context: ctx, Handler: handler}
 }
 
-/*ImagesStream swagger:route POST /v1/predict/stream/images Predict imagesStream
+/*ImagesStream swagger:route POST /predict/stream/images Predict imagesStream
 
 Image method receives a list base64 encoded images and runs
 the predictor on all the images.

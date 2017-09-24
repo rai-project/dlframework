@@ -190,14 +190,14 @@ service Predict {
   // requests.
   rpc Open(PredictorOpenRequest) returns (Predictor) {
     option (google.api.http) = {
-      post : "/v1/predict/open",
+      post : "/predict/open",
       body : "*"
     };
   }
 
   // rpc Information(Predictor) returns (PredictorInformation) {
   //   option (google.api.http) = {
-  //     post : "/v1/predict/information",
+  //     post : "/predict/information",
   //     body : "*"
   //   };
   // }
@@ -205,7 +205,7 @@ service Predict {
   // Close a predictor clear it's memory.
   rpc Close(Predictor) returns (PredictorCloseResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/close",
+      post : "/predict/close",
       body : "*"
     };
   }
@@ -216,7 +216,7 @@ service Predict {
   // The result is a prediction feature stream for each url.
   rpc URLs(URLsRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/urls",
+      post : "/predict/urls",
       body : "*"
     };
   }
@@ -227,7 +227,7 @@ service Predict {
   // The result is a prediction feature stream for each url.
   rpc URLsStream(URLsRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/stream/urls",
+      post : "/predict/stream/urls",
       body : "*"
     };
   }
@@ -238,7 +238,7 @@ service Predict {
   // The result is a prediction feature list for each image.
   rpc Images(ImagesRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/images",
+      post : "/predict/images",
       body : "*"
     };
   }
@@ -249,7 +249,7 @@ service Predict {
   // The result is a prediction feature stream for each image.
   rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/stream/images",
+      post : "/predict/stream/images",
       body : "*"
     };
   }
@@ -260,7 +260,7 @@ service Predict {
   // The result is a prediction feature list.
   rpc Dataset(DatasetRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/dataset",
+      post : "/predict/dataset",
       body : "*"
     };
   }
@@ -271,7 +271,7 @@ service Predict {
   // The result is a prediction feature stream.
   rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/stream/dataset",
+      post : "/predict/stream/dataset",
       body : "*"
     };
   }
@@ -279,7 +279,7 @@ service Predict {
   // Clear method clears the internal cache of the predictors
   rpc Reset(ResetRequest) returns (ResetResponse) {
     option (google.api.http) = {
-      post : "/v1/predict/reset",
+      post : "/predict/reset",
       body : "*"
     };
   }

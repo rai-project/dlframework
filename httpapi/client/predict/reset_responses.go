@@ -51,7 +51,7 @@ type ResetOK struct {
 }
 
 func (o *ResetOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/reset][%d] resetOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/reset][%d] resetOK  %+v", 200, o.Payload)
 }
 
 func (o *ResetOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

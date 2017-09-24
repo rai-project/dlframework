@@ -29,7 +29,7 @@ func NewImages(ctx *middleware.Context, handler ImagesHandler) *Images {
 	return &Images{Context: ctx, Handler: handler}
 }
 
-/*Images swagger:route POST /v1/predict/images Predict images
+/*Images swagger:route POST /predict/images Predict images
 
 Image method receives a list base64 encoded images and runs
 the predictor on all the images.

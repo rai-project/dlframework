@@ -29,7 +29,7 @@ func NewOpen(ctx *middleware.Context, handler OpenHandler) *Open {
 	return &Open{Context: ctx, Handler: handler}
 }
 
-/*Open swagger:route POST /v1/predict/open Predict open
+/*Open swagger:route POST /predict/open Predict open
 
 Opens a predictor and returns an id where the predictor
 is accessible. The id can be used to perform inference

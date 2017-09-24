@@ -29,7 +29,7 @@ func NewFrameworkManifests(ctx *middleware.Context, handler FrameworkManifestsHa
 	return &FrameworkManifests{Context: ctx, Handler: handler}
 }
 
-/*FrameworkManifests swagger:route GET /v1/registry/frameworks/manifest Registry frameworkManifests
+/*FrameworkManifests swagger:route GET /registry/frameworks/manifest Registry frameworkManifests
 
 FrameworkManifests framework manifests API
 

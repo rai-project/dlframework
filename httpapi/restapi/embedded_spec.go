@@ -26,16 +26,22 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "title": "dlframework.proto",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "title": "CarML DLFramework",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
       "url": "https://github.com/rai-project/carml"
     },
-    "version": "1.0.0"
+    "license": {
+      "name": "NCSA/UIUC",
+      "url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
+    },
+    "version": "0.2.18"
   },
-  "host": "localhost",
+  "host": "carml.org",
+  "basePath": "/v1",
   "paths": {
-    "/v1/predict/close": {
+    "/predict/close": {
       "post": {
         "tags": [
           "Predict"
@@ -61,7 +67,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/dataset": {
+    "/predict/dataset": {
       "post": {
         "description": "The result is a prediction feature list.",
         "tags": [
@@ -88,7 +94,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/images": {
+    "/predict/images": {
       "post": {
         "description": "The result is a prediction feature list for each image.",
         "tags": [
@@ -115,7 +121,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/open": {
+    "/predict/open": {
       "post": {
         "tags": [
           "Predict"
@@ -141,7 +147,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/reset": {
+    "/predict/reset": {
       "post": {
         "tags": [
           "Predict"
@@ -167,7 +173,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/stream/dataset": {
+    "/predict/stream/dataset": {
       "post": {
         "description": "The result is a prediction feature stream.",
         "tags": [
@@ -195,7 +201,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/stream/images": {
+    "/predict/stream/images": {
       "post": {
         "description": "The result is a prediction feature stream for each image.",
         "tags": [
@@ -223,7 +229,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/stream/urls": {
+    "/predict/stream/urls": {
       "post": {
         "description": "The result is a prediction feature stream for each url.",
         "tags": [
@@ -251,7 +257,7 @@ func init() {
         }
       }
     },
-    "/v1/predict/urls": {
+    "/predict/urls": {
       "post": {
         "description": "The result is a prediction feature stream for each url.",
         "tags": [
@@ -278,7 +284,7 @@ func init() {
         }
       }
     },
-    "/v1/registry/frameworks/agent": {
+    "/registry/frameworks/agent": {
       "get": {
         "tags": [
           "Registry"
@@ -305,7 +311,7 @@ func init() {
         }
       }
     },
-    "/v1/registry/frameworks/manifest": {
+    "/registry/frameworks/manifest": {
       "get": {
         "tags": [
           "Registry"
@@ -332,7 +338,7 @@ func init() {
         }
       }
     },
-    "/v1/registry/models/agent": {
+    "/registry/models/agent": {
       "get": {
         "tags": [
           "Registry"
@@ -369,7 +375,7 @@ func init() {
         }
       }
     },
-    "/v1/registry/models/manifest": {
+    "/registry/models/manifest": {
       "get": {
         "tags": [
           "Registry"

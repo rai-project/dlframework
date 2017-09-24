@@ -35,9 +35,12 @@ func (o *DatasetURL) SetBasePath(bp string) {
 func (o *DatasetURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/predict/dataset"
+	var _path = "/predict/dataset"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &result, nil

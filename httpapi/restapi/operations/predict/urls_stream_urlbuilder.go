@@ -35,9 +35,12 @@ func (o *UrlsStreamURL) SetBasePath(bp string) {
 func (o *UrlsStreamURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/predict/stream/urls"
+	var _path = "/predict/stream/urls"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &result, nil

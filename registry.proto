@@ -158,22 +158,22 @@ service Registry {
   rpc FrameworkManifests(FrameworkRequest)
       returns (FrameworkManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/registry/frameworks/manifest",
+      get : "/registry/frameworks/manifest",
     };
   }
   rpc FrameworkAgents(FrameworkRequest) returns (Agents) {
     option (google.api.http) = {
-      get : "/v1/registry/frameworks/agent",
+      get : "/registry/frameworks/agent",
     };
   }
   rpc ModelManifests(ModelRequest) returns (ModelManifestsResponse) {
     option (google.api.http) = {
-      get : "/v1/registry/models/manifest",
+      get : "/registry/models/manifest",
     };
   }
   rpc ModelAgents(ModelRequest) returns (Agents) {
     option (google.api.http) = {
-      get : "/v1/registry/models/agent",
+      get : "/registry/models/agent",
     };
   }
 }

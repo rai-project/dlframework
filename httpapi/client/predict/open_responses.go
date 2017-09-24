@@ -51,7 +51,7 @@ type OpenOK struct {
 }
 
 func (o *OpenOK) Error() string {
-	return fmt.Sprintf("[POST /v1/predict/open][%d] openOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /predict/open][%d] openOK  %+v", 200, o.Payload)
 }
 
 func (o *OpenOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

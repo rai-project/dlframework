@@ -29,7 +29,7 @@ func NewClose(ctx *middleware.Context, handler CloseHandler) *Close {
 	return &Close{Context: ctx, Handler: handler}
 }
 
-/*Close swagger:route POST /v1/predict/close Predict close
+/*Close swagger:route POST /predict/close Predict close
 
 Close a predictor clear it's memory.
 

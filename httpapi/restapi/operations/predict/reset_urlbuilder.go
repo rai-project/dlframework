@@ -35,9 +35,12 @@ func (o *ResetURL) SetBasePath(bp string) {
 func (o *ResetURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/v1/predict/reset"
+	var _path = "/predict/reset"
 
 	_basePath := o._basePath
+	if _basePath == "" {
+		_basePath = "/v1"
+	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	return &result, nil

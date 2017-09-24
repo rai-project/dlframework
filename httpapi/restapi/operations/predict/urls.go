@@ -29,7 +29,7 @@ func NewUrls(ctx *middleware.Context, handler UrlsHandler) *Urls {
 	return &Urls{Context: ctx, Handler: handler}
 }
 
-/*Urls swagger:route POST /v1/predict/urls Predict urls
+/*Urls swagger:route POST /predict/urls Predict urls
 
 Image method receives a stream of urls and runs
 the predictor on all the urls. The

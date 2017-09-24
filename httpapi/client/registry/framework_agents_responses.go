@@ -51,7 +51,7 @@ type FrameworkAgentsOK struct {
 }
 
 func (o *FrameworkAgentsOK) Error() string {
-	return fmt.Sprintf("[GET /v1/registry/frameworks/agent][%d] frameworkAgentsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /registry/frameworks/agent][%d] frameworkAgentsOK  %+v", 200, o.Payload)
 }
 
 func (o *FrameworkAgentsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
