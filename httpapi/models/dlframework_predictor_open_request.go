@@ -28,6 +28,9 @@ type DlframeworkPredictorOpenRequest struct {
 
 	// model version
 	ModelVersion string `json:"model_version,omitempty"`
+
+	// options
+	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
 /* polymorph dlframeworkPredictorOpenRequest framework_name false */
@@ -38,13 +41,39 @@ type DlframeworkPredictorOpenRequest struct {
 
 /* polymorph dlframeworkPredictorOpenRequest model_version false */
 
+/* polymorph dlframeworkPredictorOpenRequest options false */
+
 // Validate validates this dlframework predictor open request
 func (m *DlframeworkPredictorOpenRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DlframeworkPredictorOpenRequest) validateOptions(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Options) { // not required
+		return nil
+	}
+
+	if m.Options != nil {
+
+		if err := m.Options.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("options")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -567,6 +567,10 @@ const (
         "feature_limit": {
           "type": "integer",
           "format": "int32"
+        },
+        "batch_size": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     },
@@ -595,6 +599,9 @@ const (
         },
         "framework_version": {
           "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },

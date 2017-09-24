@@ -19,9 +19,9 @@ It has these top-level messages:
 	Agents
 	ModelRequest
 	ModelManifestsResponse
+	PredictionOptions
 	PredictorOpenRequest
 	PredictorCloseResponse
-	PredictionOptions
 	Predictor
 	URLsRequest
 	ImagesRequest

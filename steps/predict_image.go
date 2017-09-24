@@ -45,7 +45,12 @@ func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.New("the predict image was created with a nil predictor")
 	}
 
-	features, err := p.predictor.Predict(ctx, in)
+	opts, err := p.predictor.GetPredictionOptions(ctx)
+	if err != nil {
+		return err
+	}
+
+	features, err := p.predictor.Predict(ctx, in, opts)
 	if err != nil {
 		return err
 	}

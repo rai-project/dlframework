@@ -69,7 +69,11 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		return nil, err
 	}
 
-	predictor, err := p.predictor.Load(ctx, *model)
+	opts := req.GetOptions()
+	if opts == nil {
+		opts = &dl.PredictionOptions{}
+	}
+	predictor, err := p.predictor.Load(ctx, *model, *opts)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +189,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.PreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +257,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.PreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +327,7 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.PreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -123,6 +123,9 @@ func (p ImagePredictor) GetImageDimensions() ([]uint32, error) {
 	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
 		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
 	}
+	if len(dims) != 3 {
+		return nil, errors.Errorf("expecting a dimensions size of 3, but got %v. do not put the batch size in the input dimensions.", len(dims))
+	}
 	return dims, nil
 }
 
@@ -181,7 +184,7 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	return val, nil
 }
 
-func (p ImagePredictor) PreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
+func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
 	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
 

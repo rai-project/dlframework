@@ -17,12 +17,17 @@ import (
 
 type DlframeworkPredictionOptions struct {
 
+	// batch size
+	BatchSize int64 `json:"batch_size,omitempty"`
+
 	// feature limit
 	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }
+
+/* polymorph dlframeworkPredictionOptions batch_size false */
 
 /* polymorph dlframeworkPredictionOptions feature_limit false */
 

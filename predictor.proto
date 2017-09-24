@@ -29,6 +29,19 @@ option (gogoproto.unmarshaler_all) = true;
 
 option go_package = "dlframework";
 
+message PredictionOptions {
+  option (gogoproto.description) = true;
+  string request_id = 1 [
+    (gogoproto.customname) = "RequestID",
+    (gogoproto.jsontag) = "request_id,omitempty",
+    (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
+  ];
+  int32 feature_limit = 2
+      [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
+  uint32 batch_size = 3
+      [ (gogoproto.moretags) = "yaml:\"batch_size,omitempty\"" ];
+}
+
 message PredictorOpenRequest {
   option (gogoproto.description) = true;
   string model_name = 1
@@ -39,20 +52,11 @@ message PredictorOpenRequest {
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
   string framework_version = 4
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
+  PredictionOptions options = 5
+      [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
 message PredictorCloseResponse {}
-
-message PredictionOptions {
-  option (gogoproto.description) = true;
-  string request_id = 1 [
-    (gogoproto.customname) = "RequestID",
-    (gogoproto.jsontag) = "request_id,omitempty",
-    (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
-  ];
-  int32 feature_limit = 2
-      [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
-}
 
 message Predictor {
   option (gogoproto.description) = true;

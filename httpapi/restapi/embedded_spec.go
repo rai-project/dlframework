@@ -749,6 +749,10 @@ func init() {
     "dlframeworkPredictionOptions": {
       "type": "object",
       "properties": {
+        "batch_size": {
+          "type": "integer",
+          "format": "int64"
+        },
         "feature_limit": {
           "type": "integer",
           "format": "int32"
@@ -783,6 +787,9 @@ func init() {
         },
         "model_version": {
           "type": "string"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },
