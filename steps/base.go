@@ -5,6 +5,7 @@ import (
 
 	"github.com/facebookgo/stack"
 	"github.com/fatih/color"
+	"github.com/k0kubun/pp"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/uuid"
 	"golang.org/x/net/context"
@@ -60,28 +61,58 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 					continue
 				}
 
-				var id string
+				var id, data interface{}
 
 				org := input
-				if a, ok := org.(IDer); ok {
-					input = a.GetData()
+				switch a := org.(type) {
+				case IDer:
+					data = a.GetData()
 					id = a.GetID()
-				} else {
+				case []interface{}:
+					tempID := make([]string, len(a))
+					tempData := make([]interface{}, len(a))
+					for ii, e := range a {
+						switch e := e.(type) {
+						case IDer:
+							tempID[ii] = e.GetID()
+							tempData[ii] = e.GetData()
+						default:
+							tempID[ii] = uuid.NewV4()
+							tempData[ii] = e
+						}
+					}
+					id = tempID
+					data = tempData
+				default:
 					id = uuid.NewV4()
+					data = input
 					// pp.Println("no id for %v @ step = %v", input, p.info)
 				}
 
-				res := p.doer(ctx, input, options)
+				res := p.doer(ctx, data, options)
 
 				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
 					// flatten sequence
 					for _, e := range lst {
-						out <- NewIDWrapper(id, e)
+						out <- NewIDWrapper(id.(string), e)
 					}
 					continue
 				}
 
-				out <- NewIDWrapper(id, res)
+				switch ids := id.(type) {
+				case []string:
+					lst, ok := res.([]interface{})
+					if !ok {
+						pp.Println(res)
+						log.Error("expecting a []inteface{} for result but got a different type")
+						return
+					}
+					for ii, e := range lst {
+						out <- NewIDWrapper(ids[ii], e)
+					}
+				default:
+					out <- NewIDWrapper(id.(string), res)
+				}
 
 			}
 		}

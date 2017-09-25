@@ -26,10 +26,18 @@ func NewPredictImage(predictor predict.Predictor) pipeline.Step {
 }
 
 func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline.Options) interface{} {
-
-	in, ok := in0.([][]float32)
+	in, ok := in0.([]interface{})
 	if !ok {
-		return errors.Errorf("expecting [][]float32 for predict image step, but got %v", in0)
+		return errors.Errorf("expecting []interface{} for predict image step, but got %v", in0)
+	}
+
+	var data [][]float32
+	for _, e := range in {
+		v, ok := e.([]float32)
+		if !ok {
+			return errors.Errorf("expecting []float32 for each image in predict image step, but got %v", e)
+		}
+		data = append(data, v)
 	}
 
 	if p.predictor == nil {
@@ -41,12 +49,16 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	features, err := p.predictor.Predict(ctx, in, opts)
+	features, err := p.predictor.Predict(ctx, data, opts)
 	if err != nil {
 		return err
 	}
 
-	return features
+	lst := make([]interface{}, len(features))
+	for ii, f := range features {
+		lst[ii] = f
+	}
+	return lst
 }
 
 func (p predictImage) Close() error {

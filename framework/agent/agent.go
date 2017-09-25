@@ -7,6 +7,7 @@ import (
 
 	// _ "github.com/rai-project/dldataset/vision"
 
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
@@ -130,6 +131,8 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 			return nil, err
 		}
 
+		pp.Println(out)
+
 		var features []*dl.Feature
 
 		inputId := "undefined-input-id"
@@ -213,12 +216,17 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		outputs = append(outputs, out)
 	}
 
-	// predictionOptions, err := predictor.GetPredictionOptions(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// pp.Println(predictionOptions.GetBatchSize())
-	parts := partition(outputs, 1)
+	predictionOptions, err := predictor.GetPredictionOptions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	batchSize := int(predictionOptions.GetBatchSize())
+	if batchSize == 0 {
+		batchSize = 1
+	}
+
+	parts := partition(outputs, batchSize)
 
 	input = make(chan interface{}, p.channelBuffer)
 	go func() {
@@ -230,7 +238,6 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Then(steps.NewSpread()).
 		Run(input)
 
 	return output, nil
