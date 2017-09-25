@@ -3,7 +3,6 @@ package steps
 import (
 	"golang.org/x/net/context"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/pipeline"
 )
@@ -25,8 +24,8 @@ func (p forEach) Info() string {
 	return "ForEach"
 }
 
-func (p forEach) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
+func (p forEach) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
+	if span, newCtx := opts.Tracer.StartSpanFromContext(ctx, p.Info()); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

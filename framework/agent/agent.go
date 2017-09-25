@@ -207,7 +207,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 		// outputs := [][]float32
 		// for _, out := range output {
@@ -287,7 +287,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 	return output, nil
 }
 
@@ -383,7 +383,7 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 	return output, nil
 }

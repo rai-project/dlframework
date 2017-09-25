@@ -44,7 +44,7 @@ func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
 	return res
 }
 
-func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
+func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
 	// no need to trace here, since resize and read already perform tracing
 
 	var in io.Reader
@@ -59,13 +59,13 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		}
 		switch data := data.(type) {
 		case *types.RGBImage:
-			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
+			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height), image.Tracer(opts.Tracer))
 			if err != nil {
 				return err
 			}
 			return img
 		case *types.BGRImage:
-			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
+			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height), image.Tracer(opts.Tracer))
 			if err != nil {
 				return err
 			}
@@ -82,7 +82,7 @@ func (p readImage) do(ctx context.Context, in0 interface{}) interface{} {
 		return errors.Errorf("expecting a io.Reader or dataset element for read image step, but got %v", in0)
 	}
 
-	image, err := image.Read(in, image.Context(ctx), image.Resized(p.width, p.height))
+	image, err := image.Read(in, image.Context(ctx), image.Resized(p.width, p.height), image.Tracer(opts.Tracer))
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}

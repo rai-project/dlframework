@@ -6,6 +6,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/rai-project/dlframework"
+	tr "github.com/rai-project/tracer"
 )
 
 type Predictor interface {
@@ -21,6 +22,8 @@ type Predictor interface {
 	Predict(ctx context.Context, data []float32, opts dlframework.PredictionOptions) (dlframework.Features, error)
 	// Clears the internal state of a predictor
 	Reset(ctx context.Context) error
+	// Gets the tracer used for tracing operations
+	GetTracer() tr.Tracer
 
 	io.Closer
 }

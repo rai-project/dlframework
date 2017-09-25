@@ -3,7 +3,6 @@ package steps
 import (
 	"golang.org/x/net/context"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/pipeline"
@@ -26,15 +25,7 @@ func NewPredictImage(predictor predict.Predictor) pipeline.Step {
 	return res
 }
 
-func (p predictImage) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
-		ctx = newCtx
-		if framework, model, err := p.predictor.Info(); err == nil {
-			span.SetTag("framework", framework.MustCanonicalName())
-			span.SetTag("model", model.MustCanonicalName())
-		}
-		defer span.Finish()
-	}
+func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline.Options) interface{} {
 
 	in, ok := in0.([]float32)
 	if !ok {

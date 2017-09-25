@@ -4,7 +4,6 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/anthonynsimon/bild/parallel"
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image/types"
@@ -47,11 +46,9 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 	return res
 }
 
-func (p preprocessImage) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
-		ctx = newCtx
-		defer span.Finish()
-	}
+func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
+	span, ctx := pipelineOptions.Tracer.StartSpanFromContext(ctx, p.Info())
+	defer span.Finish()
 
 	switch in := in0.(type) {
 	case *types.RGBImage:

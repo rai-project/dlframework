@@ -5,6 +5,7 @@ import (
 
 	"github.com/facebookgo/stack"
 	"github.com/fatih/color"
+	"github.com/rai-project/pipeline"
 	"github.com/rai-project/uuid"
 	"golang.org/x/net/context"
 )
@@ -17,14 +18,16 @@ var (
 type base struct {
 	spreadOutput bool
 	info         string
-	doer         func(ctx context.Context, in0 interface{}) interface{}
+	doer         func(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{}
 }
 
 func (p base) Info() string {
 	return p.info
 }
 
-func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}) {
+func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}, opts ...pipeline.Option) {
+	opts = append([]pipeline.Option{pipeline.Tracer(tracer)}, opts...)
+	options := pipeline.NewOptions(opts...)
 	go func() {
 		defer close(out)
 		defer func() {
@@ -68,7 +71,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 					// pp.Println("no id for %v @ step = %v", input, p.info)
 				}
 
-				res := p.doer(ctx, input)
+				res := p.doer(ctx, input, options)
 
 				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
 					// flatten sequence

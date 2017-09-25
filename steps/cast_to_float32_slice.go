@@ -3,7 +3,6 @@ package steps
 import (
 	"golang.org/x/net/context"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/pipeline"
 )
@@ -13,18 +12,18 @@ type castToFloat32Slice struct {
 }
 
 func NewCastToFloat32Slice() pipeline.Step {
-	return castToFloat32Slice{
+	p := castToFloat32Slice{
 		base: base{
 			info: "CastToFloat32Slice",
 		},
 	}
+	p.doer = p.do
+	return p
 }
 
-func (p castToFloat32Slice) do(ctx context.Context, in0 interface{}) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, p.Info()); span != nil {
-		ctx = newCtx
-		defer span.Finish()
-	}
+func (p castToFloat32Slice) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
+	span, ctx := opts.Tracer.StartSpanFromContext(ctx, p.Info())
+	defer span.Finish()
 
 	in, err := toSlice(in0)
 	if err != nil {
