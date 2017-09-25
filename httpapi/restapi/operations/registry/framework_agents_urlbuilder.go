@@ -44,7 +44,7 @@ func (o *FrameworkAgentsURL) Build() (*url.URL, error) {
 
 	_basePath := o._basePath
 	if _basePath == "" {
-		_basePath = "/v1"
+		_basePath = "/api/v1"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 

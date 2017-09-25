@@ -9,7 +9,7 @@ CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people 
       http
       https
     Host: carml.org
-    BasePath: /v1
+    BasePath: /api/v1
     Version: 0.2.18
     License: NCSA/UIUC https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT
     Contact: Abdul Dakkak, Cheng Li https://github.com/rai-project/carml

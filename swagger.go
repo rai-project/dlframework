@@ -839,7 +839,7 @@ const (
     }
   },
   "host": "carml.org",
-  "basePath": "/v1",
+  "basePath": "/api/v1",
   "externalDocs": {
     "url": "https://rai-project.github.io/carml"
   }
@@ -861,7 +861,7 @@ const (
 		}
 	},
 	"host": "carml.org",
-	"basePath": "/v1",
+	"basePath": "/api/v1",
 	"externalDocs": {
 		"url": "https://rai-project.github.io/carml"
 	}

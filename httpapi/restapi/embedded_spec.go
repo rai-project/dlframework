@@ -39,7 +39,7 @@ func init() {
     "version": "0.2.18"
   },
   "host": "carml.org",
-  "basePath": "/v1",
+  "basePath": "/api/v1",
   "paths": {
     "/predict/close": {
       "post": {
