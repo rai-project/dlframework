@@ -7,7 +7,6 @@ import (
 
 	// _ "github.com/rai-project/dldataset/vision"
 
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
@@ -131,8 +130,6 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 			return nil, err
 		}
 
-		pp.Println(out)
-
 		var features []*dl.Feature
 
 		inputId := "undefined-input-id"
@@ -208,7 +205,6 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		// Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
 	var outputs []interface{}

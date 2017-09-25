@@ -95,8 +95,6 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 				return errors.Wrap(err, "unable to get response from urls request")
 			}
 
-			pp.Println(res)
-
 			return nil
 		},
 	}

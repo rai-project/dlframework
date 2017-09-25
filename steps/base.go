@@ -5,7 +5,6 @@ import (
 
 	"github.com/facebookgo/stack"
 	"github.com/fatih/color"
-	"github.com/k0kubun/pp"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/uuid"
 	"golang.org/x/net/context"
@@ -103,7 +102,6 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				case []string:
 					lst, ok := res.([]interface{})
 					if !ok {
-						pp.Println(res)
 						log.Error("expecting a []inteface{} for result but got a different type")
 						return
 					}

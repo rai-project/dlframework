@@ -60,11 +60,20 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 
 	client := dl.NewPredictClient(conn)
 
+	predictionOptions := params.Body.Options
+	if predictionOptions == nil {
+		predictionOptions = &webmodels.DlframeworkPredictionOptions{
+			BatchSize: 1,
+		}
+	}
 	predictor, err := client.Open(ctx, &dl.PredictorOpenRequest{
 		ModelName:        modelName,
 		ModelVersion:     modelVersion,
 		FrameworkName:    frameworkName,
 		FrameworkVersion: frameworkVersion,
+		Options: &dl.PredictionOptions{
+			BatchSize: uint32(predictionOptions.BatchSize),
+		},
 	})
 
 	if err != nil {
