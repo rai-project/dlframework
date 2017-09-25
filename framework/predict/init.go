@@ -15,6 +15,6 @@ var (
 func init() {
 	config.AfterInit(func() {
 		log = logger.New().WithField("pkg", "dlframework/common/predict")
-		tracer = tr.MustNew("predict")
+		// tracer = tr.MustNew("predict")
 	})
 }

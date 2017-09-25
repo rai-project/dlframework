@@ -14,13 +14,12 @@ import (
 	context "golang.org/x/net/context"
 	"golang.org/x/sync/syncmap"
 
-	"google.golang.org/grpc"
-
 	"github.com/rai-project/dldataset"
 	_ "github.com/rai-project/dldataset/vision"
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/registry"
+	"google.golang.org/grpc"
 
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/dlframework/steps"
@@ -206,21 +205,33 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
+		// Then(steps.NewPredictImage(predictor)).
+		Run(input)
+
+	var outputs []interface{}
+	for out := range output {
+		outputs = append(outputs, out)
+	}
+
+	// predictionOptions, err := predictor.GetPredictionOptions(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// pp.Println(predictionOptions.GetBatchSize())
+	parts := partition(outputs, 1)
+
+	input = make(chan interface{}, p.channelBuffer)
+	go func() {
+		defer close(input)
+		for _, part := range parts {
+			input <- part
+		}
+	}()
+
+	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
-
-		// outputs := [][]float32
-		// for _, out := range output {
-		//   outputs = append(outputs, out)
-		// }
-
-		// predictionOptions, _ := predictor.GetPredictionOptions(ctx)
-		// parts := partition(outputs, predictionOptions.BatchSize())
-
-		// output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
-		//   Then(steps.NewPredictImage(predictor)).
-		//   Then(steps.Spread()).
-		//   Run(parts)
+		Then(steps.NewSpread()).
+		Run(input)
 
 	return output, nil
 }

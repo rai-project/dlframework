@@ -27,9 +27,9 @@ func NewPredictImage(predictor predict.Predictor) pipeline.Step {
 
 func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline.Options) interface{} {
 
-	in, ok := in0.([]float32)
+	in, ok := in0.([][]float32)
 	if !ok {
-		return errors.Errorf("expecting []float32 for predict image step, but got %v", in0)
+		return errors.Errorf("expecting [][]float32 for predict image step, but got %v", in0)
 	}
 
 	if p.predictor == nil {

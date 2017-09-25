@@ -19,7 +19,7 @@ type Predictor interface {
 	// Returns the preprocess options
 	GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error)
 	// Returns the features
-	Predict(ctx context.Context, data []float32, opts dlframework.PredictionOptions) (dlframework.Features, error)
+	Predict(ctx context.Context, data [][]float32, opts dlframework.PredictionOptions) ([]dlframework.Features, error)
 	// Clears the internal state of a predictor
 	Reset(ctx context.Context) error
 	// Gets the tracer used for tracing operations

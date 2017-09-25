@@ -12,12 +12,14 @@ type spread struct {
 }
 
 func NewSpread() pipeline.Step {
-	return spread{
+	step := spread{
 		base: base{
 			info:         "Spread",
 			spreadOutput: true,
 		},
 	}
+	step.doer = step.do
+	return step
 }
 
 func (p spread) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
