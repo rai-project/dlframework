@@ -209,6 +209,19 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewPredictImage(predictor)).
 		Run(input)
 
+		// outputs := [][]float32
+		// for _, out := range output {
+		//   outputs = append(outputs, out)
+		// }
+
+		// predictionOptions, _ := predictor.GetPredictionOptions(ctx)
+		// parts := partition(outputs, predictionOptions.BatchSize())
+
+		// output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
+		//   Then(steps.NewPredictImage(predictor)).
+		//   Then(steps.Spread()).
+		//   Run(parts)
+
 	return output, nil
 }
 
