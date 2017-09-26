@@ -20,6 +20,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var batchSize = uint32(32)
+
 type Framework struct {
 	FrameworkName    string
 	FrameworkVersion string
@@ -72,6 +74,9 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 				ModelVersion:     modelVersion,
 				FrameworkName:    frameworkName,
 				FrameworkVersion: frameworkVersion,
+				Options: &dlframework.PredictionOptions{
+					BatchSize: batchSize,
+				},
 			})
 			if err != nil {
 				return errors.Wrap(err, "unable to open the predictor")
@@ -82,18 +87,24 @@ func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Com
 			var urls []*dlframework.URLsRequest_URL
 			for i, url := range data {
 				urls = append(urls, &dlframework.URLsRequest_URL{
-					Id:   string(i),
+					ID:   string(i),
 					Data: url,
 				})
 			}
 			urlReq := dlframework.URLsRequest{
 				Predictor: predictor,
 				Urls:      urls,
+				Options: &dlframework.PredictionOptions{
+					BatchSize: batchSize,
+				},
 			}
 			res, err := client.URLs(ctx, &urlReq)
 			if err != nil {
 				return errors.Wrap(err, "unable to get response from urls request")
 			}
+
+			// _ = res
+			pp.Println(res)
 
 			return nil
 		},
@@ -117,7 +128,6 @@ func setupFlags(c *cobra.Command) {
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
 	c.PersistentFlags().BoolVarP(&cmd.IsDebug, "debug", "d", false, "Toggle debug mode.")
 	c.PersistentFlags().StringVarP(&cmd.AppSecret, "secret", "s", "", "The application secret.")
-	c.PersistentFlags().BoolVarP(&cmd.Local, "local", "l", false, "Listen on local address.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

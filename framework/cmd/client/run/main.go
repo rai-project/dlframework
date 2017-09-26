@@ -9,8 +9,8 @@ import (
 
 var (
 	framework = client.Framework{
-		FrameworkName:    "Caffe",
-		FrameworkVersion: "1.0",
+		FrameworkName:    "MxNet",
+		FrameworkVersion: "0.11.0",
 	}
 	model = client.Model{
 		ModelName:    "SqueezeNet",
