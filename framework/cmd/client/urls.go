@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/registryquery"
@@ -82,7 +81,8 @@ var urlsCmd = &cobra.Command{
 				Data: url,
 			})
 		}
-		urlReq := dlframework.URLsRequest{
+
+		urlsReq := dlframework.URLsRequest{
 			Predictor: predictor,
 			Urls:      urls,
 			Options: &dlframework.PredictionOptions{
@@ -90,13 +90,13 @@ var urlsCmd = &cobra.Command{
 			},
 		}
 
-		res, err := client.URLs(ctx, &urlReq)
+		res, err := client.URLs(ctx, &urlsReq)
 		if err != nil {
 			return errors.Wrap(err, "unable to get response from urls request")
 		}
 
 		_ = res
-		pp.Println(res)
+		// pp.Println(res)
 
 		return nil
 	},
