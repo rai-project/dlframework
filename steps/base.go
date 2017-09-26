@@ -102,7 +102,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				case []string:
 					lst, ok := res.([]interface{})
 					if !ok {
-						log.Error("expecting a []inteface{} for result but got a different type")
+						log.Error("expecting a []inteface{} for result but got %v", res)
 						return
 					}
 

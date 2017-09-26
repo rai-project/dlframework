@@ -240,8 +240,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 }
 
 // Image method receives a stream of urls and runs
-// the predictor on all the urls. The
-//
+// the predictor on all the urls.
 // The result is a prediction feature list for each url.
 func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
 	output, err := p.urls(ctx, req)
@@ -253,8 +252,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 }
 
 // Image method receives a stream of urls and runs
-// the predictor on all the urls. The
-//
+// the predictor on all the urls.
 // The result is a prediction feature stream for each url.
 func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
 	ctx := svr.Context()
@@ -300,14 +298,42 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
+		Run(input)
+
+	var outputs []interface{}
+	for out := range output {
+		outputs = append(outputs, out)
+	}
+
+	predictionOptions, err := predictor.GetPredictionOptions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	batchSize := int(predictionOptions.GetBatchSize())
+	if batchSize == 0 {
+		batchSize = 1
+	}
+
+	parts := partition(outputs, batchSize)
+
+	input = make(chan interface{}, p.channelBuffer)
+	go func() {
+		defer close(input)
+		for _, part := range parts {
+			input <- part
+		}
+	}()
+
+	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
+
 	return output, nil
 }
 
 // Image method receives a list base64 encoded images and runs
 // the predictor on all the images.
-//
 // The result is a prediction feature list for each image.
 func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.FeaturesResponse, error) {
 	output, err := p.images(ctx, req)
@@ -320,7 +346,6 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 
 // Image method receives a list base64 encoded images and runs
 // the predictor on all the images.
-//
 // The result is a prediction feature stream for each image.
 func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamServer) error {
 	ctx := svr.Context()
@@ -337,7 +362,6 @@ func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamS
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
-//
 // The result is a prediction feature list.
 func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan interface{}, error) {
 
@@ -404,7 +428,6 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
-//
 // The result is a prediction feature list.
 func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.FeaturesResponse, error) {
 	output, err := p.dataset(ctx, req)
@@ -417,7 +440,6 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
-//
 // The result is a prediction feature stream.
 func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStreamServer) error {
 	ctx := svr.Context()
