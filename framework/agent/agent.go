@@ -205,7 +205,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 	var outputs []interface{}
 	for out := range output {
@@ -234,7 +234,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 	return output, nil
 }
@@ -298,7 +298,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 	var outputs []interface{}
 	for out := range output {
@@ -327,7 +327,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input)
+		Run(input, pipeline.Tracer(predictor.GetTracer()))
 
 	return output, nil
 }

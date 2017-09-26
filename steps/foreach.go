@@ -25,10 +25,8 @@ func (p forEach) Info() string {
 }
 
 func (p forEach) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	if span, newCtx := opts.Tracer.StartSpanFromContext(ctx, p.Info()); span != nil {
-		ctx = newCtx
-		defer span.Finish()
-	}
+	span, ctx := opts.Tracer.StartSpanFromContext(ctx, p.Info())
+	defer span.Finish()
 
 	in, err := toSlice(in0)
 	if err != nil {

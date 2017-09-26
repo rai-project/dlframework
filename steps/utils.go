@@ -4,7 +4,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"reflect"
+	"sync"
 
+	"github.com/facebookgo/stack"
+	"github.com/fatih/color"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 )
@@ -73,4 +76,48 @@ func tryBase64DecodeBytes(q []byte) []byte {
 		return q
 	}
 	return s
+}
+
+func onPanic(step string) {
+	if r := recover(); r != nil {
+		var err error
+		switch r := r.(type) {
+		case error:
+			err = r
+		default:
+			err = fmt.Errorf("%v", r)
+		}
+		stack := stack.Callers(4)
+		log.WithError(err).WithField("step", step).Errorf("[%s] %v\n", color.RedString("PANIC RECOVER"), stack)
+	}
+}
+
+// Merge different channels in one channel
+// https://github.com/tmrts/go-patterns/blob/master/messaging/fan_in.md
+func merge(cs ...<-chan interface{}) <-chan interface{} {
+	var wg sync.WaitGroup
+
+	out := make(chan interface{})
+
+	// Start an send goroutine for each input channel in cs. send
+	// copies values from c to out until c is closed, then calls wg.Done.
+	send := func(c <-chan interface{}) {
+		for n := range c {
+			out <- n
+		}
+		wg.Done()
+	}
+
+	wg.Add(len(cs))
+	for _, c := range cs {
+		go send(c)
+	}
+
+	// Start a goroutine to close out once all the send goroutines are
+	// done.  This must start after the wg.Add call.
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	return out
 }
