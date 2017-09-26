@@ -4,11 +4,10 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
+	"time"
 
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
@@ -24,9 +23,10 @@ import (
 )
 
 var urlsCmd = &cobra.Command{
-	Use:   "urlsCmd",
-	Short: "urlsCmd",
-	Long:  `urlsCmd`,
+	Use:     "urlsCmd",
+	Short:   "urlsCmd",
+	Aliases: []string{"urls", "url"},
+	Long:    `urlsCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("urlsfile path needs to be provided")
@@ -47,7 +47,12 @@ var urlsCmd = &cobra.Command{
 		ctx := context.Background()
 
 		span, ctx := tracer.StartSpanFromContext(ctx, "urls")
-		defer span.Finish()
+		spanClosed := false
+		defer func() {
+			if !spanClosed {
+				span.Finish()
+			}
+		}()
 
 		conn, err := rgrpc.DialContext(
 			ctx,
@@ -111,22 +116,17 @@ var urlsCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to get response from urls request")
 		}
 
+		spanClosed = true
+		span.Finish()
+
 		// toHex := func(t jaeger.TraceID) string {
 		// 	return fmt.Sprintf("%v", t.Low)
 		// }
 
+		time.Sleep(10 * time.Second)
+
 		traceIDModel := span.Context().(jaeger.SpanContext).TraceID()
-		bts := []byte(traceIDModel.String())
-		tp := TraceID{}
-		copy(tp[:], bts)
-		pp.Println("hex = ", traceIDModel.String())
-		traceID := TraceIDFromDomain(traceIDModel.High, traceIDModel.Low).String()
-		tr := hex.EncodeToString([]byte(traceID))
-		pp.Println(string(tr))
-		traceID = string(tr)
-		pp.Println("traceID = ", traceID)
-		pp.Println("a = ", strconv.FormatUint(traceIDModel.Low, 16))
-		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceID)
+		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceIDModel.String())
 		resp, err := grequests.Get(query, nil)
 		pp.Println(query, "    ", resp.String())
 
