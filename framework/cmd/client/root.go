@@ -1,122 +1,43 @@
 package client
 
 import (
-	"fmt"
 	"strings"
 
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-
-	"github.com/k0kubun/pp"
-	"github.com/pkg/errors"
 	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
-	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/cmd"
-	"github.com/rai-project/dlframework/registryquery"
-	rgrpc "github.com/rai-project/grpc"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var batchSize = uint32(32)
-
-type Framework struct {
-	FrameworkName    string
-	FrameworkVersion string
-}
-
-type Model struct {
-	ModelName    string
-	ModelVersion string
-}
-
 var (
-	log *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/client")
+	log              *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/client")
+	frameworkName    string
+	frameworkVersion string
+	modelName        string
+	modelVersion     string
+	batchSize        int
 )
 
-// represents the base command when called without any subcommands
-func NewRootCommand(framework Framework, model Model, data []string) (*cobra.Command, error) {
-	rootCmd := &cobra.Command{
-		Use:          "carml client",
-		Short:        "Runs the carml client",
-		SilenceUsage: true,
-		RunE: func(c *cobra.Command, args []string) error {
-			frameworkName := strings.ToLower(framework.FrameworkName)
-			frameworkVersion := strings.ToLower(framework.FrameworkVersion)
-			modelName := strings.ToLower(model.ModelName)
-			modelVersion := strings.ToLower(model.ModelVersion)
-
-			agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
-			if err != nil {
-				return err
-			}
-			if len(agents) == 0 {
-				return errors.Errorf("no agent found for %v:%v/%v:%v", frameworkName, frameworkVersion, modelName, modelVersion)
-			}
-
-			agent := agents[0]
-			serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
-
-			ctx := context.Background()
-
-			conn, err := rgrpc.DialContext(ctx, dlframework.PredictServiceDescription, serverAddress, grpc.WithInsecure())
-			if err != nil {
-				return errors.Wrapf(err, "unable to dial %s", serverAddress)
-			}
-			defer conn.Close()
-
-			client := dlframework.NewPredictClient(conn)
-
-			predictor, err := client.Open(ctx, &dlframework.PredictorOpenRequest{
-				ModelName:        modelName,
-				ModelVersion:     modelVersion,
-				FrameworkName:    frameworkName,
-				FrameworkVersion: frameworkVersion,
-				Options: &dlframework.PredictionOptions{
-					BatchSize: batchSize,
-				},
-			})
-			if err != nil {
-				return errors.Wrap(err, "unable to open the predictor")
-			}
-
-			defer client.Close(ctx, predictor)
-
-			var urls []*dlframework.URLsRequest_URL
-			for i, url := range data {
-				urls = append(urls, &dlframework.URLsRequest_URL{
-					ID:   string(i),
-					Data: url,
-				})
-			}
-			urlReq := dlframework.URLsRequest{
-				Predictor: predictor,
-				Urls:      urls,
-				Options: &dlframework.PredictionOptions{
-					BatchSize: batchSize,
-				},
-			}
-			res, err := client.URLs(ctx, &urlReq)
-			if err != nil {
-				return errors.Wrap(err, "unable to get response from urls request")
-			}
-
-			// _ = res
-			pp.Println(res)
-
-			return nil
-		},
-	}
-	setupFlags(rootCmd)
-	return rootCmd, nil
+var RootCmd = &cobra.Command{
+	Use:          "carml client",
+	Short:        "Runs the carml client",
+	SilenceUsage: true,
 }
 
-func setupFlags(c *cobra.Command) {
-
+func init() {
 	cobra.OnInitialize(initConfig)
+	setup(RootCmd)
+	RootCmd.PersistentFlags().StringVar(&frameworkName, "frameworkName", "MxNet", "frameworkName")
+	RootCmd.PersistentFlags().StringVar(&frameworkVersion, "frameworkVersion", "0.11.0", "frameworkVersion")
+	RootCmd.PersistentFlags().StringVar(&modelName, "modelName", "CaffeNet", "modelName")
+	RootCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
+	RootCmd.PersistentFlags().IntVar(&batchSize, "batchSize", 16, "batch size")
+	cleanNames()
+}
 
+func setup(c *cobra.Command) {
 	c.AddCommand(raicmd.VersionCmd)
 	c.AddCommand(raicmd.LicenseCmd)
 	c.AddCommand(raicmd.EnvCmd)
@@ -138,8 +59,11 @@ func setupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
+func cleanNames() {
+	frameworkName = strings.ToLower(frameworkName)
+	frameworkVersion = strings.ToLower(frameworkVersion)
+	modelName = strings.ToLower(modelName)
+	modelVersion = strings.ToLower(modelVersion)
 }
 
 // initConfig reads in config file and ENV variables if set.
