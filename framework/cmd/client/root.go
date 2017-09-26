@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	log              *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/client")
 	frameworkName    string
 	frameworkVersion string
 	modelName        string

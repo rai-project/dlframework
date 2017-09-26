@@ -3,15 +3,23 @@ package client
 import (
 	"bufio"
 	"context"
+	"encoding/binary"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 
+	"github.com/k0kubun/pp"
+	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/registryquery"
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"github.com/uber/jaeger/model"
+
 	"google.golang.org/grpc"
 )
 
@@ -38,7 +46,15 @@ var urlsCmd = &cobra.Command{
 
 		ctx := context.Background()
 
-		conn, err := rgrpc.DialContext(ctx, dlframework.PredictServiceDescription, serverAddress, grpc.WithInsecure())
+		span, ctx := tracer.StartSpanFromContext(ctx, "urls")
+		defer span.Finish()
+
+		conn, err := rgrpc.DialContext(
+			ctx,
+			dlframework.PredictServiceDescription,
+			serverAddress,
+			grpc.WithInsecure(),
+		)
 		if err != nil {
 			return errors.Wrapf(err, "unable to dial %s", serverAddress)
 		}
@@ -95,7 +111,27 @@ var urlsCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to get response from urls request")
 		}
 
+		// toHex := func(t jaeger.TraceID) string {
+		// 	return fmt.Sprintf("%v", t.Low)
+		// }
+
+		traceIDModel := span.Context().(jaeger.SpanContext).TraceID()
+		bts := []byte(traceIDModel.String())
+		tp := TraceID{}
+		copy(tp[:], bts)
+		pp.Println("hex = ", traceIDModel.String())
+		traceID := TraceIDFromDomain(traceIDModel.High, traceIDModel.Low).String()
+		tr := hex.EncodeToString([]byte(traceID))
+		pp.Println(string(tr))
+		traceID = string(tr)
+		pp.Println("traceID = ", traceID)
+		pp.Println("a = ", strconv.FormatUint(traceIDModel.Low, 16))
+		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceID)
+		resp, err := grequests.Get(query, nil)
+		pp.Println(query, "    ", resp.String())
+
 		_ = res
+
 		// pp.Println(res)
 
 		return nil
@@ -104,4 +140,26 @@ var urlsCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(urlsCmd)
+}
+
+// TraceID is a serializable form of model.TraceID
+type TraceID [16]byte
+
+func TraceIDFromDomain(high, low uint64) TraceID {
+	dbTraceID := TraceID{}
+	binary.BigEndian.PutUint64(dbTraceID[:8], high)
+	binary.BigEndian.PutUint64(dbTraceID[8:], low)
+	return dbTraceID
+}
+
+// ToDomain converts trace ID from db-serializable form to domain TradeID
+func (dbTraceID TraceID) ToDomain() model.TraceID {
+	traceIDHigh := binary.BigEndian.Uint64(dbTraceID[:8])
+	traceIDLow := binary.BigEndian.Uint64(dbTraceID[8:])
+	return model.TraceID{High: traceIDHigh, Low: traceIDLow}
+}
+
+// String returns hex string representation of the trace ID.
+func (dbTraceID TraceID) String() string {
+	return string(dbTraceID[:])
 }
