@@ -17,7 +17,8 @@ import (
 
 var imagesCmd = &cobra.Command{
 	Use:   "imagesCmd",
-	Short: "imagesCmd",
+  Short: "imagesCmd",
+  Aliases: []string{"images", "image"},
 	Long:  `imagesCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {

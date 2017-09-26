@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
 
 	"github.com/k0kubun/pp"
+
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
@@ -30,7 +32,20 @@ var urlsCmd = &cobra.Command{
 		if len(args) < 1 {
 			return errors.New("urlsfile path needs to be provided")
 		}
+
+		if len(args) > 1 {
+			batchSize, _ = strconv.Atoi(args[1])
+		}
+		var outputDir string
+
+		if len(args) > 2 {
+			outputDir = args[2]
+			os.MkdirAll(outputDir, os.ModePerm)
+		}
+
 		urlsFile, _ := filepath.Abs(args[0])
+
+		pp.Println(args)
 
 		agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 		if err != nil {
@@ -79,6 +94,8 @@ var urlsCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to open the predictor")
 		}
 
+		pp.Println("batch size = ", batchSize)
+
 		defer client.Close(ctx, predictor)
 
 		var data []string
@@ -123,7 +140,12 @@ var urlsCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
 		resp, err := grequests.Get(query, nil)
-		pp.Println(query, "    ", resp.String())
+
+		outputfile := frameworkName + "_" + frameworkVersion + "_" + modelName + "_" + modelVersion + "_" + strconv.Itoa(batchSize)
+		err = ioutil.WriteFile(filepath.Join(outputDir, outputfile), []byte(resp.String()), 0644)
+		if err != nil {
+			return errors.Wrap(err, "unable to write to file")
+		}
 
 		_ = res
 
