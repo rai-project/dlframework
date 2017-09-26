@@ -3,10 +3,10 @@ package client
 import (
 	"bufio"
 	"context"
-	"encoding/binary"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/k0kubun/pp"
@@ -17,7 +17,6 @@ import (
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
-	"github.com/uber/jaeger/model"
 
 	"google.golang.org/grpc"
 )
@@ -119,20 +118,14 @@ var urlsCmd = &cobra.Command{
 		spanClosed = true
 		span.Finish()
 
-		// toHex := func(t jaeger.TraceID) string {
-		// 	return fmt.Sprintf("%v", t.Low)
-		// }
-
 		time.Sleep(10 * time.Second)
 
-		traceIDModel := span.Context().(jaeger.SpanContext).TraceID()
-		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceIDModel.String())
+		traceID := span.Context().(jaeger.SpanContext).TraceID()
+		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
 		resp, err := grequests.Get(query, nil)
 		pp.Println(query, "    ", resp.String())
 
 		_ = res
-
-		// pp.Println(res)
 
 		return nil
 	},
@@ -140,26 +133,4 @@ var urlsCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(urlsCmd)
-}
-
-// TraceID is a serializable form of model.TraceID
-type TraceID [16]byte
-
-func TraceIDFromDomain(high, low uint64) TraceID {
-	dbTraceID := TraceID{}
-	binary.BigEndian.PutUint64(dbTraceID[:8], high)
-	binary.BigEndian.PutUint64(dbTraceID[8:], low)
-	return dbTraceID
-}
-
-// ToDomain converts trace ID from db-serializable form to domain TradeID
-func (dbTraceID TraceID) ToDomain() model.TraceID {
-	traceIDHigh := binary.BigEndian.Uint64(dbTraceID[:8])
-	traceIDLow := binary.BigEndian.Uint64(dbTraceID[8:])
-	return model.TraceID{High: traceIDHigh, Low: traceIDLow}
-}
-
-// String returns hex string representation of the trace ID.
-func (dbTraceID TraceID) String() string {
-	return string(dbTraceID[:])
 }
