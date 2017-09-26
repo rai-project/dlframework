@@ -54,10 +54,11 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	lst := make([]interface{}, len(features))
-	for ii, f := range features {
-		lst[ii] = f
+	lst := make([]interface{}, len(data))
+	for ii := 0; ii < len(in); ii++ {
+		lst[ii] = features[ii]
 	}
+
 	return lst
 }
 

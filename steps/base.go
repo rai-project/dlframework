@@ -105,6 +105,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 						log.Error("expecting a []inteface{} for result but got a different type")
 						return
 					}
+
 					for ii, e := range lst {
 						out <- NewIDWrapper(ids[ii], e)
 					}
