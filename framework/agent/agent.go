@@ -49,6 +49,7 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Agent{
 		base: base{
 			Framework: framework,
@@ -76,6 +77,9 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	if err != nil {
 		return nil, err
 	}
+	if predictor == nil {
+		return nil, errors.New("predictor in Open is nil")
+	}
 
 	id := uuid.NewV4()
 	p.loadedPredictors.Store(id, predictor)
@@ -90,6 +94,7 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Pred
 	}
 
 	predictor, ok := val.(predict.Predictor)
+
 	if !ok {
 		return nil, errors.Errorf("predictor %v is not a valid image predictor", predictor)
 	}
