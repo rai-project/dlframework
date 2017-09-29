@@ -186,6 +186,48 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	return val, nil
 }
 
+func getLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
+	if typeParameters == nil {
+		return "", errors.New("invalid type parameters")
+	}
+	pdims, ok := typeParameters["layer_name"]
+	if !ok {
+		return "", errors.New("expecting a layer name")
+	}
+	pdimsVal := pdims.Value
+	if pdimsVal == "" {
+		return "", errors.New("invalid layer name")
+	}
+
+	var name string
+	if err := yaml.Unmarshal([]byte(pdimsVal), &name); err != nil {
+		return "", errors.Errorf("unable to get the layer name %v as a string", pdimsVal)
+	}
+	return name, nil
+}
+
+func (p ImagePredictor) GetInputLayerName() string {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	name, err := getLayerName(typeParameters)
+	if err != nil {
+		return DefaultInputLayerName
+	}
+	return name
+}
+
+func (p ImagePredictor) GetOutputLayerName() string {
+	model := p.Model
+	modelOutput := model.GetOutput()
+	typeParameters := modelOutput.GetParameters()
+	name, err := getLayerName(typeParameters)
+	if err != nil {
+		return DefaultOutputLayerName
+	}
+	return name
+}
+
 func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
 	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
