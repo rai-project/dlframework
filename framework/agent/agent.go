@@ -110,7 +110,7 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 		return nil, err
 	}
 
-	predictor.Reset(ctx)
+	predictor.Close()
 
 	p.loadedPredictors.Delete(id)
 
