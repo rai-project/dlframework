@@ -186,7 +186,7 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	return val, nil
 }
 
-func getLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
+func (p ImagePredictor) GetLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
 	if typeParameters == nil {
 		return "", errors.New("invalid type parameters")
 	}
@@ -206,24 +206,30 @@ func getLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Para
 	return name, nil
 }
 
-func (p ImagePredictor) GetInputLayerName() string {
+func (p ImagePredictor) GetInputLayerName(defaultValue string) string {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
-	name, err := getLayerName(typeParameters)
+	name, err := p.GetLayerName(typeParameters)
 	if err != nil {
-		return DefaultInputLayerName
+		if defaultValue == "" {
+			return DefaultInputLayerName
+		}
+		return defaultValue
 	}
 	return name
 }
 
-func (p ImagePredictor) GetOutputLayerName() string {
+func (p ImagePredictor) GetOutputLayerName(defaultValue string) string {
 	model := p.Model
 	modelOutput := model.GetOutput()
 	typeParameters := modelOutput.GetParameters()
-	name, err := getLayerName(typeParameters)
+	name, err := p.GetLayerName(typeParameters)
 	if err != nil {
-		return DefaultOutputLayerName
+		if defaultValue == "" {
+			return DefaultOutputLayerName
+		}
+		return defaultValue
 	}
 	return name
 }
