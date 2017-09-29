@@ -40,6 +40,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 		MeanImage: mean,
 		Scale:     scale,
 		ColorMode: mode,
+		Layout: options.Layout,
 	}
 
 	res.doer = res.do
@@ -119,29 +120,27 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 
 	if mode == types.RGBMode {
 		parallel.Line(height, func(start, end int) {
-			offset := start * in.Stride
 			for y := start; y < end; y++ {
 				for x := 0; x < width; x++ {
+					offset := y * in.Stride + x*3
 					rgb := in.Pix[offset : offset+3]
 					r, g, b := rgb[0], rgb[1], rgb[2]
 					out[offset+0] = (float32(r) - mean[0]) / scale
 					out[offset+1] = (float32(g) - mean[1]) / scale
 					out[offset+2] = (float32(b) - mean[2]) / scale
-					offset = offset + 3
 				}
 			}
 		})
 	} else if mode == types.BGRMode {
 		parallel.Line(height, func(start, end int) {
-			offset := start * in.Stride
 			for y := start; y < end; y++ {
 				for x := 0; x < width; x++ {
+					offset := y * in.Stride + x*3
 					rgb := in.Pix[offset : offset+3]
 					r, g, b := rgb[0], rgb[1], rgb[2]
 					out[offset+0] = (float32(b) - mean[2]) / scale
 					out[offset+1] = (float32(g) - mean[1]) / scale
 					out[offset+2] = (float32(r) - mean[0]) / scale
-					offset = offset + 3
 				}
 			}
 		})
