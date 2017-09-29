@@ -74,7 +74,8 @@ func Register(framework dlframework.FrameworkManifest, a *assetfs.AssetFS) error
 			}
 
 			if err := model.Register(); err != nil {
-				log.WithField("frameworkVersion", frameworkVersion).
+				log.WithError(err).
+					WithField("frameworkVersion", frameworkVersion).
 					WithField("model_name", model.GetName()).
 					WithField("model_framework_constraint", model.GetFramework().GetVersion()).
 					Error("failed to register model")
