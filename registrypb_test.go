@@ -19,6 +19,9 @@ It has these top-level messages:
 	Agents
 	ModelRequest
 	ModelManifestsResponse
+	CPUOptions
+	GPUOptions
+	ExecutionOptions
 	PredictionOptions
 	PredictorOpenRequest
 	PredictorCloseResponse

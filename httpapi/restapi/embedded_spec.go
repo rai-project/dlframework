@@ -425,6 +425,16 @@ func init() {
         }
       }
     },
+    "ExecutionOptionsTraceLevel": {
+      "type": "string",
+      "default": "NO_TRACE",
+      "enum": [
+        "NO_TRACE",
+        "FRAMEWORK_TRACE",
+        "HARDWARE_TRACE",
+        "FULL_TRACE"
+      ]
+    },
     "ImagesRequestImage": {
       "type": "object",
       "properties": {
@@ -436,11 +446,6 @@ func init() {
         "id": {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
-        },
-        "preprocessed": {
-          "type": "boolean",
-          "format": "boolean",
-          "title": "Preprocessed is set to true to disable preprocessing.\nIf enabled then the image is assumed to be rescaled and\nencoded as an array of float32 values"
         }
       }
     },
@@ -513,6 +518,9 @@ func init() {
         }
       }
     },
+    "dlframeworkCPUOptions": {
+      "type": "object"
+    },
     "dlframeworkContainerHardware": {
       "type": "object",
       "properties": {
@@ -535,6 +543,35 @@ func init() {
         },
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkExecutionOptions": {
+      "type": "object",
+      "properties": {
+        "cpu_options": {
+          "description": "Options that apply to all CPUs.",
+          "$ref": "#/definitions/dlframeworkCPUOptions"
+        },
+        "device_count": {
+          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "gpu_options": {
+          "description": "Options that apply to all GPUs.",
+          "$ref": "#/definitions/dlframeworkGPUOptions"
+        },
+        "timeout_in_ms": {
+          "description": "Time to wait for operation to complete in milliseconds.",
+          "type": "string",
+          "format": "int64"
+        },
+        "trace_level": {
+          "$ref": "#/definitions/ExecutionOptionsTraceLevel"
         }
       }
     },
@@ -625,6 +662,29 @@ func init() {
           "items": {
             "$ref": "#/definitions/dlframeworkFrameworkManifest"
           }
+        }
+      }
+    },
+    "dlframeworkGPUOptions": {
+      "type": "object",
+      "properties": {
+        "allocator_type": {
+          "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+          "type": "string"
+        },
+        "force_gpu_compatible": {
+          "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "per_process_gpu_memory_fraction": {
+          "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+          "type": "number",
+          "format": "double"
+        },
+        "visible_device_list": {
+          "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+          "type": "string"
         }
       }
     },
@@ -752,6 +812,9 @@ func init() {
         "batch_size": {
           "type": "integer",
           "format": "int64"
+        },
+        "execution_options": {
+          "$ref": "#/definitions/dlframeworkExecutionOptions"
         },
         "feature_limit": {
           "type": "integer",

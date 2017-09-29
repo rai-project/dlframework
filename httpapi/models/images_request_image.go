@@ -22,18 +22,11 @@ type ImagesRequestImage struct {
 
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
-
-	// Preprocessed is set to true to disable preprocessing.
-	// If enabled then the image is assumed to be rescaled and
-	// encoded as an array of float32 values
-	Preprocessed bool `json:"preprocessed,omitempty"`
 }
 
 /* polymorph ImagesRequestImage data false */
 
 /* polymorph ImagesRequestImage id false */
-
-/* polymorph ImagesRequestImage preprocessed false */
 
 // Validate validates this images request image
 func (m *ImagesRequestImage) Validate(formats strfmt.Registry) error {

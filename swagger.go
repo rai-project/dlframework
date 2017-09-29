@@ -433,6 +433,16 @@ const (
         }
       }
     },
+    "ExecutionOptionsTraceLevel": {
+      "type": "string",
+      "enum": [
+        "NO_TRACE",
+        "FRAMEWORK_TRACE",
+        "HARDWARE_TRACE",
+        "FULL_TRACE"
+      ],
+      "default": "NO_TRACE"
+    },
     "ImagesRequestImage": {
       "type": "object",
       "properties": {
@@ -444,11 +454,6 @@ const (
           "type": "string",
           "format": "byte",
           "title": "The image is base64 encoded"
-        },
-        "preprocessed": {
-          "type": "boolean",
-          "format": "boolean",
-          "title": "Preprocessed is set to true to disable preprocessing.\nIf enabled then the image is assumed to be rescaled and\nencoded as an array of float32 values"
         }
       }
     },
@@ -464,6 +469,9 @@ const (
         }
       }
     },
+    "dlframeworkCPUOptions": {
+      "type": "object"
+    },
     "dlframeworkDatasetRequest": {
       "type": "object",
       "properties": {
@@ -475,6 +483,35 @@ const (
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkExecutionOptions": {
+      "type": "object",
+      "properties": {
+        "trace_level": {
+          "$ref": "#/definitions/ExecutionOptionsTraceLevel"
+        },
+        "timeout_in_ms": {
+          "type": "string",
+          "format": "int64",
+          "description": "Time to wait for operation to complete in milliseconds."
+        },
+        "device_count": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber."
+        },
+        "cpu_options": {
+          "$ref": "#/definitions/dlframeworkCPUOptions",
+          "description": "Options that apply to all CPUs."
+        },
+        "gpu_options": {
+          "$ref": "#/definitions/dlframeworkGPUOptions",
+          "description": "Options that apply to all GPUs."
         }
       }
     },
@@ -540,6 +577,29 @@ const (
         }
       }
     },
+    "dlframeworkGPUOptions": {
+      "type": "object",
+      "properties": {
+        "per_process_gpu_memory_fraction": {
+          "type": "number",
+          "format": "double",
+          "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory."
+        },
+        "allocator_type": {
+          "type": "string",
+          "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc."
+        },
+        "visible_device_list": {
+          "type": "string",
+          "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow."
+        },
+        "force_gpu_compatible": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance."
+        }
+      }
+    },
     "dlframeworkImagesRequest": {
       "type": "object",
       "properties": {
@@ -571,6 +631,9 @@ const (
         "batch_size": {
           "type": "integer",
           "format": "int64"
+        },
+        "execution_options": {
+          "$ref": "#/definitions/dlframeworkExecutionOptions"
         }
       }
     },

@@ -20,6 +20,9 @@ type DlframeworkPredictionOptions struct {
 	// batch size
 	BatchSize int64 `json:"batch_size,omitempty"`
 
+	// execution options
+	ExecutionOptions *DlframeworkExecutionOptions `json:"execution_options,omitempty"`
+
 	// feature limit
 	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
@@ -29,6 +32,8 @@ type DlframeworkPredictionOptions struct {
 
 /* polymorph dlframeworkPredictionOptions batch_size false */
 
+/* polymorph dlframeworkPredictionOptions execution_options false */
+
 /* polymorph dlframeworkPredictionOptions feature_limit false */
 
 /* polymorph dlframeworkPredictionOptions request_id false */
@@ -37,9 +42,33 @@ type DlframeworkPredictionOptions struct {
 func (m *DlframeworkPredictionOptions) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateExecutionOptions(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DlframeworkPredictionOptions) validateExecutionOptions(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ExecutionOptions) { // not required
+		return nil
+	}
+
+	if m.ExecutionOptions != nil {
+
+		if err := m.ExecutionOptions.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("execution_options")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
