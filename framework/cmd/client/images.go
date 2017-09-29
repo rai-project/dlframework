@@ -16,10 +16,10 @@ import (
 )
 
 var imagesCmd = &cobra.Command{
-	Use:   "imagesCmd",
-  Short: "imagesCmd",
-  Aliases: []string{"images", "image"},
-	Long:  `imagesCmd`,
+	Use:     "imagesCmd",
+	Short:   "imagesCmd",
+	Aliases: []string{"images", "image"},
+	Long:    `imagesCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("images dir path needs to be provided")
@@ -87,9 +87,9 @@ var imagesCmd = &cobra.Command{
 		var imgs []*dlframework.ImagesRequest_Image
 		for i, v := range data {
 			imgs = append(imgs, &dlframework.ImagesRequest_Image{
-				ID:           string(i),
-				Data:         v,
-				Preprocessed: false,
+				ID:   string(i),
+				Data: v,
+				// Preprocessed: false,
 			})
 		}
 

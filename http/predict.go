@@ -218,9 +218,9 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 	images := make([]*dl.ImagesRequest_Image, len(params.Body.Images))
 	for ii, image := range params.Body.Images {
 		images[ii] = &dl.ImagesRequest_Image{
-			ID:           image.ID,
-			Data:         image.Data,
-			Preprocessed: image.Preprocessed,
+			ID:   image.ID,
+			Data: image.Data,
+			// Preprocessed: image.Preprocessed,
 		}
 	}
 
