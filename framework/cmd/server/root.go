@@ -5,7 +5,9 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"time"
 
+	"github.com/VividCortex/robustly"
 	"github.com/facebookgo/freeport"
 	"github.com/pkg/errors"
 	raicmd "github.com/rai-project/cmd"
@@ -43,6 +45,91 @@ func getHost() (string, error) {
 	return address, nil
 }
 
+func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []string) error {
+	frameworkName := framework.GetName()
+	port, found := os.LookupEnv("PORT")
+	if !found {
+		p, err := freePort()
+		if err != nil {
+			return err
+		}
+		port = p
+	}
+
+	host, found := os.LookupEnv("HOST")
+	if !found {
+		h, err := getHost()
+		if err != nil {
+			return err
+		}
+		host = h
+	}
+
+	portInt, err := strconv.Atoi(port)
+	if err != nil {
+		return errors.Wrapf(err, "the port %s is not a valid integer", port)
+	}
+
+	predictor, err := agent.GetPredictor(framework)
+	if err != nil {
+		return errors.Wrapf(err,
+			"failed to get predictor for %s. make sure you have "+
+				"imported the framework's predictor package",
+			frameworkName,
+		)
+	}
+
+	externalHost := host
+	if e, ok := os.LookupEnv("EXTERNAL_HOST"); ok {
+		externalHost = e
+	}
+
+	externalPort := port
+	if p, ok := os.LookupEnv("EXTERNAL_PORT"); ok {
+		externalPort = p
+	}
+
+	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
+	if err != nil {
+		return err
+	}
+
+	registeryServer, err := agnt.RegisterManifests()
+	if err != nil {
+		return err
+	}
+
+	predictorServer, err := agnt.RegisterPredictor()
+	if err != nil {
+		return err
+	}
+
+	address := fmt.Sprintf("%s:%d", host, portInt)
+
+	lis, err := net.Listen("tcp", address)
+	if err != nil {
+		return errors.Wrapf(err, "failed to listen on ip %s", address)
+	}
+
+	log.Debugf(frameworkName+" service is listening on %s", address)
+
+	defer registeryServer.GracefulStop()
+	defer predictorServer.GracefulStop()
+
+	go registeryServer.Serve(lis)
+	predictorServer.Serve(lis)
+	return nil
+}
+
+var (
+	DefaultRunOptions = &robustly.RunOptions{
+		RateLimit:  1,                   // the rate limit in crashes per second
+		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
+		PrintStack: true,                // whether to print the panic stacktrace or not
+		RetryDelay: 0 * time.Nanosecond, // inject a delay before retrying the run
+	}
+)
+
 // represents the base command when called without any subcommands
 func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework.GetName()
@@ -50,77 +137,18 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
 		RunE: func(c *cobra.Command, args []string) error {
-			port, found := os.LookupEnv("PORT")
-			if !found {
-				p, err := freePort()
-				if err != nil {
-					return err
-				}
-				port = p
+			e := robustly.Run(
+				func() {
+					err := runRootE(c, framework, args)
+					if err != nil {
+						panic(err)
+					}
+				},
+				DefaultRunOptions,
+			)
+			if e != 0 {
+				return errors.Errorf("%s has panniced %d times ... giving up", frameworkName+"-agent", e)
 			}
-
-			host, found := os.LookupEnv("HOST")
-			if !found {
-				h, err := getHost()
-				if err != nil {
-					return err
-				}
-				host = h
-			}
-
-			portInt, err := strconv.Atoi(port)
-			if err != nil {
-				return errors.Wrapf(err, "the port %s is not a valid integer", port)
-			}
-
-			predictor, err := agent.GetPredictor(framework)
-			if err != nil {
-				return errors.Wrapf(err,
-					"failed to get predictor for %s. make sure you have "+
-						"imported the framework's predictor package",
-					frameworkName,
-				)
-			}
-
-			externalHost := host
-			if e, ok := os.LookupEnv("EXTERNAL_HOST"); ok {
-				externalHost = e
-			}
-
-			externalPort := port
-			if p, ok := os.LookupEnv("EXTERNAL_PORT"); ok {
-				externalPort = p
-			}
-
-			agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
-			if err != nil {
-				return err
-			}
-
-			registeryServer, err := agnt.RegisterManifests()
-			if err != nil {
-				return err
-			}
-
-			predictorServer, err := agnt.RegisterPredictor()
-			if err != nil {
-				return err
-			}
-
-			address := fmt.Sprintf("%s:%d", host, portInt)
-
-			lis, err := net.Listen("tcp", address)
-			if err != nil {
-				return errors.Wrapf(err, "failed to listen on ip %s", address)
-			}
-
-			log.Debugf(frameworkName+" service is listening on %s", address)
-
-			defer registeryServer.GracefulStop()
-			defer predictorServer.GracefulStop()
-
-			go registeryServer.Serve(lis)
-			predictorServer.Serve(lis)
 			return nil
 		},
 	}
