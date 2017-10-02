@@ -61,10 +61,10 @@ RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubunt
     apt-get update && apt-get install -y --no-install-recommends \
 		libnccl1 libnccl-dev \
     && \
-    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/lib/apt/lists/*
 		
 ENV NCCL_ROOT /opt/DL/nccl
-ENV LD_LIBRARY_PATH /opt/DL/nccl/lib:/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
+ENV LD_LIBRARY_PATH /opt/DL/nccl/lib:/usr/local/cuda/extras/CUPTI/lib64:${LD_LIBRARY_PATH}
 ENV PATH ${NCCL_ROOT}/bin:/usr/local/cuda/bin:${PATH}
     
 #Install Go
