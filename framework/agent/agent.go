@@ -38,12 +38,9 @@ var (
 )
 
 func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
-	options, err := NewOptions()
+	options, err := NewOptions(opts...)
 	if err != nil {
 		return nil, err
-	}
-	for _, opt := range opts {
-		opt(options)
 	}
 	framework, _, err := predictor.Info()
 	if err != nil {
@@ -480,7 +477,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	log.Info("populating registry")
 
 	var grpcServer *grpc.Server
-	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
+	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription, nil)
 	svr := &Registry{
 		base: base{
 			Framework: p.base.Framework,
@@ -500,7 +497,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 
 func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
 
-	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription)
+	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription, p.options.tracer)
 
 	host := fmt.Sprintf("%s:%d", p.options.host, p.options.port)
 	log.Info("registering predictor service at ", host)

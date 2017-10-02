@@ -6,15 +6,24 @@ import (
 
 	"github.com/facebookgo/freeport"
 	"github.com/pkg/errors"
+	tr "github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 )
 
 type Options struct {
-	host string
-	port int
+	host   string
+	port   int
+	tracer tr.Tracer
 }
 
 type Option func(o *Options) *Options
+
+func WithTracer(tracer tr.Tracer) Option {
+	return func(o *Options) *Options {
+		o.tracer = tracer
+		return o
+	}
+}
 
 func WithHost(host string) Option {
 	return func(o *Options) *Options {
@@ -54,7 +63,7 @@ func getHost() (string, error) {
 	return utils.GetLocalIp()
 }
 
-func NewOptions() (*Options, error) {
+func NewOptions(opts ...Option) (*Options, error) {
 	host, err := getHost()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get agent host address")
@@ -63,8 +72,12 @@ func NewOptions() (*Options, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to get agent listen port")
 	}
-	return &Options{
+	options := &Options{
 		host: host,
 		port: port,
-	}, nil
+	}
+	for _, o := range opts {
+		o(options)
+	}
+	return options, nil
 }
