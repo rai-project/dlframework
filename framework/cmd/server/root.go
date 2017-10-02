@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 	"strconv"
@@ -22,8 +23,15 @@ import (
 )
 
 var (
-	local bool
-	log   *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
+	local             bool
+	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
+	DefaultRunOptions               = &robustly.RunOptions{
+		RateLimit:  1,                   // the rate limit in crashes per second
+		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
+		PrintStack: true,                // whether to print the panic stacktrace or not
+		RetryDelay: 0 * time.Nanosecond, // inject a delay before retrying the run
+	}
+	cuptiHandle io.Closer
 )
 
 func freePort() (string, error) {
@@ -121,15 +129,6 @@ func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 	return nil
 }
 
-var (
-	DefaultRunOptions = &robustly.RunOptions{
-		RateLimit:  1,                   // the rate limit in crashes per second
-		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
-		PrintStack: true,                // whether to print the panic stacktrace or not
-		RetryDelay: 0 * time.Nanosecond, // inject a delay before retrying the run
-	}
-)
-
 // represents the base command when called without any subcommands
 func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework.GetName()
@@ -137,6 +136,11 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
 		RunE: func(c *cobra.Command, args []string) error {
+			defer func() {
+				if cuptiHandle != nil {
+					cuptiHandle.Close()
+				}
+			}()
 			e := robustly.Run(
 				func() {
 					err := runRootE(c, framework, args)
