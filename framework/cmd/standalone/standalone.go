@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -24,26 +25,33 @@ import (
 // represents the base command when called without any subcommands
 func NewRootCommand() (*cobra.Command, error) {
 	frameworks := agent.PredictorFrameworks()
+	frameworkNames := make([]string, len(frameworks))
+	for ii, framework := range frameworks {
+		frameworkNames[ii] = framework.MustCanonicalName()
+	}
 	rootCmd := &cobra.Command{
 		Use:   "all-agents",
-		Short: "Runs the carml " + frameworks + " agent",
+		Short: "Runs the carml " + strings.Join(frameworkNames, ", ") + " agent",
 		RunE: func(c *cobra.Command, args []string) error {
 			e := robustly.Run(
 				func() {
-					anyDone := make(chan struct{})
+					anyDone := make(chan bool)
 					for _, framework := range frameworks {
-						done, err := RunRootE(c, framework, args)
+						done, err := server.RunRootE(c, framework, args)
 						if err != nil {
 							panic("⚠️ " + err.Error())
 						}
-						go anyDone <- done
+						go func() {
+							v := <-done
+							anyDone <- v
+						}()
 					}
 					<-anyDone
 				},
-				DefaultRunOptions,
+				server.DefaultRunOptions,
 			)
 			if e != 0 {
-				return errors.Errorf("⚠️ %s has panniced %d times ... giving up", frameworkName+"-agent", e)
+				return errors.Errorf("⚠️ %s has panniced %d times ... giving up", strings.Join(frameworkNames, ", ")+"-agent", e)
 			}
 			return nil
 		},
@@ -56,7 +64,12 @@ func NewRootCommand() (*cobra.Command, error) {
 }
 
 func main() {
-	if err := RootCmd.Execute(); err != nil {
+	rootCmd, err := NewRootCommand()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

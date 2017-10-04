@@ -56,9 +56,9 @@ func getHost() (string, error) {
 	return address, nil
 }
 
-func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []string) (<-chan struct{}, error) {
+func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []string) (<-chan bool, error) {
 
-	done := make(chan struct{})
+	done := make(chan bool)
 
 	frameworkName := framework.GetName()
 	port, found := os.LookupEnv("PORT")
@@ -130,7 +130,10 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 	log.Debugf("➡️ "+frameworkName+" service is listening on %s", address)
 
 	go func() {
-		defer close(done)
+		defer func() {
+			done <- true
+			close(done)
+		}()
 		defer registeryServer.GracefulStop()
 		defer predictorServer.GracefulStop()
 
