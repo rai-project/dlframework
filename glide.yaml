@@ -81,6 +81,8 @@ import:
 - package: github.com/spf13/viper
 - package: github.com/tylerb/graceful
   version: ^1.2.15
+- package: github.com/klauspost/shutdown2
+  version: master
 - package: golang.org/x/net
   subpackages:
   - context

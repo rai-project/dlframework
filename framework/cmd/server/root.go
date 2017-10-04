@@ -6,17 +6,20 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/VividCortex/robustly"
 	"github.com/facebookgo/freeport"
+	"github.com/k0kubun/pp"
+	shutdown "github.com/klauspost/shutdown2"
 	"github.com/pkg/errors"
 	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
-	 "github.com/rai-project/tracer"
+	"github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -98,6 +101,7 @@ func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		externalPort = p
 	}
 
+	tracer := tracer.Std()
 
 	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort), agent.WithTracer(tracer))
 	if err != nil {
@@ -158,7 +162,6 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 			return nil
 		},
 	}
-	setupFlags(rootCmd)
 	return rootCmd, nil
 }
 
@@ -193,5 +196,14 @@ func initConfig() {
 	cmd.Init()
 	config.AfterInit(func() {
 		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
+	})
+}
+
+func init() {
+	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
+	shutdown.SetTimeout(time.Second * 1)
+	shutdown.SecondFn(func() {
+		pp.Println("🛑 shutting down!!")
+		tracer.Close()
 	})
 }
