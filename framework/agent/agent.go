@@ -492,7 +492,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 
 func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
 
-	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription, p.options.tracer)
+	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription)
 
 	host := fmt.Sprintf("%s:%d", p.options.host, p.options.port)
 	log.Info("registering predictor service at ", host)

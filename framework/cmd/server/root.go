@@ -103,9 +103,7 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		externalPort = p
 	}
 
-	tracer := tracer.Std()
-
-	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort), agent.WithTracer(tracer))
+	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
 	if err != nil {
 		return done, err
 	}

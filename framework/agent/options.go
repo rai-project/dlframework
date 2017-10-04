@@ -6,24 +6,15 @@ import (
 
 	"github.com/facebookgo/freeport"
 	"github.com/pkg/errors"
-	tr "github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 )
 
 type Options struct {
-	host   string
-	port   int
-	tracer tr.Tracer
+	host string
+	port int
 }
 
 type Option func(o *Options) *Options
-
-func WithTracer(tracer tr.Tracer) Option {
-	return func(o *Options) *Options {
-		o.tracer = tracer
-		return o
-	}
-}
 
 func WithHost(host string) Option {
 	return func(o *Options) *Options {
