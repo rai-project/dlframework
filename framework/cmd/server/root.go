@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"os"
@@ -24,6 +25,7 @@ import (
 	monitors "github.com/rai-project/monitoring/monitors"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
+	echologger "github.com/rai-project/web/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -111,12 +113,6 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, err
 	}
 
-	// create the cmux object that will multiplex 2 protocols on same port
-	m := cmux.New(l)
-	// match gRPC requests, otherwise regular HTTP requests
-	grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	httpL := m.Match(cmux.Any())
-
 	registeryServer, err := agnt.RegisterManifests()
 	if err != nil {
 		return done, err
@@ -134,24 +130,34 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, errors.Wrapf(err, "failed to listen on ip %s", address)
 	}
 
+	ctx := context.Background()
+
+	// create the cmux object that will multiplex 2 protocols on same port
+	m := cmux.New(lis)
+	// match gRPC requests, otherwise regular HTTP requests
+	grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	httpL := m.Match(cmux.Any())
+
 	e := echo.New()
+	e.Logger = &echologger.EchoLogger{Entry: log}
 	monitors.AddRoutes(e)
 
-	log.Debugf("➡️ "+frameworkName+" service is listening on %s", address)
+	log.Debugf("➡️  "+frameworkName+" service is listening on %s", address)
 
 	go func() {
 		defer registeryServer.GracefulStop()
-		registeryServer.Serve(lis)
+		registeryServer.Serve(grpcL)
 		done <- true
 	}()
 	go func() {
 		defer predictorServer.GracefulStop()
-		predictorServer.Serve(lis)
+		predictorServer.Serve(grpcL)
 		done <- true
 	}()
 	go func() {
 		defer e.Shutdown(ctx)
-		err := e.Start(addr)
+		e.Listener = httpL
+		err := e.Start(address)
 		if err != nil {
 			log.WithError(err).Error("failed to start echo server")
 			return
@@ -159,7 +165,7 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		done <- true
 	}()
 
-	log.Println("listening and serving (multiplexed) on", addr)
+	log.Println("listening and serving (multiplexed) on", address)
 	err = m.Serve()
 	if err != nil {
 		return nil, err

@@ -472,7 +472,7 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	log.Info("populating registry")
 
 	var grpcServer *grpc.Server
-	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription, nil)
+	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
 	svr := &Registry{
 		base: base{
 			Framework: p.base.Framework,
