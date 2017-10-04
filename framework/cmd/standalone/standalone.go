@@ -30,24 +30,15 @@ func NewRootCommand() (*cobra.Command, error) {
 		RunE: func(c *cobra.Command, args []string) error {
 			e := robustly.Run(
 				func() {
-					dones := []chan struct{}{}
+					anyDone := make(chan struct{})
 					for _, framework := range frameworks {
 						done, err := RunRootE(c, framework, args)
 						if err != nil {
 							panic("⚠️ " + err.Error())
 						}
-						dones = append(dones, done)
+						go anyDone <- done
 					}
-					done := make(chan struct{})
-
-					for _, ch := range dones {
-						go func(c chan struct{}) {
-							done <- c
-						}(ch)
-					}
-
-					<-done
-
+					<-anyDone
 				},
 				DefaultRunOptions,
 			)
