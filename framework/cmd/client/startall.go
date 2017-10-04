@@ -1,12 +1,10 @@
 package client
 
 import (
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
-
-	"github.com/k0kubun/pp"
 
 	"github.com/spf13/cobra"
 )
@@ -16,7 +14,19 @@ var (
 	all  = []string{"mxnet", "tensorflow"}
 )
 
-//os.Getenv("GOPATH")
+func copyLogs(r io.Reader, logfn func(args ...interface{})) {
+	buf := make([]byte, 80)
+	for {
+		n, err := r.Read(buf)
+		if n > 0 {
+			logfn(buf[0:n])
+		}
+		if err != nil {
+			break
+		}
+	}
+}
+
 var startallCmd = &cobra.Command{
 	Use:     "startallCmd",
 	Short:   "startallCmd",
@@ -34,16 +44,13 @@ var startallCmd = &cobra.Command{
 					"-v",
 				}
 				cmd := exec.Command("go", args...)
-				buf, err := cmd.CombinedOutput()
-				if err != nil {
-					log.WithError(err).Error("Failed to run go " + strings.Join(args, " "))
-				}
-				log.Infof(string(buf))
-				pp.Println(string(buf))
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				cmd.Run()
+
 			}()
 		}
 
-		pp.Println("launched all agents")
 		select {}
 
 		return nil
