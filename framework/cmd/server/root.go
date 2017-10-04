@@ -16,7 +16,7 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
-	tr "github.com/rai-project/tracer"
+	 "github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -98,7 +98,6 @@ func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		externalPort = p
 	}
 
-	tracer := tr.MustNew(frameworkName)
 
 	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort), agent.WithTracer(tracer))
 	if err != nil {

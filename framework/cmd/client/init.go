@@ -12,12 +12,10 @@ import (
 
 var (
 	log    *logrus.Entry
-	tracer tr.Tracer
 )
 
 func init() {
 	config.AfterInit(func() {
 		log = logger.New().WithField("pkg", "dlframework/framework/cmd/client")
-		tracer = tr.MustNew("client")
 	})
 }

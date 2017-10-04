@@ -1,11 +1,14 @@
 package options
 
-import context "golang.org/x/net/context"
+import (
+	dl "github.com/rai-project/dlframework"
+	context "golang.org/x/net/context"
+)
 
 type Options struct {
 	ctx        context.Context
-	devices    []device
-	batchSize  uint
+	devices    devices
+	batchSize  uint32
 	symbol     []byte
 	weights    []byte
 	inputNodes []inputNode
@@ -20,10 +23,30 @@ func Context(c context.Context) Option {
 	}
 }
 
-func BatchSize(n uint) Option {
+func (o *Options) Context() context.Context {
+	return o.ctx
+}
+
+func PredictorOptions(p dl.PredictionOptions) Option {
+	return func(o *Options) {
+		o.batchSize = p.BatchSize
+	}
+}
+
+func (o *Options) PredictorOptions() dl.PredictionOptions {
+	return dl.PredictionOptions{
+		BatchSize: o.batchSize,
+	}
+}
+
+func BatchSize(n uint32) Option {
 	return func(o *Options) {
 		o.batchSize = n
 	}
+}
+
+func (o *Options) BatchSize() uint32 {
+	return o.batchSize
 }
 
 func Device(deviceType DeviceType, id int) Option {
@@ -32,10 +55,21 @@ func Device(deviceType DeviceType, id int) Option {
 	}
 }
 
+func (o *Options) Devices() devices {
+	if len(o.devices) == 0 {
+		return []device{Config.DefaultDevice}
+	}
+	return o.devices
+}
+
 func Symbol(sym []byte) Option {
 	return func(o *Options) {
 		o.symbol = sym
 	}
+}
+
+func (o *Options) Symbol() []byte {
+	return o.symbol
 }
 
 func Weights(w []byte) Option {
@@ -44,7 +78,11 @@ func Weights(w []byte) Option {
 	}
 }
 
-func InputNode(key string, shape []uint) Option {
+func (o *Options) Weights() []byte {
+	return o.weights
+}
+
+func InputNode(key string, shape []uint32) Option {
 	return func(o *Options) {
 		o.inputNodes = append(
 			o.inputNodes,
@@ -56,19 +94,25 @@ func InputNode(key string, shape []uint) Option {
 	}
 }
 
+func (o *Options) InputNodes() []inputNode {
+	return o.inputNodes
+}
+
 func OutputNode(output string) Option {
 	return func(o *Options) {
 		o.outputNode = output
 	}
 }
 
-func NewOptions(opts ...Option) *Options {
+func (o *Options) OutputNode() string {
+	return o.outputNode
+}
+
+func New(opts ...Option) *Options {
 	options := &Options{
 		ctx:       context.Background(),
 		batchSize: Config.BatchSize,
-		devices: []device{
-			device{deviceType: CPU_DEVICE, id: 0},
-		},
+		devices:   []device{},
 	}
 
 	for _, o := range opts {
@@ -76,10 +120,11 @@ func NewOptions(opts ...Option) *Options {
 	}
 
 	for ii, inputNode := range options.inputNodes {
+		batchSize := uint32(options.batchSize)
 		if len(options.inputNodes[ii].shape) == 3 {
-			options.inputNodes[ii].shape = append([]uint{options.batchSize}, inputNode.shape...)
+			options.inputNodes[ii].shape = append([]uint32{batchSize}, inputNode.shape...)
 		} else {
-			options.inputNodes[ii].shape[0] = options.batchSize
+			options.inputNodes[ii].shape[0] = batchSize
 		}
 	}
 

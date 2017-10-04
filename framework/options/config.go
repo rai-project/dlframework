@@ -7,8 +7,10 @@ import (
 )
 
 type optionsConfig struct {
-	BatchSize uint          `json:"batchsize" config:"predictor.batch_size"`
-	done      chan struct{} `json:"-" config:"-"`
+	BatchSize           uint32        `json:"batch_size" config:"predictor.batch_size"`
+	DefaultDeviceString string        `json:"default_device" config:"predictor.default_device"`
+	DefaultDevice       device        `json:"-" config:"-"`
+	done                chan struct{} `json:"-" config:"-"`
 }
 
 var (
@@ -30,6 +32,13 @@ func (a *optionsConfig) Read() {
 	vipertags.Fill(a)
 	if a.BatchSize == 0 {
 		a.BatchSize = DefaultBatchSize
+	}
+	if a.DefaultDeviceString == "" {
+		a.DefaultDevice = DefaultDevice
+	} else if a.DefaultDeviceString == "cuda" {
+		a.DefaultDevice = device{deviceType: CUDA_DEVICE, id: 0}
+	} else {
+		a.DefaultDevice = device{deviceType: CPU_DEVICE, id: 0}
 	}
 }
 

@@ -17,7 +17,6 @@ func (p base) Info() string {
 }
 
 func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}, opts ...pipeline.Option) {
-	opts = append([]pipeline.Option{pipeline.Tracer(tracer)}, opts...)
 	options := pipeline.NewOptions(opts...)
 	go func() {
 		defer close(out)
