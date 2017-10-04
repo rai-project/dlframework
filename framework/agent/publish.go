@@ -60,7 +60,6 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 }
 
 func (b *base) PublishInRegistery(prefix string) error {
-
 	framework := b.Framework
 	cn, err := framework.CanonicalName()
 	if err != nil {

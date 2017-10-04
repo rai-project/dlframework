@@ -34,7 +34,7 @@ var startallCmd = &cobra.Command{
 	Long:    `startallCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		for _, framework := range all {
-			go func() {
+			go func(framework string) {
 				main := filepath.Join(os.Getenv("GOPATH"), base, framework, framework+"-agent", "main.go")
 				args := []string{
 					"run",
@@ -48,9 +48,8 @@ var startallCmd = &cobra.Command{
 				cmd.Stderr = os.Stderr
 				cmd.Run()
 
-			}()
+			}(framework)
 		}
-
 		select {}
 
 		return nil
