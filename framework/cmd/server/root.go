@@ -81,7 +81,7 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
-		return errors.Wrapf(err, "⚠️ the port %s is not a valid integer", port)
+		return done, errors.Wrapf(err, "⚠️ the port %s is not a valid integer", port)
 	}
 
 	predictor, err := agent.GetPredictor(framework)
