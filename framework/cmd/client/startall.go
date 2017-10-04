@@ -1,7 +1,6 @@
 package client
 
 import (
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,21 +10,8 @@ import (
 
 var (
 	base = "src/github.com/rai-project"
-	all  = []string{"mxnet", "tensorflow"}
+	all  = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
 )
-
-func copyLogs(r io.Reader, logfn func(args ...interface{})) {
-	buf := make([]byte, 80)
-	for {
-		n, err := r.Read(buf)
-		if n > 0 {
-			logfn(buf[0:n])
-		}
-		if err != nil {
-			break
-		}
-	}
-}
 
 var startallCmd = &cobra.Command{
 	Use:     "startallCmd",
