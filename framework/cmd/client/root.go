@@ -1,11 +1,17 @@
 package client
 
 import (
+	"os"
 	"strings"
+	"syscall"
+	"time"
 
+	"github.com/k0kubun/pp"
+	shutdown "github.com/klauspost/shutdown2"
 	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework/framework/cmd"
+	"github.com/rai-project/tracer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -67,8 +73,14 @@ func cleanNames() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	cmd.Init()
 	config.AfterInit(func() {
 		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/client")
+	})
+	cmd.Init()
+	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
+	shutdown.SetTimeout(time.Second * 1)
+	shutdown.SecondFn(func() {
+		pp.Println("🛑 shutting down!!")
+		tracer.Close()
 	})
 }

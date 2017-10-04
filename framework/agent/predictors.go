@@ -11,19 +11,15 @@ import (
 var predictorServers syncmap.Map
 
 func GetPredictor(framework dl.FrameworkManifest) (predict.Predictor, error) {
-	key, err := framework.CanonicalName()
-	if err != nil {
-		return nil, err
-	}
-	val, ok := predictorServers.Load(key)
+	val, ok := predictorServers.Load(framework)
 	if !ok {
-		log.WithField("framework", key).
+		log.WithField("framework", framework.MustCanonicalName()).
 			Warn("cannot find registered predictor server")
 		return nil, errors.New("cannot find registered predictor server")
 	}
 	predictor, ok := val.(predict.Predictor)
 	if !ok {
-		log.WithField("framework", key).
+		log.WithField("framework", framework.MustCanonicalName()).
 			Warn("invalid registered predictor server")
 		return nil, errors.New("invalid predictor")
 	}
@@ -31,19 +27,26 @@ func GetPredictor(framework dl.FrameworkManifest) (predict.Predictor, error) {
 }
 
 func AddPredictor(framework dl.FrameworkManifest, predictor predict.Predictor) error {
-	key, err := framework.CanonicalName()
-	if err != nil {
-		return err
-	}
-	predictorServers.Store(key, predictor)
+	predictorServers.Store(framework, predictor)
 	return nil
+}
+
+func PredictorFrameworks() []dl.FrameworkManifest {
+	frameworks := []dl.FrameworkManifest{}
+	predictorServers.Range(func(key, _ interface{}) bool {
+		if framework, ok := key.(dl.FrameworkManifest); ok {
+			frameworks = append(frameworks, framework)
+		}
+		return true
+	})
+	return frameworks
 }
 
 func Predictors() []string {
 	names := []string{}
 	predictorServers.Range(func(key, _ interface{}) bool {
-		if name, ok := key.(string); ok {
-			names = append(names, name)
+		if framework, ok := key.(dl.FrameworkManifest); ok {
+			names = append(names, framework.MustCanonicalName())
 		}
 		return true
 	})

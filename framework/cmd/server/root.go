@@ -2,10 +2,10 @@ package server
 
 import (
 	"fmt"
-	"io"
 	"net"
 	"os"
 	"strconv"
+	"sync"
 	"syscall"
 	"time"
 
@@ -35,7 +35,6 @@ var (
 		PrintStack: true,                // whether to print the panic stacktrace or not
 		RetryDelay: 0 * time.Nanosecond, // inject a delay before retrying the run
 	}
-	cuptiHandle io.Closer
 )
 
 func freePort() (string, error) {
@@ -57,13 +56,16 @@ func getHost() (string, error) {
 	return address, nil
 }
 
-func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []string) error {
+func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []string) (<-chan struct{}, error) {
+
+	done := make(chan struct{})
+
 	frameworkName := framework.GetName()
 	port, found := os.LookupEnv("PORT")
 	if !found {
 		p, err := freePort()
 		if err != nil {
-			return err
+			return done, err
 		}
 		port = p
 	}
@@ -72,20 +74,20 @@ func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 	if !found {
 		h, err := getHost()
 		if err != nil {
-			return err
+			return done, err
 		}
 		host = h
 	}
 
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
-		return errors.Wrapf(err, "the port %s is not a valid integer", port)
+		return errors.Wrapf(err, "⚠️ the port %s is not a valid integer", port)
 	}
 
 	predictor, err := agent.GetPredictor(framework)
 	if err != nil {
-		return errors.Wrapf(err,
-			"failed to get predictor for %s. make sure you have "+
+		return done, errors.Wrapf(err,
+			"⚠️ failed to get predictor for %s. make sure you have "+
 				"imported the framework's predictor package",
 			frameworkName,
 		)
@@ -105,34 +107,37 @@ func runRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 
 	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort), agent.WithTracer(tracer))
 	if err != nil {
-		return err
+		return done, err
 	}
 
 	registeryServer, err := agnt.RegisterManifests()
 	if err != nil {
-		return err
+		return done, err
 	}
 
 	predictorServer, err := agnt.RegisterPredictor()
 	if err != nil {
-		return err
+		return done, err
 	}
 
 	address := fmt.Sprintf("%s:%d", host, portInt)
 
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
-		return errors.Wrapf(err, "failed to listen on ip %s", address)
+		return done, errors.Wrapf(err, "failed to listen on ip %s", address)
 	}
 
-	log.Debugf(frameworkName+" service is listening on %s", address)
+	log.Debugf("➡️ "+frameworkName+" service is listening on %s", address)
 
-	defer registeryServer.GracefulStop()
-	defer predictorServer.GracefulStop()
+	go func() {
+		defer close(done)
+		defer registeryServer.GracefulStop()
+		defer predictorServer.GracefulStop()
 
-	go registeryServer.Serve(lis)
-	predictorServer.Serve(lis)
-	return nil
+		go registeryServer.Serve(lis)
+		predictorServer.Serve(lis)
+	}()
+	return done, nil
 }
 
 // represents the base command when called without any subcommands
@@ -142,30 +147,30 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
 		RunE: func(c *cobra.Command, args []string) error {
-			defer func() {
-				if cuptiHandle != nil {
-					cuptiHandle.Close()
-				}
-			}()
 			e := robustly.Run(
 				func() {
-					err := runRootE(c, framework, args)
+					done, err := RunRootE(c, framework, args)
 					if err != nil {
-						panic(err)
+						panic("⚠️ " + err.Error())
 					}
+					<-done
 				},
 				DefaultRunOptions,
 			)
 			if e != 0 {
-				return errors.Errorf("%s has panniced %d times ... giving up", frameworkName+"-agent", e)
+				return errors.Errorf("⚠️ %s has panniced %d times ... giving up", frameworkName+"-agent", e)
 			}
 			return nil
 		},
 	}
+	var once sync.Once
+	once.Do(func() {
+		SetupFlags(rootCmd)
+	})
 	return rootCmd, nil
 }
 
-func setupFlags(c *cobra.Command) {
+func SetupFlags(c *cobra.Command) {
 
 	cobra.OnInitialize(initConfig)
 
@@ -193,15 +198,15 @@ func setupFlags(c *cobra.Command) {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	cmd.Init()
 	config.AfterInit(func() {
 		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
 	})
-}
 
-func init() {
+	cmd.Init()
 	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
 	shutdown.SetTimeout(time.Second * 1)
+	shutdown.FirstFn(func() {
+	})
 	shutdown.SecondFn(func() {
 		pp.Println("🛑 shutting down!!")
 		tracer.Close()
