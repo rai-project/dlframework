@@ -10,15 +10,18 @@ import (
 	"time"
 
 	"github.com/VividCortex/robustly"
+	"github.com/cockroachdb/cmux"
 	"github.com/facebookgo/freeport"
 	"github.com/k0kubun/pp"
 	shutdown "github.com/klauspost/shutdown2"
+	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
+	monitors "github.com/rai-project/monitoring/monitors"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 	"github.com/sirupsen/logrus"
@@ -108,6 +111,12 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, err
 	}
 
+	// create the cmux object that will multiplex 2 protocols on same port
+	m := cmux.New(l)
+	// match gRPC requests, otherwise regular HTTP requests
+	grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	httpL := m.Match(cmux.Any())
+
 	registeryServer, err := agnt.RegisterManifests()
 	if err != nil {
 		return done, err
@@ -125,19 +134,36 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, errors.Wrapf(err, "failed to listen on ip %s", address)
 	}
 
+	e := echo.New()
+	monitors.AddRoutes(e)
+
 	log.Debugf("➡️ "+frameworkName+" service is listening on %s", address)
 
 	go func() {
-		defer func() {
-			done <- true
-			close(done)
-		}()
 		defer registeryServer.GracefulStop()
-		defer predictorServer.GracefulStop()
-
-		go registeryServer.Serve(lis)
-		predictorServer.Serve(lis)
+		registeryServer.Serve(lis)
+		done <- true
 	}()
+	go func() {
+		defer predictorServer.GracefulStop()
+		predictorServer.Serve(lis)
+		done <- true
+	}()
+	go func() {
+		defer e.Shutdown(ctx)
+		err := e.Start(addr)
+		if err != nil {
+			log.WithError(err).Error("failed to start echo server")
+			return
+		}
+		done <- true
+	}()
+
+	log.Println("listening and serving (multiplexed) on", addr)
+	err = m.Serve()
+	if err != nil {
+		return nil, err
+	}
 	return done, nil
 }
 
@@ -209,7 +235,7 @@ func initConfig() {
 	shutdown.FirstFn(func() {
 	})
 	shutdown.SecondFn(func() {
-		pp.Println("🛑 shutting down!!")
+		pp.Println("🛑  shutting down!!")
 		tracer.Close()
 	})
 }
