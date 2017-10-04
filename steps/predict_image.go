@@ -1,9 +1,12 @@
 package steps
 
 import (
+	"github.com/rai-project/go-cupti"
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/pipeline"
 )
@@ -49,7 +52,29 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	features, err := p.predictor.Predict(ctx, data, opts)
+	framework, model, err := p.predictor.Info()
+	if err != nil {
+		return err
+	}
+
+	span, ctx := pipelineOpts.Tracer.StartSpanFromContext(ctx, "Predict", opentracing.Tags{
+		"model_name":        model.GetName(),
+		"model_version":     model.GetVersion(),
+		"framework_name":    framework.GetName(),
+		"framework_version": framework.GetVersion(),
+		"batch_size":        opts.BatchSize(),
+		"device":            opts.Devices().String(),
+	})
+	defer span.Finish()
+
+	if opts.UsesGPU() {
+		cu, err := cupti.New(cupti.Context(ctx))
+		if err == nil {
+			defer cu.Close()
+		}
+	}
+
+	features, err := p.predictor.Predict(ctx, data, options.WithOptions(opts))
 	if err != nil {
 		return err
 	}

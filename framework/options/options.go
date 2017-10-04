@@ -17,6 +17,12 @@ type Options struct {
 
 type Option func(*Options)
 
+func WithOptions(opts *Options) Option {
+	return func(o *Options) {
+		*o = *opts
+	}
+}
+
 func Context(c context.Context) Option {
 	return func(o *Options) {
 		o.ctx = c
@@ -27,7 +33,7 @@ func (o *Options) Context() context.Context {
 	return o.ctx
 }
 
-func PredictorOptions(p dl.PredictionOptions) Option {
+func PredictorOptions(p *dl.PredictionOptions) Option {
 	return func(o *Options) {
 		o.batchSize = p.BatchSize
 	}
@@ -46,6 +52,9 @@ func BatchSize(n uint32) Option {
 }
 
 func (o *Options) BatchSize() uint32 {
+	if o.batchSize == 0 {
+		return uint32(1)
+	}
 	return o.batchSize
 }
 
@@ -61,6 +70,27 @@ func (o *Options) Devices() devices {
 	}
 	return o.devices
 }
+
+func (o *Options) UsesGPU() bool {
+	devs := o.Devices()
+	for _, d := range devs {
+		if d.Type() == CUDA_DEVICE {
+			return true
+		}
+	}
+	return false
+}
+
+func Graph(sym []byte) Option {
+	return func(o *Options) {
+		o.symbol = sym
+	}
+}
+
+func (o *Options) Graph() []byte {
+	return o.symbol
+}
+
 
 func Symbol(sym []byte) Option {
 	return func(o *Options) {

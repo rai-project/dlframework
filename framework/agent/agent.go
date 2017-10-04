@@ -21,6 +21,7 @@ import (
 	"github.com/rai-project/registry"
 	"google.golang.org/grpc"
 
+	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/dlframework/steps"
 )
@@ -70,7 +71,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	if opts == nil {
 		opts = &dl.PredictionOptions{}
 	}
-	predictor, err := p.predictor.Load(ctx, *model, *opts)
+	predictor, err := p.predictor.Load(ctx, *model, options.PredictorOptions(opts))
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		Then(steps.NewReadURL()).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
 
 	var outputs []interface{}
 	for out := range output {
@@ -219,10 +220,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, err
 	}
 
-	batchSize := int(predictionOptions.GetBatchSize())
-	if batchSize == 0 {
-		batchSize = 1
-	}
+	batchSize := int(predictionOptions.BatchSize())
 
 	parts := partition(outputs, batchSize)
 
@@ -236,7 +234,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
 
 	return output, nil
 }
@@ -300,22 +298,19 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 	output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
 
 	var outputs []interface{}
 	for out := range output {
 		outputs = append(outputs, out)
 	}
 
-	predictionOptions, err := predictor.GetPredictionOptions(ctx)
+	opts, err := predictor.GetPredictionOptions(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	batchSize := int(predictionOptions.GetBatchSize())
-	if batchSize == 0 {
-		batchSize = 1
-	}
+	batchSize := int(opts.BatchSize())
 
 	parts := partition(outputs, batchSize)
 
@@ -329,7 +324,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
 
 	return output, nil
 }
@@ -423,7 +418,7 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
 		Then(steps.NewPredictImage(predictor)).
-		Run(input, pipeline.Tracer(predictor.GetTracer()))
+		Run(input)
 
 	return output, nil
 }

@@ -2,29 +2,24 @@ package predict
 
 import (
 	"github.com/rai-project/dlframework"
-	tr "github.com/rai-project/tracer"
+	"github.com/rai-project/dlframework/framework/options"
 	"golang.org/x/net/context"
 )
 
 type Base struct {
-	Framework         dlframework.FrameworkManifest
-	Model             dlframework.ModelManifest
-	PredictionOptions dlframework.PredictionOptions
-	Tracer            tr.Tracer
+	Framework dlframework.FrameworkManifest
+	Model     dlframework.ModelManifest
+	Options   *options.Options
 }
 
-func (b Base) GetPredictionOptions(ctx context.Context) (dlframework.PredictionOptions, error) {
-	return b.PredictionOptions, nil
+func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error) {
+	return b.Options, nil
 }
 
 func (b Base) BatchSize() uint32 {
-	s := b.PredictionOptions.GetBatchSize()
+	s := b.Options.BatchSize()
 	if s == 0 {
 		return uint32(1)
 	}
 	return s
-}
-
-func (b Base) GetTracer() tr.Tracer {
-	return b.Tracer
 }
