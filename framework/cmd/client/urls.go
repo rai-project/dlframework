@@ -17,6 +17,7 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/registryquery"
 	rgrpc "github.com/rai-project/grpc"
+	"github.com/rai-project/tracer"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
 

@@ -57,7 +57,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	span, ctx := pipelineOpts.Tracer.StartSpanFromContext(ctx, "Predict", opentracing.Tags{
+	span, ctx := opentracing.StartSpanFromContext(ctx, "Predict", opentracing.Tags{
 		"model_name":        model.GetName(),
 		"model_version":     model.GetVersion(),
 		"framework_name":    framework.GetName(),
@@ -70,7 +70,10 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 	if opts.UsesGPU() {
 		cu, err := cupti.New(cupti.Context(ctx))
 		if err == nil {
-			defer cu.Close()
+			defer func() {
+				cu.Wait()
+				cu.Close()
+			}()
 		}
 	}
 

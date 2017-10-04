@@ -4,6 +4,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/anthonynsimon/bild/parallel"
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image"
@@ -40,7 +41,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 		MeanImage: mean,
 		Scale:     scale,
 		ColorMode: mode,
-		Layout: options.Layout,
+		Layout:    options.Layout,
 	}
 
 	res.doer = res.do
@@ -49,7 +50,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
-	span, ctx := pipelineOptions.Tracer.StartSpanFromContext(ctx, p.Info())
+	span, ctx := opentracing.StartSpanFromContext(ctx, p.Info())
 	defer span.Finish()
 
 	switch in := in0.(type) {
@@ -122,7 +123,7 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 		parallel.Line(height, func(start, end int) {
 			for y := start; y < end; y++ {
 				for x := 0; x < width; x++ {
-					offset := y * in.Stride + x*3
+					offset := y*in.Stride + x*3
 					rgb := in.Pix[offset : offset+3]
 					r, g, b := rgb[0], rgb[1], rgb[2]
 					out[offset+0] = (float32(r) - mean[0]) / scale
@@ -135,7 +136,7 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 		parallel.Line(height, func(start, end int) {
 			for y := start; y < end; y++ {
 				for x := 0; x < width; x++ {
-					offset := y * in.Stride + x*3
+					offset := y*in.Stride + x*3
 					rgb := in.Pix[offset : offset+3]
 					r, g, b := rgb[0], rgb[1], rgb[2]
 					out[offset+0] = (float32(b) - mean[2]) / scale

@@ -3,6 +3,7 @@ package steps
 import (
 	"golang.org/x/net/context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/pipeline"
 )
@@ -23,7 +24,7 @@ func NewSpread() pipeline.Step {
 }
 
 func (p spread) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	span, ctx := opts.Tracer.StartSpanFromContext(ctx, p.Info())
+	span, ctx := opentracing.StartSpanFromContext(ctx, p.Info())
 	defer span.Finish()
 
 	in, err := toSlice(in0)
