@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/VividCortex/robustly"
-	"github.com/k0kubun/pp"
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/pkg/errors"
 	_ "github.com/rai-project/caffe/predict"
@@ -84,7 +83,7 @@ func init() {
 	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
 	shutdown.SetTimeout(time.Second * 1)
 	shutdown.SecondFn(func() {
-		pp.Println("🛑  shutting down!!")
+		fmt.Println("🛑  shutting down!!")
 		tracer.Close()
 	})
 }
