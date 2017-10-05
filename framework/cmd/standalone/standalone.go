@@ -13,8 +13,9 @@ import (
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/pkg/errors"
 	_ "github.com/rai-project/caffe/predict"
-	_ "github.com/rai-project/caffe2/predict"
+	//_ "github.com/rai-project/caffe2/predict"
 	"github.com/rai-project/dlframework/framework/agent"
+	"github.com/rai-project/dlframework/framework/cmd"
 	"github.com/rai-project/dlframework/framework/cmd/server"
 	_ "github.com/rai-project/mxnet/predict"
 	_ "github.com/rai-project/tensorflow/predict"
@@ -25,6 +26,9 @@ import (
 // represents the base command when called without any subcommands
 func NewRootCommand() (*cobra.Command, error) {
 	frameworks := agent.PredictorFrameworks()
+	if len(frameworks) == 0 {
+		return nil, errors.New("no frameworks found")
+	}
 	frameworkNames := make([]string, len(frameworks))
 	for ii, framework := range frameworks {
 		frameworkNames[ii] = framework.MustCanonicalName()
@@ -37,11 +41,11 @@ func NewRootCommand() (*cobra.Command, error) {
 				func() {
 					anyDone := make(chan bool)
 					for _, framework := range frameworks {
-						done, err := server.RunRootE(c, framework, args)
-						if err != nil {
-							panic("⚠️ " + err.Error())
-						}
 						go func() {
+							done, err := server.RunRootE(c, framework, args)
+							if err != nil {
+								panic("⚠️  " + err.Error())
+							}
 							v := <-done
 							anyDone <- v
 						}()
@@ -51,7 +55,7 @@ func NewRootCommand() (*cobra.Command, error) {
 				server.DefaultRunOptions,
 			)
 			if e != 0 {
-				return errors.Errorf("⚠️ %s has panniced %d times ... giving up", strings.Join(frameworkNames, ", ")+"-agent", e)
+				return errors.Errorf("⚠️  %s has panniced %d times ... giving up", strings.Join(frameworkNames, ", ")+"-agent", e)
 			}
 			return nil
 		},
@@ -64,6 +68,7 @@ func NewRootCommand() (*cobra.Command, error) {
 }
 
 func main() {
+	cmd.Init()
 	rootCmd, err := NewRootCommand()
 	if err != nil {
 		fmt.Println(err)
@@ -79,7 +84,7 @@ func init() {
 	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
 	shutdown.SetTimeout(time.Second * 1)
 	shutdown.SecondFn(func() {
-		pp.Println("🛑 shutting down!!")
+		pp.Println("🛑  shutting down!!")
 		tracer.Close()
 	})
 }
