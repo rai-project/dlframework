@@ -114,10 +114,10 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, err
 	}
 
-	// registeryServer, err := agnt.RegisterManifests()
-	// if err != nil {
-	// 	return done, err
-	// }
+	registeryServer, err := agnt.RegisterManifests()
+	if err != nil {
+		return done, err
+	}
 
 	predictorServer, err := agnt.RegisterPredictor()
 	if err != nil {
@@ -146,11 +146,11 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 
 		log.Debugf("➡️  "+frameworkName+" service is listening on %s", address)
 
-		// go func() {
-		// 	defer registeryServer.GracefulStop()
-		// 	registeryServer.Serve(grpcL)
-		// 	done <- true
-		// }()
+		go func() {
+			defer registeryServer.GracefulStop()
+			registeryServer.Serve(grpcL)
+			done <- true
+		}()
 		go func() {
 			defer predictorServer.GracefulStop()
 			predictorServer.Serve(grpcL)
@@ -174,6 +174,12 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		}
 		return done, nil
 	}
+
+	go func() {
+		defer registeryServer.GracefulStop()
+		registeryServer.Serve(lis)
+		done <- true
+	}()
 
 	go func() {
 		defer predictorServer.GracefulStop()
