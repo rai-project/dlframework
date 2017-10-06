@@ -33,6 +33,7 @@ import (
 
 var (
 	local             bool
+	profile           bool
 	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
 	DefaultRunOptions               = &robustly.RunOptions{
 		RateLimit:  1,                   // the rate limit in crashes per second
@@ -113,10 +114,10 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, err
 	}
 
-	registeryServer, err := agnt.RegisterManifests()
-	if err != nil {
-		return done, err
-	}
+	// registeryServer, err := agnt.RegisterManifests()
+	// if err != nil {
+	// 	return done, err
+	// }
 
 	predictorServer, err := agnt.RegisterPredictor()
 	if err != nil {
@@ -132,44 +133,55 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 
 	ctx := context.Background()
 
-	// create the cmux object that will multiplex 2 protocols on same port
-	m := cmux.New(lis)
-	// match gRPC requests, otherwise regular HTTP requests
-	grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
-	httpL := m.Match(cmux.Any())
+	if profile {
+		// create the cmux object that will multiplex 2 protocols on same port
+		m := cmux.New(lis)
+		// match gRPC requests, otherwise regular HTTP requests
+		grpcL := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+		httpL := m.Match(cmux.Any())
 
-	e := echo.New()
-	e.Logger = &echologger.EchoLogger{Entry: log}
-	monitors.AddRoutes(e)
+		e := echo.New()
+		e.Logger = &echologger.EchoLogger{Entry: log}
+		monitors.AddRoutes(e)
 
-	log.Debugf("➡️  "+frameworkName+" service is listening on %s", address)
+		log.Debugf("➡️  "+frameworkName+" service is listening on %s", address)
 
-	go func() {
-		defer registeryServer.GracefulStop()
-		registeryServer.Serve(grpcL)
-		done <- true
-	}()
+		// go func() {
+		// 	defer registeryServer.GracefulStop()
+		// 	registeryServer.Serve(grpcL)
+		// 	done <- true
+		// }()
+		go func() {
+			defer predictorServer.GracefulStop()
+			predictorServer.Serve(grpcL)
+			done <- true
+		}()
+		go func() {
+			defer e.Shutdown(ctx)
+			e.Listener = httpL
+			err := e.Start(address)
+			if err != nil {
+				log.WithError(err).Error("failed to start echo server")
+				return
+			}
+			done <- true
+		}()
+
+		log.Println("listening and serving (multiplexed) on", address)
+		err = m.Serve()
+		if err != nil {
+			return nil, err
+		}
+		return done, nil
+	}
+
 	go func() {
 		defer predictorServer.GracefulStop()
-		predictorServer.Serve(grpcL)
-		done <- true
-	}()
-	go func() {
-		defer e.Shutdown(ctx)
-		e.Listener = httpL
-		err := e.Start(address)
-		if err != nil {
-			log.WithError(err).Error("failed to start echo server")
-			return
-		}
+		log.Debugf("➡️  "+frameworkName+" service is listening on %s", address)
+		predictorServer.Serve(lis)
 		done <- true
 	}()
 
-	log.Println("listening and serving (multiplexed) on", address)
-	err = m.Serve()
-	if err != nil {
-		return nil, err
-	}
 	return done, nil
 }
 
@@ -219,6 +231,7 @@ func SetupFlags(c *cobra.Command) {
 	c.PersistentFlags().BoolVarP(&cmd.IsDebug, "debug", "d", false, "Toggle debug mode.")
 	c.PersistentFlags().StringVarP(&cmd.AppSecret, "secret", "s", "", "The application secret.")
 	c.PersistentFlags().BoolVarP(&local, "local", "l", false, "Listen on local address.")
+	c.PersistentFlags().BoolVar(&profile, "profile", false, "Enable profile mode.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
