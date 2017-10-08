@@ -33,20 +33,41 @@ var urlsCmd = &cobra.Command{
 		if len(args) < 1 {
 			return errors.New("urlsfile path needs to be provided")
 		}
+		urlsFile, _ := filepath.Abs(args[0])
 
 		if len(args) > 1 {
 			batchSize, _ = strconv.Atoi(args[1])
 		}
-		var outputDir string
 
+		var outputDir string
 		if len(args) > 2 {
 			outputDir = args[2]
-			os.MkdirAll(outputDir, os.ModePerm)
+			if err := os.MkdirAll(outputDir, os.ModePerm); err != nil {
+				return errors.Wrap(err, "error creating output dir")
+
+			}
 		}
 
-		urlsFile, _ := filepath.Abs(args[0])
-
 		pp.Println(args)
+
+		var data []string
+		f, err := os.Open(urlsFile)
+		if err != nil {
+			return errors.Wrapf(err, "cannot read %s", urlsFile)
+		}
+		defer f.Close()
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := scanner.Text()
+			data = append(data, line)
+		}
+
+		// fill the batch with the same image
+		if len(data) == 1 {
+			for ii := 0; ii < batchSize; ii++ {
+				data = append(data, data[0])
+			}
+		}
 
 		agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 		if err != nil {
@@ -60,7 +81,6 @@ var urlsCmd = &cobra.Command{
 		serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
 
 		ctx := context.Background()
-
 		span, ctx := tracer.StartSpanFromContext(ctx, "urls")
 		spanClosed := false
 		defer func() {
@@ -95,24 +115,9 @@ var urlsCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to open the predictor")
 		}
 
-		pp.Println("batch size = ", batchSize)
-
 		defer client.Close(ctx, predictor)
 
-		var data []string
-		f, err := os.Open(urlsFile)
-		if err != nil {
-			return errors.Wrapf(err, "cannot read %s", urlsFile)
-		}
-		defer f.Close()
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			line := scanner.Text()
-			data = append(data, line)
-		}
-
 		var urls []*dlframework.URLsRequest_URL
-
 		for i, url := range data {
 			urls = append(urls, &dlframework.URLsRequest_URL{
 				ID:   string(i),
