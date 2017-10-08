@@ -17,7 +17,7 @@ var collectCmd = &cobra.Command{
 			return errors.New("urlsfile, batch size upperbound and output dir need to be provided")
 		}
 		batchUpper, _ := strconv.Atoi(args[1])
-		for ii := 1; ii < batchUpper; ii = ii * 2 {
+		for ii := 1; ii <= batchUpper; ii = ii * 2 {
 			err := urlsCmd.RunE(c, []string{args[0], strconv.Itoa(ii), args[2]})
 			if err != nil {
 				return err

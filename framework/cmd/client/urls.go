@@ -137,6 +137,12 @@ var urlsCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "unable to get response from urls request")
 		}
+		_ = res
+
+		// tag res in tracing
+		fr := dlframework.Features(res.Responses[0].GetFeatures())
+		fr.Sort()
+		span.SetTag("results", fr[:5])
 
 		spanClosed = true
 		span.Finish()
@@ -152,8 +158,6 @@ var urlsCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "unable to write to file")
 		}
-
-		_ = res
 
 		return nil
 	},
