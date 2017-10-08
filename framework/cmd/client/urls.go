@@ -100,13 +100,18 @@ var urlsCmd = &cobra.Command{
 
 		client := dlframework.NewPredictClient(conn)
 
+		ExecutionOptions := &dlframework.ExecutionOptions{
+			DeviceCount: map[string]int32{"gpu": 0},
+		}
+
 		predictor, err := client.Open(ctx, &dlframework.PredictorOpenRequest{
 			ModelName:        modelName,
 			ModelVersion:     modelVersion,
 			FrameworkName:    frameworkName,
 			FrameworkVersion: frameworkVersion,
 			Options: &dlframework.PredictionOptions{
-				BatchSize: uint32(batchSize),
+				BatchSize:        uint32(batchSize),
+				ExecutionOptions: ExecutionOptions,
 			},
 		})
 		if err != nil {

@@ -1,6 +1,8 @@
 package options
 
 import (
+	"strings"
+
 	dl "github.com/rai-project/dlframework"
 	context "golang.org/x/net/context"
 )
@@ -36,6 +38,14 @@ func (o *Options) Context() context.Context {
 func PredictorOptions(p *dl.PredictionOptions) Option {
 	return func(o *Options) {
 		o.batchSize = p.BatchSize
+		for k, v := range p.GetExecutionOptions().GetDeviceCount() {
+			k = strings.ToLower(k)
+			if k == "cpu" {
+				o.devices = append(o.devices, device{deviceType: CPU_DEVICE, id: int(v)})
+			} else {
+				o.devices = append(o.devices, device{deviceType: CUDA_DEVICE, id: int(v)})
+			}
+		}
 	}
 }
 
@@ -90,7 +100,6 @@ func Graph(sym []byte) Option {
 func (o *Options) Graph() []byte {
 	return o.symbol
 }
-
 
 func Symbol(sym []byte) Option {
 	return func(o *Options) {
