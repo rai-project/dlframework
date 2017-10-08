@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/k0kubun/pp"
-
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
@@ -47,8 +46,6 @@ var urlsCmd = &cobra.Command{
 
 			}
 		}
-
-		pp.Println(args)
 
 		var data []string
 		f, err := os.Open(urlsFile)
@@ -158,6 +155,9 @@ var urlsCmd = &cobra.Command{
 
 		spanClosed = true
 		span.Finish()
+
+		pp.Println(args)
+		pp.Println(modelName, modelVersion)
 
 		time.Sleep(10 * time.Second)
 

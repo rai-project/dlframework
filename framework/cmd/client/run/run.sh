@@ -19,32 +19,32 @@ declare -a array5=( SqueezeNet ) # v1.1
 
 rm -rf $OUTDIR
 
-for i in "${array1[@]}"
-do
-    echo $i
-    ./run --modelName $i --modelVersion "1.0" collect $URLFILE $BATCH $OUTDIR
-done
+# for i in "${array1[@]}"
+# do
+#     echo $i
+#     ./run --modelName $i --modelVersion "1.0" collect $URLFILE $BATCH $OUTDIR/$i-v1.0
+# done
 
 for i in "${array2[@]}"
 do
     echo $i
-    ./run --modelName $i --modelVersion "2.0" collect $URLFILE $BATCH $OUTDIR
+    ./run --modelName $i --modelVersion "2.0" collect $URLFILE $BATCH $OUTDIR/$i-v2.0
 done
 
 for i in "${array3[@]}"
 do
     echo $i
-    ./run --modelName $i --modelVersion "3.0" collect $URLFILE $BATCH $OUTDIR
+    ./run --modelName $i --modelVersion "3.0" collect $URLFILE $BATCH $OUTDIR/$i-v3.0
 done
 
 for i in "${array4[@]}"
 do
     echo $i
-    ./run --modelName $i --modelVersion "4.0" collect $URLFILE $BATCH $OUTDIR
+    ./run --modelName $i --modelVersion "4.0" collect $URLFILE $BATCH $OUTDIR/$i-v4.0
 done
 
 for i in "${array5[@]}"
 do
     echo $i
-    ./run --modelName $i --modelVersion "1.1" collect $URLFILE $BATCH $OUTDIR
+    ./run --modelName $i --modelVersion "1.1" collect $URLFILE $BATCH $OUTDIR/$i-v1.1
 done
