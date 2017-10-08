@@ -66,6 +66,7 @@ var urlsCmd = &cobra.Command{
 			}
 		}
 
+		cleanNames()
 		agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 		if err != nil {
 			return err
