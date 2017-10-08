@@ -142,7 +142,19 @@ var urlsCmd = &cobra.Command{
 		// tag res in tracing
 		fr := dlframework.Features(res.Responses[0].GetFeatures())
 		fr.Sort()
-		span.SetTag("results", fr[:5])
+		for ii, f := range fr[:5] {
+			span.SetTag("predictions_"+strconv.Itoa(ii), struct {
+				Pos   int
+				Index int64
+				Name  string
+				Prob  float32
+			}{
+				Pos:   ii,
+				Index: f.GetIndex(),
+				Name:  f.GetName(),
+				Prob:  f.GetProbability(),
+			})
+		}
 
 		spanClosed = true
 		span.Finish()
