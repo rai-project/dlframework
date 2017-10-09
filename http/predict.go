@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/labstack/echo"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -28,6 +28,42 @@ func getBody(s, defaultValue string) string {
 		return defaultValue
 	}
 	return s
+}
+
+func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.PredictionOptions {
+	if opts == nil {
+		return &dl.PredictionOptions{}
+	}
+	execOpts := &dl.ExecutionOptions{}
+	if opts.ExecutionOptions != nil {
+
+		execOpts = &dl.ExecutionOptions{
+			// CPUOptions: opts.ExecutionOptions.CPUOptions,
+
+			DeviceCount: opts.ExecutionOptions.DeviceCount,
+
+			// Options that apply to all GPUs.
+			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
+
+			TimeoutInMs: opts.ExecutionOptions.TimeoutInMs,
+
+			TraceLevel: dl.ExecutionOptions_TraceLevel(
+				dl.ExecutionOptions_TraceLevel_value[string(opts.ExecutionOptions.TraceLevel)],
+			),
+		}
+
+		if opts.BatchSize == 0 {
+			opts.BatchSize = 1
+		}
+		return &dl.PredictionOptions{
+			RequestID:        opts.RequestID,
+			FeatureLimit:     opts.FeatureLimit,
+			BatchSize:        uint32(opts.BatchSize),
+			ExecutionOptions: execOpts,
+		}
+	}
+
+	return &dl.PredictionOptions{}
 }
 
 func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
@@ -61,19 +97,14 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 	client := dl.NewPredictClient(conn)
 
 	predictionOptions := params.Body.Options
-	if predictionOptions == nil {
-		predictionOptions = &webmodels.DlframeworkPredictionOptions{
-			BatchSize: 1,
-		}
-	}
+	pp.Println(predictionOptions)
+
 	predictor, err := client.Open(ctx, &dl.PredictorOpenRequest{
 		ModelName:        modelName,
 		ModelVersion:     modelVersion,
 		FrameworkName:    frameworkName,
 		FrameworkVersion: frameworkVersion,
-		Options: &dl.PredictionOptions{
-			BatchSize: uint32(predictionOptions.BatchSize),
-		},
+		Options:          fromPredictionOptions(predictionOptions),
 	})
 
 	if err != nil {
@@ -224,26 +255,13 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 		}
 	}
 
-	options := params.Body.Options
-	if options == nil {
-		options = &webmodels.DlframeworkPredictionOptions{}
-	}
-
-	requestID := params.HTTPRequest.Header.Get(echo.HeaderXRequestID)
-	if options.RequestID != "" {
-		requestID = options.RequestID
-	}
-
 	ret, err := client.Images(ctx,
 		&dl.ImagesRequest{
 			Predictor: &dl.Predictor{
 				ID: predictorID,
 			},
-			Images: images,
-			Options: &dl.PredictionOptions{
-				RequestID:    requestID,
-				FeatureLimit: options.FeatureLimit,
-			},
+			Images:  images,
+			Options: fromPredictionOptions(params.Body.Options),
 		},
 	)
 
@@ -282,27 +300,13 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 		}
 	}
 
-	options := params.Body.Options
-	if options == nil {
-		options = &webmodels.DlframeworkPredictionOptions{}
-	}
-
-	requestID := params.HTTPRequest.Header.Get(echo.HeaderXRequestID)
-	if options.RequestID != "" {
-		requestID = options.RequestID
-	}
-
 	ret, err := client.URLs(ctx,
 		&dl.URLsRequest{
 			Predictor: &dl.Predictor{
 				ID: predictorID,
 			},
-			Urls: urls,
-			Options: &dl.PredictionOptions{
-				RequestID:    requestID,
-				FeatureLimit: options.FeatureLimit,
-				BatchSize:    uint32(options.BatchSize),
-			},
+			Urls:    urls,
+			Options: fromPredictionOptions(params.Body.Options),
 		},
 	)
 
