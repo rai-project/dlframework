@@ -17,9 +17,5 @@ func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error
 }
 
 func (b Base) BatchSize() uint32 {
-	s := b.Options.BatchSize()
-	if s == 0 {
-		return uint32(1)
-	}
-	return s
+	return b.Options.BatchSize()
 }
