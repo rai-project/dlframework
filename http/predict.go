@@ -34,36 +34,33 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 	if opts == nil {
 		return &dl.PredictionOptions{}
 	}
+
+	if opts.BatchSize == 0 {
+		opts.BatchSize = 1
+	}
+
 	execOpts := &dl.ExecutionOptions{}
 	if opts.ExecutionOptions != nil {
-
 		execOpts = &dl.ExecutionOptions{
-			// CPUOptions: opts.ExecutionOptions.CPUOptions,
-
-			DeviceCount: opts.ExecutionOptions.DeviceCount,
-
-			// Options that apply to all GPUs.
-			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
-
-			TimeoutInMs: opts.ExecutionOptions.TimeoutInMs,
-
 			TraceLevel: dl.ExecutionOptions_TraceLevel(
 				dl.ExecutionOptions_TraceLevel_value[string(opts.ExecutionOptions.TraceLevel)],
 			),
-		}
-
-		if opts.BatchSize == 0 {
-			opts.BatchSize = 1
-		}
-		return &dl.PredictionOptions{
-			RequestID:        opts.RequestID,
-			FeatureLimit:     opts.FeatureLimit,
-			BatchSize:        uint32(opts.BatchSize),
-			ExecutionOptions: execOpts,
+			TimeoutInMs: opts.ExecutionOptions.TimeoutInMs,
+			DeviceCount: opts.ExecutionOptions.DeviceCount,
+			// CPUOptions: opts.ExecutionOptions.CPUOptions,
+			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
 		}
 	}
 
-	return &dl.PredictionOptions{}
+	predOpts := &dl.PredictionOptions{
+		RequestID:        opts.RequestID,
+		FeatureLimit:     opts.FeatureLimit,
+		BatchSize:        uint32(opts.BatchSize),
+		ExecutionOptions: execOpts,
+	}
+
+	pp.Println(predOpts)
+	return predOpts
 }
 
 func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
@@ -96,15 +93,12 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 
 	client := dl.NewPredictClient(conn)
 
-	predictionOptions := params.Body.Options
-	pp.Println(predictionOptions)
-
 	predictor, err := client.Open(ctx, &dl.PredictorOpenRequest{
 		ModelName:        modelName,
 		ModelVersion:     modelVersion,
 		FrameworkName:    frameworkName,
 		FrameworkVersion: frameworkVersion,
-		Options:          fromPredictionOptions(predictionOptions),
+		Options:          fromPredictionOptions(params.Body.Options),
 	})
 
 	if err != nil {
