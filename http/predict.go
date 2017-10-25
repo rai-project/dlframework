@@ -35,10 +35,6 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 		return &dl.PredictionOptions{}
 	}
 
-	if opts.BatchSize == 0 {
-		opts.BatchSize = 1
-	}
-
 	execOpts := &dl.ExecutionOptions{}
 	if opts.ExecutionOptions != nil {
 		execOpts = &dl.ExecutionOptions{
