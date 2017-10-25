@@ -431,6 +431,7 @@ func init() {
       "enum": [
         "NO_TRACE",
         "FRAMEWORK_TRACE",
+        "CPU_ONLY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ]

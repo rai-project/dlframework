@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	dl "github.com/rai-project/dlframework"
+	"github.com/rai-project/tracer"
 	context "golang.org/x/net/context"
 )
 
@@ -11,6 +12,7 @@ type Options struct {
 	ctx        context.Context
 	devices    devices
 	batchSize  uint32
+	traceLevel tracer.Level
 	symbol     []byte
 	weights    []byte
 	inputNodes []inputNode
@@ -37,7 +39,6 @@ func (o *Options) Context() context.Context {
 
 func PredictorOptions(p *dl.PredictionOptions) Option {
 	return func(o *Options) {
-		o.batchSize = p.BatchSize
 		for k, v := range p.GetExecutionOptions().GetDeviceCount() {
 			k = strings.ToLower(k)
 			if k == "cpu" {
@@ -46,14 +47,16 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 				o.devices = append(o.devices, device{deviceType: CUDA_DEVICE, id: int(v)})
 			}
 		}
+		o.batchSize = p.BatchSize
+		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
 	}
 }
 
-func (o *Options) PredictorOptions() dl.PredictionOptions {
-	return dl.PredictionOptions{
-		BatchSize: o.batchSize,
-	}
-}
+// func (o *Options) PredictorOptions() dl.PredictionOptions {
+// 	return dl.PredictionOptions{
+// 		BatchSize: o.batchSize,
+// 	}
+// }
 
 func BatchSize(n uint32) Option {
 	return func(o *Options) {
@@ -89,6 +92,16 @@ func (o *Options) UsesGPU() bool {
 		}
 	}
 	return false
+}
+
+func TraceLevel(tl dl.ExecutionOptions_TraceLevel) Option {
+	return func(o *Options) {
+		o.traceLevel = tracer.LevelFromName(tl.String())
+	}
+}
+
+func (o *Options) TraceLevel() tracer.Level {
+	return o.traceLevel
 }
 
 func Graph(sym []byte) Option {
@@ -149,9 +162,10 @@ func (o *Options) OutputNode() string {
 
 func New(opts ...Option) *Options {
 	options := &Options{
-		ctx:       context.Background(),
-		batchSize: Config.BatchSize,
-		devices:   []device{},
+		ctx:        context.Background(),
+		devices:    []device{},
+		batchSize:  Config.BatchSize,
+		traceLevel: tracer.NO_TRACE,
 	}
 
 	for _, o := range opts {
@@ -159,7 +173,7 @@ func New(opts ...Option) *Options {
 	}
 
 	for ii, inputNode := range options.inputNodes {
-		batchSize := uint32(options.batchSize)
+		batchSize := options.batchSize
 		if len(options.inputNodes[ii].shape) == 3 {
 			options.inputNodes[ii].shape = append([]uint32{batchSize}, inputNode.shape...)
 		} else {

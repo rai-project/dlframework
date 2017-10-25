@@ -2,6 +2,7 @@ package steps
 
 import (
 	"github.com/rai-project/go-cupti"
+	"github.com/rai-project/tracer"
 	"golang.org/x/net/context"
 
 	opentracing "github.com/opentracing/opentracing-go"
@@ -57,7 +58,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	span, ctx := opentracing.StartSpanFromContext(ctx, "Predict", opentracing.Tags{
+	span, ctx := tracer.StartSpanFromContext(ctx, opts.TraceLevel(), "Predict", opentracing.Tags{
 		"model_name":        model.GetName(),
 		"model_version":     model.GetVersion(),
 		"framework_name":    framework.GetName(),
@@ -67,7 +68,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 	})
 	defer span.Finish()
 
-	if opts.UsesGPU() {
+	if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
 		cu, err := cupti.New(cupti.Context(ctx))
 		if err == nil {
 			defer func() {

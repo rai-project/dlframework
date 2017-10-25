@@ -25,10 +25,6 @@ type ImagePredictor struct {
 	WorkDir string
 }
 
-func (p Base) Info() (dlframework.FrameworkManifest, dlframework.ModelManifest, error) {
-	return p.Framework, p.Model, nil
-}
-
 func (p ImagePredictor) baseURL(model dlframework.ModelManifest) string {
 	baseURL := ""
 	if model.GetModel().GetBaseUrl() != "" {
