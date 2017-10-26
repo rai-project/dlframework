@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"strings"
 
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
@@ -10,7 +11,6 @@ import (
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/steps"
-	"github.com/rai-project/image/types"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/spf13/cobra"
@@ -101,27 +101,42 @@ var datasetCmd = &cobra.Command{
 		var cntTop5 = 0
 
 		for _, part := range fileNameParts[0:1] {
-			partData := make([]*types.RGBImage, len(part))
-			partlabels := make([]string, len(part))
-			for ii, fileName := range part {
-				lda, err := dataset.Get(ctx, fileName)
-				if err != nil {
-					return err
-				}
-				data, err := lda.Data()
-				if err != nil {
-					return err
-				}
-				rgbData := data.(*types.RGBImage)
-				partData[ii] = rgbData
-				partlabels[ii] = lda.Label()
-			}
+			// partData := make([]*types.RGBImage, len(part))
+			// partlabels := make([]string, len(part))
+			// for ii, fileName := range part {
+			// 	lda, err := dataset.Get(ctx, fileName)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	data, err := lda.Data()
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	rgbData := data.(*types.RGBImage)
+			// 	partData[ii] = rgbData
+			// 	partlabels[ii] = lda.Label()
+			// }
+
+			// input := make(chan interface{}, DefaultChannelBuffer)
+			// go func() {
+			// 	defer close(input)
+			// 	for ii, img := range partData {
+			// 		input <- steps.NewIDWrapper(string(ii), img)
+			// 	}
+			// }()
 
 			input := make(chan interface{}, DefaultChannelBuffer)
+			partlabels := map[string]string{}
 			go func() {
 				defer close(input)
-				for ii, img := range partData {
-					input <- steps.NewIDWrapper(string(ii), img)
+				for ii, fileName := range part {
+					lda, err := dataset.Get(ctx, fileName)
+					if err != nil {
+						continue
+					}
+					lbl := steps.NewIDWrapper(string(ii), lda)
+					partlabels[lbl.GetID()] = lda.Label()
+					input <- lbl
 				}
 			}()
 
@@ -156,27 +171,24 @@ var datasetCmd = &cobra.Command{
 					return errors.Errorf("expecting steps.IDer, but got %v", out0)
 				}
 				_ = out
-				// id, err := strconv.Atoi(out.GetID())
-				// if err != nil {
-				// 	return err
-				// }
-				// label := partlabels[id]
+				id := out.GetID()
+				label := partlabels[id]
 
-				// features0 := out.GetData()
-				// features, ok := features0.(dl.Features)
-				// if !ok {
-				// 	return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
-				// }
-				// features.Sort()
+				features0 := out.GetData()
+				features, ok := features0.(dl.Features)
+				if !ok {
+					return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
+				}
+				features.Sort()
 
-				// if features[0].GetName() == label {
-				// 	cntTop1++
-				// }
-				// for _, f := range features[:5] {
-				// 	if f.GetName() == label {
-				// 		cntTop5++
-				// 	}
-				// }
+				if strings.Fields(features[0].GetName())[0] == label {
+					cntTop1++
+				}
+				for _, f := range features[:5] {
+					if strings.Fields(f.GetName())[0] == label {
+						cntTop5++
+					}
+				}
 			}
 		}
 
@@ -207,5 +219,5 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 1, "partition dataset size")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 32, "partition dataset size")
 }

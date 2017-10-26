@@ -437,6 +437,7 @@ const (
       "type": "string",
       "enum": [
         "NO_TRACE",
+        "STEP_TRACE",
         "FRAMEWORK_TRACE",
         "CPU_ONLY_TRACE",
         "HARDWARE_TRACE",
