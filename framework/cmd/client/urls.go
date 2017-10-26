@@ -79,7 +79,7 @@ var urlsCmd = &cobra.Command{
 		serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
 
 		ctx := context.Background()
-		span, ctx := tracer.StartSpanFromContext(ctx, "urls")
+		span, ctx := tracer.StartSpanFromContext(ctx, tracer.NO_TRACE, "urls")
 		spanClosed := false
 		defer func() {
 			if !spanClosed {
