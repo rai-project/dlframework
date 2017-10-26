@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -55,7 +54,6 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 		ExecutionOptions: execOpts,
 	}
 
-	pp.Println(predOpts)
 	return predOpts
 }
 

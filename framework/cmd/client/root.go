@@ -38,7 +38,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&frameworkVersion, "frameworkVersion", "0.11.0", "frameworkVersion")
 	RootCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	RootCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
-	RootCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 32, "batch size")
+	RootCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
 	cleanNames()
 }
 

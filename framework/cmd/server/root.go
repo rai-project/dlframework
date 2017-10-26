@@ -35,7 +35,8 @@ var (
 	local             bool
 	profile           bool
 	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
-	DefaultRunOptions               = &robustly.RunOptions{
+	framework         dlframework.FrameworkManifest
+	DefaultRunOptions = &robustly.RunOptions{
 		RateLimit:  1,                   // the rate limit in crashes per second
 		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
 		PrintStack: true,                // whether to print the panic stacktrace or not
@@ -192,8 +193,8 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 }
 
 // represents the base command when called without any subcommands
-func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, error) {
-	frameworkName := framework.GetName()
+func NewRootCommand(framework0 dlframework.FrameworkManifest) (*cobra.Command, error) {
+	frameworkName := framework0.GetName()
 	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
@@ -217,7 +218,9 @@ func NewRootCommand(framework dlframework.FrameworkManifest) (*cobra.Command, er
 	var once sync.Once
 	once.Do(func() {
 		SetupFlags(rootCmd)
+		framework = framework0
 	})
+
 	return rootCmd, nil
 }
 
@@ -246,6 +249,8 @@ func SetupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.secret", c.PersistentFlags().Lookup("secret"))
 	viper.BindPFlag("app.debug", c.PersistentFlags().Lookup("debug"))
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
+
+	c.AddCommand(datasetCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.

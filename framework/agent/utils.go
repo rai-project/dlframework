@@ -34,7 +34,7 @@ func tryBase64Decode(input []byte) string {
 	return string(decoded)
 }
 
-func partition(in []interface{}, partitionSize int) (out [][]interface{}) {
+func Partition(in []interface{}, partitionSize int) (out [][]interface{}) {
 	cnt := (len(in)-1)/partitionSize + 1
 	for i := 0; i < cnt; i++ {
 		start := i * partitionSize
