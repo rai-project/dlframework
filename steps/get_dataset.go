@@ -3,11 +3,11 @@ package steps
 import (
 	"golang.org/x/net/context"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	_ "github.com/rai-project/dldataset/vision"
 	"github.com/rai-project/pipeline"
+	"github.com/rai-project/tracer"
 )
 
 type getDataset struct {
@@ -27,7 +27,7 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 }
 
 func (p getDataset) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	if span, newCtx := opentracing.StartSpanFromContext(ctx, "Get Dataset Step"); span != nil {
+	if span, newCtx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Get Dataset Step"); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

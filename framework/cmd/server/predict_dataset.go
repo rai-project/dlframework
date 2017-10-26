@@ -101,30 +101,6 @@ var datasetCmd = &cobra.Command{
 		var cntTop5 = 0
 
 		for _, part := range fileNameParts[0:1] {
-			// partData := make([]*types.RGBImage, len(part))
-			// partlabels := make([]string, len(part))
-			// for ii, fileName := range part {
-			// 	lda, err := dataset.Get(ctx, fileName)
-			// 	if err != nil {
-			// 		return err
-			// 	}
-			// 	data, err := lda.Data()
-			// 	if err != nil {
-			// 		return err
-			// 	}
-			// 	rgbData := data.(*types.RGBImage)
-			// 	partData[ii] = rgbData
-			// 	partlabels[ii] = lda.Label()
-			// }
-
-			// input := make(chan interface{}, DefaultChannelBuffer)
-			// go func() {
-			// 	defer close(input)
-			// 	for ii, img := range partData {
-			// 		input <- steps.NewIDWrapper(string(ii), img)
-			// 	}
-			// }()
-
 			input := make(chan interface{}, DefaultChannelBuffer)
 			partlabels := map[string]string{}
 			go func() {
@@ -150,7 +126,6 @@ var datasetCmd = &cobra.Command{
 				outputs = append(outputs, out)
 			}
 
-			// pp.Println(outputs)
 			parts := agent.Partition(outputs, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)

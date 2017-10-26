@@ -7,10 +7,10 @@ import (
 
 	"golang.org/x/net/context"
 
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/pipeline"
+	"github.com/rai-project/tracer"
 )
 
 type readURL struct {
@@ -28,7 +28,7 @@ func NewReadURL() pipeline.Step {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	span, ctx := opentracing.StartSpanFromContext(ctx, p.Info())
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
 	defer span.Finish()
 
 	url := ""

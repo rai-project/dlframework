@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"sync"
 
+	"github.com/rai-project/tracer"
+
 	// _ "github.com/rai-project/dldataset/vision"
 
 	"github.com/pkg/errors"
@@ -58,6 +60,10 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 	}, nil
 }
 
+func getTraceLevelOption(opts *dl.PredictionOptions) tracer.Level {
+	return tracer.LevelFromName(opts.GetExecutionOptions().GetTraceLevel().String())
+}
+
 // Opens a predictor and returns an id where the predictor
 // is accessible. The id can be used to perform inference
 // requests.
@@ -71,6 +77,9 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	if opts == nil {
 		opts = &dl.PredictionOptions{}
 	}
+
+	tracer.SetLevel(getTraceLevelOption(opts))
+
 	predictor, err := p.predictor.Load(ctx, *model, options.PredictorOptions(opts))
 	if err != nil {
 		return nil, err
@@ -170,6 +179,7 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 			})
 		}()
 	}
+
 	wg.Wait()
 
 	return res, nil

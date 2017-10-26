@@ -4,12 +4,12 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/anthonynsimon/bild/parallel"
-	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
+	"github.com/rai-project/tracer"
 )
 
 type preprocessImage struct {
@@ -50,7 +50,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
-	span, ctx := opentracing.StartSpanFromContext(ctx, p.Info())
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
 	defer span.Finish()
 
 	switch in := in0.(type) {
