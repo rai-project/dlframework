@@ -2,12 +2,13 @@ package server
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/k0kubun/pp"
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
-	"github.com/rai-project/dlframework"
+	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/steps"
@@ -72,13 +73,13 @@ var datasetCmd = &cobra.Command{
 		} else {
 			dc = map[string]int32{"CPU": 0}
 		}
-		execOpts := &dlframework.ExecutionOptions{
-			TraceLevel: dlframework.ExecutionOptions_TraceLevel(
-				dlframework.ExecutionOptions_TraceLevel_value["NO_TRACE"]),
+		execOpts := &dl.ExecutionOptions{
+			TraceLevel: dl.ExecutionOptions_TraceLevel(
+				dl.ExecutionOptions_TraceLevel_value["NO_TRACE"]),
 			DeviceCount: dc,
 		}
 
-		predOpts := &dlframework.PredictionOptions{
+		predOpts := &dl.PredictionOptions{
 			FeatureLimit:     5,
 			BatchSize:        uint32(batchSize),
 			ExecutionOptions: execOpts,
@@ -95,6 +96,9 @@ var datasetCmd = &cobra.Command{
 		}
 
 		fileNameParts := partitionDataset(fileList, partitionDatasetSize)
+
+		var cntTop1 = 0
+		var cntTop5 = 0
 
 		for _, part := range fileNameParts {
 			partData := make([]*types.RGBImage, len(part))
@@ -116,8 +120,8 @@ var datasetCmd = &cobra.Command{
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for _, img := range partData {
-					input <- img
+				for ii, img := range partData {
+					input <- steps.NewIDWrapper(string(ii), img)
 				}
 			}()
 
@@ -145,8 +149,37 @@ var datasetCmd = &cobra.Command{
 				Then(steps.NewPredictImage(predictor)).
 				Run(input)
 
-			pp.Println(output)
+			for out0 := range output {
+				out, ok := out0.(steps.IDer)
+				if !ok {
+					return errors.Errorf("expecting steps.IDer, but got %v", out0)
+				}
+
+				id, err := strconv.Atoi(out.GetID())
+				if err != nil {
+					return err
+				}
+				label := partlabels[id]
+
+				features0 := out.GetData()
+				features, ok := features0.(dl.Features)
+				if !ok {
+					return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
+				}
+				features.Sort()
+
+				if features[0].GetName() == label {
+					cntTop1++
+				}
+				for _, f := range features[:5] {
+					if f.GetName() == label {
+						cntTop5++
+					}
+				}
+			}
 		}
+
+		pp.Println(cntTop1, cntTop5)
 
 		return nil
 	},
