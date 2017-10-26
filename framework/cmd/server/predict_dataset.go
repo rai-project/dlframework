@@ -2,10 +2,8 @@ package server
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/k0kubun/pp"
-
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
@@ -53,6 +51,7 @@ var datasetCmd = &cobra.Command{
 			return err
 		}
 
+		_ = fileList
 		predictorFramework, err := agent.GetPredictor(framework)
 		if err != nil {
 			return errors.Wrapf(err,
@@ -62,7 +61,7 @@ var datasetCmd = &cobra.Command{
 			)
 		}
 
-		model, err := framework.FindModel(modelName + "/" + modelVersion)
+		model, err := framework.FindModel(modelName + ":" + modelVersion)
 		if err != nil {
 			return err
 		}
@@ -80,7 +79,7 @@ var datasetCmd = &cobra.Command{
 		}
 
 		predOpts := &dl.PredictionOptions{
-			FeatureLimit:     5,
+			// FeatureLimit:     5,
 			BatchSize:        uint32(batchSize),
 			ExecutionOptions: execOpts,
 		}
@@ -94,13 +93,14 @@ var datasetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		_ = preprocessOptions
 
 		fileNameParts := partitionDataset(fileList, partitionDatasetSize)
 
 		var cntTop1 = 0
 		var cntTop5 = 0
 
-		for _, part := range fileNameParts {
+		for _, part := range fileNameParts[0:1] {
 			partData := make([]*types.RGBImage, len(part))
 			partlabels := make([]string, len(part))
 			for ii, fileName := range part {
@@ -135,6 +135,7 @@ var datasetCmd = &cobra.Command{
 				outputs = append(outputs, out)
 			}
 
+			// pp.Println(outputs)
 			parts := agent.Partition(outputs, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
@@ -154,32 +155,32 @@ var datasetCmd = &cobra.Command{
 				if !ok {
 					return errors.Errorf("expecting steps.IDer, but got %v", out0)
 				}
+				_ = out
+				// id, err := strconv.Atoi(out.GetID())
+				// if err != nil {
+				// 	return err
+				// }
+				// label := partlabels[id]
 
-				id, err := strconv.Atoi(out.GetID())
-				if err != nil {
-					return err
-				}
-				label := partlabels[id]
+				// features0 := out.GetData()
+				// features, ok := features0.(dl.Features)
+				// if !ok {
+				// 	return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
+				// }
+				// features.Sort()
 
-				features0 := out.GetData()
-				features, ok := features0.(dl.Features)
-				if !ok {
-					return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
-				}
-				features.Sort()
-
-				if features[0].GetName() == label {
-					cntTop1++
-				}
-				for _, f := range features[:5] {
-					if f.GetName() == label {
-						cntTop5++
-					}
-				}
+				// if features[0].GetName() == label {
+				// 	cntTop1++
+				// }
+				// for _, f := range features[:5] {
+				// 	if f.GetName() == label {
+				// 		cntTop5++
+				// 	}
+				// }
 			}
 		}
 
-		pp.Println(cntTop1, cntTop5)
+		pp.Println("cntTop1 = ", cntTop1, "cntTop5 = ", cntTop5)
 
 		return nil
 	},
@@ -201,10 +202,10 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 }
 
 func init() {
-	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
+	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation_folder", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 32, "partition dataset size")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 1, "partition dataset size")
 }
