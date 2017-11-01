@@ -40,7 +40,7 @@ var (
 )
 
 var (
-	DefaultChannelBuffer = 1000
+	DefaultChannelBuffer = 50000
 )
 
 var datasetCmd = &cobra.Command{
@@ -157,9 +157,11 @@ var datasetCmd = &cobra.Command{
 		var cntTop1 = 0
 		var cntTop5 = 0
 
-		for _, part := range fileNameParts[0:4] {
+		outputs := make(chan interface{}, DefaultChannelBuffer)
+		partlabels := map[string]string{}
+
+		for _, part := range fileNameParts[0:16] {
 			input := make(chan interface{}, DefaultChannelBuffer)
-			partlabels := map[string]string{}
 			go func() {
 				defer close(input)
 				for _, fileName := range part {
@@ -179,12 +181,12 @@ var datasetCmd = &cobra.Command{
 				Then(steps.NewPreprocessImage(preprocessOptions)).
 				Run(input)
 
-			var outputs []interface{}
+			var images []interface{}
 			for out := range output {
-				outputs = append(outputs, out)
+				images = append(images, out)
 			}
 
-			parts := agent.Partition(outputs, batchSize)
+			parts := agent.Partition(images, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -198,43 +200,49 @@ var datasetCmd = &cobra.Command{
 				Then(steps.NewPredictImage(predictor)).
 				Run(input)
 
-			for out0 := range output {
-				out, ok := out0.(steps.IDer)
-				if !ok {
-					return errors.Errorf("expecting steps.IDer, but got %v", out0)
-				}
-				_ = out
-				id := out.GetID()
-				label := partlabels[id]
+			for o := range output {
+				outputs <- o
+			}
 
-				features := out.GetData().(dl.Features)
-				if !ok {
-					return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
-				}
+		}
 
-				inputPrediction := evaluation.InputPrediction{
-					ID:            bson.NewObjectId(),
-					CreatedAt:     time.Now(),
-					InputID:       id,
-					ExpectedLabel: label,
-					Features:      features,
-				}
-				if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
-					log.WithError(err).Error("failed to publish input prediction entry")
-				}
-				inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+		close(outputs)
 
-				features.Sort()
+		for out0 := range outputs {
+			out, ok := out0.(steps.IDer)
+			if !ok {
+				return errors.Errorf("expecting steps.IDer, but got %v", out0)
+			}
+			_ = out
+			id := out.GetID()
+			label := partlabels[id]
 
-				if strings.Fields(features[0].GetName())[0] == label {
-					cntTop1++
-				}
-				for _, f := range features[:5] {
-					if strings.Fields(f.GetName())[0] == label {
-						cntTop5++
-					}
-				}
+			features := out.GetData().(dl.Features)
+			if !ok {
+				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
+			}
 
+			inputPrediction := evaluation.InputPrediction{
+				ID:            bson.NewObjectId(),
+				CreatedAt:     time.Now(),
+				InputID:       id,
+				ExpectedLabel: label,
+				Features:      features,
+			}
+			if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
+				log.WithError(err).Error("failed to publish input prediction entry")
+			}
+			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+
+			features.Sort()
+
+			if strings.Fields(features[0].GetName())[0] == label {
+				cntTop1++
+			}
+			for _, f := range features[:5] {
+				if strings.Fields(f.GetName())[0] == label {
+					cntTop5++
+				}
 			}
 		}
 
@@ -300,7 +308,7 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation_folder", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
-	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 32, "batch size")
+	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 32, "partition dataset size")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 64, "partition dataset size")
 }
