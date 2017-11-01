@@ -2,18 +2,30 @@ package server
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/k0kubun/pp"
+	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
+	"github.com/rai-project/config"
+	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/steps"
+	"github.com/rai-project/evaluation"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
+	"github.com/rai-project/tracer"
+	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -23,6 +35,8 @@ var (
 	modelVersion         string
 	batchSize            int
 	partitionDatasetSize int
+	publishEvaluation    bool
+	traceLevel           tracer.Level = tracer.STEP_TRACE
 )
 
 var (
@@ -33,13 +47,18 @@ var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
 	RunE: func(c *cobra.Command, args []string) error {
+		defer tracer.Close()
 		dataset, err := dldataset.Get(datasetCategory, datasetName)
 		if err != nil {
 			return err
 		}
 		defer dataset.Close()
 
-		ctx := context.Background()
+		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
+		defer span.Finish()
+
+		db, err := mongodb.NewDatabase(config.App.Name)
+		defer db.Close()
 
 		err = dataset.Download(ctx)
 		if err != nil {
@@ -72,9 +91,11 @@ var datasetCmd = &cobra.Command{
 		} else {
 			dc = map[string]int32{"CPU": 0}
 		}
+
 		execOpts := &dl.ExecutionOptions{
 			TraceLevel: dl.ExecutionOptions_TraceLevel(
-				dl.ExecutionOptions_TraceLevel_value["NO_TRACE"]),
+				dl.ExecutionOptions_TraceLevel_value[traceLevel.String()],
+			),
 			DeviceCount: dc,
 		}
 
@@ -89,6 +110,42 @@ var datasetCmd = &cobra.Command{
 			return err
 		}
 
+		inputPredictionIds := []bson.ObjectId{}
+
+		evaluationEntry := evaluation.Evaluation{
+			ID:              bson.NewObjectId(),
+			CreatedAt:       time.Now(),
+			Framework:       *model.GetFramework(),
+			Model:           *model,
+			DatasetCategory: dataset.Category(),
+			DatasetName:     dataset.Name(),
+			Public:          false,
+		}
+
+		evaluationTable, err := mongodb.NewTable(db, evaluationEntry.TableName())
+		if err != nil {
+			return err
+		}
+		evaluationTable.Create(nil)
+
+		modelAccuracyTable, err := mongodb.NewTable(db, evaluation.ModelAccuracy{}.TableName())
+		if err != nil {
+			return err
+		}
+		modelAccuracyTable.Create(nil)
+
+		performanceTable, err := mongodb.NewTable(db, evaluation.Performance{}.TableName())
+		if err != nil {
+			return err
+		}
+		performanceTable.Create(nil)
+
+		inputPredictionsTable, err := mongodb.NewTable(db, evaluation.InputPrediction{}.TableName())
+		if err != nil {
+			return err
+		}
+		inputPredictionsTable.Create(nil)
+
 		preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
 		if err != nil {
 			return err
@@ -100,17 +157,18 @@ var datasetCmd = &cobra.Command{
 		var cntTop1 = 0
 		var cntTop5 = 0
 
-		for _, part := range fileNameParts[0:1] {
+		for _, part := range fileNameParts[0:4] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			partlabels := map[string]string{}
 			go func() {
 				defer close(input)
-				for ii, fileName := range part {
+				for _, fileName := range part {
 					lda, err := dataset.Get(ctx, fileName)
 					if err != nil {
 						continue
 					}
-					lbl := steps.NewIDWrapper(string(ii), lda)
+					id := uuid.NewV4()
+					lbl := steps.NewIDWrapper(id, lda)
 					partlabels[lbl.GetID()] = lda.Label()
 					input <- lbl
 				}
@@ -149,11 +207,23 @@ var datasetCmd = &cobra.Command{
 				id := out.GetID()
 				label := partlabels[id]
 
-				features0 := out.GetData()
-				features, ok := features0.(dl.Features)
+				features := out.GetData().(dl.Features)
 				if !ok {
-					return errors.Errorf("expecting a dlframework.Features type, but got %v", features0)
+					return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 				}
+
+				inputPrediction := evaluation.InputPrediction{
+					ID:            bson.NewObjectId(),
+					CreatedAt:     time.Now(),
+					InputID:       id,
+					ExpectedLabel: label,
+					Features:      features,
+				}
+				if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
+					log.WithError(err).Error("failed to publish input prediction entry")
+				}
+				inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+
 				features.Sort()
 
 				if strings.Fields(features[0].GetName())[0] == label {
@@ -164,7 +234,44 @@ var datasetCmd = &cobra.Command{
 						cntTop5++
 					}
 				}
+
 			}
+		}
+
+		modelAccuracy := evaluation.ModelAccuracy{
+			ID:        bson.NewObjectId(),
+			CreatedAt: time.Now(),
+			Top1:      float64(cntTop1) / float64(len(fileList)),
+			Top5:      float64(cntTop5) / float64(len(fileList)),
+		}
+		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
+			log.WithError(err).Error("failed to publish model accuracy entry")
+		}
+
+		traceID := span.Context().(jaeger.SpanContext).TraceID()
+		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
+		resp, err := grequests.Get(query, nil)
+
+		if err == nil {
+			var trace evaluation.TraceInformation
+			dec := json.NewDecoder(resp)
+			if err := dec.Decode(&trace); err != nil {
+				log.WithError(err).Error("failed to decode trace information")
+			}
+			performance := evaluation.Performance{
+				ID:         bson.NewObjectId(),
+				CreatedAt:  time.Now(),
+				Trace:      trace,
+				TraceLevel: traceLevel,
+			}
+			evaluationEntry.PerformanceID = performance.ID
+			performanceTable.Insert(performance)
+		}
+		evaluationEntry.ModelAccuracyID = modelAccuracy.ID
+		evaluationEntry.InputPredictionIDs = inputPredictionIds
+
+		if err := evaluationTable.Insert(evaluationEntry); err != nil {
+			log.WithError(err).Error("failed to publish evaluation entry")
 		}
 
 		pp.Println("cntTop1 = ", cntTop1, "cntTop5 = ", cntTop5)
@@ -193,6 +300,7 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation_folder", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
-	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
+	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 32, "batch size")
+	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 32, "partition dataset size")
 }
