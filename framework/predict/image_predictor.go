@@ -13,6 +13,7 @@ import (
 )
 
 type PreprocessOptions struct {
+	Context   context.Context
 	MeanImage []float32
 	Size      []int
 	Scale     float32

@@ -49,6 +49,10 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 
 	var in io.Reader
 
+	if p.options.Context == nil {
+		ctx = nil
+	}
+
 	switch in0 := in0.(type) {
 	case io.Reader:
 		in = in0

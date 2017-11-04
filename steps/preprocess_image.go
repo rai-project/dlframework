@@ -38,6 +38,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 	}
 
 	res.options = predict.PreprocessOptions{
+		Context:   options.Context,
 		MeanImage: mean,
 		Scale:     scale,
 		ColorMode: mode,
@@ -50,8 +51,11 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 }
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
-	defer span.Finish()
+	if p.options.Context != nil {
+		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
+		ctx = ctx0
+		defer span.Finish()
+	}
 
 	switch in := in0.(type) {
 	case *types.RGBImage:

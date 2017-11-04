@@ -49,7 +49,6 @@ var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
 	RunE: func(c *cobra.Command, args []string) error {
-		defer tracer.Close()
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
@@ -96,11 +95,11 @@ var datasetCmd = &cobra.Command{
 		}
 
 		if datasetName == "ilsvrc2012_validation" {
-			imagePredictor, ok := predictor.(predict.ImagePredictor)
+			imagePredictor, ok := predictor.(*predict.ImagePredictor)
 			if !ok {
-				return errors.Errorf("expecting an image predictor for %v", model.GetCannonicalName())
+				return errors.Errorf("expecting an image predictor for %v", model.MustCanonicalName())
 			}
-			dims, err := predictor.GetImageDimensions(ctx)
+			dims, err := imagePredictor.GetImageDimensions()
 			if err != nil {
 				return err
 			}
@@ -112,8 +111,7 @@ var datasetCmd = &cobra.Command{
 				return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
 			}
 
-			imageDimensionString := strconv.Itoa(width)
-			datasetName = datasetName + "_" + imageDimensionString
+			datasetName = fmt.Sprintf("%s_%v", datasetName, width)
 		}
 
 		log.WithField("dataset_category", datasetCategory).
@@ -177,7 +175,7 @@ var datasetCmd = &cobra.Command{
 		}
 		inputPredictionsTable.Create(nil)
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
+		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
 		if err != nil {
 			return err
 		}
@@ -191,13 +189,17 @@ var datasetCmd = &cobra.Command{
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		progress := progressbar.New(len(fileList))
-		for _, part := range fileNameParts[0:16] {
+		log.WithField("file_name_parts_length", len(fileNameParts)).
+			WithField("file_name_parts_element_length", len(fileNameParts[0])).
+			WithField("file_list_length", len(fileList)).
+			Info("starting inference on dataset")
+		progress := progressbar.New(len(fileNameParts))
+		for _, part := range fileNameParts {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for _, fileName := range part {
-					lda, err := dataset.Get(ctx, fileName)
+				for range part {
+					lda, err := dataset.Next(ctx)
 					if err != nil {
 						continue
 					}
@@ -232,8 +234,9 @@ var datasetCmd = &cobra.Command{
 				Then(steps.NewPredictImage(predictor)).
 				Run(input)
 
+			progress.Add(1)
+
 			for o := range output {
-				progress.Add(batchSize)
 				outputs <- o
 			}
 
