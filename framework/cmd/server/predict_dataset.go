@@ -11,11 +11,11 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/rai-project/caffe/predict"
 	"github.com/rai-project/config"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
+	"github.com/rai-project/mxnet/predict"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/steps"
@@ -38,7 +38,7 @@ var (
 	batchSize            int
 	partitionDatasetSize int
 	publishEvaluation    bool
-	traceLevel           tracer.Level = tracer.STEP_TRACE
+	traceLevel           tracer.Level = tracer.FRAMEWORK_TRACE
 )
 
 var (
@@ -347,4 +347,4 @@ func init() {
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 64, "partition dataset size")
-}
+	}

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rai-project/caffe"
-	_ "github.com/rai-project/caffe/predict"
+	"github.com/rai-project/mxnet"
+	_ "github.com/rai-project/mxnet/predict"
 	cmd "github.com/rai-project/dlframework/framework/cmd/server"
 	"github.com/rai-project/tracer"
 
@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	rootCmd, err := cmd.NewRootCommand(caffe.FrameworkManifest)
+	rootCmd, err := cmd.NewRootCommand(mxnet.FrameworkManifest)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
