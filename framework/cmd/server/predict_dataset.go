@@ -50,9 +50,9 @@ var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
 	RunE: func(c *cobra.Command, args []string) error {
-if partitionDatasetSize == 0 {
-partitionDatasetSize = batchSize 
-}
+		if partitionDatasetSize == 0 {
+			partitionDatasetSize = batchSize
+		}
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
@@ -251,6 +251,12 @@ partitionDatasetSize = batchSize
 		}
 
 		close(outputs)
+
+		if publishEvaluation == false {
+			for out0 := range outputs {
+			}
+			return nil
+		}
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
