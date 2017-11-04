@@ -50,6 +50,9 @@ var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
 	RunE: func(c *cobra.Command, args []string) error {
+if partitionDatasetSize == 0 {
+partitionDatasetSize = batchSize 
+}
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
@@ -345,13 +348,12 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 }
 
 func init() {
-	nvidiasmi.Wait()
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
-	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", nvidiasmi.HasGPU, "use gpu")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 64, "partition dataset size")
+	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "use gpu")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 0, "partition dataset size")
 }
