@@ -253,7 +253,7 @@ var datasetCmd = &cobra.Command{
 		close(outputs)
 
 		if publishEvaluation == false {
-			for out0 := range outputs {
+			for range outputs {
 			}
 			return nil
 		}
