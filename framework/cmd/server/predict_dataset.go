@@ -182,7 +182,7 @@ var datasetCmd = &cobra.Command{
 		}
 		inputPredictionsTable.Create(nil)
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
+		preprocessOptions, err := predictor.GetPreprocessOptions(ctx) // disable tracing
 		if err != nil {
 			return err
 		}
@@ -279,10 +279,11 @@ var datasetCmd = &cobra.Command{
 				ExpectedLabel: label,
 				Features:      features,
 			}
-			if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
-				log.WithError(err).Error("failed to publish input prediction entry")
-			}
-			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+			_ = inputPrediction
+			// if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
+			// 	log.WithError(err).Error("failed to publish input prediction entry")
+			// }
+			// inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 
 			features.Sort()
 
@@ -305,6 +306,10 @@ var datasetCmd = &cobra.Command{
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")
 		}
+
+		log.WithField("model", model.MustCanonicalName()).
+			WithField("accuracy", pp.Sprint(modelAccuracy)).
+			Info("finished publishing prediction result")
 
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
