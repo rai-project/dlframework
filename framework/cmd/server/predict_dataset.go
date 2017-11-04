@@ -11,6 +11,7 @@ import (
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
+	"github.com/rai-project/caffe/predict"
 	"github.com/rai-project/config"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
@@ -23,6 +24,7 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/schollz/progressbar"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
 	"gopkg.in/mgo.v2/bson"
@@ -40,7 +42,7 @@ var (
 )
 
 var (
-	DefaultChannelBuffer = 50000
+	DefaultChannelBuffer = 100000
 )
 
 var datasetCmd = &cobra.Command{
@@ -48,29 +50,12 @@ var datasetCmd = &cobra.Command{
 	Short: "dataset",
 	RunE: func(c *cobra.Command, args []string) error {
 		defer tracer.Close()
-		dataset, err := dldataset.Get(datasetCategory, datasetName)
-		if err != nil {
-			return err
-		}
-		defer dataset.Close()
-
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
 		db, err := mongodb.NewDatabase(config.App.Name)
 		defer db.Close()
 
-		err = dataset.Download(ctx)
-		if err != nil {
-			return err
-		}
-
-		fileList, err := dataset.List(ctx)
-		if err != nil {
-			return err
-		}
-
-		_ = fileList
 		predictorFramework, err := agent.GetPredictor(framework)
 		if err != nil {
 			return errors.Wrapf(err,
@@ -106,6 +91,52 @@ var datasetCmd = &cobra.Command{
 		}
 
 		predictor, err := predictorFramework.Load(ctx, *model, options.PredictorOptions(predOpts))
+		if err != nil {
+			return err
+		}
+
+		if datasetName == "ilsvrc2012_validation" {
+			imagePredictor, ok := predictor.(predict.ImagePredictor)
+			if !ok {
+				return errors.Errorf("expecting an image predictor for %v", model.GetCannonicalName())
+			}
+			dims, err := predictor.GetImageDimensions(ctx)
+			if err != nil {
+				return err
+			}
+			if len(dims) != 3 {
+				return errors.Errorf("expecting a 3 element vector for dimensions %v", dims)
+			}
+			width, height := dims[1], dims[2]
+			if width != height {
+				return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
+			}
+
+			imageDimensionString := strconv.Itoa(width)
+			datasetName = datasetName + "_" + imageDimensionString
+		}
+
+		log.WithField("dataset_category", datasetCategory).
+			WithField("dataset_name", datasetName).
+			Debug("using specified dataset")
+
+		dataset, err := dldataset.Get(datasetCategory, datasetName)
+		if err != nil {
+			return err
+		}
+		defer dataset.Close()
+
+		err = dataset.Download(ctx)
+		if err != nil {
+			return err
+		}
+
+		fileList, err := dataset.List(ctx)
+		if err != nil {
+			return err
+		}
+
+		err = dataset.Load(ctx)
 		if err != nil {
 			return err
 		}
@@ -160,6 +191,7 @@ var datasetCmd = &cobra.Command{
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
+		progress := progressbar.New(len(fileList))
 		for _, part := range fileNameParts[0:16] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -201,6 +233,7 @@ var datasetCmd = &cobra.Command{
 				Run(input)
 
 			for o := range output {
+				progress.Add(batchSize)
 				outputs <- o
 			}
 
@@ -305,7 +338,7 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 
 func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
-	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation_folder", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
+	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
