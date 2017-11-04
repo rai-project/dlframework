@@ -15,11 +15,11 @@ import (
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
-	"github.com/rai-project/mxnet/predict"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
+	"github.com/rai-project/mxnet/predict"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
@@ -38,6 +38,7 @@ var (
 	batchSize            int
 	partitionDatasetSize int
 	publishEvaluation    bool
+	useGPU               bool
 	traceLevel           tracer.Level = tracer.FRAMEWORK_TRACE
 )
 
@@ -70,7 +71,10 @@ var datasetCmd = &cobra.Command{
 		}
 
 		var dc map[string]int32
-		if nvidiasmi.HasGPU {
+		if useGPU {
+			if !nvidiasmi.HasGPU {
+				return errors.New("not gpu found")
+			}
 			dc = map[string]int32{"GPU": 0}
 		} else {
 			dc = map[string]int32{"CPU": 0}
@@ -192,6 +196,7 @@ var datasetCmd = &cobra.Command{
 		log.WithField("file_name_parts_length", len(fileNameParts)).
 			WithField("file_name_parts_element_length", len(fileNameParts[0])).
 			WithField("file_list_length", len(fileList)).
+			WithField("using_gpu", useGPU).
 			Info("starting inference on dataset")
 		progress := progressbar.New(len(fileNameParts))
 		for _, part := range fileNameParts {
@@ -340,11 +345,13 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 }
 
 func init() {
+	nvidiasmi.Wait()
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
+	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", nvidiasmi.HasGPU, "use gpu")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 64, "partition dataset size")
-	}
+}
