@@ -7,8 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
+
+	"context"
 
 	"bitbucket.org/c3sr/p3sr-pdf/cmd"
+	shellwords "github.com/junegunn/go-shellwords"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Sirupsen/logrus"
@@ -33,6 +37,7 @@ var (
 		64,
 		256,
 	}
+	timeout                  = time.Hour
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
@@ -47,15 +52,22 @@ func main() {
 	cmd.Init()
 
 	for _, framework := range frameworks {
+		mainFile := filepath.Join(sourcePath, framework+".go")
+		cmd := exec.Command("go", []string{"build", mainFile})
+		err := cmd.Run()
+		if err != nil {
+			log.WithError(err).
+				WithField("framework", framework).
+				Error("failed to compile " + mainFile)
+			continue
+		}
+
 		for _, model := range models {
 			progress := pb.New(len(batchSizes)).Prefix(model)
 			progress.Start()
 			for _, batchSize := range batchSizes {
-
-				main := filepath.Join(sourcePath, "main.go")
-				shellCmd := "run " +
-					main +
-					" dataset" +
+				ctx := context.WithTimeout(context.Background(), timeout)
+				shellCmd := "dataset" +
 					" --publish=true" +
 					fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
 					fmt.Sprintf(" --modelName=%v", modelName)
@@ -65,10 +77,29 @@ func main() {
 					os.Exit(-1)
 				}
 
-				cmd := exec.Command("go", args...)
+				cmd := exec.Command(filepath.Join(sourcePath, framework), args...)
 				cmd.Stdout = os.Stdout
 				cmd.Stderr = os.Stderr
-				cmd.Run()
+
+				err := cmd.Start()
+				if err != nil {
+					progress.Increment()
+					log.WithError(err).WithField("cmd", shellCmd).Error("failed to run command")
+					continue
+				}
+
+				done := make(chan error)
+				go func() { done <- cmd.Wait() }()
+
+				select {
+				case err := <-done:
+					if err != nil {
+						log.WithError(err).WithField("cmd", shellCmd).Error("failed to wait for command")
+					}
+				case <-ctx.Done():
+					cmd.Process.Kill()
+					log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
+				}
 
 				progress.Increment()
 			}
