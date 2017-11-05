@@ -12,6 +12,7 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/jinzhu/copier"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
@@ -20,9 +21,9 @@ import (
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
+	common "github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
-	"github.com/rai-project/mxnet/predict"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
@@ -74,7 +75,7 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 
 var datasetCmd = &cobra.Command{
 	Use:   "dataset",
-	Short: "dataset",
+	Short: "evaluates the dataset using the specified model and framework",
 	PreRun: func(c *cobra.Command, args []string) {
 		if partitionDatasetSize == 0 {
 			partitionDatasetSize = batchSize
@@ -131,9 +132,11 @@ var datasetCmd = &cobra.Command{
 		}
 
 		if datasetName == "ilsvrc2012_validation" {
-			imagePredictor, ok := predictor.(*predict.ImagePredictor)
-			if !ok {
-				return errors.Errorf("expecting an image predictor for %v", model.MustCanonicalName())
+			var imagePredictor common.ImagePredictor
+
+			err := copier.Copy(&predictor, &imagePredictor)
+			if err != nil {
+				return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 			}
 			dims, err := imagePredictor.GetImageDimensions()
 			if err != nil {
