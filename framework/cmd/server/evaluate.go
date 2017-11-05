@@ -34,8 +34,9 @@ var (
 	batchSizes = []int{
 		256,
 		64,
+		32,
 		8,
-		1,
+		//1,
 	}
 	timeout                  = 4*time.Hour
 	usingGPU                 = true
