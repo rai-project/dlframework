@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
@@ -24,7 +27,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
-	"github.com/schollz/progressbar"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
 	"gopkg.in/mgo.v2/bson"
@@ -39,6 +41,7 @@ var (
 	partitionDatasetSize int
 	publishEvaluation    bool
 	useGPU               bool
+	traceLevelName       string
 	traceLevel           tracer.Level = tracer.FRAMEWORK_TRACE
 )
 
@@ -46,13 +49,42 @@ var (
 	DefaultChannelBuffer = 100000
 )
 
+func newProgress(prefix string, count int) *pb.ProgressBar {
+	// get the new original progress bar.
+	bar := pb.New(count).Prefix(prefix)
+
+	// Show current speed is true.
+	bar.ShowSpeed = true
+
+	// Refresh rate for progress bar is set to 100 milliseconds.
+	bar.SetRefreshRate(time.Millisecond * 100)
+
+	// Use different unicodes for Linux, OS X and Windows.
+	switch runtime.GOOS {
+	case "linux":
+		// Need to add '\x00' as delimiter for unicode characters.
+		bar.Format("┃\x00▓\x00█\x00░\x00┃")
+	case "darwin":
+		// Need to add '\x00' as delimiter for unicode characters.
+		bar.Format(" \x00▓\x00 \x00░\x00 ")
+	default:
+		// Default to non unicode characters.
+		bar.Format("[=> ]")
+	}
+	bar.Start()
+	return bar
+}
+
 var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
-	RunE: func(c *cobra.Command, args []string) error {
+	PreRun: func(c *cobra.Command, args []string) error {
 		if partitionDatasetSize == 0 {
 			partitionDatasetSize = batchSize
 		}
+		traceLevel = tracer.LevelFromName(traceLevelName)
+	},
+	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
@@ -148,14 +180,28 @@ var datasetCmd = &cobra.Command{
 
 		inputPredictionIds := []bson.ObjectId{}
 
+		hostName, _ := os.Hostname()
+		nvidiaSmiData := ""
+		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+			nvidiaSmiData = string(bts)
+		}
+
 		evaluationEntry := evaluation.Evaluation{
-			ID:              bson.NewObjectId(),
-			CreatedAt:       time.Now(),
-			Framework:       *model.GetFramework(),
-			Model:           *model,
-			DatasetCategory: dataset.Category(),
-			DatasetName:     dataset.Name(),
-			Public:          false,
+			ID:                  bson.NewObjectId(),
+			CreatedAt:           time.Now(),
+			Framework:           *model.GetFramework(),
+			Model:               *model,
+			DatasetCategory:     dataset.Category(),
+			DatasetName:         dataset.Name(),
+			Public:              false,
+			Hostname:            hostName,
+			UsingGPU:            useGPU,
+			BatchSize:           batchSize,
+			TraceLevel:          traceLevel.String(),
+			MachineArchitecture: runtime.GOARCH,
+			Metadata: map[string]string{
+				"nvidia_smi": nvidiaSmiData,
+			},
 		}
 
 		evaluationTable, err := mongodb.NewTable(db, evaluationEntry.TableName())
@@ -190,8 +236,8 @@ var datasetCmd = &cobra.Command{
 
 		fileNameParts := partitionDataset(fileList, partitionDatasetSize)
 
-		var cntTop1 = 0
-		var cntTop5 = 0
+		cntTop1 := 0
+		cntTop5 := 0
 
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
@@ -201,7 +247,8 @@ var datasetCmd = &cobra.Command{
 			WithField("file_list_length", len(fileList)).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on dataset")
-		progress := progressbar.New(len(fileNameParts))
+
+		inferenceProgress := newProgress("infering", len(fileNameParts))
 		for _, part := range fileNameParts {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -242,13 +289,15 @@ var datasetCmd = &cobra.Command{
 				Then(steps.NewPredictImage(predictor)).
 				Run(input)
 
-			progress.Add(1)
+			inferenceProgress.Increment()
 
 			for o := range output {
 				outputs <- o
 			}
 
 		}
+
+		inferenceProgress.FinishPrint("inference complete")
 
 		close(outputs)
 
@@ -257,6 +306,8 @@ var datasetCmd = &cobra.Command{
 			}
 			return nil
 		}
+
+		databaseInsertProgress := newProgress("inserting prediction", len(fileNameParts))
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
@@ -279,11 +330,12 @@ var datasetCmd = &cobra.Command{
 				ExpectedLabel: label,
 				Features:      features,
 			}
-			_ = inputPrediction
-			// if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
-			// 	log.WithError(err).Error("failed to publish input prediction entry")
-			// }
-			// inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+			if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
+				log.WithError(err).Error("failed to publish input prediction entry")
+			}
+			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
+
+			databaseInsertProgress.Increment()
 
 			features.Sort()
 
@@ -297,6 +349,7 @@ var datasetCmd = &cobra.Command{
 				}
 			}
 		}
+		databaseInsertProgress.FinishPrint("inserting prediction complete")
 
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
@@ -368,6 +421,7 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
-	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "use gpu")
+	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "enable gpu")
+	datasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "trace level")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 0, "partition dataset size")
 }
