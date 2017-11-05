@@ -25,7 +25,7 @@ var (
 		"BVLC-AlexNet",
 		"BVLC-GoogleNet",
 		"VGG16",
-		"RestNet50",
+		"ResNet50",
 	}
 
 	frameworks = []string{

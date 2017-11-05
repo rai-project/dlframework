@@ -12,7 +12,6 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/jinzhu/copier"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
@@ -30,6 +29,7 @@ import (
 	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
+	"github.com/ulule/deepcopier"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -134,7 +134,7 @@ var datasetCmd = &cobra.Command{
 		if datasetName == "ilsvrc2012_validation" {
 			var imagePredictor common.ImagePredictor
 
-			err := copier.Copy(&predictor, &imagePredictor)
+			err := deepcopier.Copy(predictor).To(&imagePredictor)
 			if err != nil {
 				return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 			}
