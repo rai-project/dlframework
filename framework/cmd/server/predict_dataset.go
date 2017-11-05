@@ -53,9 +53,6 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 	// get the new original progress bar.
 	bar := pb.New(count).Prefix(prefix)
 
-	// Show current speed is true.
-	bar.ShowSpeed = true
-
 	// Refresh rate for progress bar is set to 100 milliseconds.
 	bar.SetRefreshRate(time.Millisecond * 100)
 
@@ -78,7 +75,7 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "dataset",
-	PreRun: func(c *cobra.Command, args []string) error {
+	PreRun: func(c *cobra.Command, args []string) {
 		if partitionDatasetSize == 0 {
 			partitionDatasetSize = batchSize
 		}
@@ -307,7 +304,7 @@ var datasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", len(fileNameParts))
+		databaseInsertProgress := newProgress("inserting prediction", len(fileList))
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
