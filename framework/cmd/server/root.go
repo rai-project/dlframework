@@ -13,7 +13,6 @@ import (
 	"github.com/VividCortex/robustly"
 	"github.com/cockroachdb/cmux"
 	"github.com/facebookgo/freeport"
-	"github.com/k0kubun/pp"
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/labstack/echo"
 	"github.com/pkg/errors"
@@ -265,7 +264,7 @@ func initConfig() {
 	shutdown.FirstFn(func() {
 	})
 	shutdown.SecondFn(func() {
-		pp.Println("🛑  shutting down!!")
+		fmt.Println("🛑  shutting down!!")
 		tracer.Close()
 	})
 }
