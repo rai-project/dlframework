@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/k0kubun/pp"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
@@ -287,11 +287,12 @@ var datasetCmd = &cobra.Command{
 
 			features.Sort()
 
-			if strings.Fields(features[0].GetName())[0] == label {
+			label = strings.TrimSpace(strings.ToLower(label))
+			if strings.TrimSpace(strings.ToLower(features[0].GetName())) == label {
 				cntTop1++
 			}
 			for _, f := range features[:5] {
-				if strings.Fields(f.GetName())[0] == label {
+				if strings.TrimSpace(strings.ToLower(f.GetName())) == label {
 					cntTop5++
 				}
 			}
@@ -308,7 +309,7 @@ var datasetCmd = &cobra.Command{
 		}
 
 		log.WithField("model", model.MustCanonicalName()).
-			WithField("accuracy", pp.Sprint(modelAccuracy)).
+			WithField("accuracy", spew.Sprint(modelAccuracy)).
 			Info("finished publishing prediction result")
 
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
@@ -337,7 +338,9 @@ var datasetCmd = &cobra.Command{
 			log.WithError(err).Error("failed to publish evaluation entry")
 		}
 
-		pp.Println("cntTop1 = ", cntTop1, "cntTop5 = ", cntTop5)
+		log.WithField("top1_accuracy", modelAccuracy.Top1).
+			WithField("top5_accuracy", modelAccuracy.Top5).
+			Info("done")
 
 		return nil
 	},
