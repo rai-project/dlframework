@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cenkalti/backoff"
 	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
@@ -328,10 +327,8 @@ var datasetCmd = &cobra.Command{
 				ExpectedLabel: label,
 				Features:      features,
 			}
-			insertIntoDatabase := func() error {
-				return inputPredictionsTable.Insert(inputPrediction)
-			}
-			err = backoff.Retry(insertIntoDatabase, backoff.NewExponentialBackOff())
+
+			err = inputPredictionsTable.Insert(inputPrediction)
 			if err != nil {
 				log.WithError(err).Errorf("failed to insert input prediction into database")
 			}
