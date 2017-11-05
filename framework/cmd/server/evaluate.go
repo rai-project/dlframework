@@ -25,17 +25,17 @@ var (
 		"BVLC-AlexNet",
 		"BVLC-GoogleNet",
 		"VGG16",
-		"ResNet50",
+		"ResNet101",
 	}
 
 	frameworks = []string{
 		"mxnet",
 	}
 	batchSizes = []int{
-		256,
+		//256,
 		64,
 		32,
-		8,
+		//8,
 		//1,
 	}
 	timeout                  = 4*time.Hour

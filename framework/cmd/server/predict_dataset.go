@@ -41,6 +41,7 @@ var (
 	batchSize            int
 	partitionDatasetSize int
 	publishEvaluation    bool
+	publishPredictions   bool
 	useGPU               bool
 	traceLevelName       string
 	traceLevel           tracer.Level = tracer.STEP_TRACE
@@ -323,21 +324,22 @@ var datasetCmd = &cobra.Command{
 				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 			}
 
-			inputPrediction := evaluation.InputPrediction{
-				ID:            bson.NewObjectId(),
-				CreatedAt:     time.Now(),
-				InputID:       id,
-				ExpectedLabel: label,
-				Features:      features,
+			if publishPredictions == true {
+				inputPrediction := evaluation.InputPrediction{
+					ID:            bson.NewObjectId(),
+					CreatedAt:     time.Now(),
+					InputID:       id,
+					ExpectedLabel: label,
+					Features:      features,
+				}
+
+				err = inputPredictionsTable.Insert(inputPrediction)
+				if err != nil {
+					log.WithError(err).Errorf("failed to insert input prediction into database")
+				}
+
+				inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 			}
-
-			err = inputPredictionsTable.Insert(inputPrediction)
-			if err != nil {
-				log.WithError(err).Errorf("failed to insert input prediction into database")
-			}
-
-			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
-
 			databaseInsertProgress.Increment()
 
 			features.Sort()
@@ -352,6 +354,7 @@ var datasetCmd = &cobra.Command{
 				}
 			}
 		}
+
 		databaseInsertProgress.FinishPrint("inserting prediction complete")
 
 		modelAccuracy := evaluation.ModelAccuracy{
@@ -433,6 +436,7 @@ func init() {
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
 	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "enable gpu")
+	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publishPredictions", false, "publish predictions to database")
 	datasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "trace level")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 0, "partition dataset size")
 }
