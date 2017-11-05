@@ -329,9 +329,12 @@ var datasetCmd = &cobra.Command{
 				Features:      features,
 			}
 			insertIntoDatabase := func() error {
-				inputPredictionsTable.Insert(inputPrediction)
+				return inputPredictionsTable.Insert(inputPrediction)
 			}
-			backoff.Retry(insertIntoDatabase, backoff.NewExponentialBackOff())
+			err = backoff.Retry(insertIntoDatabase, backoff.NewExponentialBackOff())
+			if err != nil {
+				log.WithError(err).Errorf("failed to insert input prediction into database")
+			}
 
 			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 
