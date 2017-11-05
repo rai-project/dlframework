@@ -12,6 +12,7 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
@@ -178,10 +179,12 @@ var datasetCmd = &cobra.Command{
 		inputPredictionIds := []bson.ObjectId{}
 
 		hostName, _ := os.Hostname()
-		nvidiaSmiData := ""
+metadata := map[string]string{}
+if useGPU  {
 		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			nvidiaSmiData = string(bts)
+			metadata["nvidia_smi"] = string(bts)
 		}
+}
 
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),
@@ -196,9 +199,7 @@ var datasetCmd = &cobra.Command{
 			BatchSize:           batchSize,
 			TraceLevel:          traceLevel.String(),
 			MachineArchitecture: runtime.GOARCH,
-			Metadata: map[string]string{
-				"nvidia_smi": nvidiaSmiData,
-			},
+			Metadata: metadata,
 		}
 
 		evaluationTable, err := mongodb.NewTable(db, evaluationEntry.TableName())
@@ -386,6 +387,8 @@ var datasetCmd = &cobra.Command{
 		}
 		evaluationEntry.ModelAccuracyID = modelAccuracy.ID
 		evaluationEntry.InputPredictionIDs = inputPredictionIds
+
+		pp.Println(evaluationEntry)
 
 		if err := evaluationTable.Insert(evaluationEntry); err != nil {
 			log.WithError(err).Error("failed to publish evaluation entry")
