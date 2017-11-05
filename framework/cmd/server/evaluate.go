@@ -32,12 +32,12 @@ var (
 		"mxnet",
 	}
 	batchSizes = []int{
-		1,
-		8,
-		64,
 		256,
+		64,
+		8,
+		1,
 	}
-	timeout                  = time.Hour
+	timeout                  = 4*time.Hour
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
