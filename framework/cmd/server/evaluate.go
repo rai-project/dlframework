@@ -11,11 +11,11 @@ import (
 
 	"context"
 
-	"bitbucket.org/c3sr/p3sr-pdf/cmd"
+	"github.com/rai-project/dlframework/framework/cmd"
 	shellwords "github.com/junegunn/go-shellwords"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/cheggaaa/pb"
 	"github.com/rai-project/config"
 )
@@ -53,7 +53,7 @@ func main() {
 
 	for _, framework := range frameworks {
 		mainFile := filepath.Join(sourcePath, framework+".go")
-		cmd := exec.Command("go", []string{"build", mainFile})
+		cmd := exec.Command("go", "build", mainFile)
 		err := cmd.Run()
 		if err != nil {
 			log.WithError(err).
@@ -66,11 +66,11 @@ func main() {
 			progress := pb.New(len(batchSizes)).Prefix(model)
 			progress.Start()
 			for _, batchSize := range batchSizes {
-				ctx := context.WithTimeout(context.Background(), timeout)
+				ctx, _ := context.WithTimeout(context.Background(), timeout)
 				shellCmd := "dataset" +
 					" --publish=true" +
 					fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
-					fmt.Sprintf(" --modelName=%v", modelName)
+					fmt.Sprintf(" --modelName=%v", model)
 				args, err := shellwords.Parse(shellCmd)
 				if err != nil {
 					log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")
@@ -81,7 +81,7 @@ func main() {
 				cmd.Stdout = os.Stdout
 				cmd.Stderr = os.Stderr
 
-				err := cmd.Start()
+				err = cmd.Start()
 				if err != nil {
 					progress.Increment()
 					log.WithError(err).WithField("cmd", shellCmd).Error("failed to run command")

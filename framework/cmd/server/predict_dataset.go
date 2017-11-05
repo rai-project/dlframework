@@ -42,7 +42,7 @@ var (
 	publishEvaluation    bool
 	useGPU               bool
 	traceLevelName       string
-	traceLevel           tracer.Level = tracer.STEP_TRACE
+	traceLevel           tracer.Level = tracer.FRAMEWORK_TRACE
 )
 
 var (
