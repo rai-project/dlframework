@@ -369,7 +369,11 @@ var datasetCmd = &cobra.Command{
 		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
 		resp, err := grequests.Get(query, nil)
 
-		log.Info("downloaded span information")
+		if err != nil {
+			log.WithError(err).Error("failed to download span information")
+		} else {
+			log.Info("downloaded span information")
+		}
 
 		if err == nil {
 			var trace evaluation.TraceInformation
