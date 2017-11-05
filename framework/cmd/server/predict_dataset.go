@@ -225,7 +225,7 @@ var datasetCmd = &cobra.Command{
 		}
 		inputPredictionsTable.Create(nil)
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(ctx) // disable tracing
+		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
 		if err != nil {
 			return err
 		}
