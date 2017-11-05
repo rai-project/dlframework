@@ -12,7 +12,6 @@ import (
 
 	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
@@ -43,7 +42,7 @@ var (
 	publishEvaluation    bool
 	useGPU               bool
 	traceLevelName       string
-	traceLevel           tracer.Level = tracer.FRAMEWORK_TRACE
+	traceLevel           tracer.Level = tracer.STEP_TRACE
 )
 
 var (
@@ -179,12 +178,12 @@ var datasetCmd = &cobra.Command{
 		inputPredictionIds := []bson.ObjectId{}
 
 		hostName, _ := os.Hostname()
-metadata := map[string]string{}
-if useGPU  {
-		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			metadata["nvidia_smi"] = string(bts)
+		metadata := map[string]string{}
+		if useGPU {
+			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+				metadata["nvidia_smi"] = string(bts)
+			}
 		}
-}
 
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),
@@ -199,7 +198,7 @@ if useGPU  {
 			BatchSize:           batchSize,
 			TraceLevel:          traceLevel.String(),
 			MachineArchitecture: runtime.GOARCH,
-			Metadata: metadata,
+			Metadata:            metadata,
 		}
 
 		evaluationTable, err := mongodb.NewTable(db, evaluationEntry.TableName())
@@ -370,6 +369,8 @@ if useGPU  {
 		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
 		resp, err := grequests.Get(query, nil)
 
+		log.Info("downloaded span information")
+
 		if err == nil {
 			var trace evaluation.TraceInformation
 			dec := json.NewDecoder(resp)
@@ -384,12 +385,12 @@ if useGPU  {
 			}
 			evaluationEntry.PerformanceID = performance.ID
 			performanceTable.Insert(performance)
+			log.Info("inserted span information")
 		}
 		evaluationEntry.ModelAccuracyID = modelAccuracy.ID
 		evaluationEntry.InputPredictionIDs = inputPredictionIds
 
-		pp.Println(evaluationEntry)
-
+		log.Info("inserting evaluation information")
 		if err := evaluationTable.Insert(evaluationEntry); err != nil {
 			log.WithError(err).Error("failed to publish evaluation entry")
 		}
