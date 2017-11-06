@@ -11,13 +11,12 @@ import (
 
 	"context"
 
-	"github.com/rai-project/dlframework/framework/cmd"
 	shellwords "github.com/junegunn/go-shellwords"
+	"github.com/rai-project/dlframework/framework/cmd"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
-	"github.com/sirupsen/logrus"
-	"github.com/cheggaaa/pb"
 	"github.com/rai-project/config"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -30,82 +29,91 @@ var (
 
 	frameworks = []string{
 		"mxnet",
+		"caffe2",
+		"caffe",
 	}
 	batchSizes = []int{
 		//256,
 		64,
+		50,
 		32,
-		//8,
+		16,
+		8,
 		//1,
 	}
-	timeout                  = 4*time.Hour
+	timeout                  = 4 * time.Hour
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
 )
 
 func main() {
-
 	config.AfterInit(func() {
 		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
 	})
 
 	cmd.Init()
 
-	for _, framework := range frameworks {
-		mainFile := filepath.Join(sourcePath, framework+".go")
-		cmd := exec.Command("go", "build", mainFile)
-		err := cmd.Run()
-		if err != nil {
-			log.WithError(err).
-				WithField("framework", framework).
-				Error("failed to compile " + mainFile)
-			continue
+	for _, usingGPU := range []bool{true, false} {
+		var device string
+		if usingGPU {
+			device = "gpu"
+		} else {
+			device = "cpu"
 		}
-
-		for _, model := range models {
-			progress := pb.New(len(batchSizes)).Prefix(model)
-			progress.Start()
-			for _, batchSize := range batchSizes {
-				ctx, _ := context.WithTimeout(context.Background(), timeout)
-				shellCmd := "dataset" +
-					" --publish=true" +
-					fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
-					fmt.Sprintf(" --modelName=%v", model)
-				args, err := shellwords.Parse(shellCmd)
-				if err != nil {
-					log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")
-					os.Exit(-1)
-				}
-
-				cmd := exec.Command(filepath.Join(sourcePath, framework), args...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-
-				err = cmd.Start()
-				if err != nil {
-					progress.Increment()
-					log.WithError(err).WithField("cmd", shellCmd).Error("failed to run command")
-					continue
-				}
-
-				done := make(chan error)
-				go func() { done <- cmd.Wait() }()
-
-				select {
-				case err := <-done:
-					if err != nil {
-						log.WithError(err).WithField("cmd", shellCmd).Error("failed to wait for command")
-					}
-				case <-ctx.Done():
-					cmd.Process.Kill()
-					log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
-				}
-
-				progress.Increment()
+		for _, framework := range frameworks {
+			mainFile := filepath.Join(sourcePath, framework+".go")
+			cmd := exec.Command("go", "build", mainFile)
+			err := cmd.Run()
+			if err != nil {
+				log.WithError(err).
+					WithField("framework", framework).
+					Error("failed to compile " + mainFile)
+				continue
 			}
-			progress.FinishPrint("finished evaluation of " + framework + "/" + model)
+
+			for _, model := range models {
+				for _, batchSize := range batchSizes {
+					fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
+					ctx, _ := context.WithTimeout(context.Background(), timeout)
+					shellCmd := "dataset" +
+						" --publish=true" +
+						fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
+						fmt.Sprintf(" --modelName=%v", model)
+					args, err := shellwords.Parse(shellCmd)
+					if err != nil {
+						log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")
+						//os.Exit(-1)
+						continue
+					}
+
+					cmd := exec.Command(filepath.Join(sourcePath, framework), args...)
+					cmd.Stdout = os.Stdout
+					cmd.Stderr = os.Stderr
+
+					err = cmd.Start()
+					if err != nil {
+						log.WithError(err).WithField("cmd", shellCmd).Error("failed to run command")
+						continue
+					}
+
+					done := make(chan error)
+					go func() { done <- cmd.Wait() }()
+
+					select {
+					case err := <-done:
+						if err != nil {
+							log.WithError(err).WithField("cmd", shellCmd).Error("failed to wait for command")
+						}
+					case <-ctx.Done():
+						cmd.Process.Kill()
+						log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
+					}
+				}
+				fmt.Println("Finished running", framework, "::", model, "on", device)
+			}
 		}
+
 	}
 }
 
