@@ -23,10 +23,10 @@ import (
 
 var (
 	models = []string{
-		"BVLC-AlexNet",
+		//		"BVLC-AlexNet",
 		"BVLC-GoogleNet",
-		"VGG16",
-		"ResNet101",
+		//		"VGG16",
+		//		"ResNet101",
 	}
 
 	frameworks = []string{
@@ -36,11 +36,11 @@ var (
 	}
 	batchSizes = []int{
 		//256,
-		//64,
+		64,
 		//50,
 		//32,
-		16,
-		8,
+		//16,
+		//8,
 		//1,
 	}
 	timeout                  = 4 * time.Hour
@@ -56,12 +56,7 @@ func main() {
 
 	cmd.Init()
 
-	tags := ""
-	if !cpuid.SupportsAVX() {
-		tags = "-tags=noasm"
-	}
-
-	for _, usingGPU := range []bool{true, false} {
+	for _, usingGPU := range []bool{true} {
 		var device string
 		if usingGPU {
 			device = "gpu"
@@ -70,8 +65,15 @@ func main() {
 		}
 		for _, framework := range frameworks {
 			mainFile := filepath.Join(sourcePath, framework+".go")
-			fmt.Println("Compiling using :: ", "go", "build", tags, mainFile)
-			cmd := exec.Command("go", "build", tags, mainFile)
+			compileArgs := []string{
+				"build",
+			}
+			if !cpuid.SupportsAVX() {
+				compileArgs = append(compileArgs, "-tags=noasm")
+			}
+			compileArgs = append(compileArgs, mainFile)
+			fmt.Print("Compiling using :: ", "go", compileArgs)
+			cmd := exec.Command("go", compileArgs...)
 			err := cmd.Run()
 			if err != nil {
 				log.WithError(err).
@@ -85,7 +87,10 @@ func main() {
 					fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 					ctx, _ := context.WithTimeout(context.Background(), timeout)
 					shellCmd := "dataset" +
+						" -d" +
+						" -v" +
 						" --publish=true" +
+						" --publishPredictions=true" +
 						fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
 						fmt.Sprintf(" --modelName=%v", model)
 					args, err := shellwords.Parse(shellCmd)
