@@ -16,6 +16,8 @@ import (
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/rai-project/config"
+	"github.com/rai-project/cpu/cpuid"
+	_ "github.com/rai-project/logger/hooks"
 	"github.com/sirupsen/logrus"
 )
 
@@ -34,9 +36,9 @@ var (
 	}
 	batchSizes = []int{
 		//256,
-		64,
-		50,
-		32,
+		//64,
+		//50,
+		//32,
 		16,
 		8,
 		//1,
@@ -54,6 +56,11 @@ func main() {
 
 	cmd.Init()
 
+	tags := ""
+	if !cpuid.SupportsAVX() {
+		tags = "-tags=noasm"
+	}
+
 	for _, usingGPU := range []bool{true, false} {
 		var device string
 		if usingGPU {
@@ -63,7 +70,8 @@ func main() {
 		}
 		for _, framework := range frameworks {
 			mainFile := filepath.Join(sourcePath, framework+".go")
-			cmd := exec.Command("go", "build", mainFile)
+			fmt.Println("Compiling using :: ", "go", "build", tags, mainFile)
+			cmd := exec.Command("go", "build", tags, mainFile)
 			err := cmd.Run()
 			if err != nil {
 				log.WithError(err).
