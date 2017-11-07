@@ -251,8 +251,8 @@ func SetupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
 
 	c.AddCommand(datasetCmd)
-	c.AddCommand(downloadDatasetCmd)
-	c.AddCommand(downloadModelCmd)
+	c.AddCommand(downloadCmd)
+	c.AddCommand(containerCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -264,8 +264,7 @@ func initConfig() {
 	cmd.Init()
 	shutdown.OnSignal(0, os.Interrupt, syscall.SIGTERM)
 	shutdown.SetTimeout(time.Second * 1)
-	shutdown.FirstFn(func() {
-	})
+	shutdown.FirstFn(func() {})
 	shutdown.SecondFn(func() {
 		fmt.Println("🛑  shutting down!!")
 		tracer.Close()
