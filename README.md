@@ -1,4 +1,4 @@
-# DLFramework
+# DLFramework [![Build Status](https://travis-ci.org/rai-project/dlframework.svg?branch=master)](https://travis-ci.org/rai-project/dlframework)
 
 ## Framework Manifest Format
 
