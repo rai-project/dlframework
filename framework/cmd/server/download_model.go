@@ -68,28 +68,6 @@ var downloadModelCmd = &cobra.Command{
 	},
 }
 
-var downloadModelCmd = &cobra.Command{
-	Use:   "downloadModelCmd",
-	Short: "download models",
-	RunE: func(c *cobra.Command, args []string) error {
-		ctx := context.Background()
-
-		if downloadAll == true {
-			err := modelDownloadAll(ctx)
-			if err != nil {
-				return err
-			}
-		}
-
-		err := modelDownload(ctx, modelName, modelVersion)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	},
-}
-
 func init() {
 	downloadModelCmd.PersistentFlags().StringVar(&modelName, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	downloadModelCmd.PersistentFlags().StringVar(&modelVersion, "dataset_name", "ilsvrc2012_validation_224", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
