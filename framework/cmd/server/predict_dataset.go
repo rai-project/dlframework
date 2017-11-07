@@ -45,9 +45,7 @@ var (
 	useGPU               bool
 	traceLevelName       string
 	traceLevel           tracer.Level = tracer.STEP_TRACE
-)
-
-var (
+	databaseName string 
 	DefaultChannelBuffer = 100000
 )
 
@@ -87,7 +85,10 @@ var datasetCmd = &cobra.Command{
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
-		db, err := mongodb.NewDatabase(config.App.Name)
+		if databaseName == "" {
+		databaseName = config.App.Name 
+		}
+		db, err := mongodb.NewDatabase(databaseName)
 		defer db.Close()
 
 		predictorFramework, err := agent.GetPredictor(framework)
@@ -430,6 +431,7 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 
 func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
+	datasetCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "name of the database to publish")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")

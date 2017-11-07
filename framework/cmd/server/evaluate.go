@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"context"
@@ -94,6 +95,7 @@ func main() {
 						fmt.Sprintf(" --gpu=%v", usingGPU) +
 						fmt.Sprintf(" --batch_size=%v", batchSize) +
 						fmt.Sprintf(" --model_name=%v", model)
+					shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 					args, err := shellwords.Parse(shellCmd)
 					if err != nil {
 						log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")
