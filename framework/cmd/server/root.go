@@ -250,6 +250,8 @@ func SetupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
 
 	c.AddCommand(datasetCmd)
+	c.AddCommand(downloadDatasetCmd)
+	c.AddCommand(downloadModelCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
