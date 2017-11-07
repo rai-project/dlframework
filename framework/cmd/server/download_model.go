@@ -9,14 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	modelName    string
-	modelVersion string
-	all          bool
-)
-
-func modelDownload(ctx context.Context, datasetCategory, datasetName string) error {
-	dataset, err := dldataset.Get(datasetCategory, datasetName)
+func modelDownload(ctx context.Context, modelName, modelVersion string) error {
+	dataset, err := dldataset.Get(modelName, modelVersion)
 	if err != nil {
 		return err
 	}
@@ -71,5 +65,5 @@ var downloadModelCmd = &cobra.Command{
 func init() {
 	downloadModelCmd.PersistentFlags().StringVar(&modelName, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	downloadModelCmd.PersistentFlags().StringVar(&modelVersion, "dataset_name", "ilsvrc2012_validation_224", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
-	downloadModelCmd.PersistentFlags().BoolVar(&all, "dowloadAll", false, "download all the available datasets")
+	downloadModelCmd.PersistentFlags().BoolVar(&downloadAll, "dowloadAll", false, "download all the available datasets")
 }
