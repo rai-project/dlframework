@@ -61,7 +61,6 @@ import:
   subpackages:
   - types
 - package: github.com/rai-project/libkv
-  version: ^0.2.15
   subpackages:
   - store
 - package: github.com/rai-project/lock
