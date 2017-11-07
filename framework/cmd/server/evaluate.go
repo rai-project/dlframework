@@ -72,7 +72,7 @@ func main() {
 				compileArgs = append(compileArgs, "-tags=noasm")
 			}
 			compileArgs = append(compileArgs, mainFile)
-			fmt.Print("Compiling using :: ", "go", compileArgs)
+			fmt.Printf("Compiling using :: go %#v\n", compileArgs)
 			cmd := exec.Command("go", compileArgs...)
 			err := cmd.Run()
 			if err != nil {
@@ -87,12 +87,13 @@ func main() {
 					fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 					ctx, _ := context.WithTimeout(context.Background(), timeout)
 					shellCmd := "dataset" +
-						" -d" +
-						" -v" +
+						" --debug" +
+						" --verbose" +
 						" --publish=true" +
-						" --publishPredictions=true" +
-						fmt.Sprintf(" --gpu=%v", usingGPU) + fmt.Sprintf(" -b %v", batchSize) +
-						fmt.Sprintf(" --modelName=%v", model)
+						" --publish_predictions=true" +
+						fmt.Sprintf(" --gpu=%v", usingGPU) +
+						fmt.Sprintf(" --batch_size=%v", batchSize) +
+						fmt.Sprintf(" --model_name=%v", model)
 					args, err := shellwords.Parse(shellCmd)
 					if err != nil {
 						log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")

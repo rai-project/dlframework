@@ -76,7 +76,7 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 
 var datasetCmd = &cobra.Command{
 	Use:   "dataset",
-	Short: "evaluates the dataset using the specified model and framework",
+	Short: "Evaluates the dataset using the specified model and framework",
 	PreRun: func(c *cobra.Command, args []string) {
 		if partitionDatasetSize == 0 {
 			partitionDatasetSize = batchSize
@@ -205,29 +205,29 @@ var datasetCmd = &cobra.Command{
 			Metadata:            metadata,
 		}
 
-		evaluationTable, err := mongodb.NewTable(db, evaluationEntry.TableName())
+		evaluationTable, err := evaluation.NewEvaluationCollection(db)
 		if err != nil {
 			return err
 		}
-		evaluationTable.Create(nil)
+		defer evaluationTable.Close()
 
-		modelAccuracyTable, err := mongodb.NewTable(db, evaluation.ModelAccuracy{}.TableName())
+		modelAccuracyTable, err := evaluation.NewModelAccuracyCollection(db)
 		if err != nil {
 			return err
 		}
-		modelAccuracyTable.Create(nil)
+		defer modelAccuracyTable.Close()
 
-		performanceTable, err := mongodb.NewTable(db, evaluation.Performance{}.TableName())
+		performanceTable, err := evaluation.NewPerformanceCollection(db)
 		if err != nil {
 			return err
 		}
-		performanceTable.Create(nil)
+		defer performanceTable.Close()
 
-		inputPredictionsTable, err := mongodb.NewTable(db, evaluation.InputPrediction{}.TableName())
+		inputPredictionsTable, err := evaluation.NewInputPredictionCollection(db)
 		if err != nil {
 			return err
 		}
-		inputPredictionsTable.Create(nil)
+		defer inputPredictionsTable.Close()
 
 		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
 		if err != nil {
@@ -431,12 +431,12 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
-	datasetCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
-	datasetCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
-	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 64, "batch size")
+	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
+	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
+	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "batch size")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
 	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "enable gpu")
-	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publishPredictions", false, "publish predictions to database")
+	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "publish predictions to database")
 	datasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "trace level")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partitionDatasetSize", "p", 0, "partition dataset size")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "partition dataset size")
 }

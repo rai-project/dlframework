@@ -47,8 +47,8 @@ func datasetDownloadAll(ctx context.Context) error {
 }
 
 var downloadDatasetCmd = &cobra.Command{
-	Use:   "downloadDataset",
-	Short: "download datasets",
+	Use:   "dataset",
+	Short: "Download CarML datasets",
 	RunE: func(c *cobra.Command, args []string) error {
 		ctx := context.Background()
 
@@ -69,7 +69,7 @@ var downloadDatasetCmd = &cobra.Command{
 }
 
 func init() {
-	downloadDatasetCmd.PersistentFlags().StringVar(&downloadDatasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
-	downloadDatasetCmd.PersistentFlags().StringVar(&downloadDatasetName, "dataset_name", "ilsvrc2012_validation_224", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
-	downloadDatasetCmd.PersistentFlags().BoolVar(&downloadAll, "dowloadAll", false, "download all the available datasets")
+	downloadDatasetCmd.PersistentFlags().StringVar(&downloadDatasetCategory, "category", "vision", "dataset category (e.g. \"vision\")")
+	downloadDatasetCmd.PersistentFlags().StringVar(&downloadDatasetName, "name", "ilsvrc2012_validation_224", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
+	downloadDatasetCmd.PersistentFlags().BoolVar(&downloadAll, "all", false, "download all the available datasets")
 }
