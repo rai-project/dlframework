@@ -15,6 +15,7 @@ import (
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
+	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
@@ -45,7 +46,9 @@ var (
 	useGPU               bool
 	traceLevelName       string
 	traceLevel           tracer.Level = tracer.STEP_TRACE
-	databaseName string 
+	databaseAddress      string
+	databaseName         string
+	databaseEndpoints    []string
 	DefaultChannelBuffer = 100000
 )
 
@@ -80,15 +83,23 @@ var datasetCmd = &cobra.Command{
 			partitionDatasetSize = batchSize
 		}
 		traceLevel = tracer.LevelFromName(traceLevelName)
+
+		if databaseName == "" {
+			databaseName = config.App.Name
+		}
+		if databaseAddress != "" {
+			databaseEndpoints = []string{databaseAddress}
+		}
 	},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer span.Finish()
 
-		if databaseName == "" {
-		databaseName = config.App.Name 
+		opts := []database.Option{}
+		if len(databaseEndpoints) != 0 {
+			opts = append(opts, database.Endpoints(databaseEndpoints))
 		}
-		db, err := mongodb.NewDatabase(databaseName)
+		db, err := mongodb.NewDatabase(databaseName, opts...)
 		defer db.Close()
 
 		predictorFramework, err := agent.GetPredictor(framework)
@@ -431,6 +442,7 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 
 func init() {
 	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
+	datasetCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "address of the database")
 	datasetCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "name of the database to publish")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
 	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
