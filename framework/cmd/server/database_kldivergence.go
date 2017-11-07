@@ -7,6 +7,7 @@ import (
 	"github.com/rai-project/config"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
+	"github.com/rai-project/dlframework"
 	"github.com/rai-project/evaluation"
 	"github.com/spf13/cobra"
 	"gopkg.in/mgo.v2/bson"
@@ -15,9 +16,17 @@ import (
 )
 
 var (
-	sourceEvaluationID string
-	targetEvaluationID string
+	sourceEvaluationID   string
+	targetEvaluationID   string
+	divergenceTollerance float64
 )
+
+type featurePair struct {
+	sourceInputID  string
+	targetInputID  string
+	sourceFeatures dlframework.Features
+	targetFeatures dlframework.Features
+}
 
 var databaseKLDivergenceCmd = &cobra.Command{
 	Use:   "kldivergence",
@@ -93,31 +102,46 @@ var databaseKLDivergenceCmd = &cobra.Command{
 			return errors.Errorf("input prediction length mismatch %v != %v", len(sourceEvaluation.InputPredictionIDs), len(targetEvaluation.InputPredictionIDs))
 		}
 
+		featureChan := make(chan *featurePair, 1000)
+
 		for ii := range sourceEvaluation.InputPredictionIDs {
-			sourcePredictionID := sourceEvaluation.InputPredictionIDs[ii]
-			targetPredictionID := targetEvaluation.InputPredictionIDs[ii]
+			go func(ii int) {
+				sourcePredictionID := sourceEvaluation.InputPredictionIDs[ii]
+				targetPredictionID := targetEvaluation.InputPredictionIDs[ii]
 
-			var sourcePrediction evaluation.InputPrediction
-			err := inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: sourcePredictionID}, &sourcePrediction)
-			if err != nil {
-				return errors.Wrapf(err, "cannot find source prediction with id = %v", sourcePredictionID)
-			}
+				var sourcePrediction evaluation.InputPrediction
+				err := inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: sourcePredictionID}, &sourcePrediction)
+				if err != nil {
+					log.WithError(err).Errorf("cannot find source prediction with id = %v", sourcePredictionID)
+					return
+				}
 
-			var targetPrediction evaluation.InputPrediction
-			err = inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: targetPredictionID}, &targetPrediction)
-			if err != nil {
-				return errors.Wrapf(err, "cannot find target prediction with id = %v", targetPredictionID)
-			}
+				var targetPrediction evaluation.InputPrediction
+				err = inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: targetPredictionID}, &targetPrediction)
+				if err != nil {
+					log.WithError(err).Errorf("cannot find target prediction with id = %v", targetPredictionID)
+					return
+				}
 
-			sourceFeatures := sourcePrediction.Features
-			targetFeatures := targetPrediction.Features
+				sourceFeatures := sourcePrediction.Features
+				targetFeatures := targetPrediction.Features
 
-			divergence, err := sourceFeatures.KullbackLeiblerDivergence(targetFeatures)
+				featureChan <- &featurePair{
+					sourceInputID:  sourcePrediction.InputID,
+					targetInputID:  targetPrediction.InputID,
+					sourceFeatures: sourceFeatures,
+					targetFeatures: targetFeatures,
+				}
+			}(ii)
+		}
+
+		for pair := range featureChan {
+			divergence, err := pair.sourceFeatures.KullbackLeiblerDivergence(pair.targetFeatures)
 			if err != nil {
 				return errors.Wrapf(err, "cannot perform KullbackLeiblerDivergence")
 			}
-			if math.Abs(divergence) >= 0.0001 {
-				println("source_input_id= ", sourcePrediction.InputID, "target_input_id= ", targetPrediction.InputID, " divergence=", divergence)
+			if math.Abs(divergence) >= divergenceTollerance {
+				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " divergence=", divergence)
 			}
 		}
 
@@ -128,4 +152,5 @@ var databaseKLDivergenceCmd = &cobra.Command{
 func init() {
 	databaseKLDivergenceCmd.PersistentFlags().StringVar(&sourceEvaluationID, "source", "", "source id for the evaluation")
 	databaseKLDivergenceCmd.PersistentFlags().StringVar(&targetEvaluationID, "target", "", "target id for the evaluation")
+	databaseKLDivergenceCmd.PersistentFlags().Float64Var(&divergenceTollerance, "tollerance", 0.01, "tolerance to use while printing divergence information")
 }
