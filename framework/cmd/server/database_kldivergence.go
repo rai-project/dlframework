@@ -22,8 +22,7 @@ var (
 var databaseKLDivergenceCmd = &cobra.Command{
 	Use:   "kldivergence",
 	Short: "Perform Kullback-Leibler divergence on two evaluation ids",
-	Long: `for example : go run mxnet.go database kldivergence --database_address=minsky1-1.csl.illinois.edu --database_name=carml --source=5a01fc48ca60c
-  c797e63603c --target=5a0203f8ca60ccd42aa2a706`,
+	Long:  `for example : go run mxnet.go database kldivergence --database_address=minsky1-1.csl.illinois.edu --database_name=carml --source=5a01fc48ca60cc797e63603c --target=5a0203f8ca60ccd42aa2a706`,
 	PreRun: func(c *cobra.Command, args []string) {
 		if databaseName == "" {
 			databaseName = config.App.Name
