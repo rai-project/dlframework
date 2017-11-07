@@ -253,6 +253,7 @@ func SetupFlags(c *cobra.Command) {
 	c.AddCommand(datasetCmd)
 	c.AddCommand(downloadCmd)
 	c.AddCommand(containerCmd)
+	c.AddCommand(databaseCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
