@@ -303,8 +303,20 @@ var databaseDivergenceCmd = &cobra.Command{
 	},
 }
 
+var divergenceCmds = []*cobra.Command{
+	databaseKLDivergenceCmd,
+	databaseJSDivergenceCmd,
+	databaseCovDivergenceCmd,
+	databaseCorrDivergenceCmd,
+	databaseHellDivergenceCmd,
+	databaseBhattDivergenceCmd,
+	databaseDivergenceCmd,
+}
+
 func init() {
-	databaseKLDivergenceCmd.PersistentFlags().StringVar(&sourceEvaluationID, "source", "", "source id for the evaluation")
-	databaseKLDivergenceCmd.PersistentFlags().StringVar(&targetEvaluationID, "target", "", "target id for the evaluation")
-	databaseKLDivergenceCmd.PersistentFlags().Float64Var(&divergenceTollerance, "tollerance", 0.01, "tolerance to use while printing divergence information")
+	for _, cmd := range divergenceCmds {
+		cmd.PersistentFlags().StringVar(&sourceEvaluationID, "source", "", "source id for the evaluation")
+		cmd.PersistentFlags().StringVar(&targetEvaluationID, "target", "", "target id for the evaluation")
+		cmd.PersistentFlags().Float64Var(&divergenceTollerance, "tollerance", 0.01, "tolerance to use while printing divergence information")
+	}
 }
