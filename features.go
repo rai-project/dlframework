@@ -76,3 +76,47 @@ func (p Features) Correlation(q Features) (float64, error) {
 
 	return stat.Correlation(pProbs, qProbs, nil), nil
 }
+
+func (p Features) Covariance(q Features) (float64, error) {
+	if p.Len() != q.Len() {
+		return 0, errors.Errorf("length mismatch %d != %d", p.Len(), q.Len())
+	}
+
+	pProbs := p.ProbabilitiesFloat64()
+	qProbs := q.ProbabilitiesFloat64()
+
+	return stat.Covariance(pProbs, qProbs, nil), nil
+}
+
+func (p Features) JensenShannon(q Features) (float64, error) {
+	if p.Len() != q.Len() {
+		return 0, errors.Errorf("length mismatch %d != %d", p.Len(), q.Len())
+	}
+
+	pProbs := p.ProbabilitiesFloat64()
+	qProbs := q.ProbabilitiesFloat64()
+
+	return stat.JensenShannon(pProbs, qProbs), nil
+}
+
+func (p Features) Bhattacharyya(q Features) (float64, error) {
+	if p.Len() != q.Len() {
+		return 0, errors.Errorf("length mismatch %d != %d", p.Len(), q.Len())
+	}
+
+	pProbs := p.ProbabilitiesFloat64()
+	qProbs := q.ProbabilitiesFloat64()
+
+	return stat.Bhattacharyya(pProbs, qProbs), nil
+}
+
+func (p Features) Hellinger(q Features) (float64, error) {
+	if p.Len() != q.Len() {
+		return 0, errors.Errorf("length mismatch %d != %d", p.Len(), q.Len())
+	}
+
+	pProbs := p.ProbabilitiesFloat64()
+	qProbs := q.ProbabilitiesFloat64()
+
+	return stat.Hellinger(pProbs, qProbs), nil
+}
