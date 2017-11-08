@@ -2,7 +2,10 @@ package server
 
 import (
 	"math"
+	"runtime"
+	"sync"
 
+	"github.com/Jeffail/tunny"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/database"
@@ -102,48 +105,54 @@ var databaseKLDivergenceCmd = &cobra.Command{
 			return errors.Errorf("input prediction length mismatch %v != %v", len(sourceEvaluation.InputPredictionIDs), len(targetEvaluation.InputPredictionIDs))
 		}
 
-		featureChan := make(chan *featurePair, 1000)
+		numEvals := len(sourceEvaluation.InputPredictionIDs)
 
-		for ii := range sourceEvaluation.InputPredictionIDs {
-			go func(ii int) {
-				sourcePredictionID := sourceEvaluation.InputPredictionIDs[ii]
-				targetPredictionID := targetEvaluation.InputPredictionIDs[ii]
+		progress := newProgress("checking prediction divergence", numEvals)
 
-				var sourcePrediction evaluation.InputPrediction
-				err := inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: sourcePredictionID}, &sourcePrediction)
-				if err != nil {
-					log.WithError(err).Errorf("cannot find source prediction with id = %v", sourcePredictionID)
-					return
-				}
+		var wg sync.WaitGroup
+		wg.Add(numEvals)
 
-				var targetPrediction evaluation.InputPrediction
-				err = inputPredictionCollection.FindOne(evaluation.InputPrediction{ID: targetPredictionID}, &targetPrediction)
-				if err != nil {
-					log.WithError(err).Errorf("cannot find target prediction with id = %v", targetPredictionID)
-					return
-				}
+		numCPUs := runtime.NumCPU()
 
-				sourceFeatures := sourcePrediction.Features
-				targetFeatures := targetPrediction.Features
+		pool, _ := tunny.CreatePool(2*numCPUs, func(o interface{}) interface{} {
+			defer progress.Increment()
+			defer wg.Done()
+			ii := o.(int)
+			sourcePredictionID := sourceEvaluation.InputPredictionIDs[ii]
+			targetPredictionID := targetEvaluation.InputPredictionIDs[ii]
 
-				featureChan <- &featurePair{
-					sourceInputID:  sourcePrediction.InputID,
-					targetInputID:  targetPrediction.InputID,
-					sourceFeatures: sourceFeatures,
-					targetFeatures: targetFeatures,
-				}
-			}(ii)
-		}
+			var sourcePrediction evaluation.InputPrediction
+			err := inputPredictionCollection.FindOne(sourcePredictionID, &sourcePrediction)
+			if err != nil {
+				log.WithError(err).Errorf("cannot find source prediction with id = %v", sourcePredictionID)
+				return nil
+			}
 
-		for pair := range featureChan {
-			divergence, err := pair.sourceFeatures.KullbackLeiblerDivergence(pair.targetFeatures)
+			var targetPrediction evaluation.InputPrediction
+			err = inputPredictionCollection.FindOne(targetPredictionID, &targetPrediction)
+			if err != nil {
+				log.WithError(err).Errorf("cannot find target prediction with id = %v", targetPredictionID)
+				return nil
+			}
+
+			sourceFeatures := sourcePrediction.Features
+			targetFeatures := targetPrediction.Features
+
+			divergence, err := sourceFeatures.KullbackLeiblerDivergence(targetFeatures)
 			if err != nil {
 				return errors.Wrapf(err, "cannot perform KullbackLeiblerDivergence")
 			}
 			if math.Abs(divergence) >= divergenceTollerance {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " divergence=", divergence)
+				println("source_input_id= ", sourcePrediction.InputID, "target_input_id= ", targetPrediction.InputID, " divergence=", divergence)
 			}
+			return nil
+		}).Open()
+		defer pool.Close()
+
+		for ii := range sourceEvaluation.InputPredictionIDs {
+			pool.SendWorkAsync(ii, nil)
 		}
+		wg.Wait()
 
 		return nil
 	},
