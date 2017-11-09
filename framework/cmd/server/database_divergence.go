@@ -76,6 +76,10 @@ func doComputeDivergence(
 		return errors.Wrapf(err, "cannot find target evaluation with id = %v", bsonTargetEvaluationID.String())
 	}
 
+	if sourceEvaluation.Model.Name != sourceEvaluation.Model.Name {
+		return nil
+	}
+
 	if len(targetEvaluation.InputPredictionIDs) == 0 {
 		return errors.Errorf("empty target evaluation with id = %v", bsonTargetEvaluationID.String())
 	}
@@ -86,7 +90,8 @@ func doComputeDivergence(
 
 	numEvals := len(sourceEvaluation.InputPredictionIDs)
 
-	progress := newProgress("checking prediction divergence", numEvals)
+	progress := newProgress("checking prediction divergence step", numEvals)
+	defer progress.FinishPrint("finished prediction divergence step")
 
 	var wg sync.WaitGroup
 	wg.Add(numEvals)
@@ -221,6 +226,9 @@ func computeDivergence(c *cobra.Command, args []string, divs ...func(pq *feature
 
 	for _, src := range sources {
 		for _, trgt := range targets {
+			if src == trgt {
+				continue
+			}
 			doComputeDivergence(
 				db,
 				evaluationCollection,
