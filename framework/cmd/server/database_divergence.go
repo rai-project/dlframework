@@ -4,6 +4,7 @@ import (
 	"math"
 	"runtime"
 	"sync"
+	"time"
 
 	"github.com/Jeffail/tunny"
 	"github.com/pkg/errors"
@@ -19,35 +20,31 @@ import (
 )
 
 var (
-	sourceEvaluationID   string
-	targetEvaluationID   string
-	divergenceTollerance float64
+	sourceEvaluationID     string
+	targetEvaluationID     string
+	divergenceTollerance   float64
+	divergenceReporterName string
 )
 
 type featurePair struct {
+	sourceID       bson.ObjectId
+	targetID       bson.ObjectId
 	sourceInputID  string
 	targetInputID  string
 	sourceFeatures dlframework.Features
 	targetFeatures dlframework.Features
 }
 
-func computeDivergence(c *cobra.Command, args []string, div func(pq *featurePair)) error {
-	opts := []database.Option{}
-	if len(databaseEndpoints) != 0 {
-		opts = append(opts, database.Endpoints(databaseEndpoints))
-	}
-	db, err := mongodb.NewDatabase(databaseName, opts...)
-	defer db.Close()
-
-	evaluationCollection, err := evaluation.NewEvaluationCollection(db)
-	if err != nil {
-		return err
-	}
-
-	inputPredictionCollection, err := evaluation.NewInputPredictionCollection(db)
-	if err != nil {
-		return err
-	}
+func doComputeDivergence(
+	db database.Database,
+	evaluationCollection *evaluation.EvaluationCollection,
+	inputPredictionCollection *evaluation.InputPredictionCollection,
+	divergenceCollection *evaluation.DivergenceCollection,
+	sourceEvaluationID string,
+	targetEvaluationID string,
+	reporterName string,
+	divs ...func(pq *featurePair, reporter func(string, *featurePair, float64)),
+) error {
 
 	var bsonSourceEvaluationID, bsonTargetEvaluationID bson.ObjectId
 
@@ -58,7 +55,7 @@ func computeDivergence(c *cobra.Command, args []string, div func(pq *featurePair
 	}
 
 	var sourceEvaluation evaluation.Evaluation
-	err = evaluationCollection.FindOne(udb.Cond{"_id": bsonSourceEvaluationID}, &sourceEvaluation)
+	err := evaluationCollection.FindOne(udb.Cond{"_id": bsonSourceEvaluationID}, &sourceEvaluation)
 	if err != nil {
 		return errors.Wrapf(err, "cannot find source evaluation with id = %v", bsonSourceEvaluationID.String())
 	}
@@ -120,12 +117,42 @@ func computeDivergence(c *cobra.Command, args []string, div func(pq *featurePair
 		sourceFeatures := sourcePrediction.Features
 		targetFeatures := targetPrediction.Features
 
-		div(&featurePair{
-			sourceInputID:  sourcePrediction.InputID,
-			targetInputID:  targetPrediction.InputID,
-			sourceFeatures: sourceFeatures,
-			targetFeatures: targetFeatures,
-		})
+		reporter := func(name string, pair *featurePair, divergence float64) {}
+		switch reporterName {
+		case "print", "Print":
+			reporter = func(name string, pair *featurePair, divergence float64) {
+				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, name, " divergence=", divergence)
+			}
+		case "database":
+			reporter = func(name string, pair *featurePair, divergence float64) {
+				divergenceCollection.Insert(evaluation.Divergence{
+					ID:                           bson.NewObjectId(),
+					CreatedAt:                    time.Now(),
+					Method:                       name,
+					Value:                        divergence,
+					SourcePredictionID:           pair.sourceID,
+					TargetPredictionID:           pair.targetID,
+					SourceInputPredictionInputID: pair.sourceInputID,
+					TargetInputPredictionInputID: pair.targetInputID,
+					SourceFeatures:               pair.sourceFeatures,
+					TargetFeatures:               pair.targetFeatures,
+				})
+			}
+		}
+
+		for _, div := range divs {
+			div(
+				&featurePair{
+					sourceID:       sourcePredictionID,
+					targetID:       targetPredictionID,
+					sourceInputID:  sourcePrediction.InputID,
+					targetInputID:  targetPrediction.InputID,
+					sourceFeatures: sourceFeatures,
+					targetFeatures: targetFeatures,
+				},
+				reporter,
+			)
+		}
 
 		return nil
 	}).Open()
@@ -135,6 +162,77 @@ func computeDivergence(c *cobra.Command, args []string, div func(pq *featurePair
 		pool.SendWorkAsync(ii, nil)
 	}
 	wg.Wait()
+
+	return nil
+}
+
+func computeDivergence(c *cobra.Command, args []string, divs ...func(pq *featurePair, reporter func(string, *featurePair, float64))) error {
+	opts := []database.Option{}
+	if len(databaseEndpoints) != 0 {
+		opts = append(opts, database.Endpoints(databaseEndpoints))
+	}
+	db, err := mongodb.NewDatabase(databaseName, opts...)
+	defer db.Close()
+
+	evaluationCollection, err := evaluation.NewEvaluationCollection(db)
+	if err != nil {
+		return err
+	}
+
+	inputPredictionCollection, err := evaluation.NewInputPredictionCollection(db)
+	if err != nil {
+		return err
+	}
+
+	divergenceCollection, err := evaluation.NewDivergenceCollection(db)
+	if err != nil {
+		return err
+	}
+
+	sources := []string{}
+	if sourceEvaluationID == "all" {
+		srcs := []evaluation.Evaluation{}
+		err = evaluationCollection.FindAll(nil, &srcs)
+		if err != nil {
+			return err
+		}
+		for _, src := range srcs {
+			id := string(src.ID)
+			sources = append(sources, id)
+		}
+	} else {
+		sources = append(sources, sourceEvaluationID)
+	}
+
+	targets := []string{}
+	if targetEvaluationID == "all" {
+		trgts := []evaluation.Evaluation{}
+		err = evaluationCollection.FindAll(nil, &trgts)
+		if err != nil {
+			return err
+		}
+		for _, trgt := range trgts {
+			id := string(trgt.ID)
+			targets = append(targets, id)
+		}
+	} else {
+		targets = append(targets, sourceEvaluationID)
+	}
+
+	for _, src := range sources {
+		for _, trgt := range targets {
+			doComputeDivergence(
+				db,
+				evaluationCollection,
+				inputPredictionCollection,
+				divergenceCollection,
+				src,
+				trgt,
+				divergenceReporterName,
+				divs...,
+			)
+		}
+	}
 
 	return nil
 }
@@ -154,70 +252,70 @@ func divergencePreRun(c *cobra.Command, args []string) {
 }
 
 var (
-	divergenceDispatch = map[string]func(pair *featurePair){
-		"Bhattacharyya": func(pair *featurePair) {
+	divergenceDispatch = map[string]func(pair *featurePair, reporter func(string, *featurePair, float64)){
+		"Bhattacharyya": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.Bhattacharyya(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform Bhattacharyya")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " Bhattacharyya divergence=", divergence)
+				reporter("Bhattacharyya", pair, divergence)
 			}
 		},
 
-		"Hellinger": func(pair *featurePair) {
+		"Hellinger": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.Hellinger(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform Hellinger")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " Hellinger divergence=", divergence)
+				reporter("Hellinger", pair, divergence)
 			}
 		},
 
-		"Correlation": func(pair *featurePair) {
+		"Correlation": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.Correlation(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform Correlation")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " Correlation divergence=", divergence)
+				reporter("Correlation", pair, divergence)
 			}
 		},
 
-		"JensenShannon": func(pair *featurePair) {
+		"JensenShannon": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.JensenShannon(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform JensenShannon")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " JensenShannon divergence=", divergence)
+				reporter("JensenShannon", pair, divergence)
 			}
 		},
 
-		"Covariance": func(pair *featurePair) {
+		"Covariance": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.Covariance(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform Covariance")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " Covariance divergence=", divergence)
+				reporter("Covariance", pair, divergence)
 			}
 		},
 
-		"KullbackLeibler": func(pair *featurePair) {
+		"KullbackLeibler": func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			divergence, err := pair.sourceFeatures.KullbackLeiblerDivergence(pair.targetFeatures)
 			if err != nil {
 				log.WithError(err).Error("cannot perform KullbackLeiblerDivergence")
 				return
 			}
 			if math.Abs(divergence) >= divergenceTollerance && divergence != 0 {
-				println("source_input_id= ", pair.sourceInputID, "target_input_id= ", pair.targetInputID, " Kullback-Leibler divergence=", divergence)
+				reporter("KullbackLeiblerDivergence", pair, divergence)
 			}
 		},
 	}
@@ -295,9 +393,9 @@ var databaseDivergenceCmd = &cobra.Command{
 	Long:   `for example : go run mxnet.go database divergence --database_address=minsky1-1.csl.illinois.edu --database_name=carml --source=5a01fc48ca60cc797e63603c --target=5a0203f8ca60ccd42aa2a706`,
 	PreRun: divergencePreRun,
 	RunE: func(c *cobra.Command, args []string) error {
-		return computeDivergence(c, args, func(pair *featurePair) {
+		return computeDivergence(c, args, func(pair *featurePair, reporter func(string, *featurePair, float64)) {
 			for _, f := range divergenceDispatch {
-				f(pair)
+				f(pair, reporter)
 			}
 		})
 	},
@@ -318,5 +416,6 @@ func init() {
 		cmd.PersistentFlags().StringVar(&sourceEvaluationID, "source", "", "source id for the evaluation")
 		cmd.PersistentFlags().StringVar(&targetEvaluationID, "target", "", "target id for the evaluation")
 		cmd.PersistentFlags().Float64Var(&divergenceTollerance, "tollerance", 0.01, "tolerance to use while printing divergence information")
+		cmd.PersistentFlags().StringVar(&divergenceReporterName, "reporter", "print", "method to use to report divergence")
 	}
 }
