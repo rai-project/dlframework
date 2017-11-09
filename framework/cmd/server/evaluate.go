@@ -13,6 +13,7 @@ import (
 	"context"
 
 	shellwords "github.com/junegunn/go-shellwords"
+	"github.com/k0kubun/pp"
 	"github.com/rai-project/dlframework/framework/cmd"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
@@ -24,22 +25,26 @@ import (
 
 var (
 	models = []string{
-		//		"BVLC-AlexNet",
-		"BVLC-GoogleNet",
-		//		"VGG16",
-		//		"ResNet101",
+		//				"BVLC-AlexNet",
+		//"BVLC-GoogleNet",
+		//				"VGG16",
+		//"ResNet101",
+		//"Inception",
+
+		//"SqueezeNet",
+		"DPN68",
 	}
 
 	frameworks = []string{
 		"mxnet",
 		"caffe2",
-		"caffe",
+		//		"caffe",
 	}
 	batchSizes = []int{
 		//256,
-		64,
+		//64,
 		//50,
-		//32,
+		32,
 		//16,
 		//8,
 		//1,
@@ -85,7 +90,7 @@ func main() {
 
 			for _, model := range models {
 				for _, batchSize := range batchSizes {
-					fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
+					pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 					ctx, _ := context.WithTimeout(context.Background(), timeout)
 					shellCmd := "dataset" +
 						" --debug" +
@@ -94,7 +99,8 @@ func main() {
 						" --publish_predictions=true" +
 						fmt.Sprintf(" --gpu=%v", usingGPU) +
 						fmt.Sprintf(" --batch_size=%v", batchSize) +
-						fmt.Sprintf(" --model_name=%v", model)
+						fmt.Sprintf(" --model_name=%v", model) +
+						" --model_version=1.0"
 					shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 					args, err := shellwords.Parse(shellCmd)
 					if err != nil {
@@ -126,7 +132,7 @@ func main() {
 						log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
 					}
 				}
-				fmt.Println("Finished running", framework, "::", model, "on", device)
+				pp.Println("Finished running", framework, "::", model, "on", device)
 			}
 		}
 
