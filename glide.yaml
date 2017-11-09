@@ -85,9 +85,7 @@ import:
 - package: golang.org/x/net
   subpackages:
   - context
-- package: gonum.org/v1/gonum
-  subpackages:
-  - stat
+- package: gonum.org/v1/gonum/stat
 - package: golang.org/x/sync
   subpackages:
   - syncmap
