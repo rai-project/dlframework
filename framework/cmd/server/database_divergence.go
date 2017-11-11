@@ -3,6 +3,7 @@ package server
 import (
 	"math"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -40,19 +41,11 @@ func doComputeDivergence(
 	evaluationCollection *evaluation.EvaluationCollection,
 	inputPredictionCollection *evaluation.InputPredictionCollection,
 	divergenceCollection *evaluation.DivergenceCollection,
-	sourceEvaluationID string,
-	targetEvaluationID string,
+	bsonSourceEvaluationID bson.ObjectId,
+	bsonTargetEvaluationID bson.ObjectId,
 	reporterName string,
 	divs ...func(pq *featurePair, reporter func(string, *featurePair, float64)),
 ) error {
-
-	var bsonSourceEvaluationID, bsonTargetEvaluationID bson.ObjectId
-
-	if bson.IsObjectIdHex(sourceEvaluationID) {
-		bsonSourceEvaluationID = bson.ObjectIdHex(sourceEvaluationID)
-	} else {
-		bsonSourceEvaluationID = bson.ObjectId(sourceEvaluationID)
-	}
 
 	var sourceEvaluation evaluation.Evaluation
 	err := evaluationCollection.FindOne(udb.Cond{"_id": bsonSourceEvaluationID}, &sourceEvaluation)
@@ -64,19 +57,14 @@ func doComputeDivergence(
 		return errors.Errorf("empty source evaluation with id = %v", bsonSourceEvaluationID.String())
 	}
 
-	if bson.IsObjectIdHex(targetEvaluationID) {
-		bsonTargetEvaluationID = bson.ObjectIdHex(targetEvaluationID)
-	} else {
-		bsonTargetEvaluationID = bson.ObjectId(targetEvaluationID)
-	}
-
 	var targetEvaluation evaluation.Evaluation
 	err = evaluationCollection.FindOne(udb.Cond{"_id": bsonTargetEvaluationID}, &targetEvaluation)
 	if err != nil {
 		return errors.Wrapf(err, "cannot find target evaluation with id = %v", bsonTargetEvaluationID.String())
 	}
 
-	if sourceEvaluation.Model.Name != sourceEvaluation.Model.Name {
+	if strings.ToLower(sourceEvaluation.Model.Name) != strings.ToLower(targetEvaluation.Model.Name) {
+		println("skipping name")
 		return nil
 	}
 
@@ -98,7 +86,7 @@ func doComputeDivergence(
 
 	numCPUs := runtime.NumCPU()
 
-	pool, _ := tunny.CreatePool(2*numCPUs, func(o interface{}) interface{} {
+	pool, _ := tunny.CreatePool(numCPUs, func(o interface{}) interface{} {
 		defer progress.Increment()
 		defer wg.Done()
 		ii := o.(int)
@@ -108,14 +96,14 @@ func doComputeDivergence(
 		var sourcePrediction evaluation.InputPrediction
 		err := inputPredictionCollection.FindOne(sourcePredictionID, &sourcePrediction)
 		if err != nil {
-			log.WithError(err).Errorf("cannot find source prediction with id = %v", sourcePredictionID)
+			//log.WithError(err).Errorf("cannot find source prediction with id = %v", sourcePredictionID)
 			return nil
 		}
 
 		var targetPrediction evaluation.InputPrediction
 		err = inputPredictionCollection.FindOne(targetPredictionID, &targetPrediction)
 		if err != nil {
-			log.WithError(err).Errorf("cannot find target prediction with id = %v", targetPredictionID)
+			//log.WithError(err).Errorf("cannot find target prediction with id = %v", targetPredictionID)
 			return nil
 		}
 
@@ -130,6 +118,7 @@ func doComputeDivergence(
 			}
 		case "database":
 			reporter = func(name string, pair *featurePair, divergence float64) {
+				println("inserting into database")
 				divergenceCollection.Insert(evaluation.Divergence{
 					ID:                           bson.NewObjectId(),
 					CreatedAt:                    time.Now(),
@@ -194,42 +183,42 @@ func computeDivergence(c *cobra.Command, args []string, divs ...func(pq *feature
 		return err
 	}
 
-	sources := []string{}
+	sources := []bson.ObjectId{}
 	if sourceEvaluationID == "all" {
 		srcs := []evaluation.Evaluation{}
-		err = evaluationCollection.FindAll(nil, &srcs)
+		err = evaluationCollection.FindAll("*", &srcs)
 		if err != nil {
 			return err
 		}
 		for _, src := range srcs {
-			id := string(src.ID)
-			sources = append(sources, id)
+			sources = append(sources, src.ID)
 		}
 	} else {
-		sources = append(sources, sourceEvaluationID)
+		sources = append(sources, bson.ObjectIdHex(sourceEvaluationID))
 	}
 
-	targets := []string{}
+	targets := []bson.ObjectId{}
 	if targetEvaluationID == "all" {
 		trgts := []evaluation.Evaluation{}
-		err = evaluationCollection.FindAll(nil, &trgts)
+		err = evaluationCollection.FindAll("*", &trgts)
 		if err != nil {
 			return err
 		}
 		for _, trgt := range trgts {
-			id := string(trgt.ID)
-			targets = append(targets, id)
+			targets = append(targets, trgt.ID)
 		}
 	} else {
-		targets = append(targets, sourceEvaluationID)
+		targets = append(targets, bson.ObjectIdHex(targetEvaluationID))
 	}
 
 	for _, src := range sources {
 		for _, trgt := range targets {
 			if src == trgt {
+				println("skipping equal ", src.String(), " == ", trgt.String())
 				continue
 			}
-			doComputeDivergence(
+			println("not equal ", src.String(), " == ", trgt.String())
+			err = doComputeDivergence(
 				db,
 				evaluationCollection,
 				inputPredictionCollection,
@@ -239,6 +228,7 @@ func computeDivergence(c *cobra.Command, args []string, divs ...func(pq *feature
 				divergenceReporterName,
 				divs...,
 			)
+			log.WithError(err).Error("failed to compute divergence")
 		}
 	}
 

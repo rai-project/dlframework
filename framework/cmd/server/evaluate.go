@@ -23,31 +23,41 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func parse(model string) (modelName, version string) {
+	splt := strings.Split(model, "_")
+	modelName, modelVersion := splt[0], splt[1]
+	return modelName, modelVersion
+}
+
 var (
 	models = []string{
-		//				"BVLC-AlexNet",
-		//"BVLC-GoogleNet",
-		//				"VGG16",
-		//"ResNet101",
-		//"Inception",
-
-		//"SqueezeNet",
-		"DPN68",
+		"SqueezeNet_1.0",
+		"SqueezeNet_1.1",
+		"DPN68_1.0",
+		"BVLC-AlexNet_1.0",
+		"BVLC-GoogleNet_1.0",
+		"VGG16_1.0",
+		"ResNet101_1.0",
+		"ResNet101_2.0",
+		"Inception_3.0",
+		"Inception_4.0",
 	}
 
 	frameworks = []string{
 		"mxnet",
 		"caffe2",
-		//		"caffe",
+		"caffe",
 	}
 	batchSizes = []int{
-		//256,
-		//64,
-		//50,
+		256,
+		128,
+		64,
 		32,
-		//16,
-		//8,
-		//1,
+		16,
+		8,
+		4,
+		2,
+		1,
 	}
 	timeout                  = 4 * time.Hour
 	usingGPU                 = true
@@ -89,6 +99,7 @@ func main() {
 			}
 
 			for _, model := range models {
+				modelName, modelVersion := parse(model)
 				for _, batchSize := range batchSizes {
 					pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 					ctx, _ := context.WithTimeout(context.Background(), timeout)
@@ -96,11 +107,11 @@ func main() {
 						" --debug" +
 						" --verbose" +
 						" --publish=true" +
-						" --publish_predictions=true" +
 						fmt.Sprintf(" --gpu=%v", usingGPU) +
 						fmt.Sprintf(" --batch_size=%v", batchSize) +
-						fmt.Sprintf(" --model_name=%v", model) +
-						" --model_version=1.0"
+						fmt.Sprintf(" --model_name=%v", modelName) +
+						// " --publish_predictions=true" +
+						fmt.Sprintf(" --model_version=%v", modelVersion)
 					shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 					args, err := shellwords.Parse(shellCmd)
 					if err != nil {

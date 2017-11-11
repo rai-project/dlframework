@@ -262,7 +262,7 @@ var datasetCmd = &cobra.Command{
 			Info("starting inference on dataset")
 
 		inferenceProgress := newProgress("infering", len(fileNameParts))
-		for _, part := range fileNameParts {
+		for _, part := range fileNameParts[0:4] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
