@@ -33,12 +33,14 @@ var (
 	models = []string{
 		"SqueezeNet_1.0",
 		"SqueezeNet_1.1",
-		"DPN68_1.0",
 		"BVLC-AlexNet_1.0",
 		"BVLC-GoogleNet_1.0",
+		"BVLC-Reference-RCNN-ILSVRC13",
 		"VGG16_1.0",
 		"ResNet101_1.0",
 		"ResNet101_2.0",
+		"ResNeXt50-32x4d_1.0",
+		"WRN50_2.0",
 		"Inception_3.0",
 		"Inception_4.0",
 	}
@@ -49,15 +51,15 @@ var (
 		"caffe",
 	}
 	batchSizes = []int{
-		256,
-		128,
-		64,
-		32,
+		// 256,
+		// 128,
+		// 64,
+		// 32,
 		16,
-		8,
-		4,
-		2,
-		1,
+		// 8,
+		// 4,
+		// 2,
+		// 1,
 	}
 	timeout                  = 4 * time.Hour
 	usingGPU                 = true
