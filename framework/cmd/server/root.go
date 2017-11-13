@@ -35,7 +35,6 @@ var (
 	local             bool
 	profile           bool
 	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
-	framework         dlframework.FrameworkManifest
 	DefaultRunOptions = &robustly.RunOptions{
 		RateLimit:  1,                   // the rate limit in crashes per second
 		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
