@@ -12,11 +12,13 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dllayer/network"
+	"github.com/rai-project/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
-	fullFlops bool
+	fullFlops  bool
+	humanFlops bool
 )
 
 func cleanPath(path string) string {
@@ -52,21 +54,31 @@ var flopsInfoCmd = &cobra.Command{
 			return err
 		}
 
+		flopsToString := func(e int64) string {
+			return fmt.Sprintf("%v", e)
+		}
+		if humanFlops {
+			flopsToString = func(e int64) string {
+				return utils.Flops(uint64(e))
+			}
+		}
+
 		if fullFlops {
 			infos := net.LayerInformations()
 
 			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{"LayerName", "#MultiplyAdds", "#Additions", "#Divisions", "#Exponentiations", "#Comparisons", "#General"})
+			table.SetHeader([]string{"LayerName", "LayerType", "#MultiplyAdds", "#Additions", "#Divisions", "#Exponentiations", "#Comparisons", "#General"})
 			for _, info := range infos {
 				flops := info.Flops()
 				table.Append([]string{
-					"",
-					fmt.Sprintf("%v", flops.MultiplyAdds),
-					fmt.Sprintf("%v", flops.Additions),
-					fmt.Sprintf("%v", flops.Divisions),
-					fmt.Sprintf("%v", flops.Exponentiations),
-					fmt.Sprintf("%v", flops.Comparisons),
-					fmt.Sprintf("%v", flops.General),
+					info.Name(),
+					info.Type(),
+					flopsToString(flops.MultiplyAdds),
+					flopsToString(flops.Additions),
+					flopsToString(flops.Divisions),
+					flopsToString(flops.Exponentiations),
+					flopsToString(flops.Comparisons),
+					flopsToString(flops.General),
 				})
 			}
 			table.Render()
@@ -77,12 +89,12 @@ var flopsInfoCmd = &cobra.Command{
 
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"Flop Type", "#"})
-		table.Append([]string{"MultipleAdds", fmt.Sprintf("%v", info.MultiplyAdds)})
-		table.Append([]string{"Additions", fmt.Sprintf("%v", info.Additions)})
-		table.Append([]string{"Divisions", fmt.Sprintf("%v", info.Divisions)})
-		table.Append([]string{"Exponentiations", fmt.Sprintf("%v", info.Exponentiations)})
-		table.Append([]string{"Comparisons", fmt.Sprintf("%v", info.Comparisons)})
-		table.Append([]string{"General", fmt.Sprintf("%v", info.General)})
+		table.Append([]string{"MultipleAdds", flopsToString(info.MultiplyAdds)})
+		table.Append([]string{"Additions", flopsToString(info.Additions)})
+		table.Append([]string{"Divisions", flopsToString(info.Divisions)})
+		table.Append([]string{"Exponentiations", flopsToString(info.Exponentiations)})
+		table.Append([]string{"Comparisons", flopsToString(info.Comparisons)})
+		table.Append([]string{"General", flopsToString(info.General)})
 		table.Render()
 
 		return nil
@@ -92,5 +104,6 @@ var flopsInfoCmd = &cobra.Command{
 func init() {
 	flopsInfoCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
 	flopsInfoCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
+	flopsInfoCmd.PersistentFlags().BoolVar(&humanFlops, "human", false, "print flops in human form")
 	flopsInfoCmd.PersistentFlags().BoolVar(&fullFlops, "full", false, "print all information about flops")
 }
