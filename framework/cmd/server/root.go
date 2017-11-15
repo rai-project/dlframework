@@ -35,8 +35,7 @@ var (
 	local             bool
 	profile           bool
 	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
-	framework         dlframework.FrameworkManifest
-	DefaultRunOptions = &robustly.RunOptions{
+	DefaultRunOptions               = &robustly.RunOptions{
 		RateLimit:  1,                   // the rate limit in crashes per second
 		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
 		PrintStack: true,                // whether to print the panic stacktrace or not
@@ -253,6 +252,7 @@ func SetupFlags(c *cobra.Command) {
 	c.AddCommand(datasetCmd)
 	c.AddCommand(downloadCmd)
 	c.AddCommand(containerCmd)
+	c.AddCommand(infoCmd)
 	c.AddCommand(databaseCmd)
 }
 
