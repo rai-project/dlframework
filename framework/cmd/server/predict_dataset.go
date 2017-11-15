@@ -93,7 +93,11 @@ var datasetCmd = &cobra.Command{
 	},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
-		defer span.Finish()
+		defer func() {
+			if span != nil {
+				span.Finish()
+			}
+		}()
 
 		opts := []database.Option{}
 		if len(databaseEndpoints) != 0 {
@@ -262,7 +266,7 @@ var datasetCmd = &cobra.Command{
 			Info("starting inference on dataset")
 
 		inferenceProgress := newProgress("infering", len(fileNameParts))
-		for _, part := range fileNameParts[0:4] {
+		for _, part := range fileNameParts[0:16] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -309,6 +313,10 @@ var datasetCmd = &cobra.Command{
 			}
 
 		}
+		span.Finish()
+		defer func() {
+			span = nil
+		}()
 
 		inferenceProgress.FinishPrint("inference complete")
 
@@ -384,13 +392,17 @@ var datasetCmd = &cobra.Command{
 			Info("finished publishing prediction result")
 
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
-		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", strconv.FormatUint(traceID.Low, 16))
+		traceIDVal := strconv.FormatUint(traceID.Low, 16)
+		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
 		if err != nil {
-			log.WithError(err).Error("failed to download span information")
+			log.WithError(err).
+				WithField("trace_id", traceIDVal).
+				Error("failed to download span information")
 		} else {
-			log.Info("downloaded span information")
+			log.WithField("trace_id", traceIDVal).
+				Info("downloaded span information")
 		}
 
 		if err == nil {
