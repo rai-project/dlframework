@@ -46,8 +46,8 @@ var (
 	}
 
 	frameworks = []string{
-		"mxnet",
-		"caffe2",
+		// "mxnet",
+		// "caffe2",
 		"caffe",
 	}
 	batchSizes = []int{
@@ -73,8 +73,8 @@ func main() {
 	})
 
 	cmd.Init()
-	for i := 0; i < 5; i++ {
-		for _, usingGPU := range []bool{false} {
+	for i := 0; i < 1; i++ {
+		for _, usingGPU := range []bool{true} {
 			var device string
 			if usingGPU {
 				device = "gpu"
