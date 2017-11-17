@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"encoding/csv"
 	"fmt"
 
 	"github.com/Unknwon/com"
@@ -17,8 +18,9 @@ import (
 )
 
 var (
-	fullFlops  bool
-	humanFlops bool
+	fullFlops         bool
+	humanFlops        bool
+	flopsOutputFormat string
 )
 
 func cleanPath(path string) string {
@@ -63,14 +65,49 @@ var flopsInfoCmd = &cobra.Command{
 			}
 		}
 
+		tableWriter := tablewriter.NewWriter(os.Stdout)
+		csvWriter := csv.NewWriter(os.Stdout)
+
+		flopsOutputFormat := strings.ToLower(flopsOutputFormat)
+
+		writeHeader := func(header []string) {
+			switch flopsOutputFormat {
+			case "table":
+				tableWriter.SetHeader(header)
+			case "csv":
+				csvWriter.Write(header)
+			}
+		}
+
+		writeRecord := func(row []string) {
+			switch flopsOutputFormat {
+			case "table":
+				tableWriter.Append(row)
+			case "csv":
+				csvWriter.Write(row)
+			}
+		}
+
+		flush := func() {
+			switch flopsOutputFormat {
+			case "table":
+				tableWriter.Render()
+			case "csv":
+				csvWriter.Flush()
+			}
+		}
+
+		defer flush()
+
 		if fullFlops {
+
 			infos := net.LayerInformations()
 
-			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{"LayerName", "LayerType", "#MultiplyAdds", "#Additions", "#Divisions", "#Exponentiations", "#Comparisons", "#General"})
+			writeHeader([]string{"LayerName", "LayerType", "#MultiplyAdds", "#Additions", "#Divisions", "#Exponentiations", "#Comparisons", "#General"})
+
 			for _, info := range infos {
 				flops := info.Flops()
-				table.Append([]string{
+				writeRecord([]string{
 					info.Name(),
 					info.Type(),
 					flopsToString(flops.MultiplyAdds),
@@ -81,21 +118,18 @@ var flopsInfoCmd = &cobra.Command{
 					flopsToString(flops.General),
 				})
 			}
-			table.Render()
 			return nil
 		}
 
 		info := net.FlopsInformation()
 
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"Flop Type", "#"})
-		table.Append([]string{"MultipleAdds", flopsToString(info.MultiplyAdds)})
-		table.Append([]string{"Additions", flopsToString(info.Additions)})
-		table.Append([]string{"Divisions", flopsToString(info.Divisions)})
-		table.Append([]string{"Exponentiations", flopsToString(info.Exponentiations)})
-		table.Append([]string{"Comparisons", flopsToString(info.Comparisons)})
-		table.Append([]string{"General", flopsToString(info.General)})
-		table.Render()
+		writeHeader([]string{"Flop Type", "#"})
+		writeRecord([]string{"MultipleAdds", flopsToString(info.MultiplyAdds)})
+		writeRecord([]string{"Additions", flopsToString(info.Additions)})
+		writeRecord([]string{"Divisions", flopsToString(info.Divisions)})
+		writeRecord([]string{"Exponentiations", flopsToString(info.Exponentiations)})
+		writeRecord([]string{"Comparisons", flopsToString(info.Comparisons)})
+		writeRecord([]string{"General", flopsToString(info.General)})
 
 		return nil
 	},
@@ -106,4 +140,5 @@ func init() {
 	flopsInfoCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
 	flopsInfoCmd.PersistentFlags().BoolVar(&humanFlops, "human", false, "print flops in human form")
 	flopsInfoCmd.PersistentFlags().BoolVar(&fullFlops, "full", false, "print all information about flops")
+	flopsInfoCmd.PersistentFlags().StringVarP(&flopsOutputFormat, "format", "f", "table", "print format to use")
 }

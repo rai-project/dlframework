@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -86,7 +87,7 @@ func main() {
 				compileArgs := []string{
 					"build",
 				}
-				if !cpuid.SupportsAVX() {
+				if runtime.GOARCH == "amd64" && !cpuid.SupportsAVX() {
 					compileArgs = append(compileArgs, "-tags=noasm")
 				}
 				compileArgs = append(compileArgs, mainFile)
