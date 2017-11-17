@@ -75,7 +75,7 @@ func main() {
 
 	cmd.Init()
 	for i := 0; i < 2; i++ {
-		for _, usingGPU := range []bool{true} {
+		for _, usingGPU := range []bool{true, false} {
 			var device string
 			if usingGPU {
 				device = "gpu"
