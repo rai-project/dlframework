@@ -136,7 +136,6 @@ var datasetCmd = &cobra.Command{
 			),
 			DeviceCount: dc,
 		}
-
 		predOpts := &dl.PredictionOptions{
 			// FeatureLimit:     5,
 			BatchSize:        uint32(batchSize),
@@ -266,7 +265,7 @@ var datasetCmd = &cobra.Command{
 			Info("starting inference on dataset")
 
 		inferenceProgress := newProgress("infering", len(fileNameParts))
-		for _, part := range fileNameParts[0:4] {
+		for _, part := range fileNameParts[0:16] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
