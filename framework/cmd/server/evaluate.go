@@ -52,9 +52,16 @@ var (
 		"caffe2",
 	}
 	batchSizes = []int{
+		// 512,
+		// 400,
+		// 350,
+		// 300,
+		// 260,
 		// 256,
 		// 128,
+		// 96,
 		// 64,
+		// 56,
 		// 32,
 		16,
 		// 8,
@@ -74,8 +81,8 @@ func main() {
 	})
 
 	cmd.Init()
-	for i := 0; i < 2; i++ {
-		for _, usingGPU := range []bool{true, false} {
+	for i := 0; i < 5; i++ {
+		for _, usingGPU := range []bool{false} {
 			var device string
 			if usingGPU {
 				device = "gpu"
