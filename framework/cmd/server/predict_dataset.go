@@ -392,6 +392,7 @@ var datasetCmd = &cobra.Command{
 
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
+		tracer.Close()
 		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
