@@ -1,7 +1,7 @@
 package steps
 
 import (
-	"github.com/rai-project/go-cupti"
+	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/tracer"
 	"golang.org/x/net/context"
 

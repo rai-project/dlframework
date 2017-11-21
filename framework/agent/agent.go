@@ -80,6 +80,8 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 
 	tracer.SetLevel(getTraceLevelOption(opts))
 
+	cuptiTrace(ctx, options.New(options.PredictorOptions(opts)))
+
 	predictor, err := p.predictor.Load(ctx, *model, options.PredictorOptions(opts))
 	if err != nil {
 		return nil, err
@@ -116,6 +118,12 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	if err != nil {
 		return nil, err
 	}
+	opts, err := predictor.GetPredictionOptions(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cuptiTrace(ctx, opts)
 
 	predictor.Close()
 
