@@ -9,7 +9,7 @@ type DeviceType int
 
 const (
 	CPU_DEVICE  DeviceType = iota + 1 // cpu device type
-	CUDA_DEVICE                       // cuda device type
+	CUDA_DEVICE DeviceType = 2        // cuda device type
 )
 
 func (d DeviceType) String() string {
