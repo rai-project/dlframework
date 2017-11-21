@@ -32,35 +32,34 @@ func parse(model string) (modelName, version string) {
 
 var (
 	models = []string{
-		// "SqueezeNet_1.0",
-		// "SqueezeNet_1.1",
+		"SqueezeNet_1.0",
+		"SqueezeNet_1.1",
 		"BVLC-AlexNet_1.0",
-		// "BVLC-GoogleNet_1.0",
-		// "VGG16_1.0",
-		// "ResNet101_1.0",
-		// "ResNet101_2.0",
-		// "WRN50_2.0",
-		// "BVLC-Reference-RCNN-ILSVRC13_1.0",
-		// "Inception_3.0",
-		// "Inception_4.0",
-		// "ResNeXt50-32x4d_1.0",
+		"BVLC-GoogleNet_1.0",
+		"VGG16_1.0",
+		"ResNet101_1.0",
+		"ResNet101_2.0",
+		"WRN50_2.0",
+		"BVLC-Reference-RCNN-ILSVRC13_1.0",
+		"Inception_3.0",
+		"Inception_4.0",
+		"ResNeXt50-32x4d_1.0",
 	}
 
 	frameworks = []string{
 		"caffe",
-		// "mxnet",
-		// "caffe2",
+		"mxnet",
+		"caffe2",
 	}
 	batchSizes = []int{
-		400,
-		350,
-		300,
-		260,
+		384,
+		320,
 		256,
+		196,
 		128,
 		96,
 		64,
-		56,
+		48,
 		32,
 		16,
 		8,
@@ -81,7 +80,7 @@ func main() {
 
 	cmd.Init()
 	for i := 0; i < 5; i++ {
-		for _, usingGPU := range []bool{true} {
+		for _, usingGPU := range []bool{true, false} {
 			var device string
 			if usingGPU {
 				device = "gpu"
