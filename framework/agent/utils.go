@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"encoding/base64"
 	"os"
 	"path/filepath"
@@ -8,6 +9,9 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
+	"github.com/rai-project/dlframework/framework/options"
+	cupti "github.com/rai-project/go-cupti"
+	"github.com/rai-project/tracer"
 )
 
 func UploadDir() (string, error) {
@@ -47,4 +51,16 @@ func Partition(in []interface{}, partitionSize int) (out [][]interface{}) {
 	}
 
 	return out
+}
+
+func cuptiTrace(ctx context.Context, opts *options.Options) {
+	if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
+		cu, err := cupti.New(cupti.Context(ctx))
+		if err == nil {
+			defer func() {
+				cu.Wait()
+				cu.Close()
+			}()
+		}
+	}
 }
