@@ -31,7 +31,7 @@ func parse(model string) (modelName, version string) {
 }
 
 var (
-	models = []string{
+	models_c = []string{
 		"SqueezeNet_1.0",
 		"SqueezeNet_1.1",
 		"BVLC-AlexNet_1.0",
@@ -46,10 +46,21 @@ var (
 		"ResNeXt50-32x4d_1.0",
 	}
 
+	models_tf = []string{
+		"VGG16_1.0",
+		"ResNet101_1.0",
+		"ResNet101_2.0",
+		"Inception_3.0",
+		"Inception_4.0",
+		"VGG19_1.0",
+	}
+	models = models_tf
+
 	frameworks = []string{
-		"caffe",
-		"mxnet",
-		"caffe2",
+		// "caffe",
+		// "mxnet",
+		// "caffe2",
+		"tensorflow",
 	}
 	batchSizes = []int{
 		384,
