@@ -68,6 +68,11 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 
 				res := p.doer(ctx, data, options)
 
+				if err, ok := res.(error); ok {
+					out <- err
+					continue
+				}
+
 				if lst, ok := res.([]interface{}); ok && p.spreadOutput {
 					// flatten sequence
 					for _, e := range lst {
@@ -80,7 +85,7 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				case []string:
 					lst, ok := res.([]interface{})
 					if !ok {
-						log.Error("expecting a []inteface{} for result but got %v", res)
+						log.Errorf("expecting a []inteface{} for result but got %v", res)
 						return
 					}
 
