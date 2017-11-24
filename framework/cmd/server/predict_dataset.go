@@ -24,6 +24,7 @@ import (
 	common "github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
+	_ "github.com/rai-project/monitoring/monitors"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
@@ -40,10 +41,12 @@ var (
 	modelName            string
 	modelVersion         string
 	batchSize            int
+	numFileParts         int
 	partitionDatasetSize int
 	publishEvaluation    bool
 	publishPredictions   bool
 	useGPU               bool
+	failOnFirstError     bool
 	traceLevelName       string
 	traceLevel           tracer.Level = tracer.STEP_TRACE
 	databaseAddress      string
@@ -264,8 +267,11 @@ var datasetCmd = &cobra.Command{
 			WithField("using_gpu", useGPU).
 			Info("starting inference on dataset")
 
-		inferenceProgress := newProgress("infering", len(fileNameParts))
-		for _, part := range fileNameParts[0:64] {
+		if numFileParts == -1 {
+			numFileParts = len(fileNameParts)
+		}
+		inferenceProgress := newProgress("infering", numFileParts)
+		for _, part := range fileNameParts[0:numFileParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -308,6 +314,11 @@ var datasetCmd = &cobra.Command{
 			inferenceProgress.Increment()
 
 			for o := range output {
+				if err, ok := o.(error); ok && failOnFirstError {
+					inferenceProgress.FinishPrint("inference halted")
+					log.WithError(err).Error("encountered an error while performing inference")
+					os.Exit(-1)
+				}
 				outputs <- o
 			}
 
@@ -460,6 +471,8 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "batch size")
+	datasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "number of file parts to process")
+	datasetCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to exit upon first inference error")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
 	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "enable gpu")
 	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "publish predictions to database")
