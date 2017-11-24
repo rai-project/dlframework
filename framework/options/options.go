@@ -15,7 +15,6 @@ type Options struct {
 	traceLevel tracer.Level
 	symbol     []byte
 	weights    []byte
-	class      []byte
 	inputNodes []inputNode
 	outputNode string
 }
@@ -123,16 +122,6 @@ func Symbol(sym []byte) Option {
 
 func (o *Options) Symbol() []byte {
 	return o.symbol
-}
-
-func Class(sym []byte) Option {
-	return func(o *Options) {
-		o.class = sym
-	}
-}
-
-func (o *Options) Class() []byte {
-	return o.class
 }
 
 func Weights(w []byte) Option {
