@@ -127,6 +127,8 @@ func main() {
 							" --debug" +
 							" --verbose" +
 							" --publish=true" +
+							" --fail_on_error=true" +
+							" --num_file_parts=64" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
