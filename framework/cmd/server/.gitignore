@@ -5,3 +5,4 @@ caffe
 caffe2
 tensorflow
 evaluate
+tensorrt
