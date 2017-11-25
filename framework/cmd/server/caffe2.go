@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	rootCmd, err := cmd.NewRootCommand(caffe2.FrameworkManifest)
+	rootCmd, err := cmd.NewRootCommand(caffe2.Register, caffe2.FrameworkManifest)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
