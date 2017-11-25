@@ -199,7 +199,7 @@ func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 
 	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
-		PreRun: func(c *cobra.Command, args []string) error {
+		PreRun: func(c *cobra.Command, args []string) {
 			frameworkRegisterFunc()
 		},
 		RunE: func(c *cobra.Command, args []string) error {
