@@ -10,7 +10,7 @@ import (
 
 var (
 	base = "src/github.com/rai-project"
-	all  = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
+	all  = []string{"mxnet", "tensorflow", "caffe", "caffe2", "tensorrt"}
 )
 
 var startallCmd = &cobra.Command{

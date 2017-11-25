@@ -12,6 +12,7 @@ import (
 	shutdown "github.com/klauspost/shutdown2"
 	"github.com/pkg/errors"
 	_ "github.com/rai-project/caffe/predict"
+	_ "github.com/rai-project/tensorrt/predict"
 	//_ "github.com/rai-project/caffe2/predict"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
