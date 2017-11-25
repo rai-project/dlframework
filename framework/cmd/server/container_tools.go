@@ -71,7 +71,7 @@ var containerRestartCmd = &cobra.Command{
 	RunE: func(c *cobra.Command, args []string) error {
 		containers := []string{}
 		if containerAll {
-			for k, _ := range defaultContainerImageNames {
+			for k := range defaultContainerImageNames {
 				containers = append(containers, k)
 			}
 		}
@@ -106,7 +106,7 @@ var containerPullCmd = &cobra.Command{
 	RunE: func(c *cobra.Command, args []string) error {
 		containers := []string{}
 		if containerAll {
-			for k, _ := range defaultContainerImageNames {
+			for k := range defaultContainerImageNames {
 				containers = append(containers, k)
 			}
 		}

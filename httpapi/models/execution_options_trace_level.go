@@ -16,7 +16,6 @@ import (
 
 // ExecutionOptionsTraceLevel execution options trace level
 // swagger:model ExecutionOptionsTraceLevel
-
 type ExecutionOptionsTraceLevel string
 
 const (

@@ -39,7 +39,7 @@ func init() {
     "version": "0.2.18"
   },
   "host": "carml.org",
-  "basePath": "/api/v1",
+  "basePath": "/api",
   "paths": {
     "/predict/close": {
       "post": {
@@ -498,13 +498,32 @@ func init() {
     "dlframeworkAgent": {
       "type": "object",
       "properties": {
+        "architecture": {
+          "type": "string"
+        },
+        "cpuinfo": {
+          "type": "string"
+        },
+        "gpuinfo": {
+          "type": "string"
+        },
+        "hasgpu": {
+          "type": "boolean",
+          "format": "boolean"
+        },
         "host": {
           "type": "string"
         },
-        "port": {
+        "hostname": {
           "type": "string"
         },
-        "specification": {
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "port": {
           "type": "string"
         }
       }

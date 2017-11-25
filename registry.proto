@@ -126,8 +126,13 @@ message Agent {
   option (gogoproto.description) = true;
   string host = 1 [ (gogoproto.moretags) = "yaml:\"host,omitempty\"" ];
   string port = 2 [ (gogoproto.moretags) = "yaml:\"port,omitempty\"" ];
-  string specification = 3
-      [ (gogoproto.moretags) = "yaml:\"specification,omitempty\"" ];
+  string hostname = 3 [ (gogoproto.moretags) = "yaml:\"hostname,omitempty\"" ];
+  string architecture = 4 [ (gogoproto.moretags) = "yaml:\"architecture,omitempty\"" ];
+  bool hasgpu = 5 [ (gogoproto.moretags) = "yaml:\"hasgpu,omitempty\"" ];
+  string cpuinfo = 6 [ (gogoproto.moretags) = "yaml:\"cpuinfo,omitempty\"" ];
+  string gpuinfo = 7 [ (gogoproto.moretags) = "yaml:\"gpuinfo,omitempty\"" ];
+  map<string, string> metadata = 8
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
 }
 
 message Agents {

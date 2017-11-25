@@ -1,15 +1,18 @@
 package registryquery
 
 import (
+	"encoding/json"
 	"path"
 	"runtime"
 	"strings"
 	"sync"
 
 	"github.com/jeffail/tunny"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
+	store "github.com/rai-project/libkv/store"
 	kv "github.com/rai-project/registry"
 )
 
@@ -47,10 +50,12 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 
 	poolSize := runtime.NumCPU()
 	pool, err := tunny.CreatePool(poolSize, func(object interface{}) interface{} {
-		key, ok := object.(string)
+		kvs, ok := object.(*store.KVPair)
 		if !ok {
-			return errors.New("invalid key type. expecting a string type")
+			return errors.New("invalid kv type. expecting a KVPair type")
 		}
+		key := kvs.Key
+		val := kvs.Value
 
 		keyBase := path.Base(key)
 		if !strings.HasPrefix(keyBase, "agent-") {
@@ -67,10 +72,17 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 			return nil
 		}
 
-		agents = append(agents, &webmodels.DlframeworkAgent{
-			Host: host,
-			Port: port,
-		})
+		pp.Println(string(val))
+
+		agent := &webmodels.DlframeworkAgent{}
+		err := json.Unmarshal(val, agent)
+		if err != nil {
+			log.WithError(err).WithField("host", host).WithField("port", port).Error("failed to unmarshal agent")
+			return nil
+		}
+
+		agents = append(agents, agent)
+
 		set[keyBase] = true
 		return nil
 	}).Open()
@@ -96,7 +108,7 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 		}
 		for _, kv := range kvs {
 			wg.Add(1)
-			pool.SendWorkAsync(kv.Key, func(interface{}, error) {
+			pool.SendWorkAsync(kv, func(interface{}, error) {
 				wg.Done()
 			})
 		}

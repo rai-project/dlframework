@@ -14,7 +14,6 @@ import (
 
 // DlframeworkPredictionOptions dlframework prediction options
 // swagger:model dlframeworkPredictionOptions
-
 type DlframeworkPredictionOptions struct {
 
 	// batch size
@@ -29,14 +28,6 @@ type DlframeworkPredictionOptions struct {
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }
-
-/* polymorph dlframeworkPredictionOptions batch_size false */
-
-/* polymorph dlframeworkPredictionOptions execution_options false */
-
-/* polymorph dlframeworkPredictionOptions feature_limit false */
-
-/* polymorph dlframeworkPredictionOptions request_id false */
 
 // Validate validates this dlframework prediction options
 func (m *DlframeworkPredictionOptions) Validate(formats strfmt.Registry) error {

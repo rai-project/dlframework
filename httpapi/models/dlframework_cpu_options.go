@@ -7,5 +7,4 @@ package models
 
 // DlframeworkCPUOptions dlframework CPU options
 // swagger:model dlframeworkCPUOptions
-
 type DlframeworkCPUOptions interface{}

@@ -29,7 +29,7 @@ func NewModelAgentsParams() ModelAgentsParams {
 type ModelAgentsParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request
+	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  In: query

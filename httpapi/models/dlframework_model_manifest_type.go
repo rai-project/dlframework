@@ -10,55 +10,29 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DlframeworkModelManifestType dlframework model manifest type
 // swagger:model dlframeworkModelManifestType
-
 type DlframeworkModelManifestType struct {
 
 	// description
 	Description string `json:"description,omitempty"`
 
 	// parameters
-	Parameters map[string]TypeParameter `json:"parameters,omitempty"`
+	Parameters DlframeworkModelManifestTypeParameters `json:"parameters,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`
 }
 
-/* polymorph dlframeworkModelManifestType description false */
-
-/* polymorph dlframeworkModelManifestType parameters false */
-
-/* polymorph dlframeworkModelManifestType type false */
-
 // Validate validates this dlframework model manifest type
 func (m *DlframeworkModelManifestType) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateParameters(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *DlframeworkModelManifestType) validateParameters(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Parameters) { // not required
-		return nil
-	}
-
-	if err := validate.Required("parameters", "body", m.Parameters); err != nil {
-		return err
-	}
-
 	return nil
 }
 

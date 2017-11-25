@@ -6,8 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -16,11 +14,10 @@ import (
 
 // DlframeworkFeatureResponse dlframework feature response
 // swagger:model dlframeworkFeatureResponse
-
 type DlframeworkFeatureResponse struct {
 
 	// features
-	Features []*DlframeworkFeature `json:"features"`
+	Features DlframeworkFeatureResponseFeatures `json:"features"`
 
 	// id
 	ID string `json:"id,omitempty"`
@@ -35,55 +32,13 @@ type DlframeworkFeatureResponse struct {
 	RequestID string `json:"request_id,omitempty"`
 }
 
-/* polymorph dlframeworkFeatureResponse features false */
-
-/* polymorph dlframeworkFeatureResponse id false */
-
-/* polymorph dlframeworkFeatureResponse input_id false */
-
-/* polymorph dlframeworkFeatureResponse metadata false */
-
-/* polymorph dlframeworkFeatureResponse request_id false */
-
 // Validate validates this dlframework feature response
 func (m *DlframeworkFeatureResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateFeatures(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *DlframeworkFeatureResponse) validateFeatures(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Features) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Features); i++ {
-
-		if swag.IsZero(m.Features[i]) { // not required
-			continue
-		}
-
-		if m.Features[i] != nil {
-
-			if err := m.Features[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("features" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

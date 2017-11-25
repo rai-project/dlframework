@@ -14,14 +14,11 @@ import (
 
 // DlframeworkPredictor dlframework predictor
 // swagger:model dlframeworkPredictor
-
 type DlframeworkPredictor struct {
 
 	// id
 	ID string `json:"id,omitempty"`
 }
-
-/* polymorph dlframeworkPredictor id false */
 
 // Validate validates this dlframework predictor
 func (m *DlframeworkPredictor) Validate(formats strfmt.Registry) error {

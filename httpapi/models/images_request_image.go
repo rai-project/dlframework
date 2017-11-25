@@ -14,7 +14,6 @@ import (
 
 // ImagesRequestImage images request image
 // swagger:model ImagesRequestImage
-
 type ImagesRequestImage struct {
 
 	// The image is base64 encoded
@@ -23,10 +22,6 @@ type ImagesRequestImage struct {
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
 }
-
-/* polymorph ImagesRequestImage data false */
-
-/* polymorph ImagesRequestImage id false */
 
 // Validate validates this images request image
 func (m *ImagesRequestImage) Validate(formats strfmt.Registry) error {

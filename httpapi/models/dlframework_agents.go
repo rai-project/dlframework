@@ -6,8 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -16,54 +14,19 @@ import (
 
 // DlframeworkAgents dlframework agents
 // swagger:model dlframeworkAgents
-
 type DlframeworkAgents struct {
 
 	// agents
-	Agents []*DlframeworkAgent `json:"agents"`
+	Agents DlframeworkAgentsAgents `json:"agents"`
 }
-
-/* polymorph dlframeworkAgents agents false */
 
 // Validate validates this dlframework agents
 func (m *DlframeworkAgents) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAgents(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *DlframeworkAgents) validateAgents(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Agents) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Agents); i++ {
-
-		if swag.IsZero(m.Agents[i]) { // not required
-			continue
-		}
-
-		if m.Agents[i] != nil {
-
-			if err := m.Agents[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("agents" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
