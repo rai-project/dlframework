@@ -763,6 +763,12 @@ const (
         "gpuinfo": {
           "type": "string"
         },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFrameworkManifest"
+          }
+        },
         "metadata": {
           "type": "object",
           "additionalProperties": {

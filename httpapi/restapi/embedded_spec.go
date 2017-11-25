@@ -504,6 +504,12 @@ func init() {
         "cpuinfo": {
           "type": "string"
         },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkFrameworkManifest"
+          }
+        },
         "gpuinfo": {
           "type": "string"
         },

@@ -22,6 +22,9 @@ type DlframeworkAgent struct {
 	// cpuinfo
 	Cpuinfo string `json:"cpuinfo,omitempty"`
 
+	// frameworks
+	Frameworks DlframeworkAgentFrameworks `json:"frameworks"`
+
 	// gpuinfo
 	Gpuinfo string `json:"gpuinfo,omitempty"`
 
