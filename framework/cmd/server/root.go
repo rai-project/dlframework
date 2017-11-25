@@ -191,12 +191,17 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 	return done, nil
 }
 
+type FrameworkRegisterFunction func()
+
 // represents the base command when called without any subcommands
-func NewRootCommand(framework0 dlframework.FrameworkManifest) (*cobra.Command, error) {
+func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework0.GetName()
 	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
+		PreRun: func(c *cobra.Command, args []string) error {
+			frameworkRegisterFunc()
+		},
 		RunE: func(c *cobra.Command, args []string) error {
 			e := robustly.Run(
 				func() {

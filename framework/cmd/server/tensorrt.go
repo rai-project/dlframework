@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	rootCmd, err := cmd.NewRootCommand(tensorrt.FrameworkManifest)
+	rootCmd, err := cmd.NewRootCommand(tensorrt.Register, tensorrt.FrameworkManifest)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
