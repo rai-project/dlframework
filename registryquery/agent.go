@@ -72,7 +72,7 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 			return nil
 		}
 
-		pp.Println(string(val))
+		pp.Println(val)
 
 		agent := &webmodels.DlframeworkAgent{}
 		err := json.Unmarshal(val, agent)

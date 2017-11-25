@@ -38,6 +38,16 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 
 	prefix = path.Join(config.App.Name, prefix)
 
+	frameworks0, err := dl.Frameworks()
+	if err != nil {
+		log.WithError(err).Error("failed to get frameworks while publishing predictor")
+		return err
+	}
+	frameworks := make([]*dl.FrameworkManifest, len(frameworks0))
+	for ii := range frameworks0 {
+		frameworks[ii] = &frameworks0[ii]
+	}
+
 	rgs.Put(prefix, nil, &store.WriteOptions{IsDir: true})
 
 	var wg sync.WaitGroup
@@ -66,6 +76,7 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 				Hasgpu:       nvidiasmi.HasGPU,
 				Gpuinfo:      string(gpuinfo),
 				Cpuinfo:      "TODO",
+				Frameworks:   frameworks,
 			})
 			if err != nil {
 				return

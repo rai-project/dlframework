@@ -131,7 +131,8 @@ message Agent {
   bool hasgpu = 5 [ (gogoproto.moretags) = "yaml:\"hasgpu,omitempty\"" ];
   string cpuinfo = 6 [ (gogoproto.moretags) = "yaml:\"cpuinfo,omitempty\"" ];
   string gpuinfo = 7 [ (gogoproto.moretags) = "yaml:\"gpuinfo,omitempty\"" ];
-  map<string, string> metadata = 8
+  repeated FrameworkManifest frameworks = 8 [ (gogoproto.moretags) = "yaml:\"frameworks,omitempty\"" ];
+  map<string, string> metadata = 9
       [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
 }
 
