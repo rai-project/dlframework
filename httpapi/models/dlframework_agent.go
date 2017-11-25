@@ -14,24 +14,32 @@ import (
 
 // DlframeworkAgent dlframework agent
 // swagger:model dlframeworkAgent
-
 type DlframeworkAgent struct {
+
+	// architecture
+	Architecture string `json:"architecture,omitempty"`
+
+	// cpuinfo
+	Cpuinfo string `json:"cpuinfo,omitempty"`
+
+	// gpuinfo
+	Gpuinfo string `json:"gpuinfo,omitempty"`
+
+	// hasgpu
+	Hasgpu bool `json:"hasgpu,omitempty"`
 
 	// host
 	Host string `json:"host,omitempty"`
 
+	// hostname
+	Hostname string `json:"hostname,omitempty"`
+
+	// metadata
+	Metadata map[string]string `json:"metadata,omitempty"`
+
 	// port
 	Port string `json:"port,omitempty"`
-
-	// specification
-	Specification string `json:"specification,omitempty"`
 }
-
-/* polymorph dlframeworkAgent host false */
-
-/* polymorph dlframeworkAgent port false */
-
-/* polymorph dlframeworkAgent specification false */
 
 // Validate validates this dlframework agent
 func (m *DlframeworkAgent) Validate(formats strfmt.Registry) error {

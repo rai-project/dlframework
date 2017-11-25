@@ -10,16 +10,14 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DlframeworkFrameworkManifest dlframework framework manifest
 // swagger:model dlframeworkFrameworkManifest
-
 type DlframeworkFrameworkManifest struct {
 
 	// container
-	Container map[string]DlframeworkContainerHardware `json:"container,omitempty"`
+	Container DlframeworkFrameworkManifestContainer `json:"container,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -28,37 +26,13 @@ type DlframeworkFrameworkManifest struct {
 	Version string `json:"version,omitempty"`
 }
 
-/* polymorph dlframeworkFrameworkManifest container false */
-
-/* polymorph dlframeworkFrameworkManifest name false */
-
-/* polymorph dlframeworkFrameworkManifest version false */
-
 // Validate validates this dlframework framework manifest
 func (m *DlframeworkFrameworkManifest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateContainer(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *DlframeworkFrameworkManifest) validateContainer(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Container) { // not required
-		return nil
-	}
-
-	if err := validate.Required("container", "body", m.Container); err != nil {
-		return err
-	}
-
 	return nil
 }
 

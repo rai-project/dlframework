@@ -6,18 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DlframeworkModelManifest dlframework model manifest
 // swagger:model dlframeworkModelManifest
-
 type DlframeworkModelManifest struct {
 
 	// after postprocess
@@ -36,7 +32,7 @@ type DlframeworkModelManifest struct {
 	BeforePreprocess string `json:"before_preprocess,omitempty"`
 
 	// container
-	Container map[string]DlframeworkContainerHardware `json:"container,omitempty"`
+	Container DlframeworkModelManifestContainer `json:"container,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -48,7 +44,7 @@ type DlframeworkModelManifest struct {
 	Hidden bool `json:"hidden,omitempty"`
 
 	// inputs
-	Inputs []*DlframeworkModelManifestType `json:"inputs"`
+	Inputs DlframeworkModelManifestInputs `json:"inputs"`
 
 	// license
 	License string `json:"license,omitempty"`
@@ -75,57 +71,11 @@ type DlframeworkModelManifest struct {
 	Version string `json:"version,omitempty"`
 }
 
-/* polymorph dlframeworkModelManifest after_postprocess false */
-
-/* polymorph dlframeworkModelManifest after_preprocess false */
-
-/* polymorph dlframeworkModelManifest attributes false */
-
-/* polymorph dlframeworkModelManifest before_postprocess false */
-
-/* polymorph dlframeworkModelManifest before_preprocess false */
-
-/* polymorph dlframeworkModelManifest container false */
-
-/* polymorph dlframeworkModelManifest description false */
-
-/* polymorph dlframeworkModelManifest framework false */
-
-/* polymorph dlframeworkModelManifest hidden false */
-
-/* polymorph dlframeworkModelManifest inputs false */
-
-/* polymorph dlframeworkModelManifest license false */
-
-/* polymorph dlframeworkModelManifest model false */
-
-/* polymorph dlframeworkModelManifest name false */
-
-/* polymorph dlframeworkModelManifest output false */
-
-/* polymorph dlframeworkModelManifest postprocess false */
-
-/* polymorph dlframeworkModelManifest preprocess false */
-
-/* polymorph dlframeworkModelManifest reference false */
-
-/* polymorph dlframeworkModelManifest version false */
-
 // Validate validates this dlframework model manifest
 func (m *DlframeworkModelManifest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateContainer(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
 	if err := m.validateFramework(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateInputs(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -151,19 +101,6 @@ func (m *DlframeworkModelManifest) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkModelManifest) validateContainer(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Container) { // not required
-		return nil
-	}
-
-	if err := validate.Required("container", "body", m.Container); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *DlframeworkModelManifest) validateFramework(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Framework) { // not required
@@ -178,33 +115,6 @@ func (m *DlframeworkModelManifest) validateFramework(formats strfmt.Registry) er
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *DlframeworkModelManifest) validateInputs(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Inputs) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if swag.IsZero(m.Inputs[i]) { // not required
-			continue
-		}
-
-		if m.Inputs[i] != nil {
-
-			if err := m.Inputs[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

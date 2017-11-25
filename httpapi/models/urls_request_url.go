@@ -14,7 +14,6 @@ import (
 
 // UrlsRequestURL urls request URL
 // swagger:model URLsRequestURL
-
 type UrlsRequestURL struct {
 
 	// data
@@ -23,10 +22,6 @@ type UrlsRequestURL struct {
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
 }
-
-/* polymorph URLsRequestURL data false */
-
-/* polymorph URLsRequestURL id false */
 
 // Validate validates this urls request URL
 func (m *UrlsRequestURL) Validate(formats strfmt.Registry) error {

@@ -39,7 +39,7 @@ func (o *DatasetStreamURL) Build() (*url.URL, error) {
 
 	_basePath := o._basePath
 	if _basePath == "" {
-		_basePath = "/api/v1"
+		_basePath = "/api"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
 

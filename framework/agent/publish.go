@@ -1,9 +1,14 @@
 package agent
 
 import (
+	"encoding/json"
+	"os"
 	"path"
+	"runtime"
 	"strings"
 	"sync"
+
+	"github.com/rai-project/nvidia-smi"
 
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
@@ -45,7 +50,23 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 			if err != nil {
 				return
 			}
-			bts, err := marshaler.Marshal(&model)
+			spltHost := strings.Split(host, ":")
+			ip, port := spltHost[0], spltHost[1]
+			hostName, _ := os.Hostname()
+			gpuinfo, err := json.Marshal(nvidiasmi.Info)
+			if err != nil {
+				log.WithError(err).Error("failed to get agent's nvidia-smi information")
+				gpuinfo = []byte{}
+			}
+			bts, err := marshaler.Marshal(&dl.Agent{
+				Host:         ip,
+				Port:         port,
+				Hostname:     hostName,
+				Architecture: runtime.GOARCH,
+				Hasgpu:       nvidiasmi.HasGPU,
+				Gpuinfo:      string(gpuinfo),
+				Cpuinfo:      "TODO",
+			})
 			if err != nil {
 				return
 			}

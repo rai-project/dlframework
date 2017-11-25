@@ -14,14 +14,11 @@ import (
 
 // TypeParameter type parameter
 // swagger:model TypeParameter
-
 type TypeParameter struct {
 
 	// value
 	Value string `json:"value,omitempty"`
 }
-
-/* polymorph TypeParameter value false */
 
 // Validate validates this type parameter
 func (m *TypeParameter) Validate(formats strfmt.Registry) error {

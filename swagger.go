@@ -747,8 +747,27 @@ const (
         "port": {
           "type": "string"
         },
-        "specification": {
+        "hostname": {
           "type": "string"
+        },
+        "architecture": {
+          "type": "string"
+        },
+        "hasgpu": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "cpuinfo": {
+          "type": "string"
+        },
+        "gpuinfo": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -904,7 +923,7 @@ const (
     }
   },
   "host": "carml.org",
-  "basePath": "/api/v1",
+  "basePath": "/api",
   "externalDocs": {
     "url": "https://rai-project.github.io/carml"
   }
@@ -926,7 +945,7 @@ const (
 		}
 	},
 	"host": "carml.org",
-	"basePath": "/api/v1",
+	"basePath": "/api",
 	"externalDocs": {
 		"url": "https://rai-project.github.io/carml"
 	}

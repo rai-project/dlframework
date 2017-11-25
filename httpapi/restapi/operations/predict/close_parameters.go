@@ -30,7 +30,7 @@ func NewCloseParams() CloseParams {
 type CloseParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request
+	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  Required: true

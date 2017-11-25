@@ -14,7 +14,7 @@
 		}
 	},
 	"host": "carml.org",
-	"basePath": "/api/v1",
+	"basePath": "/api",
 	"externalDocs": {
 		"url": "https://rai-project.github.io/carml"
 	}
