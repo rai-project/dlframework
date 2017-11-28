@@ -144,9 +144,6 @@ import:
 - package: golang.org/x/sync
   subpackages:
   - syncmap
-- package: gonum.org/v1/gonum
-  subpackages:
-  - stat
 - package: google.golang.org/genproto
   subpackages:
   - googleapis/api/annotations
