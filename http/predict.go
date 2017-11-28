@@ -13,6 +13,8 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/registryquery"
 	"github.com/rai-project/grpc"
+	"github.com/rai-project/tracer"
+	"github.com/rai-project/uuid"
 	"golang.org/x/sync/syncmap"
 	gogrpc "google.golang.org/grpc"
 )
@@ -31,20 +33,33 @@ func getBody(s, defaultValue string) string {
 
 func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.PredictionOptions {
 	if opts == nil {
-		return &dl.PredictionOptions{}
+		opts = &webmodels.DlframeworkPredictionOptions{}
 	}
 
 	execOpts := &dl.ExecutionOptions{}
 	if opts.ExecutionOptions != nil {
 		execOpts = &dl.ExecutionOptions{
 			TraceLevel: dl.ExecutionOptions_TraceLevel(
-				dl.ExecutionOptions_TraceLevel_value[string(opts.ExecutionOptions.TraceLevel)],
+				tracer.LevelFromName(string(opts.ExecutionOptions.TraceLevel)),
 			),
 			TimeoutInMs: opts.ExecutionOptions.TimeoutInMs,
 			DeviceCount: opts.ExecutionOptions.DeviceCount,
 			// CPUOptions: opts.ExecutionOptions.CPUOptions,
 			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
 		}
+	} else {
+		execOpts = &dl.ExecutionOptions{
+			TraceLevel: dl.ExecutionOptions_TraceLevel(
+				tracer.Config.Level,
+			),
+		}
+	}
+
+	if opts.RequestID == "" {
+		opts.RequestID = uuid.NewV4()
+	}
+	if opts.FeatureLimit == 0 {
+		opts.FeatureLimit = 10
 	}
 
 	predOpts := &dl.PredictionOptions{
