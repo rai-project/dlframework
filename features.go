@@ -5,7 +5,6 @@ import (
 	"sort"
 
 	"github.com/pkg/errors"
-	"gonum.org/v1/gonum/stat"
 )
 
 type Features []*Feature
@@ -63,7 +62,7 @@ func (p Features) KullbackLeiblerDivergence(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.KullbackLeibler(pProbs, qProbs), nil
+	return KullbackLeibler(pProbs, qProbs), nil
 }
 
 func (p Features) Correlation(q Features) (float64, error) {
@@ -74,7 +73,7 @@ func (p Features) Correlation(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.Correlation(pProbs, qProbs, nil), nil
+	return Correlation(pProbs, qProbs, nil), nil
 }
 
 func (p Features) Covariance(q Features) (float64, error) {
@@ -85,7 +84,7 @@ func (p Features) Covariance(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.Covariance(pProbs, qProbs, nil), nil
+	return Covariance(pProbs, qProbs, nil), nil
 }
 
 func (p Features) JensenShannon(q Features) (float64, error) {
@@ -96,7 +95,7 @@ func (p Features) JensenShannon(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.JensenShannon(pProbs, qProbs), nil
+	return JensenShannon(pProbs, qProbs), nil
 }
 
 func (p Features) Bhattacharyya(q Features) (float64, error) {
@@ -107,7 +106,7 @@ func (p Features) Bhattacharyya(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.Bhattacharyya(pProbs, qProbs), nil
+	return Bhattacharyya(pProbs, qProbs), nil
 }
 
 func (p Features) Hellinger(q Features) (float64, error) {
@@ -118,5 +117,5 @@ func (p Features) Hellinger(q Features) (float64, error) {
 	pProbs := p.ProbabilitiesFloat64()
 	qProbs := q.ProbabilitiesFloat64()
 
-	return stat.Hellinger(pProbs, qProbs), nil
+	return Hellinger(pProbs, qProbs), nil
 }
