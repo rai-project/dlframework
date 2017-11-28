@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/jeffail/tunny"
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -71,8 +70,6 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 		if _, ok := set[keyBase]; ok {
 			return nil
 		}
-
-		pp.Println(val)
 
 		agent := &webmodels.DlframeworkAgent{}
 		err := json.Unmarshal(val, agent)
