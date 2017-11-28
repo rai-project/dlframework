@@ -21,7 +21,7 @@ install-deps: ## Install dependencies
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 glide-install: ## Performs glide install
-	glide install --force
+	glide install -v --force
 
 logrus-fix: ## Fixes logrus
 	rm -fr vendor/github.com/Sirupsen

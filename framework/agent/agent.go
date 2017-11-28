@@ -61,7 +61,8 @@ func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
 }
 
 func getTraceLevelOption(opts *dl.PredictionOptions) tracer.Level {
-	return tracer.LevelFromName(opts.GetExecutionOptions().GetTraceLevel().String())
+	level := tracer.LevelFromName(opts.GetExecutionOptions().GetTraceLevel().String())
+	return level
 }
 
 // Opens a predictor and returns an id where the predictor
@@ -212,7 +213,6 @@ func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.Predic
 }
 
 func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface{}, error) {
-
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
 	}
