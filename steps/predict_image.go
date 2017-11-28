@@ -65,6 +65,8 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		"framework_version": framework.GetVersion(),
 		"batch_size":        opts.BatchSize(),
 		"device":            opts.Devices().String(),
+		"trace_level":       opts.TraceLevel().String(),
+		"uses_gpu":          opts.UsesGPU(),
 	})
 	defer span.Finish()
 
