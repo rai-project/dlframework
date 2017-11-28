@@ -4,23 +4,29 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
+	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 )
 
 var (
-	base = "src/github.com/rai-project"
-	all  = []string{"mxnet", "tensorflow", "caffe", "caffe2", "tensorrt", "cntk"}
+	base   = "src/github.com/rai-project"
+	agents = []string{}
 )
 
 var startallCmd = &cobra.Command{
-	Use:     "startallCmd",
-	Short:   "startallCmd",
+	Use:     "startall",
+	Short:   "starts the " + strings.Join(agents, " ") + " agents",
 	Aliases: []string{"startall", "start"},
-	Long:    `startallCmd`,
+	Long:    `starts all the CarML agents`,
 	RunE: func(c *cobra.Command, args []string) error {
+		var wg sync.WaitGroup
 		for _, framework := range all {
+			wg.Add(1)
 			go func(framework string) {
+				defer wg.Done()
 				main := filepath.Join(os.Getenv("GOPATH"), base, framework, framework+"-agent", "main.go")
 				args := []string{
 					"run",
@@ -33,10 +39,9 @@ var startallCmd = &cobra.Command{
 				cmd.Stdout = os.Stdout
 				cmd.Stderr = os.Stderr
 				cmd.Run()
-
 			}(framework)
 		}
-		select {}
+		wg.Wait()
 
 		return nil
 	},
@@ -44,4 +49,16 @@ var startallCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(startallCmd)
+	agents = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
+	if runtime.GOOS != "linux" {
+		return
+	}
+	if runtime.GOARCH == "ppc64le" {
+		return
+	}
+	args = append(agents, "tensorrt")
+	if runtime.GOARCH == "arm64" {
+		return
+	}
+	args = append(agents, "cntk")
 }
