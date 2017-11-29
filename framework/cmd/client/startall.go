@@ -7,7 +7,9 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"syscall"
 
+	shutdown "github.com/klauspost/shutdown2"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +25,11 @@ var startallCmd = &cobra.Command{
 	Long:    `starts all the CarML agents`,
 	RunE: func(c *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
-		for _, framework := range all {
+		quitAll := make(chan struct{})
+		shutdown.SecondFn(func() {
+			defer close(quitAll)
+		})
+		for _, framework := range agents {
 			wg.Add(1)
 			go func(framework string) {
 				defer wg.Done()
@@ -35,10 +41,27 @@ var startallCmd = &cobra.Command{
 					"-d",
 					"-v",
 				}
-				cmd := exec.Command("go", args...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-				cmd.Run()
+				frameworkExited := make(chan error)
+				var cmd *exec.Cmd
+				runFramework := func() {
+					cmd = exec.Command("go", args...)
+					cmd.Stdout = os.Stdout
+					cmd.Stderr = os.Stderr
+					frameworkExited <- cmd.Run()
+				}
+				go runFramework()
+				for {
+					select {
+					case <-frameworkExited:
+						go runFramework()
+					case <-quitAll:
+						if cmd != nil {
+							cmd.Process.Signal(syscall.SIGTERM)
+							cmd.Process.Kill()
+						}
+						return
+					}
+				}
 			}(framework)
 		}
 		wg.Wait()
@@ -49,16 +72,16 @@ var startallCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(startallCmd)
-	agents = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
+	agents = []string{"caffe", "caffe2"}
 	if runtime.GOOS != "linux" {
 		return
 	}
 	if runtime.GOARCH == "ppc64le" {
 		return
 	}
-	args = append(agents, "tensorrt")
+	agents = append(agents, "tensorrt")
 	if runtime.GOARCH == "arm64" {
 		return
 	}
-	args = append(agents, "cntk")
+	agents = append(agents, "cntk")
 }
