@@ -72,7 +72,7 @@ var startallCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(startallCmd)
-	agents = []string{"caffe", "caffe2"}
+	agents = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
 	if runtime.GOOS != "linux" {
 		return
 	}
