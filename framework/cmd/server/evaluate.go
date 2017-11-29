@@ -54,14 +54,14 @@ var (
 		"Inception_4.0",
 		"VGG19_1.0",
 	}
-	models = models_c
+	models = models_tf
 
 	frameworks = []string{
 		// "caffe",
 		// "mxnet",
 		// "caffe2",
-		// "tensorflow",
-		"tensorrt",
+		"tensorflow",
+		// "tensorrt",
 	}
 	batchSizes = []int{
 		384,
