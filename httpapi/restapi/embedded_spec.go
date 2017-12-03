@@ -836,6 +836,9 @@ func init() {
     "dlframeworkPredictionOptions": {
       "type": "object",
       "properties": {
+        "agent": {
+          "type": "string"
+        },
         "batch_size": {
           "type": "integer",
           "format": "int64"

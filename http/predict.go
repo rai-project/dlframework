@@ -91,7 +91,24 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 			))
 	}
 
-	agent := agents[rand.Intn(len(agents))]
+	var agent *webmodels.DlframeworkAgent
+	if params.Body.Options == nil || params.Body.Options.Agent == "" {
+		agent = agents[rand.Intn(len(agents))]
+	} else {
+		for _, a := range agents {
+			if a.Host == params.Body.Options.Agent {
+				agent = a
+				break
+			}
+		}
+		if agent == nil {
+			return NewError("Predict/Open",
+				errors.Errorf("unable to find agent %v which supports framework=%s:%s model=%s:%s",
+					params.Body.Options.Agent, frameworkName, frameworkVersion, modelName, modelVersion,
+				))
+		}
+	}
+
 	serverAddress := fmt.Sprintf("%s:%s", agent.Host, agent.Port)
 
 	ctx := params.HTTPRequest.Context()

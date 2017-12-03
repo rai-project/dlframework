@@ -14,11 +14,14 @@ import (
 
 // DlframeworkResetResponse dlframework reset response
 // swagger:model dlframeworkResetResponse
+
 type DlframeworkResetResponse struct {
 
 	// predictor
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
+
+/* polymorph dlframeworkResetResponse predictor false */
 
 // Validate validates this dlframework reset response
 func (m *DlframeworkResetResponse) Validate(formats strfmt.Registry) error {

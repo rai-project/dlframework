@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -14,6 +16,7 @@ import (
 
 // DlframeworkUrlsRequest dlframework urls request
 // swagger:model dlframeworkURLsRequest
+
 type DlframeworkUrlsRequest struct {
 
 	// options
@@ -23,8 +26,14 @@ type DlframeworkUrlsRequest struct {
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 
 	// urls
-	Urls DlframeworkUrlsRequestUrls `json:"urls"`
+	Urls []*UrlsRequestURL `json:"urls"`
 }
+
+/* polymorph dlframeworkURLsRequest options false */
+
+/* polymorph dlframeworkURLsRequest predictor false */
+
+/* polymorph dlframeworkURLsRequest urls false */
 
 // Validate validates this dlframework urls request
 func (m *DlframeworkUrlsRequest) Validate(formats strfmt.Registry) error {
@@ -36,6 +45,11 @@ func (m *DlframeworkUrlsRequest) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePredictor(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateUrls(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -79,6 +93,33 @@ func (m *DlframeworkUrlsRequest) validatePredictor(formats strfmt.Registry) erro
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkUrlsRequest) validateUrls(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Urls) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Urls); i++ {
+
+		if swag.IsZero(m.Urls[i]) { // not required
+			continue
+		}
+
+		if m.Urls[i] != nil {
+
+			if err := m.Urls[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("urls" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

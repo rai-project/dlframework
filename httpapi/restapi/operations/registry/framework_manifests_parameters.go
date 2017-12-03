@@ -29,7 +29,7 @@ func NewFrameworkManifestsParams() FrameworkManifestsParams {
 type FrameworkManifestsParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request `json:"-"`
+	HTTPRequest *http.Request
 
 	/*
 	  In: query

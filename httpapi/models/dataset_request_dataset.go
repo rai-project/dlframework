@@ -14,6 +14,7 @@ import (
 
 // DatasetRequestDataset dataset request dataset
 // swagger:model DatasetRequestDataset
+
 type DatasetRequestDataset struct {
 
 	// category
@@ -22,6 +23,10 @@ type DatasetRequestDataset struct {
 	// name
 	Name string `json:"name,omitempty"`
 }
+
+/* polymorph DatasetRequestDataset category false */
+
+/* polymorph DatasetRequestDataset name false */
 
 // Validate validates this dataset request dataset
 func (m *DatasetRequestDataset) Validate(formats strfmt.Registry) error {

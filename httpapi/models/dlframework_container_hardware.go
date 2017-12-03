@@ -14,6 +14,7 @@ import (
 
 // DlframeworkContainerHardware dlframework container hardware
 // swagger:model dlframeworkContainerHardware
+
 type DlframeworkContainerHardware struct {
 
 	// cpu
@@ -22,6 +23,10 @@ type DlframeworkContainerHardware struct {
 	// gpu
 	Gpu string `json:"gpu,omitempty"`
 }
+
+/* polymorph dlframeworkContainerHardware cpu false */
+
+/* polymorph dlframeworkContainerHardware gpu false */
 
 // Validate validates this dlframework container hardware
 func (m *DlframeworkContainerHardware) Validate(formats strfmt.Registry) error {
