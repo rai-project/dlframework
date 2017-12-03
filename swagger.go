@@ -636,6 +636,9 @@ const (
         },
         "execution_options": {
           "$ref": "#/definitions/dlframeworkExecutionOptions"
+        },
+        "agent": {
+          "type": "string"
         }
       }
     },

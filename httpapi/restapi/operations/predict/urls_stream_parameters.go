@@ -30,7 +30,7 @@ func NewUrlsStreamParams() UrlsStreamParams {
 type UrlsStreamParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request `json:"-"`
+	HTTPRequest *http.Request
 
 	/*
 	  Required: true

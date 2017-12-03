@@ -197,18 +197,10 @@ func RegisterPredictHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 // RegisterPredictHandler registers the http handlers for service Predict to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterPredictHandlerClient(ctx, mux, NewPredictClient(conn))
-}
-
-// RegisterPredictHandler registers the http handlers for service Predict to "mux".
-// The handlers forward requests to the grpc endpoint over the given implementation of "PredictClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PredictClient"
-// doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "PredictClient" to call the correct interceptors.
-func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PredictClient) error {
+	client := NewPredictClient(conn)
 
 	mux.Handle("POST", pattern_Predict_Open_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -237,7 +229,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_Close_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -266,7 +258,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_URLs_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -295,7 +287,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_URLsStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -324,7 +316,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_Images_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -353,7 +345,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_ImagesStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -382,7 +374,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_Dataset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -411,7 +403,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_DatasetStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -440,7 +432,7 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 	})
 
 	mux.Handle("POST", pattern_Predict_Reset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
+		ctx, cancel := context.WithCancel(ctx)
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {

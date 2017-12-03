@@ -30,7 +30,7 @@ func NewDatasetStreamParams() DatasetStreamParams {
 type DatasetStreamParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request `json:"-"`
+	HTTPRequest *http.Request
 
 	/*
 	  Required: true
