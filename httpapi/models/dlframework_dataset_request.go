@@ -14,6 +14,7 @@ import (
 
 // DlframeworkDatasetRequest dlframework dataset request
 // swagger:model dlframeworkDatasetRequest
+
 type DlframeworkDatasetRequest struct {
 
 	// dataset
@@ -25,6 +26,12 @@ type DlframeworkDatasetRequest struct {
 	// predictor
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
+
+/* polymorph dlframeworkDatasetRequest dataset false */
+
+/* polymorph dlframeworkDatasetRequest options false */
+
+/* polymorph dlframeworkDatasetRequest predictor false */
 
 // Validate validates this dlframework dataset request
 func (m *DlframeworkDatasetRequest) Validate(formats strfmt.Registry) error {

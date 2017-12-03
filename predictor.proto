@@ -128,6 +128,8 @@ message PredictionOptions {
       [ (gogoproto.moretags) = "yaml:\"batch_size,omitempty\"" ];
   ExecutionOptions execution_options = 4
       [ (gogoproto.moretags) = "yaml:\"execution_options,omitempty\"" ];
+  string agent = 5
+      [ (gogoproto.moretags) = "yaml:\"agent,omitempty\"" ];
 }
 
 message PredictorOpenRequest {

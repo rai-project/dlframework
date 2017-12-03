@@ -14,6 +14,7 @@ import (
 
 // ModelManifestModel model manifest model
 // swagger:model ModelManifestModel
+
 type ModelManifestModel struct {
 
 	// base url
@@ -34,6 +35,18 @@ type ModelManifestModel struct {
 	// weights path
 	WeightsPath string `json:"weights_path,omitempty"`
 }
+
+/* polymorph ModelManifestModel base_url false */
+
+/* polymorph ModelManifestModel graph_checksum false */
+
+/* polymorph ModelManifestModel graph_path false */
+
+/* polymorph ModelManifestModel is_archive false */
+
+/* polymorph ModelManifestModel weights_checksum false */
+
+/* polymorph ModelManifestModel weights_path false */
 
 // Validate validates this model manifest model
 func (m *ModelManifestModel) Validate(formats strfmt.Registry) error {

@@ -14,6 +14,7 @@ import (
 
 // DlframeworkPredictorOpenRequest dlframework predictor open request
 // swagger:model dlframeworkPredictorOpenRequest
+
 type DlframeworkPredictorOpenRequest struct {
 
 	// framework name
@@ -31,6 +32,16 @@ type DlframeworkPredictorOpenRequest struct {
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
+
+/* polymorph dlframeworkPredictorOpenRequest framework_name false */
+
+/* polymorph dlframeworkPredictorOpenRequest framework_version false */
+
+/* polymorph dlframeworkPredictorOpenRequest model_name false */
+
+/* polymorph dlframeworkPredictorOpenRequest model_version false */
+
+/* polymorph dlframeworkPredictorOpenRequest options false */
 
 // Validate validates this dlframework predictor open request
 func (m *DlframeworkPredictorOpenRequest) Validate(formats strfmt.Registry) error {

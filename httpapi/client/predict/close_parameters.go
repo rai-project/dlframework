@@ -124,10 +124,12 @@ func (o *CloseParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 	}
 	var res []error
 
-	if o.Body != nil {
-		if err := r.SetBodyParam(o.Body); err != nil {
-			return err
-		}
+	if o.Body == nil {
+		o.Body = new(models.DlframeworkPredictor)
+	}
+
+	if err := r.SetBodyParam(o.Body); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

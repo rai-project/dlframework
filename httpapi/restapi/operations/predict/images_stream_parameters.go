@@ -30,7 +30,7 @@ func NewImagesStreamParams() ImagesStreamParams {
 type ImagesStreamParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request `json:"-"`
+	HTTPRequest *http.Request
 
 	/*
 	  Required: true
