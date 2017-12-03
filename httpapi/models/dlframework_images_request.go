@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -14,10 +16,11 @@ import (
 
 // DlframeworkImagesRequest dlframework images request
 // swagger:model dlframeworkImagesRequest
+
 type DlframeworkImagesRequest struct {
 
-	// images
-	Images DlframeworkImagesRequestImages `json:"images"`
+	// A list of Base64 encoded images
+	Images []*ImagesRequestImage `json:"images"`
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
@@ -26,9 +29,20 @@ type DlframeworkImagesRequest struct {
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
 
+/* polymorph dlframeworkImagesRequest images false */
+
+/* polymorph dlframeworkImagesRequest options false */
+
+/* polymorph dlframeworkImagesRequest predictor false */
+
 // Validate validates this dlframework images request
 func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateImages(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
 
 	if err := m.validateOptions(formats); err != nil {
 		// prop
@@ -43,6 +57,33 @@ func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *DlframeworkImagesRequest) validateImages(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Images) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Images); i++ {
+
+		if swag.IsZero(m.Images[i]) { // not required
+			continue
+		}
+
+		if m.Images[i] != nil {
+
+			if err := m.Images[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("images" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

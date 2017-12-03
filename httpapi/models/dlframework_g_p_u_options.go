@@ -14,6 +14,7 @@ import (
 
 // DlframeworkGPUOptions dlframework g p u options
 // swagger:model dlframeworkGPUOptions
+
 type DlframeworkGPUOptions struct {
 
 	// The type of GPU allocation strategy to use.
@@ -61,6 +62,14 @@ type DlframeworkGPUOptions struct {
 	// physical to visible device mapping prior to invoking TensorFlow.
 	VisibleDeviceList string `json:"visible_device_list,omitempty"`
 }
+
+/* polymorph dlframeworkGPUOptions allocator_type false */
+
+/* polymorph dlframeworkGPUOptions force_gpu_compatible false */
+
+/* polymorph dlframeworkGPUOptions per_process_gpu_memory_fraction false */
+
+/* polymorph dlframeworkGPUOptions visible_device_list false */
 
 // Validate validates this dlframework g p u options
 func (m *DlframeworkGPUOptions) Validate(formats strfmt.Registry) error {

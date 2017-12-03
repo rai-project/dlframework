@@ -29,7 +29,7 @@ func NewFrameworkAgentsParams() FrameworkAgentsParams {
 type FrameworkAgentsParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request `json:"-"`
+	HTTPRequest *http.Request
 
 	/*
 	  In: query
