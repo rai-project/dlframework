@@ -20,6 +20,7 @@ import (
 var (
 	fullFlops         bool
 	humanFlops        bool
+	outputToFile      bool
 	flopsOutputFormat string
 )
 
@@ -65,8 +66,16 @@ var flopsInfoCmd = &cobra.Command{
 			}
 		}
 
-		tableWriter := tablewriter.NewWriter(os.Stdout)
-		csvWriter := csv.NewWriter(os.Stdout)
+		output := os.Stdout
+		if outputToFile {
+			output, err = os.Create(strings.ToLower(modelName + "_" + modelVersion))
+			if err != nil {
+				return err
+			}
+			defer output.Close()
+		}
+		tableWriter := tablewriter.NewWriter(output)
+		csvWriter := csv.NewWriter(output)
 
 		flopsOutputFormat := strings.ToLower(flopsOutputFormat)
 
@@ -140,5 +149,6 @@ func init() {
 	flopsInfoCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
 	flopsInfoCmd.PersistentFlags().BoolVar(&humanFlops, "human", false, "print flops in human form")
 	flopsInfoCmd.PersistentFlags().BoolVar(&fullFlops, "full", false, "print all information about flops")
+	flopsInfoCmd.PersistentFlags().BoolVar(&outputToFile, "output_to_file", false, "output to file")
 	flopsInfoCmd.PersistentFlags().StringVarP(&flopsOutputFormat, "format", "f", "table", "print format to use")
 }
