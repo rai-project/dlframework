@@ -58,25 +58,26 @@ var (
 
 	frameworks = []string{
 		"caffe",
-		// "mxnet",
+		"mxnet",
 		"caffe2",
 		// "tensorflow",
-		// "tensorrt",
+		"cntk",
+		"tensorrt",
 	}
 	batchSizes = []int{
-		384,
-		320,
+		// 384,
+		// 320,
 		256,
 		196,
 		128,
-		96,
+		// 96,
 		64,
-		48,
+		// 48,
 		32,
 		16,
-		8,
-		4,
-		2,
+		// 8,
+		// 4,
+		// 2,
 		1,
 	}
 	timeout                  = 4 * time.Hour
