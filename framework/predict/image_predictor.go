@@ -208,29 +208,38 @@ func (p ImagePredictor) GetLayout() (string, error) {
 	return val, nil
 }
 
-func (p ImagePredictor) GetColorMode() (string, error) {
+func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
-		return "", errors.New("invalid type parameters")
+		return defaultMode
 	}
 	pscale, ok := typeParameters["color_mode"]
 	if !ok {
-		log.Debug("no color_mode specified")
-		return "", nil
+		return defaultMode
 	}
 	pscaleVal := pscale.Value
 	if pscaleVal == "" {
-		return "", errors.New("invalid color_mode value")
+		return defaultMode
 	}
 
 	var val string
 	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
-		return "", errors.Errorf("unable to get color_mode %v as a string", pscaleVal)
+		log.Errorf("unable to get color_mode %v as a string", pscaleVal)
+		return defaultMode
 	}
 
-	return val, nil
+	switch val {
+	case "RGB":
+		return types.RGBMode
+	case "BGR":
+		return types.BGRMode
+	default:
+		log.Error("invalid image mode specified " + val)
+		return types.InvalidMode
+	}
+
 }
 
 func (p ImagePredictor) GetLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
