@@ -183,29 +183,37 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	return val, nil
 }
 
-func (p ImagePredictor) GetLayout() (string, error) {
+func (p ImagePredictor) GetLayout(defaultLayout image.Layout) image.Layout {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
-		return "", errors.New("invalid type parameters")
+		return defaultLayout
 	}
 	pscale, ok := typeParameters["layout"]
 	if !ok {
-		log.Debug("no layout specified")
-		return "", nil
+		return defaultLayout
 	}
 	pscaleVal := pscale.Value
 	if pscaleVal == "" {
-		return "", errors.New("invalid layout value")
+		return defaultLayout
 	}
 
 	var val string
 	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
-		return "", errors.Errorf("unable to get layout %v as a string", pscaleVal)
+		log.Errorf("unable to get color_mode %v as a string", pscaleVal)
+		return defaultLayout
 	}
 
-	return val, nil
+	switch val {
+	case "CHW":
+		return image.CHWLayout
+	case "HWC":
+		return image.HWCLayout
+	default:
+		log.Error("invalid image mode specified " + val)
+		return image.InvalidLayout
+	}
 }
 
 func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
@@ -239,7 +247,6 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 		log.Error("invalid image mode specified " + val)
 		return types.InvalidMode
 	}
-
 }
 
 func (p ImagePredictor) GetLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
