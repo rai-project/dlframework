@@ -57,30 +57,30 @@ var (
 	models = models_c
 
 	frameworks = []string{
-		"caffe",
 		"mxnet",
+		"cntk",
 		"caffe2",
 		// "tensorflow",
-		"cntk",
 		"tensorrt",
+		"caffe",
 	}
 	batchSizes = []int{
-		// 384,
-		// 320,
+		384,
+		320,
 		256,
 		196,
 		128,
-		// 96,
+		96,
 		64,
-		// 48,
+		48,
 		32,
 		16,
-		// 8,
-		// 4,
-		// 2,
+		8,
+		4,
+		2,
 		1,
 	}
-	timeout                  = 4 * time.Hour
+	timeout                  = 30 * time.Minute
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
@@ -93,7 +93,7 @@ func main() {
 
 	cmd.Init()
 	for i := 0; i < 5; i++ {
-		for _, usingGPU := range []bool{true, false} {
+		for _, usingGPU := range []bool{true} {
 			var device string
 			if usingGPU {
 				device = "gpu"
