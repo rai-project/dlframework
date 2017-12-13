@@ -31,12 +31,12 @@ func parse(model string) (modelName, version string) {
 }
 
 var (
-	models_c = []string{
+	models = []string{
 		"SqueezeNet_1.0",
 		"SqueezeNet_1.1",
 		"BVLC-AlexNet_1.0",
+		"BVLC-Reference-CaffeNet_1.0",
 		"BVLC-GoogleNet_1.0",
-		"VGG16_1.0",
 		"ResNet101_1.0",
 		"ResNet101_2.0",
 		"WRN50_2.0",
@@ -44,23 +44,15 @@ var (
 		"Inception_3.0",
 		"Inception_4.0",
 		"ResNeXt50-32x4d_1.0",
-	}
-
-	models_tf = []string{
 		"VGG16_1.0",
-		"ResNet101_1.0",
-		"ResNet101_2.0",
-		"Inception_3.0",
-		"Inception_4.0",
 		"VGG19_1.0",
 	}
-	models = models_c
 
 	frameworks = []string{
 		"mxnet",
 		"cntk",
 		"caffe2",
-		// "tensorflow",
+		"tensorflow",
 		"tensorrt",
 		"caffe",
 	}
