@@ -338,7 +338,7 @@ var datasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", len(fileList))
+		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionDatasetSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
