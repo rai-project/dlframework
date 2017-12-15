@@ -72,7 +72,7 @@ var (
 		2,
 		1,
 	}
-	timeout                  = 30 * time.Minute
+	timeout                  = 10 * time.Minute
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
@@ -84,7 +84,7 @@ func main() {
 	})
 
 	cmd.Init()
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 1; i++ {
 		for _, usingGPU := range []bool{true} {
 			var device string
 			if usingGPU {
@@ -114,7 +114,7 @@ func main() {
 				for _, model := range models {
 					modelName, modelVersion := parse(model)
 					for _, batchSize := range batchSizes {
-						fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
+						pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "dataset" +
 							" --debug" +
@@ -134,7 +134,7 @@ func main() {
 							//os.Exit(-1)
 							continue
 						}
-
+						pp.Println(shellCmd)
 						cmd := exec.Command(filepath.Join(sourcePath, framework), args...)
 						cmd.Stdout = os.Stdout
 						cmd.Stderr = os.Stderr
