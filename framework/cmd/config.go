@@ -3,6 +3,8 @@ package cmd
 import (
 	"path/filepath"
 
+	"github.com/k0kubun/pp"
+
 	"github.com/Unknwon/com"
 	"github.com/fatih/color"
 	homedir "github.com/mitchellh/go-homedir"
@@ -33,6 +35,9 @@ func Init() {
 		config.ColorMode(true),
 		config.DebugMode(IsDebug),
 		config.VerboseMode(IsVerbose),
+	}
+	if IsDebug || IsVerbose {
+		pp.WithLineInfo = true
 	}
 	if c, err := homedir.Expand(CfgFile); err == nil {
 		CfgFile = c
