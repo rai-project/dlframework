@@ -11,8 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/c3sr/p3sr-pdf/cmd"
-
 	"context"
 
 	shellwords "github.com/junegunn/go-shellwords"
@@ -82,7 +80,7 @@ func main() {
 		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
 	})
 
-	cmd.Init()
+	dlcmd.Init()
 	for i := 0; i < 1; i++ {
 		for _, usingGPU := range []bool{true} {
 			var device string
