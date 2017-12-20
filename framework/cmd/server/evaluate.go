@@ -11,11 +11,12 @@ import (
 	"strings"
 	"time"
 
+	"bitbucket.org/c3sr/p3sr-pdf/cmd"
+
 	"context"
 
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/k0kubun/pp"
-	"github.com/rai-project/dlframework/framework/cmd"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/rai-project/config"
@@ -25,8 +26,8 @@ import (
 )
 
 var (
-	// models = cmd.DefaultEvaulationModels
-	// frameworks = cmd.DefaultEvaluationFrameworks
+	// models = dlcmd.DefaultEvaulationModels
+	// frameworks = dlcmd.DefaultEvaluationFrameworks
 
 	frameworks = []string{
 		// "mxnet",
@@ -110,7 +111,7 @@ func main() {
 				}
 
 				for _, model := range models {
-					modelName, modelVersion := cmd.ParseModelName(model)
+					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
 						pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
