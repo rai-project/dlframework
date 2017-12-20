@@ -15,6 +15,7 @@ import (
 
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/k0kubun/pp"
+	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/rai-project/config"
