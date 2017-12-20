@@ -29,11 +29,11 @@ var (
 	// frameworks = dlcmd.DefaultEvaluationFrameworks
 
 	frameworks = []string{
-		// "mxnet",
+		//	"mxnet",
 		// "caffe2",
-		"tensorflow",
+		// "tensorflow",
 		// "caffe",
-		// "cntk",
+		"cntk",
 		// "tensorrt",
 	}
 
@@ -46,12 +46,12 @@ var (
 		"ResNet101_1.0",
 		"ResNet101_2.0",
 		"WRN50_2.0",
-		"BVLC-Reference-RCNN-ILSVRC13_1.0",
+		// "BVLC-Reference-RCNN-ILSVRC13_1.0",
 		"Inception_3.0",
 		"Inception_4.0",
 		"ResNeXt50-32x4d_1.0",
-		"VGG16_1.0",
-		"VGG19_1.0",
+		// "VGG16_1.0",
+		// "VGG19_1.0",
 	}
 
 	batchSizes = []int{
