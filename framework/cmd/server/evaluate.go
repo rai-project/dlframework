@@ -24,38 +24,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func parse(model string) (modelName, version string) {
-	splt := strings.Split(model, "_")
-	modelName, modelVersion := splt[0], splt[1]
-	return modelName, modelVersion
-}
-
 var (
-	models = []string{
-		"SqueezeNet_1.0",
-		"SqueezeNet_1.1",
-		"BVLC-AlexNet_1.0",
-		"BVLC-Reference-CaffeNet_1.0",
-		"BVLC-GoogleNet_1.0",
-		"ResNet101_1.0",
-		"ResNet101_2.0",
-		"WRN50_2.0",
-		"BVLC-Reference-RCNN-ILSVRC13_1.0",
-		"Inception_3.0",
-		"Inception_4.0",
-		"ResNeXt50-32x4d_1.0",
-		"VGG16_1.0",
-		"VGG19_1.0",
-	}
+	models     = cmd.DefaultEvaulationModels
+	frameworks = cmd.DefaultEvaluationFrameworks
 
-	frameworks = []string{
-		"mxnet",
-		"cntk",
-		"caffe2",
-		"tensorflow",
-		"tensorrt",
-		"caffe",
-	}
 	batchSizes = []int{
 		384,
 		320,
@@ -112,7 +84,7 @@ func main() {
 				}
 
 				for _, model := range models {
-					modelName, modelVersion := parse(model)
+					modelName, modelVersion := cmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
 						pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
@@ -134,7 +106,7 @@ func main() {
 							//os.Exit(-1)
 							continue
 						}
-						pp.Println(shellCmd)
+						fmt.Println("Running " + shellCmd)
 						cmd := exec.Command(filepath.Join(sourcePath, framework), args...)
 						cmd.Stdout = os.Stdout
 						cmd.Stderr = os.Stderr
