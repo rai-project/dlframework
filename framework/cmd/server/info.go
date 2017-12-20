@@ -1,6 +1,9 @@
 package server
 
-import "github.com/spf13/cobra"
+import (
+	evaluations "github.com/rai-project/evaluation/cmd"
+	"github.com/spf13/cobra"
+)
 
 var infoCmd = &cobra.Command{
 	Use:   "info",
@@ -9,4 +12,5 @@ var infoCmd = &cobra.Command{
 
 func init() {
 	infoCmd.AddCommand(flopsInfoCmd)
+	infoCmd.AddCommand(evaluations.EvaluationCmd)
 }
