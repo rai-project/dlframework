@@ -28,13 +28,22 @@ var (
 	models     = cmd.DefaultEvaulationModels
 	frameworks = cmd.DefaultEvaluationFrameworks
 
+	frameworks = []string{
+		"mxnet",
+		// "cntk",
+		"caffe2",
+		"tensorflow",
+		// "tensorrt",
+		"caffe",
+	}
+
 	batchSizes = []int{
-		384,
-		320,
-		256,
-		196,
-		128,
-		96,
+		// 384,
+		// 320,
+		// 256,
+		// 196,
+		// 128,
+		// 96,
 		64,
 		48,
 		32,
@@ -57,7 +66,7 @@ func main() {
 
 	cmd.Init()
 	for i := 0; i < 1; i++ {
-		for _, usingGPU := range []bool{true} {
+		for _, usingGPU := range []bool{false} {
 			var device string
 			if usingGPU {
 				device = "gpu"
@@ -93,7 +102,7 @@ func main() {
 							" --verbose" +
 							" --publish=true" +
 							" --fail_on_error=true" +
-							" --num_file_parts=64" +
+							// " --num_file_parts=64" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
