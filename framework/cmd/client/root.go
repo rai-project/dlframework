@@ -11,6 +11,7 @@ import (
 	raicmd "github.com/rai-project/cmd"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework/framework/cmd"
+	evaluations "github.com/rai-project/evaluation/cmd"
 	"github.com/rai-project/tracer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -49,6 +50,7 @@ func setup(c *cobra.Command) {
 	c.AddCommand(raicmd.GendocCmd)
 	c.AddCommand(raicmd.CompletionCmd)
 	c.AddCommand(raicmd.BuildTimeCmd)
+	c.AddCommand(evaluations.EvaluationCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
