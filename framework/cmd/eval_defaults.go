@@ -8,7 +8,7 @@ var (
 		"SqueezeNet_1.1",
 		"BVLC-AlexNet_1.0",
 		"BVLC-Reference-CaffeNet_1.0",
-		"BVLC-GoogleNet_1.0",
+		"BVLC-GoogLeNet_1.0",
 		"ResNet101_1.0",
 		"ResNet101_2.0",
 		"WRN50_2.0",
