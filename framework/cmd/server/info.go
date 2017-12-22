@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+
 	dllayer "github.com/rai-project/dllayer/cmd"
 	evaluations "github.com/rai-project/evaluation/cmd"
 	"github.com/spf13/cobra"
@@ -9,8 +11,8 @@ import (
 var infoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Get model and other information from CarML",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		dllayer.Framework = framework
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Printf("Inside infoCmd Run with framework %v\n", framework)
 	},
 }
 

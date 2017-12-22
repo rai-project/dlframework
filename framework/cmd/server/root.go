@@ -21,6 +21,7 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
+	dllayer "github.com/rai-project/dllayer/cmd"
 	_ "github.com/rai-project/logger/hooks"
 	monitors "github.com/rai-project/monitoring/monitors"
 	"github.com/rai-project/tracer"
@@ -201,6 +202,8 @@ func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 
 		Short: "Runs the carml " + frameworkName + " agent",
 		PersistentPreRun: func(c *cobra.Command, args []string) {
 			frameworkRegisterFunc()
+			framework = framework0
+			dllayer.Framework = framework
 		},
 		RunE: func(c *cobra.Command, args []string) error {
 			e := robustly.Run(
@@ -222,7 +225,6 @@ func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 
 	var once sync.Once
 	once.Do(func() {
 		SetupFlags(rootCmd)
-		framework = framework0
 	})
 
 	return rootCmd, nil
