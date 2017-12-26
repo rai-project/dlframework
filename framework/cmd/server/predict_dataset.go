@@ -52,6 +52,7 @@ var (
 	databaseAddress      string
 	databaseName         string
 	databaseEndpoints    []string
+	traceServerAddress   string
 	DefaultChannelBuffer = 100000
 )
 
@@ -81,7 +82,7 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 var datasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "Evaluates the dataset using the specified model and framework",
-	PreRun: func(c *cobra.Command, args []string) {
+	PreRunE: func(c *cobra.Command, args []string) error {
 		if partitionDatasetSize == 0 {
 			partitionDatasetSize = batchSize
 		}
@@ -93,6 +94,10 @@ var datasetCmd = &cobra.Command{
 		if databaseAddress != "" {
 			databaseEndpoints = []string{databaseAddress}
 		}
+		if useGPU && !nvidiasmi.HasGPU {
+			return errors.New("unable to find gpu on the system")
+		}
+		return nil
 	},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
@@ -404,7 +409,7 @@ var datasetCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
-		query := fmt.Sprintf("http://localhost:16686/api/traces/%v", traceIDVal)
+		query := fmt.Sprintf("http://%s/api/traces/%v", traceServerAddress, traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
 		if err != nil {
@@ -464,18 +469,19 @@ func partitionDataset(in []string, partitionSize int) (out [][]string) {
 }
 
 func init() {
-	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "dataset category (e.g. \"vision\")")
-	datasetCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "address of the database")
-	datasetCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "name of the database to publish")
-	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "dataset name (e.g. \"ilsvrc2012_validation_folder\")")
-	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "modelName")
-	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "modelVersion")
-	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "batch size")
-	datasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "number of file parts to process")
-	datasetCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to exit upon first inference error")
-	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "publish evaluation to database")
-	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "enable gpu")
-	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "publish predictions to database")
-	datasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "trace level")
-	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "partition dataset size")
+	datasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
+	datasetCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to")
+	datasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "the name of the model to use for prediction")
+	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
+	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "the chunk size to partition the input dataset. By default this is the same as the batch size")
+	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "the batch size to use while performing inference")
+	datasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
+	datasetCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
+	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
+	datasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
+	datasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
+	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which would be a few gigabytes of data for one dataset")
+	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 22 ")
+	datasetCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
+	databaseCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
 }

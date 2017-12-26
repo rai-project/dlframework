@@ -35,5 +35,6 @@ var infoMLArcCmd = &cobra.Command{
 func init() {
 	infoCmd.AddCommand(dllayer.FlopsInfoCmd)
 	infoCmd.AddCommand(evaluations.EvaluationCmd)
+	infoCmd.AddCommand(infoModelsCmd)
 	infoCmd.AddCommand(infoMLArcCmd)
 }
