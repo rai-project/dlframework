@@ -29,11 +29,11 @@ var (
 	// frameworks = dlcmd.DefaultEvaluationFrameworks
 
 	frameworks = []string{
-		//	"mxnet",
-		// "caffe2",
-		// "tensorflow",
-		// "caffe",
-		"cntk",
+		"mxnet",
+		"caffe2",
+		"tensorflow",
+		"caffe",
+		// "cntk",
 		// "tensorrt",
 	}
 
@@ -46,31 +46,31 @@ var (
 		"ResNet101_1.0",
 		"ResNet101_2.0",
 		"WRN50_2.0",
-		// "BVLC-Reference-RCNN-ILSVRC13_1.0",
+		"BVLC-Reference-RCNN-ILSVRC13_1.0",
 		"Inception_3.0",
 		"Inception_4.0",
 		"ResNeXt50-32x4d_1.0",
-		// "VGG16_1.0",
-		// "VGG19_1.0",
+		"VGG16_1.0",
+		"VGG19_1.0",
 	}
 
 	batchSizes = []int{
-		384,
-		320,
-		256,
-		196,
-		128,
-		96,
-		64,
-		48,
+		// 384,
+		// 320,
+		// 256,
+		// 196,
+		// 128,
+		// 96,
 		32,
-		16,
-		8,
-		4,
-		2,
-		1,
+		// 48,
+		// 32,
+		// 16,
+		// 8,
+		// 4,
+		// 2,
+		// 1,
 	}
-	timeout                  = 10 * time.Minute
+	timeout                  = 30 * time.Minute
 	usingGPU                 = true
 	sourcePath               = sourcepath.MustAbsoluteDir()
 	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")

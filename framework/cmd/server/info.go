@@ -11,9 +11,6 @@ import (
 var infoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "Get model and other information from CarML",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		dllayer.Framework = framework
-	},
 }
 
 var infoMLArcCmd = &cobra.Command{
