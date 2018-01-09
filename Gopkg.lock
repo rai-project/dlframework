@@ -369,10 +369,10 @@
   version = "v0.4.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/evalphobia/logrus_kinesis"
   packages = ["."]
   revision = "428603df186e780ba1e055a1c8421881494d0e77"
+  version = "v0.2.0"
 
 [[projects]]
   branch = "master"
@@ -968,8 +968,8 @@
     ".",
     "predict"
   ]
-  revision = "8bb47eb34d35cb50d84778daceb2d86505fd28d3"
-  version = "v0.2.21"
+  revision = "a011cd7cb8ba73df90e509678b066358d7887018"
+  version = "v0.2.22"
 
 [[projects]]
   name = "github.com/rai-project/caffe2"
@@ -977,8 +977,8 @@
     ".",
     "predict"
   ]
-  revision = "d4b4d47ae8e578ce91a6654487ba61fc09b5124e"
-  version = "v0.3.14"
+  revision = "dc10631d4b3269d6f76285fbc7ca8fe6241eff6e"
+  version = "v0.3.15"
 
 [[projects]]
   branch = "master"
@@ -1008,13 +1008,13 @@
   revision = "f063aa4dfdafbc1d36b3d48d7423bfa886078ffc"
 
 [[projects]]
-  branch = "master"
+  branch = "feature/find"
   name = "github.com/rai-project/database"
   packages = [
     ".",
     "mongodb"
   ]
-  revision = "1a8580a9c95670beab957fea65741500cdcfb3e1"
+  revision = "994fb98bb705457e06624bc342c0d24836b46d36"
 
 [[projects]]
   branch = "master"
@@ -1060,7 +1060,7 @@
     "cmd",
     "eventflow"
   ]
-  revision = "ac8dd128b3411e7e789885d59b038cd1fe3702a5"
+  revision = "5770d0d3d5a2dd4bb3248ea177032a2b37f9d7b7"
 
 [[projects]]
   name = "github.com/rai-project/go-caffe"
@@ -1068,14 +1068,14 @@
     ".",
     "proto"
   ]
-  revision = "f3adc706ea0518f83665d66f6afb4f9785ca0136"
-  version = "v0.3.10"
+  revision = "0f2c8b6aaf1280fef1e4e447efc91c616db98587"
+  version = "v0.3.11"
 
 [[projects]]
   name = "github.com/rai-project/go-caffe2"
   packages = ["."]
-  revision = "c8e762a4cdb25e504ea4c882819169ec5119df62"
-  version = "v0.3.18"
+  revision = "2c50317d80939fa9a1fd1167952b3d3b46684ee9"
+  version = "v0.3.19"
 
 [[projects]]
   branch = "master"
@@ -1101,8 +1101,8 @@
 [[projects]]
   name = "github.com/rai-project/go-mxnet-predictor"
   packages = ["mxnet"]
-  revision = "21bd9e891df1508bc2322c9f8cc8c3e7ab7d640c"
-  version = "v0.3.12"
+  revision = "9bacc20492d5d10fbfcea5722b4a6dde64b97330"
+  version = "v0.3.13"
 
 [[projects]]
   branch = "master"
@@ -1113,8 +1113,8 @@
 [[projects]]
   name = "github.com/rai-project/godotenv"
   packages = ["."]
-  revision = "871558a2514ec69b2f4ef816336b72808c0a597f"
-  version = "v1.1.4"
+  revision = "59354f37392e046b01b6759037002772b9cb53aa"
+  version = "v1.1.5"
 
 [[projects]]
   branch = "master"
@@ -1155,8 +1155,8 @@
     "store/mock",
     "store/zookeeper"
   ]
-  revision = "2aac52d95aab54226d8889f80a293f9923ff6245"
-  version = "v0.2.17"
+  revision = "f01cf81553df65a5e18bce2503a3db96b9059cd7"
+  version = "v0.2.18"
 
 [[projects]]
   branch = "master"
@@ -1175,7 +1175,7 @@
     "hooks",
     "hooks/logruzio"
   ]
-  revision = "ff697735845bf90ec412675916bb9393d5d1b359"
+  revision = "18e94b257532aa37669e721461c19b9d54ab2a58"
 
 [[projects]]
   branch = "master"
@@ -1201,8 +1201,8 @@
     ".",
     "predict"
   ]
-  revision = "0eb61cf68ed038fac830d4ca133735b54d11bdb1"
-  version = "v0.2.20"
+  revision = "106689e63b267236ca6fdc566802126f7f61388a"
+  version = "v0.2.21"
 
 [[projects]]
   branch = "master"
@@ -1257,8 +1257,8 @@
     ".",
     "predict"
   ]
-  revision = "5061f088d067e0f975fd2a078ffbc1d2610dbf28"
-  version = "v0.2.17"
+  revision = "9dcc4625828ea9c1ef71bcbea84005c4939694d6"
+  version = "v0.2.18"
 
 [[projects]]
   branch = "master"
@@ -1312,7 +1312,7 @@
   branch = "master"
   name = "github.com/rai-project/web"
   packages = ["logger"]
-  revision = "133539c94205f4f8e9ab7d9e2229de1a50424b1a"
+  revision = "f7a60ec9fe696322abf3289cf174d1e51ef177c6"
 
 [[projects]]
   branch = "master"
@@ -1402,7 +1402,7 @@
   branch = "master"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
-  revision = "12bd96e66386c1960ab0f74ced1362f66f552f7b"
+  revision = "7c0cea34c8ece3fbeb2b27ab9b59511d360fb394"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -1436,10 +1436,7 @@
 
 [[projects]]
   name = "github.com/tensorflow/tensorflow"
-  packages = [
-    "tensorflow/go",
-    "tensorflow/go/op"
-  ]
+  packages = ["tensorflow/go"]
   revision = "438604fc885208ee05f9eef2d0f2c630e1360a83"
   version = "v1.4.1"
 
@@ -1867,6 +1864,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b0c43b3b0b7825eaed5d15efc983e9c40441447e9312fa7d575c094231ea144f"
+  inputs-digest = "f03c3803faaaf173e140e2b2fd750587221e095cdef357c2b600f565c3333c35"
   solver-name = "gps-cdcl"
   solver-version = 1
