@@ -55,8 +55,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     update-alternatives --config gcc && \
     gcc --version
 
-#Install Go
-ENV GIMME_GO_VERSION "1.8.3"
+# Install Go
+ENV GIMME_GO_VERSION "1.9.2"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 
@@ -74,7 +74,7 @@ ENV PATH ${GOROOT}/bin:${PATH}
 ENV GOPATH "/go"
 ENV PATH $GOPATH/bin:$PATH
 
-#Install Go packages
+# Install Go packages
 RUN go get github.com/Masterminds/glide && \
     go get -u github.com/jteeuwen/go-bindata/... && \
 	  go get -u github.com/elazarl/go-bindata-assetfs/... && \
