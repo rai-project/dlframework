@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Jeffail/tunny"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/evaluation"
+	"github.com/rai-project/parallel/tunny"
 	"github.com/spf13/cobra"
 	"gopkg.in/mgo.v2/bson"
 

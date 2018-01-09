@@ -8,12 +8,12 @@ import (
 	"sync"
 
 	"github.com/Masterminds/semver"
-	"github.com/jeffail/tunny"
 	"github.com/jinzhu/copier"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
+	"github.com/rai-project/parallel/tunny"
 	kv "github.com/rai-project/registry"
 	"github.com/rai-project/serializer"
 )

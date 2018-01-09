@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jeffail/tunny"
+	"github.com/rai-project/parallel/tunny"
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
