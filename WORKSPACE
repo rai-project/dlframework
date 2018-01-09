@@ -12,9 +12,61 @@ git_repository(
     remote = "https://github.com/bazelbuild/bazel_gazelle",
 )
 
+git_repository(
+    name = "com_github_tnarg_rules_go_swagger",
+    remote = "https://github.com/tnarg/rules_go_swagger.git",
+    tag = "0.1.0",
+)
+
+git_repository(
+    name = "io_bazel_rules_docker",
+    remote = "https://github.com/bazelbuild/rules_docker.git",
+    tag = "v0.3.0",
+)
+
+git_repository(
+    name = "build_tools",
+    commit = "72c03d74aab4cbe9fe6860f6d5571f2aa292e47c",
+    remote = "https://github.com/rai-project/build_tools",
+)
+
 load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains", "go_repository")
 load("@io_bazel_rules_go//proto:def.bzl", "proto_register_toolchains")
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+load("@com_github_tnarg_rules_go_swagger//go/swagger:def.bzl", "go_swagger_deps", "go_swagger_repositories", "go_swagger_repository")
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_pull",
+    container_repositories = "repositories",
+)
+load("@build_tools//:esc.bzl", "esc_repositories")
+
+# This is NOT needed when going through the language lang_image
+# "repositories" function(s).
+container_repositories()
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+gazelle_dependencies()
+
+go_swagger_deps()
+
+go_swagger_repositories()
+
+esc_repositories()
+
+container_pull(
+    name = "nvidia_cuda_container",
+    registry = "index.docker.io",
+    repository = select({
+        # see https://github.com/bazelbuild/rules_go/blob/master/go/platform/list.bzl#L31:14
+        "@bazel_tools//platforms:x86_64": "nvidia/cuda",
+        "@bazel_tools//platforms:ppc": "nvidia/cuda-ppc64le",
+    }),
+    tag = "8.0-cudnn6-devel-ubuntu16.04",
+)
 
 go_repository(
     name = "com_github_jteeuwen_go_bindata",
@@ -87,9 +139,3 @@ go_repository(
     commit = "acf3c15f3a1fd86f271220a05558717ec1c61d32",
     importpath = "github.com/go-swagger/go-swagger/cmd/swagger",
 )
-
-go_rules_dependencies()
-
-go_register_toolchains()
-
-gazelle_dependencies()

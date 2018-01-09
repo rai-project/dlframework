@@ -151,8 +151,8 @@
     "service/s3",
     "service/sts"
   ]
-  revision = "5177d71d80f123f6d82aaf762387e39b88c5ba23"
-  version = "v1.12.57"
+  revision = "00aba4fd6bb87ab518ee0857fea017804f40a6da"
+  version = "v1.12.58"
 
 [[projects]]
   branch = "master"
@@ -1008,13 +1008,13 @@
   revision = "f063aa4dfdafbc1d36b3d48d7423bfa886078ffc"
 
 [[projects]]
-  branch = "feature/find"
+  branch = "master"
   name = "github.com/rai-project/database"
   packages = [
     ".",
     "mongodb"
   ]
-  revision = "994fb98bb705457e06624bc342c0d24836b46d36"
+  revision = "1a8580a9c95670beab957fea65741500cdcfb3e1"
 
 [[projects]]
   branch = "master"
@@ -1060,7 +1060,7 @@
     "cmd",
     "eventflow"
   ]
-  revision = "5770d0d3d5a2dd4bb3248ea177032a2b37f9d7b7"
+  revision = "33c8d5bfc40a69b7ff97608a9e745a2b11ba59cf"
 
 [[projects]]
   name = "github.com/rai-project/go-caffe"
@@ -1694,7 +1694,7 @@
     "unix",
     "windows"
   ]
-  revision = "d38bf781f16e180a1b2ad82697d2f81d7b7ecfac"
+  revision = "b9cf5f96b68d9eaa53d5db5fef235718767f416a"
 
 [[projects]]
   branch = "master"
@@ -1864,6 +1864,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f03c3803faaaf173e140e2b2fd750587221e095cdef357c2b600f565c3333c35"
+  inputs-digest = "c59907d91e147662dd5d55f0b63a6d39c17d97531f6176d8dbc82c1f4b6aa1f9"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -185,7 +185,7 @@
   name = "github.com/rai-project/cpu"
 
 [[constraint]]
-  branch = "feature/find"
+  branch = "master"
   name = "github.com/rai-project/database"
 
 [[constraint]]
