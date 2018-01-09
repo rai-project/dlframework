@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "configure_dlframework.go",
+        "doc.go",
+        "embedded_spec.go",
+        "server.go",
+    ],
+    importpath = "github.com/rai-project/dlframework/httpapi/restapi",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//httpapi/restapi/operations:go_default_library",
+        "//httpapi/restapi/operations/predict:go_default_library",
+        "//httpapi/restapi/operations/registry:go_default_library",
+        "//vendor/github.com/go-openapi/errors:go_default_library",
+        "//vendor/github.com/go-openapi/runtime:go_default_library",
+        "//vendor/github.com/go-openapi/runtime/flagext:go_default_library",
+        "//vendor/github.com/go-openapi/runtime/middleware:go_default_library",
+        "//vendor/github.com/go-openapi/swag:go_default_library",
+        "//vendor/github.com/jessevdk/go-flags:go_default_library",
+        "//vendor/github.com/tylerb/graceful:go_default_library",
+    ],
+)

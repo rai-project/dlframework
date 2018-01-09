@@ -1,0 +1,37 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "agent.go",
+        "frameworks.go",
+        "init.go",
+        "models.go",
+    ],
+    importpath = "github.com/rai-project/dlframework/registryquery",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:go_default_library",
+        "//httpapi/models:go_default_library",
+        "//vendor/github.com/Masterminds/semver:go_default_library",
+        "//vendor/github.com/jinzhu/copier:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/github.com/rai-project/config:go_default_library",
+        "//vendor/github.com/rai-project/libkv/store:go_default_library",
+        "//vendor/github.com/rai-project/logger:go_default_library",
+        "//vendor/github.com/rai-project/parallel/tunny:go_default_library",
+        "//vendor/github.com/rai-project/registry:go_default_library",
+        "//vendor/github.com/rai-project/serializer:go_default_library",
+        "//vendor/github.com/sirupsen/logrus:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = [
+        "frameworks_test.go",
+        "models_test.go",
+    ],
+    embed = [":go_default_library"],
+    deps = ["//vendor/github.com/stretchr/testify/assert:go_default_library"],
+)

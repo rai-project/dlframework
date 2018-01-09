@@ -1,0 +1,26 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "config.go",
+        "eval_defaults.go",
+        "info.go",
+        "info_cpu.go",
+        "info_cuda.go",
+        "info_interconnect.go",
+    ],
+    importpath = "github.com/rai-project/dlframework/framework/cmd",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//vendor/github.com/Unknwon/com:go_default_library",
+        "//vendor/github.com/fatih/color:go_default_library",
+        "//vendor/github.com/k0kubun/pp:go_default_library",
+        "//vendor/github.com/mitchellh/go-homedir:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/github.com/rai-project/config:go_default_library",
+        "//vendor/github.com/rai-project/logger:go_default_library",
+        "//vendor/github.com/rai-project/nvidia-smi:go_default_library",
+        "//vendor/github.com/sirupsen/logrus:go_default_library",
+    ],
+)

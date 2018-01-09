@@ -1,0 +1,36 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "close_parameters.go",
+        "close_responses.go",
+        "dataset_parameters.go",
+        "dataset_responses.go",
+        "dataset_stream_parameters.go",
+        "dataset_stream_responses.go",
+        "images_parameters.go",
+        "images_responses.go",
+        "images_stream_parameters.go",
+        "images_stream_responses.go",
+        "open_parameters.go",
+        "open_responses.go",
+        "predict_client.go",
+        "reset_parameters.go",
+        "reset_responses.go",
+        "urls_parameters.go",
+        "urls_responses.go",
+        "urls_stream_parameters.go",
+        "urls_stream_responses.go",
+    ],
+    importpath = "github.com/rai-project/dlframework/httpapi/client/predict",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//httpapi/models:go_default_library",
+        "//vendor/github.com/go-openapi/errors:go_default_library",
+        "//vendor/github.com/go-openapi/runtime:go_default_library",
+        "//vendor/github.com/go-openapi/runtime/client:go_default_library",
+        "//vendor/github.com/go-openapi/strfmt:go_default_library",
+        "//vendor/golang.org/x/net/context:go_default_library",
+    ],
+)

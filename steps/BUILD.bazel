@@ -1,0 +1,56 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "go_default_library",
+    srcs = [
+        "base.go",
+        "cast_to_float32_slice.go",
+        "foreach.go",
+        "get_dataset.go",
+        "ider.go",
+        "init.go",
+        "predict_image.go",
+        "preprocess_image.go",
+        "read_image.go",
+        "read_url.go",
+        "spread.go",
+        "utils.go",
+    ],
+    importpath = "github.com/rai-project/dlframework/steps",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:go_default_library",
+        "//framework/options:go_default_library",
+        "//framework/predict:go_default_library",
+        "//vendor/github.com/anthonynsimon/bild/parallel:go_default_library",
+        "//vendor/github.com/facebookgo/stack:go_default_library",
+        "//vendor/github.com/fatih/color:go_default_library",
+        "//vendor/github.com/opentracing/opentracing-go:go_default_library",
+        "//vendor/github.com/pkg/errors:go_default_library",
+        "//vendor/github.com/rai-project/config:go_default_library",
+        "//vendor/github.com/rai-project/dldataset:go_default_library",
+        "//vendor/github.com/rai-project/dldataset/vision:go_default_library",
+        "//vendor/github.com/rai-project/go-cupti:go_default_library",
+        "//vendor/github.com/rai-project/image:go_default_library",
+        "//vendor/github.com/rai-project/image/types:go_default_library",
+        "//vendor/github.com/rai-project/logger:go_default_library",
+        "//vendor/github.com/rai-project/pipeline:go_default_library",
+        "//vendor/github.com/rai-project/tracer:go_default_library",
+        "//vendor/github.com/rai-project/uuid:go_default_library",
+        "//vendor/github.com/sirupsen/logrus:go_default_library",
+        "//vendor/github.com/spf13/cast:go_default_library",
+        "//vendor/golang.org/x/net/context:go_default_library",
+    ],
+)
+
+go_test(
+    name = "go_default_test",
+    srcs = ["steps_test.go"],
+    embed = [":go_default_library"],
+    deps = [
+        "//framework/predict:go_default_library",
+        "//vendor/github.com/rai-project/image/types:go_default_library",
+        "//vendor/github.com/rai-project/pipeline:go_default_library",
+        "//vendor/github.com/stretchr/testify/assert:go_default_library",
+    ],
+)

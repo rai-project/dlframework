@@ -54,3 +54,6 @@ key.pem
 /bazel-*
 
 .DS_Store
+
+
+/build/bin/

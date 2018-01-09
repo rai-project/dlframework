@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "github.com/rai-project/dlframework/httpapi/cmd/dlframework-server",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//httpapi/restapi:go_default_library",
+        "//httpapi/restapi/operations:go_default_library",
+        "//vendor/github.com/go-openapi/loads:go_default_library",
+        "//vendor/github.com/jessevdk/go-flags:go_default_library",
+    ],
+)
+
+go_binary(
+    name = "dlframework-server",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)

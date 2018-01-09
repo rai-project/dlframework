@@ -1,0 +1,15 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["dlframework_client.go"],
+    importpath = "github.com/rai-project/dlframework/httpapi/client",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//httpapi/client/predict:go_default_library",
+        "//httpapi/client/registry:go_default_library",
+        "//vendor/github.com/go-openapi/runtime:go_default_library",
+        "//vendor/github.com/go-openapi/runtime/client:go_default_library",
+        "//vendor/github.com/go-openapi/strfmt:go_default_library",
+    ],
+)
