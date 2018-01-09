@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     update-alternatives --config gcc && \
     gcc --version
 
-# add powerai repo
+# Add powerai repo
 RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubuntu/mldl-repo-network_4.0.0_ppc64el.deb -O && \
     dpkg -i mldl-repo-network_4.0.0_ppc64el.deb && \
     apt-get update && apt-get install -y --no-install-recommends \
@@ -66,8 +66,8 @@ ENV NCCL_ROOT /opt/DL/nccl
 ENV LD_LIBRARY_PATH /opt/DL/nccl/lib:/usr/local/cuda/extras/CUPTI/lib64:${LD_LIBRARY_PATH}
 ENV PATH ${NCCL_ROOT}/bin:/usr/local/cuda/bin:${PATH}
 
-#Install Go
-ENV GIMME_GO_VERSION "1.8.3"
+# Install Go
+ENV GIMME_GO_VERSION "1.9.2"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 
