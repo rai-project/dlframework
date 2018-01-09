@@ -4,6 +4,12 @@ load("@bazel_gazelle//:def.bzl", "gazelle")
 
 go_prefix("github.com/rai-project/dlframework")
 
+filegroup(
+    name = "dockerfiles",
+    srcs = glob(["dockerfiles/*.bzl"]),
+    visibility = ["//visibility:public"],
+)
+
 gazelle(
     name = "gazelle",
     external = "vendored",

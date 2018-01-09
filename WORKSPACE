@@ -9,25 +9,31 @@ git_repository(
 git_repository(
     name = "bazel_gazelle",
     commit = "9e43c85089c3247fece397f95dabc1cb63096a59",  # master on 2018-01-09
-    remote = "https://github.com/bazelbuild/bazel_gazelle",
+    remote = "https://github.com/bazelbuild/bazel-gazelle",
 )
 
 git_repository(
     name = "com_github_tnarg_rules_go_swagger",
+    commit = "f87f37a5e097329f03f3bcb73f942e003cd56164",
     remote = "https://github.com/tnarg/rules_go_swagger.git",
-    tag = "0.1.0",
 )
 
 git_repository(
     name = "io_bazel_rules_docker",
+    commit = "8aeab63328a82fdb8e8eb12f677a4e5ce6b183b1",
     remote = "https://github.com/bazelbuild/rules_docker.git",
-    tag = "v0.3.0",
 )
 
 git_repository(
     name = "build_tools",
     commit = "72c03d74aab4cbe9fe6860f6d5571f2aa292e47c",
     remote = "https://github.com/rai-project/build_tools",
+)
+
+git_repository(
+    name = "distroless",
+    commit = "d061f8989a5fc1c59f2e84bfedb299a5fbb20cb6",
+    remote = "https://github.com/GoogleCloudPlatform/distroless",
 )
 
 load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains", "go_repository")
@@ -40,10 +46,6 @@ load(
     container_repositories = "repositories",
 )
 load("@build_tools//:esc.bzl", "esc_repositories")
-
-# This is NOT needed when going through the language lang_image
-# "repositories" function(s).
-container_repositories()
 
 go_rules_dependencies()
 
@@ -58,15 +60,33 @@ go_swagger_repositories()
 esc_repositories()
 
 container_pull(
-    name = "nvidia_cuda_container",
+    name = "nvidia_cuda_container_amd64",
     registry = "index.docker.io",
-    repository = select({
-        # see https://github.com/bazelbuild/rules_go/blob/master/go/platform/list.bzl#L31:14
-        "@bazel_tools//platforms:x86_64": "nvidia/cuda",
-        "@bazel_tools//platforms:ppc": "nvidia/cuda-ppc64le",
-    }),
+    repository = "nvidia/cuda",
     tag = "8.0-cudnn6-devel-ubuntu16.04",
 )
+
+container_pull(
+    name = "nvidia_cuda_container_ppc64le",
+    registry = "index.docker.io",
+    repository = "nvidia/cuda-ppc64le",
+    tag = "8.0-cudnn6-devel-ubuntu16.04",
+)
+
+# This is NOT needed when going through the language lang_image
+# "repositories" function(s).
+container_repositories()
+
+# container_pull(
+#     name = "nvidia_cuda_container",
+#     registry = "index.docker.io",
+#     repository = select({
+#         # see https://github.com/bazelbuild/rules_go/blob/master/go/platform/list.bzl#L31:14
+#         "@bazel_tools//platforms:x86_64": "nvidia/cuda",
+#         "@bazel_tools//platforms:ppc": "nvidia/cuda-ppc64le",
+#     }),
+#     tag = "8.0-cudnn6-devel-ubuntu16.04",
+# )
 
 go_repository(
     name = "com_github_jteeuwen_go_bindata",
