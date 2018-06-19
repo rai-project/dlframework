@@ -16,9 +16,9 @@ import (
 )
 
 // NewFrameworkManifestsParams creates a new FrameworkManifestsParams object
-// with the default values initialized.
+// no default values defined in spec.
 func NewFrameworkManifestsParams() FrameworkManifestsParams {
-	var ()
+
 	return FrameworkManifestsParams{}
 }
 
@@ -29,7 +29,7 @@ func NewFrameworkManifestsParams() FrameworkManifestsParams {
 type FrameworkManifestsParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request
+	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  In: query
@@ -42,9 +42,12 @@ type FrameworkManifestsParams struct {
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
-// for simple values it will use straight method calls
+// for simple values it will use straight method calls.
+//
+// To ensure default values, the struct must have been initialized with NewFrameworkManifestsParams() beforehand.
 func (o *FrameworkManifestsParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
+
 	o.HTTPRequest = r
 
 	qs := runtime.Values(r.URL.Query())
@@ -65,11 +68,15 @@ func (o *FrameworkManifestsParams) BindRequest(r *http.Request, route *middlewar
 	return nil
 }
 
+// bindFrameworkName binds and validates parameter FrameworkName from query.
 func (o *FrameworkManifestsParams) bindFrameworkName(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
+
+	// Required: false
+	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}
@@ -79,11 +86,15 @@ func (o *FrameworkManifestsParams) bindFrameworkName(rawData []string, hasKey bo
 	return nil
 }
 
+// bindFrameworkVersion binds and validates parameter FrameworkVersion from query.
 func (o *FrameworkManifestsParams) bindFrameworkVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
+
+	// Required: false
+	// AllowEmptyValue: false
 	if raw == "" { // empty values pass all other validations
 		return nil
 	}

@@ -16,20 +16,25 @@ import (
 
 // ExecutionOptionsTraceLevel execution options trace level
 // swagger:model ExecutionOptionsTraceLevel
-
 type ExecutionOptionsTraceLevel string
 
 const (
+
 	// ExecutionOptionsTraceLevelNOTRACE captures enum value "NO_TRACE"
 	ExecutionOptionsTraceLevelNOTRACE ExecutionOptionsTraceLevel = "NO_TRACE"
+
 	// ExecutionOptionsTraceLevelSTEPTRACE captures enum value "STEP_TRACE"
 	ExecutionOptionsTraceLevelSTEPTRACE ExecutionOptionsTraceLevel = "STEP_TRACE"
+
 	// ExecutionOptionsTraceLevelFRAMEWORKTRACE captures enum value "FRAMEWORK_TRACE"
 	ExecutionOptionsTraceLevelFRAMEWORKTRACE ExecutionOptionsTraceLevel = "FRAMEWORK_TRACE"
+
 	// ExecutionOptionsTraceLevelCPUONLYTRACE captures enum value "CPU_ONLY_TRACE"
 	ExecutionOptionsTraceLevelCPUONLYTRACE ExecutionOptionsTraceLevel = "CPU_ONLY_TRACE"
+
 	// ExecutionOptionsTraceLevelHARDWARETRACE captures enum value "HARDWARE_TRACE"
 	ExecutionOptionsTraceLevelHARDWARETRACE ExecutionOptionsTraceLevel = "HARDWARE_TRACE"
+
 	// ExecutionOptionsTraceLevelFULLTRACE captures enum value "FULL_TRACE"
 	ExecutionOptionsTraceLevelFULLTRACE ExecutionOptionsTraceLevel = "FULL_TRACE"
 )

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // FrameworkAgentsOKCode is the HTTP code returned for type FrameworkAgentsOK
@@ -30,6 +30,7 @@ type FrameworkAgentsOK struct {
 
 // NewFrameworkAgentsOK creates FrameworkAgentsOK with default headers values
 func NewFrameworkAgentsOK() *FrameworkAgentsOK {
+
 	return &FrameworkAgentsOK{}
 }
 

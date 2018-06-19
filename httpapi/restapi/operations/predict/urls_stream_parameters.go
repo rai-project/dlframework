@@ -13,13 +13,13 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // NewUrlsStreamParams creates a new UrlsStreamParams object
-// with the default values initialized.
+// no default values defined in spec.
 func NewUrlsStreamParams() UrlsStreamParams {
-	var ()
+
 	return UrlsStreamParams{}
 }
 
@@ -30,7 +30,7 @@ func NewUrlsStreamParams() UrlsStreamParams {
 type UrlsStreamParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request
+	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  Required: true
@@ -40,9 +40,12 @@ type UrlsStreamParams struct {
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
-// for simple values it will use straight method calls
+// for simple values it will use straight method calls.
+//
+// To ensure default values, the struct must have been initialized with NewUrlsStreamParams() beforehand.
 func (o *UrlsStreamParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
+
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
@@ -54,8 +57,8 @@ func (o *UrlsStreamParams) BindRequest(r *http.Request, route *middleware.Matche
 			} else {
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
-
 		} else {
+			// validate body object
 			if err := body.Validate(route.Formats); err != nil {
 				res = append(res, err)
 			}
@@ -64,11 +67,9 @@ func (o *UrlsStreamParams) BindRequest(r *http.Request, route *middleware.Matche
 				o.Body = &body
 			}
 		}
-
 	} else {
 		res = append(res, errors.Required("body", "body"))
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // ImagesStreamOKCode is the HTTP code returned for type ImagesStreamOK
@@ -30,6 +30,7 @@ type ImagesStreamOK struct {
 
 // NewImagesStreamOK creates ImagesStreamOK with default headers values
 func NewImagesStreamOK() *ImagesStreamOK {
+
 	return &ImagesStreamOK{}
 }
 

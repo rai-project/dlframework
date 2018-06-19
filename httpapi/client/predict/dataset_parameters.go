@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"context"
+	"golang.org/x/net/context"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
@@ -17,7 +17,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // NewDatasetParams creates a new DatasetParams object
@@ -124,12 +124,10 @@ func (o *DatasetParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 	}
 	var res []error
 
-	if o.Body == nil {
-		o.Body = new(models.DlframeworkDatasetRequest)
-	}
-
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
+	if o.Body != nil {
+		if err := r.SetBodyParam(o.Body); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {

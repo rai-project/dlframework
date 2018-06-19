@@ -10,31 +10,45 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // ImagesRequestImage images request image
 // swagger:model ImagesRequestImage
-
 type ImagesRequestImage struct {
 
 	// The image is base64 encoded
+	// Format: byte
 	Data strfmt.Base64 `json:"data,omitempty"`
 
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
 }
 
-/* polymorph ImagesRequestImage data false */
-
-/* polymorph ImagesRequestImage id false */
-
 // Validate validates this images request image
 func (m *ImagesRequestImage) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ImagesRequestImage) validateData(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Data) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("data", "body", "byte", m.Data.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

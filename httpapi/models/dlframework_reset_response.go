@@ -14,21 +14,17 @@ import (
 
 // DlframeworkResetResponse dlframework reset response
 // swagger:model dlframeworkResetResponse
-
 type DlframeworkResetResponse struct {
 
 	// predictor
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
 
-/* polymorph dlframeworkResetResponse predictor false */
-
 // Validate validates this dlframework reset response
 func (m *DlframeworkResetResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validatePredictor(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -45,7 +41,6 @@ func (m *DlframeworkResetResponse) validatePredictor(formats strfmt.Registry) er
 	}
 
 	if m.Predictor != nil {
-
 		if err := m.Predictor.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("predictor")

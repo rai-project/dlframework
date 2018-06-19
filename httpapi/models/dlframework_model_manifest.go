@@ -12,12 +12,10 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // DlframeworkModelManifest dlframework model manifest
 // swagger:model dlframeworkModelManifest
-
 type DlframeworkModelManifest struct {
 
 	// after postprocess
@@ -36,7 +34,7 @@ type DlframeworkModelManifest struct {
 	BeforePreprocess string `json:"before_preprocess,omitempty"`
 
 	// container
-	Container map[string]DlframeworkContainerHardware `json:"container,omitempty"`
+	Container DlframeworkModelManifestContainer `json:"container,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -75,73 +73,27 @@ type DlframeworkModelManifest struct {
 	Version string `json:"version,omitempty"`
 }
 
-/* polymorph dlframeworkModelManifest after_postprocess false */
-
-/* polymorph dlframeworkModelManifest after_preprocess false */
-
-/* polymorph dlframeworkModelManifest attributes false */
-
-/* polymorph dlframeworkModelManifest before_postprocess false */
-
-/* polymorph dlframeworkModelManifest before_preprocess false */
-
-/* polymorph dlframeworkModelManifest container false */
-
-/* polymorph dlframeworkModelManifest description false */
-
-/* polymorph dlframeworkModelManifest framework false */
-
-/* polymorph dlframeworkModelManifest hidden false */
-
-/* polymorph dlframeworkModelManifest inputs false */
-
-/* polymorph dlframeworkModelManifest license false */
-
-/* polymorph dlframeworkModelManifest model false */
-
-/* polymorph dlframeworkModelManifest name false */
-
-/* polymorph dlframeworkModelManifest output false */
-
-/* polymorph dlframeworkModelManifest postprocess false */
-
-/* polymorph dlframeworkModelManifest preprocess false */
-
-/* polymorph dlframeworkModelManifest reference false */
-
-/* polymorph dlframeworkModelManifest version false */
-
 // Validate validates this dlframework model manifest
 func (m *DlframeworkModelManifest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateContainer(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateFramework(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateInputs(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateModel(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateOutput(formats); err != nil {
-		// prop
-		res = append(res, err)
-	}
-
-	if err := m.validateReference(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -157,7 +109,10 @@ func (m *DlframeworkModelManifest) validateContainer(formats strfmt.Registry) er
 		return nil
 	}
 
-	if err := validate.Required("container", "body", m.Container); err != nil {
+	if err := m.Container.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("container")
+		}
 		return err
 	}
 
@@ -171,7 +126,6 @@ func (m *DlframeworkModelManifest) validateFramework(formats strfmt.Registry) er
 	}
 
 	if m.Framework != nil {
-
 		if err := m.Framework.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("framework")
@@ -190,13 +144,11 @@ func (m *DlframeworkModelManifest) validateInputs(formats strfmt.Registry) error
 	}
 
 	for i := 0; i < len(m.Inputs); i++ {
-
 		if swag.IsZero(m.Inputs[i]) { // not required
 			continue
 		}
 
 		if m.Inputs[i] != nil {
-
 			if err := m.Inputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
@@ -217,7 +169,6 @@ func (m *DlframeworkModelManifest) validateModel(formats strfmt.Registry) error 
 	}
 
 	if m.Model != nil {
-
 		if err := m.Model.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("model")
@@ -236,22 +187,12 @@ func (m *DlframeworkModelManifest) validateOutput(formats strfmt.Registry) error
 	}
 
 	if m.Output != nil {
-
 		if err := m.Output.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("output")
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *DlframeworkModelManifest) validateReference(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Reference) { // not required
-		return nil
 	}
 
 	return nil

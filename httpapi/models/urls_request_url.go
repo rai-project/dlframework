@@ -8,13 +8,11 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // UrlsRequestURL urls request URL
 // swagger:model URLsRequestURL
-
 type UrlsRequestURL struct {
 
 	// data
@@ -24,17 +22,8 @@ type UrlsRequestURL struct {
 	ID string `json:"id,omitempty"`
 }
 
-/* polymorph URLsRequestURL data false */
-
-/* polymorph URLsRequestURL id false */
-
 // Validate validates this urls request URL
 func (m *UrlsRequestURL) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

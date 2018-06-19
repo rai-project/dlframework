@@ -9,8 +9,12 @@ import (
 	"encoding/json"
 )
 
-// SwaggerJSON embedded version of the swagger document used at generation time
-var SwaggerJSON json.RawMessage
+var (
+	// SwaggerJSON embedded version of the swagger document used at generation time
+	SwaggerJSON json.RawMessage
+	// FlatSwaggerJSON embedded flattened version of the swagger document used at generation time
+	FlatSwaggerJSON json.RawMessage
+)
 
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
@@ -918,6 +922,3097 @@ func init() {
           "type": "array",
           "items": {
             "$ref": "#/definitions/URLsRequestURL"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "url": "https://rai-project.github.io/carml"
+  }
+}`))
+	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "title": "CarML DLFramework",
+    "contact": {
+      "name": "Abdul Dakkak, Cheng Li",
+      "url": "https://github.com/rai-project/carml"
+    },
+    "license": {
+      "name": "NCSA/UIUC",
+      "url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
+    },
+    "version": "0.2.18"
+  },
+  "host": "carml.org",
+  "basePath": "/api",
+  "paths": {
+    "/predict/close": {
+      "post": {
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Close a predictor clear it's memory.",
+        "operationId": "Close",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "/predict/dataset": {
+      "post": {
+        "description": "The result is a prediction feature list.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "operationId": "Dataset",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "responses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "string",
+                              "format": "int64"
+                            },
+                            "metadata": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "probability": {
+                              "type": "number",
+                              "format": "float"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "input_id": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "request_id": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/images": {
+      "post": {
+        "description": "The result is a prediction feature list for each image.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "operationId": "Images",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "images": {
+                  "type": "array",
+                  "title": "A list of Base64 encoded images",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string",
+                        "format": "byte",
+                        "title": "The image is base64 encoded"
+                      },
+                      "id": {
+                        "type": "string",
+                        "title": "An id used to identify the output feature: maps to input_id for output"
+                      }
+                    }
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "responses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "string",
+                              "format": "int64"
+                            },
+                            "metadata": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "probability": {
+                              "type": "number",
+                              "format": "float"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "input_id": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "request_id": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/open": {
+      "post": {
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Opens a predictor and returns an id where the predictor\nis accessible. The id can be used to perform inference\nrequests.",
+        "operationId": "Open",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "framework_name": {
+                  "type": "string"
+                },
+                "framework_version": {
+                  "type": "string"
+                },
+                "model_name": {
+                  "type": "string"
+                },
+                "model_version": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/reset": {
+      "post": {
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Clear method clears the internal cache of the predictors",
+        "operationId": "Reset",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/stream/dataset": {
+      "post": {
+        "description": "The result is a prediction feature stream.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "operationId": "DatasetStream",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "features": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "index": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "probability": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "string"
+                },
+                "input_id": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "request_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/stream/images": {
+      "post": {
+        "description": "The result is a prediction feature stream for each image.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "operationId": "ImagesStream",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "images": {
+                  "type": "array",
+                  "title": "A list of Base64 encoded images",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string",
+                        "format": "byte",
+                        "title": "The image is base64 encoded"
+                      },
+                      "id": {
+                        "type": "string",
+                        "title": "An id used to identify the output feature: maps to input_id for output"
+                      }
+                    }
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "features": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "index": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "probability": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "string"
+                },
+                "input_id": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "request_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/stream/urls": {
+      "post": {
+        "description": "The result is a prediction feature stream for each url.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "operationId": "URLsStream",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "title": "An id used to identify the output feature: maps to input_id for output"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "features": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "index": {
+                        "type": "string",
+                        "format": "int64"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "probability": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  }
+                },
+                "id": {
+                  "type": "string"
+                },
+                "input_id": {
+                  "type": "string"
+                },
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "request_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/predict/urls": {
+      "post": {
+        "description": "The result is a prediction feature stream for each url.",
+        "tags": [
+          "Predict"
+        ],
+        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "operationId": "URLs",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "string"
+                    },
+                    "batch_size": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "execution_options": {
+                      "type": "object",
+                      "properties": {
+                        "cpu_options": {
+                          "type": "object"
+                        },
+                        "device_count": {
+                          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "format": "int32"
+                          }
+                        },
+                        "gpu_options": {
+                          "type": "object",
+                          "properties": {
+                            "allocator_type": {
+                              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                              "type": "string"
+                            },
+                            "force_gpu_compatible": {
+                              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                              "type": "boolean",
+                              "format": "boolean"
+                            },
+                            "per_process_gpu_memory_fraction": {
+                              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                              "type": "number",
+                              "format": "double"
+                            },
+                            "visible_device_list": {
+                              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "timeout_in_ms": {
+                          "description": "Time to wait for operation to complete in milliseconds.",
+                          "type": "string",
+                          "format": "int64"
+                        },
+                        "trace_level": {
+                          "type": "string",
+                          "default": "NO_TRACE",
+                          "enum": [
+                            "NO_TRACE",
+                            "STEP_TRACE",
+                            "FRAMEWORK_TRACE",
+                            "CPU_ONLY_TRACE",
+                            "HARDWARE_TRACE",
+                            "FULL_TRACE"
+                          ]
+                        }
+                      }
+                    },
+                    "feature_limit": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "request_id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "predictor": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "urls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string",
+                        "title": "An id used to identify the output feature: maps to input_id for output"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "responses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "string",
+                              "format": "int64"
+                            },
+                            "metadata": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "probability": {
+                              "type": "number",
+                              "format": "float"
+                            }
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "input_id": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "request_id": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/frameworks/agent": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "FrameworkAgents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "agents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "architecture": {
+                        "type": "string"
+                      },
+                      "cpuinfo": {
+                        "type": "string"
+                      },
+                      "frameworks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "container": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                  "cpu": {
+                                    "type": "string"
+                                  },
+                                  "gpu": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "version": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "gpuinfo": {
+                        "type": "string"
+                      },
+                      "hasgpu": {
+                        "type": "boolean",
+                        "format": "boolean"
+                      },
+                      "host": {
+                        "type": "string"
+                      },
+                      "hostname": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "port": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/frameworks/manifest": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "FrameworkManifests",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "manifests": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "container": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "cpu": {
+                              "type": "string"
+                            },
+                            "gpu": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/models/agent": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "ModelAgents",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "agents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "architecture": {
+                        "type": "string"
+                      },
+                      "cpuinfo": {
+                        "type": "string"
+                      },
+                      "frameworks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "container": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                  "cpu": {
+                                    "type": "string"
+                                  },
+                                  "gpu": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "version": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "gpuinfo": {
+                        "type": "string"
+                      },
+                      "hasgpu": {
+                        "type": "boolean",
+                        "format": "boolean"
+                      },
+                      "host": {
+                        "type": "string"
+                      },
+                      "hostname": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "port": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/registry/models/manifest": {
+      "get": {
+        "tags": [
+          "Registry"
+        ],
+        "operationId": "ModelManifests",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "framework_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "framework_version",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_name",
+            "in": "query"
+          },
+          {
+            "type": "string",
+            "name": "model_version",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "manifests": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "after_postprocess": {
+                        "type": "string"
+                      },
+                      "after_preprocess": {
+                        "type": "string"
+                      },
+                      "attributes": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "before_postprocess": {
+                        "type": "string"
+                      },
+                      "before_preprocess": {
+                        "type": "string"
+                      },
+                      "container": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "object",
+                          "properties": {
+                            "cpu": {
+                              "type": "string"
+                            },
+                            "gpu": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "framework": {
+                        "type": "object",
+                        "properties": {
+                          "container": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "object",
+                              "properties": {
+                                "cpu": {
+                                  "type": "string"
+                                },
+                                "gpu": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "hidden": {
+                        "type": "boolean",
+                        "format": "boolean"
+                      },
+                      "inputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            },
+                            "parameters": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "license": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "object",
+                        "properties": {
+                          "base_url": {
+                            "type": "string"
+                          },
+                          "graph_checksum": {
+                            "type": "string"
+                          },
+                          "graph_path": {
+                            "type": "string"
+                          },
+                          "is_archive": {
+                            "type": "boolean",
+                            "format": "boolean"
+                          },
+                          "weights_checksum": {
+                            "type": "string"
+                          },
+                          "weights_path": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "output": {
+                        "type": "object",
+                        "properties": {
+                          "description": {
+                            "type": "string"
+                          },
+                          "parameters": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "object",
+                              "properties": {
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "postprocess": {
+                        "type": "string"
+                      },
+                      "preprocess": {
+                        "type": "string"
+                      },
+                      "reference": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DatasetRequestDataset": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "ExecutionOptionsTraceLevel": {
+      "type": "string",
+      "default": "NO_TRACE",
+      "enum": [
+        "NO_TRACE",
+        "STEP_TRACE",
+        "FRAMEWORK_TRACE",
+        "CPU_ONLY_TRACE",
+        "HARDWARE_TRACE",
+        "FULL_TRACE"
+      ]
+    },
+    "ImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        }
+      }
+    },
+    "ModelManifestModel": {
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "type": "string"
+        },
+        "graph_checksum": {
+          "type": "string"
+        },
+        "graph_path": {
+          "type": "string"
+        },
+        "is_archive": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "weights_checksum": {
+          "type": "string"
+        },
+        "weights_path": {
+          "type": "string"
+        }
+      }
+    },
+    "TypeParameter": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "URLsRequestURL": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        }
+      }
+    },
+    "dlframeworkAgent": {
+      "type": "object",
+      "properties": {
+        "architecture": {
+          "type": "string"
+        },
+        "cpuinfo": {
+          "type": "string"
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "container": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "gpu": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "gpuinfo": {
+          "type": "string"
+        },
+        "hasgpu": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "port": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAgents": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "architecture": {
+                "type": "string"
+              },
+              "cpuinfo": {
+                "type": "string"
+              },
+              "frameworks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "container": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "cpu": {
+                            "type": "string"
+                          },
+                          "gpu": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "gpuinfo": {
+                "type": "string"
+              },
+              "hasgpu": {
+                "type": "boolean",
+                "format": "boolean"
+              },
+              "host": {
+                "type": "string"
+              },
+              "hostname": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "port": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkCPUOptions": {
+      "type": "object"
+    },
+    "dlframeworkContainerHardware": {
+      "type": "object",
+      "properties": {
+        "cpu": {
+          "type": "string"
+        },
+        "gpu": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkDatasetRequest": {
+      "type": "object",
+      "properties": {
+        "dataset": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "batch_size": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "execution_options": {
+              "type": "object",
+              "properties": {
+                "cpu_options": {
+                  "type": "object"
+                },
+                "device_count": {
+                  "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "gpu_options": {
+                  "type": "object",
+                  "properties": {
+                    "allocator_type": {
+                      "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                      "type": "string"
+                    },
+                    "force_gpu_compatible": {
+                      "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                      "type": "boolean",
+                      "format": "boolean"
+                    },
+                    "per_process_gpu_memory_fraction": {
+                      "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "visible_device_list": {
+                      "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "timeout_in_ms": {
+                  "description": "Time to wait for operation to complete in milliseconds.",
+                  "type": "string",
+                  "format": "int64"
+                },
+                "trace_level": {
+                  "type": "string",
+                  "default": "NO_TRACE",
+                  "enum": [
+                    "NO_TRACE",
+                    "STEP_TRACE",
+                    "FRAMEWORK_TRACE",
+                    "CPU_ONLY_TRACE",
+                    "HARDWARE_TRACE",
+                    "FULL_TRACE"
+                  ]
+                }
+              }
+            },
+            "feature_limit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "request_id": {
+              "type": "string"
+            }
+          }
+        },
+        "predictor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkExecutionOptions": {
+      "type": "object",
+      "properties": {
+        "cpu_options": {
+          "type": "object"
+        },
+        "device_count": {
+          "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "gpu_options": {
+          "type": "object",
+          "properties": {
+            "allocator_type": {
+              "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+              "type": "string"
+            },
+            "force_gpu_compatible": {
+              "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+              "type": "boolean",
+              "format": "boolean"
+            },
+            "per_process_gpu_memory_fraction": {
+              "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+              "type": "number",
+              "format": "double"
+            },
+            "visible_device_list": {
+              "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+              "type": "string"
+            }
+          }
+        },
+        "timeout_in_ms": {
+          "description": "Time to wait for operation to complete in milliseconds.",
+          "type": "string",
+          "format": "int64"
+        },
+        "trace_level": {
+          "type": "string",
+          "default": "NO_TRACE",
+          "enum": [
+            "NO_TRACE",
+            "STEP_TRACE",
+            "FRAMEWORK_TRACE",
+            "CPU_ONLY_TRACE",
+            "HARDWARE_TRACE",
+            "FULL_TRACE"
+          ]
+        }
+      }
+    },
+    "dlframeworkFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "string",
+          "format": "int64"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "dlframeworkFeatureResponse": {
+      "type": "object",
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "string",
+                "format": "int64"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "probability": {
+                "type": "number",
+                "format": "float"
+              }
+            }
+          }
+        },
+        "id": {
+          "type": "string"
+        },
+        "input_id": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkFeaturesResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "index": {
+                      "type": "string",
+                      "format": "int64"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "probability": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              },
+              "id": {
+                "type": "string"
+              },
+              "input_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "request_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkFrameworkManifest": {
+      "type": "object",
+      "properties": {
+        "container": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cpu": {
+                "type": "string"
+              },
+              "gpu": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkFrameworkManifestsResponse": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "container": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "gpu": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkGPUOptions": {
+      "type": "object",
+      "properties": {
+        "allocator_type": {
+          "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+          "type": "string"
+        },
+        "force_gpu_compatible": {
+          "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "per_process_gpu_memory_fraction": {
+          "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+          "type": "number",
+          "format": "double"
+        },
+        "visible_device_list": {
+          "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkImagesRequest": {
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "title": "A list of Base64 encoded images",
+          "items": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "format": "byte",
+                "title": "The image is base64 encoded"
+              },
+              "id": {
+                "type": "string",
+                "title": "An id used to identify the output feature: maps to input_id for output"
+              }
+            }
+          }
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "batch_size": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "execution_options": {
+              "type": "object",
+              "properties": {
+                "cpu_options": {
+                  "type": "object"
+                },
+                "device_count": {
+                  "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "gpu_options": {
+                  "type": "object",
+                  "properties": {
+                    "allocator_type": {
+                      "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                      "type": "string"
+                    },
+                    "force_gpu_compatible": {
+                      "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                      "type": "boolean",
+                      "format": "boolean"
+                    },
+                    "per_process_gpu_memory_fraction": {
+                      "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "visible_device_list": {
+                      "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "timeout_in_ms": {
+                  "description": "Time to wait for operation to complete in milliseconds.",
+                  "type": "string",
+                  "format": "int64"
+                },
+                "trace_level": {
+                  "type": "string",
+                  "default": "NO_TRACE",
+                  "enum": [
+                    "NO_TRACE",
+                    "STEP_TRACE",
+                    "FRAMEWORK_TRACE",
+                    "CPU_ONLY_TRACE",
+                    "HARDWARE_TRACE",
+                    "FULL_TRACE"
+                  ]
+                }
+              }
+            },
+            "feature_limit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "request_id": {
+              "type": "string"
+            }
+          }
+        },
+        "predictor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkModelManifest": {
+      "type": "object",
+      "properties": {
+        "after_postprocess": {
+          "type": "string"
+        },
+        "after_preprocess": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "before_postprocess": {
+          "type": "string"
+        },
+        "before_preprocess": {
+          "type": "string"
+        },
+        "container": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cpu": {
+                "type": "string"
+              },
+              "gpu": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "framework": {
+          "type": "object",
+          "properties": {
+            "container": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "cpu": {
+                    "type": "string"
+                  },
+                  "gpu": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          }
+        },
+        "hidden": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "license": {
+          "type": "string"
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "base_url": {
+              "type": "string"
+            },
+            "graph_checksum": {
+              "type": "string"
+            },
+            "graph_path": {
+              "type": "string"
+            },
+            "is_archive": {
+              "type": "boolean",
+              "format": "boolean"
+            },
+            "weights_checksum": {
+              "type": "string"
+            },
+            "weights_path": {
+              "type": "string"
+            }
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "parameters": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        },
+        "postprocess": {
+          "type": "string"
+        },
+        "preprocess": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkModelManifestType": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkModelManifestsResponse": {
+      "type": "object",
+      "properties": {
+        "manifests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "after_postprocess": {
+                "type": "string"
+              },
+              "after_preprocess": {
+                "type": "string"
+              },
+              "attributes": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "before_postprocess": {
+                "type": "string"
+              },
+              "before_preprocess": {
+                "type": "string"
+              },
+              "container": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "cpu": {
+                      "type": "string"
+                    },
+                    "gpu": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "description": {
+                "type": "string"
+              },
+              "framework": {
+                "type": "object",
+                "properties": {
+                  "container": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "cpu": {
+                          "type": "string"
+                        },
+                        "gpu": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              },
+              "hidden": {
+                "type": "boolean",
+                "format": "boolean"
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "description": {
+                      "type": "string"
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "license": {
+                "type": "string"
+              },
+              "model": {
+                "type": "object",
+                "properties": {
+                  "base_url": {
+                    "type": "string"
+                  },
+                  "graph_checksum": {
+                    "type": "string"
+                  },
+                  "graph_path": {
+                    "type": "string"
+                  },
+                  "is_archive": {
+                    "type": "boolean",
+                    "format": "boolean"
+                  },
+                  "weights_checksum": {
+                    "type": "string"
+                  },
+                  "weights_path": {
+                    "type": "string"
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "output": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              },
+              "postprocess": {
+                "type": "string"
+              },
+              "preprocess": {
+                "type": "string"
+              },
+              "reference": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkPredictionOptions": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "batch_size": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "execution_options": {
+          "type": "object",
+          "properties": {
+            "cpu_options": {
+              "type": "object"
+            },
+            "device_count": {
+              "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "gpu_options": {
+              "type": "object",
+              "properties": {
+                "allocator_type": {
+                  "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                  "type": "string"
+                },
+                "force_gpu_compatible": {
+                  "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                  "type": "boolean",
+                  "format": "boolean"
+                },
+                "per_process_gpu_memory_fraction": {
+                  "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                  "type": "number",
+                  "format": "double"
+                },
+                "visible_device_list": {
+                  "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                  "type": "string"
+                }
+              }
+            },
+            "timeout_in_ms": {
+              "description": "Time to wait for operation to complete in milliseconds.",
+              "type": "string",
+              "format": "int64"
+            },
+            "trace_level": {
+              "type": "string",
+              "default": "NO_TRACE",
+              "enum": [
+                "NO_TRACE",
+                "STEP_TRACE",
+                "FRAMEWORK_TRACE",
+                "CPU_ONLY_TRACE",
+                "HARDWARE_TRACE",
+                "FULL_TRACE"
+              ]
+            }
+          }
+        },
+        "feature_limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkPredictorCloseResponse": {
+      "type": "object"
+    },
+    "dlframeworkPredictorOpenRequest": {
+      "type": "object",
+      "properties": {
+        "framework_name": {
+          "type": "string"
+        },
+        "framework_version": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "batch_size": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "execution_options": {
+              "type": "object",
+              "properties": {
+                "cpu_options": {
+                  "type": "object"
+                },
+                "device_count": {
+                  "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "gpu_options": {
+                  "type": "object",
+                  "properties": {
+                    "allocator_type": {
+                      "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                      "type": "string"
+                    },
+                    "force_gpu_compatible": {
+                      "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                      "type": "boolean",
+                      "format": "boolean"
+                    },
+                    "per_process_gpu_memory_fraction": {
+                      "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "visible_device_list": {
+                      "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "timeout_in_ms": {
+                  "description": "Time to wait for operation to complete in milliseconds.",
+                  "type": "string",
+                  "format": "int64"
+                },
+                "trace_level": {
+                  "type": "string",
+                  "default": "NO_TRACE",
+                  "enum": [
+                    "NO_TRACE",
+                    "STEP_TRACE",
+                    "FRAMEWORK_TRACE",
+                    "CPU_ONLY_TRACE",
+                    "HARDWARE_TRACE",
+                    "FULL_TRACE"
+                  ]
+                }
+              }
+            },
+            "feature_limit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "request_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkResetRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "predictor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkResetResponse": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dlframeworkURLsRequest": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "object",
+          "properties": {
+            "agent": {
+              "type": "string"
+            },
+            "batch_size": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "execution_options": {
+              "type": "object",
+              "properties": {
+                "cpu_options": {
+                  "type": "object"
+                },
+                "device_count": {
+                  "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber.",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                },
+                "gpu_options": {
+                  "type": "object",
+                  "properties": {
+                    "allocator_type": {
+                      "description": "The type of GPU allocation strategy to use.\n\nAllowed values:\n\"\": The empty string (default) uses a system-chosen default\n    which may change over time.\n\n\"BFC\": A \"Best-fit with coalescing\" algorithm, simplified from a\n       version of dlmalloc.",
+                      "type": "string"
+                    },
+                    "force_gpu_compatible": {
+                      "description": "Force all tensors to be gpu_compatible. On a GPU-enabled TensorFlow,\nenabling this option forces all CPU tensors to be allocated with Cuda\npinned memory. Normally, TensorFlow will infer which tensors should be\nallocated as the pinned memory. But in case where the inference is\nincomplete, this option can significantly speed up the cross-device memory\ncopy performance as long as it fits the memory.\nNote that this option is not something that should be\nenabled by default for unknown or very large models, since all Cuda pinned\nmemory is unpageable, having too much pinned memory might negatively impact\nthe overall host system performance.",
+                      "type": "boolean",
+                      "format": "boolean"
+                    },
+                    "per_process_gpu_memory_fraction": {
+                      "description": "A value between 0 and 1 that indicates what fraction of the\navailable GPU memory to pre-allocate for each process.  1 means\nto pre-allocate all of the GPU memory, 0.5 means the process\nallocates ~50% of the available GPU memory.",
+                      "type": "number",
+                      "format": "double"
+                    },
+                    "visible_device_list": {
+                      "description": "A comma-separated list of GPU ids that determines the 'visible'\nto 'virtual' mapping of GPU devices.  For example, if TensorFlow\ncan see 8 GPU devices in the process, and one wanted to map\nvisible GPU devices 5 and 3 as \"/device:GPU:0\", and \"/device:GPU:1\", then\none would specify this field as \"5,3\".  This field is similar in spirit to\nthe CUDA_VISIBLE_DEVICES environment variable, except it applies to the\nvisible GPU devices in the process.\n\nNOTE: The GPU driver provides the process with the visible GPUs\nin an order which is not guaranteed to have any correlation to\nthe *physical* GPU id in the machine.  This field is used for\nremapping \"visible\" to \"virtual\", which means this operates only\nafter the process starts.  Users are required to use vendor\nspecific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the\nphysical to visible device mapping prior to invoking TensorFlow.",
+                      "type": "string"
+                    }
+                  }
+                },
+                "timeout_in_ms": {
+                  "description": "Time to wait for operation to complete in milliseconds.",
+                  "type": "string",
+                  "format": "int64"
+                },
+                "trace_level": {
+                  "type": "string",
+                  "default": "NO_TRACE",
+                  "enum": [
+                    "NO_TRACE",
+                    "STEP_TRACE",
+                    "FRAMEWORK_TRACE",
+                    "CPU_ONLY_TRACE",
+                    "HARDWARE_TRACE",
+                    "FULL_TRACE"
+                  ]
+                }
+              }
+            },
+            "feature_limit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "request_id": {
+              "type": "string"
+            }
+          }
+        },
+        "predictor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            }
+          }
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string",
+                "title": "An id used to identify the output feature: maps to input_id for output"
+              }
+            }
           }
         }
       }

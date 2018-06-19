@@ -14,7 +14,6 @@ import (
 
 // DlframeworkDatasetRequest dlframework dataset request
 // swagger:model dlframeworkDatasetRequest
-
 type DlframeworkDatasetRequest struct {
 
 	// dataset
@@ -27,28 +26,19 @@ type DlframeworkDatasetRequest struct {
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
 
-/* polymorph dlframeworkDatasetRequest dataset false */
-
-/* polymorph dlframeworkDatasetRequest options false */
-
-/* polymorph dlframeworkDatasetRequest predictor false */
-
 // Validate validates this dlframework dataset request
 func (m *DlframeworkDatasetRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDataset(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateOptions(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validatePredictor(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -65,7 +55,6 @@ func (m *DlframeworkDatasetRequest) validateDataset(formats strfmt.Registry) err
 	}
 
 	if m.Dataset != nil {
-
 		if err := m.Dataset.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("dataset")
@@ -84,7 +73,6 @@ func (m *DlframeworkDatasetRequest) validateOptions(formats strfmt.Registry) err
 	}
 
 	if m.Options != nil {
-
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
@@ -103,7 +91,6 @@ func (m *DlframeworkDatasetRequest) validatePredictor(formats strfmt.Registry) e
 	}
 
 	if m.Predictor != nil {
-
 		if err := m.Predictor.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("predictor")

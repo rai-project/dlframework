@@ -8,28 +8,19 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // TypeParameter type parameter
 // swagger:model TypeParameter
-
 type TypeParameter struct {
 
 	// value
 	Value string `json:"value,omitempty"`
 }
 
-/* polymorph TypeParameter value false */
-
 // Validate validates this type parameter
 func (m *TypeParameter) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

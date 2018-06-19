@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // ModelManifestsOKCode is the HTTP code returned for type ModelManifestsOK
@@ -30,6 +30,7 @@ type ModelManifestsOK struct {
 
 // NewModelManifestsOK creates ModelManifestsOK with default headers values
 func NewModelManifestsOK() *ModelManifestsOK {
+
 	return &ModelManifestsOK{}
 }
 

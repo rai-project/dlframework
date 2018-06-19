@@ -16,7 +16,6 @@ import (
 
 // DlframeworkAgent dlframework agent
 // swagger:model dlframeworkAgent
-
 type DlframeworkAgent struct {
 
 	// architecture
@@ -47,30 +46,11 @@ type DlframeworkAgent struct {
 	Port string `json:"port,omitempty"`
 }
 
-/* polymorph dlframeworkAgent architecture false */
-
-/* polymorph dlframeworkAgent cpuinfo false */
-
-/* polymorph dlframeworkAgent frameworks false */
-
-/* polymorph dlframeworkAgent gpuinfo false */
-
-/* polymorph dlframeworkAgent hasgpu false */
-
-/* polymorph dlframeworkAgent host false */
-
-/* polymorph dlframeworkAgent hostname false */
-
-/* polymorph dlframeworkAgent metadata false */
-
-/* polymorph dlframeworkAgent port false */
-
 // Validate validates this dlframework agent
 func (m *DlframeworkAgent) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateFrameworks(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -87,13 +67,11 @@ func (m *DlframeworkAgent) validateFrameworks(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Frameworks); i++ {
-
 		if swag.IsZero(m.Frameworks[i]) { // not required
 			continue
 		}
 
 		if m.Frameworks[i] != nil {
-
 			if err := m.Frameworks[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("frameworks" + "." + strconv.Itoa(i))

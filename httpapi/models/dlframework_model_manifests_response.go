@@ -16,21 +16,17 @@ import (
 
 // DlframeworkModelManifestsResponse dlframework model manifests response
 // swagger:model dlframeworkModelManifestsResponse
-
 type DlframeworkModelManifestsResponse struct {
 
 	// manifests
 	Manifests []*DlframeworkModelManifest `json:"manifests"`
 }
 
-/* polymorph dlframeworkModelManifestsResponse manifests false */
-
 // Validate validates this dlframework model manifests response
 func (m *DlframeworkModelManifestsResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateManifests(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -47,13 +43,11 @@ func (m *DlframeworkModelManifestsResponse) validateManifests(formats strfmt.Reg
 	}
 
 	for i := 0; i < len(m.Manifests); i++ {
-
 		if swag.IsZero(m.Manifests[i]) { // not required
 			continue
 		}
 
 		if m.Manifests[i] != nil {
-
 			if err := m.Manifests[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("manifests" + "." + strconv.Itoa(i))

@@ -8,7 +8,6 @@ import (
 
 	loads "github.com/go-openapi/loads"
 	flags "github.com/jessevdk/go-flags"
-
 	"github.com/rai-project/dlframework/httpapi/restapi"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
 )
@@ -18,7 +17,7 @@ import (
 
 func main() {
 
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
 	if err != nil {
 		log.Fatalln(err)
 	}

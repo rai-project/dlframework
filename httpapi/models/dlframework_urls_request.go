@@ -16,7 +16,6 @@ import (
 
 // DlframeworkUrlsRequest dlframework urls request
 // swagger:model dlframeworkURLsRequest
-
 type DlframeworkUrlsRequest struct {
 
 	// options
@@ -29,28 +28,19 @@ type DlframeworkUrlsRequest struct {
 	Urls []*UrlsRequestURL `json:"urls"`
 }
 
-/* polymorph dlframeworkURLsRequest options false */
-
-/* polymorph dlframeworkURLsRequest predictor false */
-
-/* polymorph dlframeworkURLsRequest urls false */
-
 // Validate validates this dlframework urls request
 func (m *DlframeworkUrlsRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOptions(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validatePredictor(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateUrls(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -67,7 +57,6 @@ func (m *DlframeworkUrlsRequest) validateOptions(formats strfmt.Registry) error 
 	}
 
 	if m.Options != nil {
-
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
@@ -86,7 +75,6 @@ func (m *DlframeworkUrlsRequest) validatePredictor(formats strfmt.Registry) erro
 	}
 
 	if m.Predictor != nil {
-
 		if err := m.Predictor.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("predictor")
@@ -105,13 +93,11 @@ func (m *DlframeworkUrlsRequest) validateUrls(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Urls); i++ {
-
 		if swag.IsZero(m.Urls[i]) { // not required
 			continue
 		}
 
 		if m.Urls[i] != nil {
-
 			if err := m.Urls[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("urls" + "." + strconv.Itoa(i))

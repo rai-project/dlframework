@@ -14,7 +14,6 @@ import (
 
 // DlframeworkExecutionOptions dlframework execution options
 // swagger:model dlframeworkExecutionOptions
-
 type DlframeworkExecutionOptions struct {
 
 	// Options that apply to all CPUs.
@@ -36,27 +35,15 @@ type DlframeworkExecutionOptions struct {
 	TraceLevel ExecutionOptionsTraceLevel `json:"trace_level,omitempty"`
 }
 
-/* polymorph dlframeworkExecutionOptions cpu_options false */
-
-/* polymorph dlframeworkExecutionOptions device_count false */
-
-/* polymorph dlframeworkExecutionOptions gpu_options false */
-
-/* polymorph dlframeworkExecutionOptions timeout_in_ms false */
-
-/* polymorph dlframeworkExecutionOptions trace_level false */
-
 // Validate validates this dlframework execution options
 func (m *DlframeworkExecutionOptions) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateGpuOptions(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateTraceLevel(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -73,7 +60,6 @@ func (m *DlframeworkExecutionOptions) validateGpuOptions(formats strfmt.Registry
 	}
 
 	if m.GpuOptions != nil {
-
 		if err := m.GpuOptions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gpu_options")
