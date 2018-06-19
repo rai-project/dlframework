@@ -3,7 +3,7 @@ package steps
 import (
 	"io"
 
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"

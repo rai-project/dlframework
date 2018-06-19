@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"

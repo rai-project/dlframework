@@ -1,9 +1,9 @@
 package steps
 
 import (
+	"context"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/uuid"
-	"golang.org/x/net/context"
 )
 
 type base struct {

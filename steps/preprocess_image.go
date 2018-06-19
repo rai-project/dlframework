@@ -1,7 +1,7 @@
 package steps
 
 import (
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/anthonynsimon/bild/parallel"
 	"github.com/pkg/errors"

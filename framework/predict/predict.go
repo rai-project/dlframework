@@ -3,7 +3,7 @@ package predict
 import (
 	"io"
 
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"

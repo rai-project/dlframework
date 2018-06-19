@@ -1,8 +1,8 @@
 package agent
 
 import (
+	context "context"
 	dl "github.com/rai-project/dlframework"
-	context "golang.org/x/net/context"
 )
 
 type Registry struct {

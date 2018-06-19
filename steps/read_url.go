@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"

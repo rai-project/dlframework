@@ -1,10 +1,10 @@
 package predict
 
 import (
+	"context"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/tracer"
-	"golang.org/x/net/context"
 )
 
 type Base struct {

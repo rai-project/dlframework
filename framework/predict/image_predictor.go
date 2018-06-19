@@ -4,11 +4,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"context"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
-	"golang.org/x/net/context"
 	yaml "gopkg.in/yaml.v2"
 )
 

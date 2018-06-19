@@ -1,8 +1,8 @@
 package framework
 
 import (
+	context "context"
 	"github.com/rai-project/dlframework"
-	context "golang.org/x/net/context"
 )
 
 type Registry struct {

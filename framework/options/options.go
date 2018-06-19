@@ -3,9 +3,9 @@ package options
 import (
 	"strings"
 
+	context "context"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/tracer"
-	context "golang.org/x/net/context"
 )
 
 type Options struct {

@@ -1,9 +1,9 @@
 package steps
 
 import (
+	"context"
 	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/tracer"
-	"golang.org/x/net/context"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"

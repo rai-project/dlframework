@@ -9,11 +9,11 @@ import (
 
 	// _ "github.com/rai-project/dldataset/vision"
 
+	context "context"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
 	"github.com/rai-project/uuid"
-	context "golang.org/x/net/context"
 	"golang.org/x/sync/syncmap"
 
 	"github.com/rai-project/dldataset"
