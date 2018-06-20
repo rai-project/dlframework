@@ -13,13 +13,13 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // NewOpenParams creates a new OpenParams object
-// with the default values initialized.
+// no default values defined in spec.
 func NewOpenParams() OpenParams {
-	var ()
+
 	return OpenParams{}
 }
 
@@ -30,7 +30,7 @@ func NewOpenParams() OpenParams {
 type OpenParams struct {
 
 	// HTTP Request Object
-	HTTPRequest *http.Request
+	HTTPRequest *http.Request `json:"-"`
 
 	/*
 	  Required: true
@@ -40,9 +40,12 @@ type OpenParams struct {
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
-// for simple values it will use straight method calls
+// for simple values it will use straight method calls.
+//
+// To ensure default values, the struct must have been initialized with NewOpenParams() beforehand.
 func (o *OpenParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
+
 	o.HTTPRequest = r
 
 	if runtime.HasBody(r) {
@@ -54,8 +57,8 @@ func (o *OpenParams) BindRequest(r *http.Request, route *middleware.MatchedRoute
 			} else {
 				res = append(res, errors.NewParseError("body", "body", "", err))
 			}
-
 		} else {
+			// validate body object
 			if err := body.Validate(route.Formats); err != nil {
 				res = append(res, err)
 			}
@@ -64,11 +67,9 @@ func (o *OpenParams) BindRequest(r *http.Request, route *middleware.MatchedRoute
 				o.Body = &body
 			}
 		}
-
 	} else {
 		res = append(res, errors.Required("body", "body"))
 	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}

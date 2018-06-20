@@ -13,7 +13,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // ModelAgentsReader is a Reader for the ModelAgents structure.

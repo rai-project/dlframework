@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // OpenOKCode is the HTTP code returned for type OpenOK
@@ -30,6 +30,7 @@ type OpenOK struct {
 
 // NewOpenOK creates OpenOK with default headers values
 func NewOpenOK() *OpenOK {
+
 	return &OpenOK{}
 }
 

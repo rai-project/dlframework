@@ -16,7 +16,6 @@ import (
 
 // DlframeworkImagesRequest dlframework images request
 // swagger:model dlframeworkImagesRequest
-
 type DlframeworkImagesRequest struct {
 
 	// A list of Base64 encoded images
@@ -29,28 +28,19 @@ type DlframeworkImagesRequest struct {
 	Predictor *DlframeworkPredictor `json:"predictor,omitempty"`
 }
 
-/* polymorph dlframeworkImagesRequest images false */
-
-/* polymorph dlframeworkImagesRequest options false */
-
-/* polymorph dlframeworkImagesRequest predictor false */
-
 // Validate validates this dlframework images request
 func (m *DlframeworkImagesRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateImages(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validateOptions(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
 	if err := m.validatePredictor(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -67,13 +57,11 @@ func (m *DlframeworkImagesRequest) validateImages(formats strfmt.Registry) error
 	}
 
 	for i := 0; i < len(m.Images); i++ {
-
 		if swag.IsZero(m.Images[i]) { // not required
 			continue
 		}
 
 		if m.Images[i] != nil {
-
 			if err := m.Images[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("images" + "." + strconv.Itoa(i))
@@ -94,7 +82,6 @@ func (m *DlframeworkImagesRequest) validateOptions(formats strfmt.Registry) erro
 	}
 
 	if m.Options != nil {
-
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")
@@ -113,7 +100,6 @@ func (m *DlframeworkImagesRequest) validatePredictor(formats strfmt.Registry) er
 	}
 
 	if m.Predictor != nil {
-
 		if err := m.Predictor.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("predictor")

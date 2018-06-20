@@ -7,5 +7,4 @@ package models
 
 // DlframeworkPredictorCloseResponse dlframework predictor close response
 // swagger:model dlframeworkPredictorCloseResponse
-
 type DlframeworkPredictorCloseResponse interface{}

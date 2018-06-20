@@ -8,13 +8,11 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // DlframeworkContainerHardware dlframework container hardware
 // swagger:model dlframeworkContainerHardware
-
 type DlframeworkContainerHardware struct {
 
 	// cpu
@@ -24,17 +22,8 @@ type DlframeworkContainerHardware struct {
 	Gpu string `json:"gpu,omitempty"`
 }
 
-/* polymorph dlframeworkContainerHardware cpu false */
-
-/* polymorph dlframeworkContainerHardware gpu false */
-
 // Validate validates this dlframework container hardware
 func (m *DlframeworkContainerHardware) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

@@ -8,13 +8,11 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // DlframeworkGPUOptions dlframework g p u options
 // swagger:model dlframeworkGPUOptions
-
 type DlframeworkGPUOptions struct {
 
 	// The type of GPU allocation strategy to use.
@@ -63,21 +61,8 @@ type DlframeworkGPUOptions struct {
 	VisibleDeviceList string `json:"visible_device_list,omitempty"`
 }
 
-/* polymorph dlframeworkGPUOptions allocator_type false */
-
-/* polymorph dlframeworkGPUOptions force_gpu_compatible false */
-
-/* polymorph dlframeworkGPUOptions per_process_gpu_memory_fraction false */
-
-/* polymorph dlframeworkGPUOptions visible_device_list false */
-
 // Validate validates this dlframework g p u options
 func (m *DlframeworkGPUOptions) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

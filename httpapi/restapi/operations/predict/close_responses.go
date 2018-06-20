@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // CloseOKCode is the HTTP code returned for type CloseOK
@@ -30,6 +30,7 @@ type CloseOK struct {
 
 // NewCloseOK creates CloseOK with default headers values
 func NewCloseOK() *CloseOK {
+
 	return &CloseOK{}
 }
 

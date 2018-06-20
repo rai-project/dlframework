@@ -8,13 +8,11 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // DatasetRequestDataset dataset request dataset
 // swagger:model DatasetRequestDataset
-
 type DatasetRequestDataset struct {
 
 	// category
@@ -24,17 +22,8 @@ type DatasetRequestDataset struct {
 	Name string `json:"name,omitempty"`
 }
 
-/* polymorph DatasetRequestDataset category false */
-
-/* polymorph DatasetRequestDataset name false */
-
 // Validate validates this dataset request dataset
 func (m *DatasetRequestDataset) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

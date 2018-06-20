@@ -16,21 +16,17 @@ import (
 
 // DlframeworkAgents dlframework agents
 // swagger:model dlframeworkAgents
-
 type DlframeworkAgents struct {
 
 	// agents
 	Agents []*DlframeworkAgent `json:"agents"`
 }
 
-/* polymorph dlframeworkAgents agents false */
-
 // Validate validates this dlframework agents
 func (m *DlframeworkAgents) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAgents(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -47,13 +43,11 @@ func (m *DlframeworkAgents) validateAgents(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Agents); i++ {
-
 		if swag.IsZero(m.Agents[i]) { // not required
 			continue
 		}
 
 		if m.Agents[i] != nil {
-
 			if err := m.Agents[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("agents" + "." + strconv.Itoa(i))

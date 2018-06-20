@@ -20,7 +20,7 @@ import:
   subpackages:
   - spew
 - package: github.com/docker/docker
-  version: ^17.5.0-ce-rc3
+  version: ^17.03.2-ce
   subpackages:
   - api/types
 - package: github.com/elazarl/go-bindata-assetfs
@@ -41,7 +41,7 @@ import:
 - package: github.com/go-openapi/swag
 - package: github.com/go-openapi/validate
 - package: github.com/gogo/protobuf
-  version: ^0.5.0
+  version: ^1.0.0
   subpackages:
   - gogoproto
   - proto

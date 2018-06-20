@@ -8,28 +8,19 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
 // DlframeworkPredictor dlframework predictor
 // swagger:model dlframeworkPredictor
-
 type DlframeworkPredictor struct {
 
 	// id
 	ID string `json:"id,omitempty"`
 }
 
-/* polymorph dlframeworkPredictor id false */
-
 // Validate validates this dlframework predictor
 func (m *DlframeworkPredictor) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

@@ -14,7 +14,6 @@ import (
 
 // DlframeworkPredictorOpenRequest dlframework predictor open request
 // swagger:model dlframeworkPredictorOpenRequest
-
 type DlframeworkPredictorOpenRequest struct {
 
 	// framework name
@@ -33,22 +32,11 @@ type DlframeworkPredictorOpenRequest struct {
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
 }
 
-/* polymorph dlframeworkPredictorOpenRequest framework_name false */
-
-/* polymorph dlframeworkPredictorOpenRequest framework_version false */
-
-/* polymorph dlframeworkPredictorOpenRequest model_name false */
-
-/* polymorph dlframeworkPredictorOpenRequest model_version false */
-
-/* polymorph dlframeworkPredictorOpenRequest options false */
-
 // Validate validates this dlframework predictor open request
 func (m *DlframeworkPredictorOpenRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateOptions(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -65,7 +53,6 @@ func (m *DlframeworkPredictorOpenRequest) validateOptions(formats strfmt.Registr
 	}
 
 	if m.Options != nil {
-
 		if err := m.Options.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("options")

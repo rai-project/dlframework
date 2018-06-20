@@ -12,10 +12,10 @@ import (
 	"io"
 	"net/http"
 
-	"context"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -32,7 +32,7 @@ func request_Predict_Open_0(ctx context.Context, marshaler runtime.Marshaler, cl
 	var protoReq PredictorOpenRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -45,7 +45,7 @@ func request_Predict_Close_0(ctx context.Context, marshaler runtime.Marshaler, c
 	var protoReq Predictor
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -58,7 +58,7 @@ func request_Predict_URLs_0(ctx context.Context, marshaler runtime.Marshaler, cl
 	var protoReq URLsRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -71,7 +71,7 @@ func request_Predict_URLsStream_0(ctx context.Context, marshaler runtime.Marshal
 	var protoReq URLsRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -92,7 +92,7 @@ func request_Predict_Images_0(ctx context.Context, marshaler runtime.Marshaler, 
 	var protoReq ImagesRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -105,7 +105,7 @@ func request_Predict_ImagesStream_0(ctx context.Context, marshaler runtime.Marsh
 	var protoReq ImagesRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -126,7 +126,7 @@ func request_Predict_Dataset_0(ctx context.Context, marshaler runtime.Marshaler,
 	var protoReq DatasetRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -139,7 +139,7 @@ func request_Predict_DatasetStream_0(ctx context.Context, marshaler runtime.Mars
 	var protoReq DatasetRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -160,7 +160,7 @@ func request_Predict_Reset_0(ctx context.Context, marshaler runtime.Marshaler, c
 	var protoReq ResetRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -179,14 +179,14 @@ func RegisterPredictHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 	defer func() {
 		if err != nil {
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 			return
 		}
 		go func() {
 			<-ctx.Done()
 			if cerr := conn.Close(); cerr != nil {
-				grpclog.Printf("Failed to close conn to %s: %v", endpoint, cerr)
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
 			}
 		}()
 	}()
@@ -197,10 +197,18 @@ func RegisterPredictHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 // RegisterPredictHandler registers the http handlers for service Predict to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	client := NewPredictClient(conn)
+	return RegisterPredictHandlerClient(ctx, mux, NewPredictClient(conn))
+}
+
+// RegisterPredictHandlerClient registers the http handlers for service Predict
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "PredictClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PredictClient"
+// doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
+// "PredictClient" to call the correct interceptors.
+func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PredictClient) error {
 
 	mux.Handle("POST", pattern_Predict_Open_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -229,7 +237,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_Close_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -258,7 +266,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_URLs_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -287,7 +295,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_URLsStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -316,7 +324,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_Images_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -345,7 +353,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_ImagesStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -374,7 +382,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_Dataset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -403,7 +411,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_DatasetStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {
@@ -432,7 +440,7 @@ func RegisterPredictHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 	})
 
 	mux.Handle("POST", pattern_Predict_Reset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(ctx)
+		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
 			go func(done <-chan struct{}, closed <-chan bool) {

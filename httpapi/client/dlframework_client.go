@@ -39,9 +39,6 @@ func NewHTTPClient(formats strfmt.Registry) *Dlframework {
 // using a customizable transport config.
 func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *Dlframework {
 	// ensure nullable parameters have default
-	if formats == nil {
-		formats = strfmt.Default
-	}
 	if cfg == nil {
 		cfg = DefaultTransportConfig()
 	}
@@ -53,6 +50,11 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *Dlf
 
 // New creates a new dlframework client
 func New(transport runtime.ClientTransport, formats strfmt.Registry) *Dlframework {
+	// ensure nullable parameters have default
+	if formats == nil {
+		formats = strfmt.Default
+	}
+
 	cli := new(Dlframework)
 	cli.Transport = transport
 

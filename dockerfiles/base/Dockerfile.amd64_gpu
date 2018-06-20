@@ -56,7 +56,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc --version
 
 # Install Go
-ENV GIMME_GO_VERSION "1.9.2"
+ENV GIMME_GO_VERSION "1.10.3"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 

@@ -16,7 +16,6 @@ import (
 
 // DlframeworkFeaturesResponse dlframework features response
 // swagger:model dlframeworkFeaturesResponse
-
 type DlframeworkFeaturesResponse struct {
 
 	// id
@@ -26,16 +25,11 @@ type DlframeworkFeaturesResponse struct {
 	Responses []*DlframeworkFeatureResponse `json:"responses"`
 }
 
-/* polymorph dlframeworkFeaturesResponse id false */
-
-/* polymorph dlframeworkFeaturesResponse responses false */
-
 // Validate validates this dlframework features response
 func (m *DlframeworkFeaturesResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateResponses(formats); err != nil {
-		// prop
 		res = append(res, err)
 	}
 
@@ -52,13 +46,11 @@ func (m *DlframeworkFeaturesResponse) validateResponses(formats strfmt.Registry)
 	}
 
 	for i := 0; i < len(m.Responses); i++ {
-
 		if swag.IsZero(m.Responses[i]) { // not required
 			continue
 		}
 
 		if m.Responses[i] != nil {
-
 			if err := m.Responses[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("responses" + "." + strconv.Itoa(i))

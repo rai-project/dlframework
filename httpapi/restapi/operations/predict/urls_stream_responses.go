@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // UrlsStreamOKCode is the HTTP code returned for type UrlsStreamOK
@@ -30,6 +30,7 @@ type UrlsStreamOK struct {
 
 // NewUrlsStreamOK creates UrlsStreamOK with default headers values
 func NewUrlsStreamOK() *UrlsStreamOK {
+
 	return &UrlsStreamOK{}
 }
 

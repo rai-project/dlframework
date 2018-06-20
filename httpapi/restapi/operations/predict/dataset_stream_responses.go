@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/rai-project/dlframework/httpapi/models"
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // DatasetStreamOKCode is the HTTP code returned for type DatasetStreamOK
@@ -30,6 +30,7 @@ type DatasetStreamOK struct {
 
 // NewDatasetStreamOK creates DatasetStreamOK with default headers values
 func NewDatasetStreamOK() *DatasetStreamOK {
+
 	return &DatasetStreamOK{}
 }
 
