@@ -48,6 +48,7 @@ import:
   - protoc-gen-gogo/descriptor
   - sortkeys
 - package: github.com/golang/protobuf
+  version: master
   subpackages:
   - proto
 - package: github.com/grpc-ecosystem/grpc-gateway
