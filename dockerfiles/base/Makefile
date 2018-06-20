@@ -24,7 +24,7 @@ CODE_VERSION = v$(strip $(shell cat ../../VERSION))
 GIT_NOT_CLEAN_CHECK = $(shell git status --porcelain)
 
 # Version of gcc to install
-GCC_VERSION = 5
+GCC_VERSION = 7.3.1
 
 # If we're releasing to Docker Hub, and we're going to mark it with the latest tag, it should exactly match a version release
 ifeq ($(MAKECMDGOALS),release)
