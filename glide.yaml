@@ -26,6 +26,7 @@ import:
 - package: github.com/facebookgo/freeport
 - package: github.com/facebookgo/stack
 - package: github.com/fatih/color
+  version: ~1.7.0
 - package: github.com/go-openapi/errors
 - package: github.com/go-openapi/loads
 - package: github.com/go-openapi/runtime
