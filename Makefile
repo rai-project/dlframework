@@ -23,6 +23,9 @@ install-deps: ## Install dependencies
 glide-install: ## Performs glide install
 	glide install -v --force
 
+dep-ensure: ## Performs dep ensure
+	dep ensure
+
 logrus-fix: ## Fixes logrus
 	rm -fr vendor/github.com/Sirupsen
 	find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
@@ -58,7 +61,7 @@ clean-httpapi:  ## Deletes the httpapi directory
 install-proto:  ## Installs protobuf (used by travis)
 	./scripts/install-protobuf.sh
 
-travis: install-proto install-deps glide-install logrus-fix generate  ## Travis builder
+travis: install-proto install-deps dep-ensure logrus-fix generate  ## Travis builder
 	echo "building..."
 	go build
 
