@@ -119,6 +119,7 @@ import:
 - package: github.com/rai-project/registry
 - package: github.com/rai-project/serializer
 - package: github.com/rai-project/tensorflow
+  version: ~0.2.18
   subpackages:
   - predict
 - package: github.com/rai-project/tensorrt
