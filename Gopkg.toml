@@ -167,11 +167,11 @@
 
 [[constraint]]
   name = "github.com/rai-project/caffe"
-  version = "0.2.22"
+  branch = "master"
 
 [[constraint]]
   name = "github.com/rai-project/caffe2"
-  version = "0.3.15"
+  branch = "master"
 
 [[constraint]]
   branch = "master"
@@ -223,7 +223,7 @@
 
 [[constraint]]
   name = "github.com/rai-project/libkv"
-  version = "0.2.18"
+  branch = "master"
 
 [[constraint]]
   branch = "master"
@@ -239,7 +239,7 @@
 
 [[constraint]]
   name = "github.com/rai-project/mxnet"
-  version = "0.2.21"
+  branch = "master"
 
 [[constraint]]
   branch = "master"
@@ -263,7 +263,7 @@
 
 [[constraint]]
   name = "github.com/rai-project/tensorflow"
-  version = "0.2.18"
+  branch = "master"
 
 [[constraint]]
   branch = "master"

@@ -984,22 +984,22 @@
   revision = "deb7e58459467392822a2822f2e193f9ccfdd68f"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rai-project/caffe"
   packages = [
     ".",
     "predict"
   ]
-  revision = "a011cd7cb8ba73df90e509678b066358d7887018"
-  version = "v0.2.22"
+  revision = "8b331d4cb719c7ab70ad5bae9a1dca8eda3481f4"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rai-project/caffe2"
   packages = [
     ".",
     "predict"
   ]
-  revision = "dc10631d4b3269d6f76285fbc7ca8fe6241eff6e"
-  version = "v0.3.15"
+  revision = "4aa8b5956ebc0da8c2b5df7be9ecc325dd6eaeba"
 
 [[projects]]
   branch = "master"
@@ -1166,6 +1166,7 @@
   revision = "96ef258e02c8f67a42ae5fce51fbb3327fb8fae3"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rai-project/libkv"
   packages = [
     ".",
@@ -1176,8 +1177,7 @@
     "store/mock",
     "store/zookeeper"
   ]
-  revision = "f01cf81553df65a5e18bce2503a3db96b9059cd7"
-  version = "v0.2.18"
+  revision = "11c2565b618ffc9a85fd1842155c9a3d85422bd4"
 
 [[projects]]
   branch = "master"
@@ -1217,13 +1217,13 @@
   revision = "498a6c4f3e85d1ea02b2fbd95c24baf6c2fbadce"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rai-project/mxnet"
   packages = [
     ".",
     "predict"
   ]
-  revision = "106689e63b267236ca6fdc566802126f7f61388a"
-  version = "v0.2.21"
+  revision = "d716259a70295a75e945315eada1b86c1eb921e8"
 
 [[projects]]
   branch = "master"
@@ -1279,13 +1279,13 @@
   revision = "e67904ef854ae00a55270b7bc2a3a2bd875ee080"
 
 [[projects]]
+  branch = "master"
   name = "github.com/rai-project/tensorflow"
   packages = [
     ".",
     "predict"
   ]
-  revision = "9dcc4625828ea9c1ef71bcbea84005c4939694d6"
-  version = "v0.2.18"
+  revision = "761d0a3913d4d968eca9ddbee31920c8cea77f83"
 
 [[projects]]
   branch = "master"
@@ -1886,6 +1886,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c62fa480bf053a2ea6cac53d0722b0df74210a58254569cd06a36be48a5e8f04"
+  inputs-digest = "029a9740a50df28cabfbe8b7c7fcd8d74892466f6bb90863559644548d276ff9"
   solver-name = "gps-cdcl"
   solver-version = 1
