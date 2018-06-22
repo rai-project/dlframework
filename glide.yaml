@@ -73,6 +73,7 @@ import:
 - package: github.com/pkg/errors
   version: ~0.8.0
 - package: github.com/rai-project/caffe
+  version: master
   subpackages:
   - predict
 - package: github.com/rai-project/cmd
@@ -87,28 +88,35 @@ import:
   subpackages:
   - cmd
 - package: github.com/rai-project/docker
+  version: master
 - package: github.com/rai-project/evaluation
   subpackages:
   - cmd
 - package: github.com/rai-project/go-cupti
+  version: master
 - package: github.com/rai-project/grpc
+  version: master
 - package: github.com/rai-project/image
+  version: master
   subpackages:
   - types
 - package: github.com/rai-project/libkv
-  version: ^0.2.18
+  version: master
   subpackages:
   - store
 - package: github.com/rai-project/lock
+  version: master
   subpackages:
   - registry
 - package: github.com/rai-project/logger
+  version: master
   subpackages:
   - hooks
 - package: github.com/rai-project/monitoring
   subpackages:
   - monitors
 - package: github.com/rai-project/mxnet
+  version: master
   subpackages:
   - predict
 - package: github.com/rai-project/nvidia-smi
@@ -119,13 +127,15 @@ import:
 - package: github.com/rai-project/registry
 - package: github.com/rai-project/serializer
 - package: github.com/rai-project/tensorflow
-  version: ~0.2.18
+  version: master
   subpackages:
   - predict
 - package: github.com/rai-project/tensorrt
+  version: master
   subpackages:
   - predict
 - package: github.com/rai-project/tracer
+  version: master
   subpackages:
   - jaeger
   - noop

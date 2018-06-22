@@ -205,7 +205,7 @@
   branch = "master"
   name = "github.com/rai-project/docker"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "github.com/rai-project/evaluation"
 
