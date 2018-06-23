@@ -166,14 +166,6 @@
   version = "0.8.0"
 
 [[constraint]]
-  name = "github.com/rai-project/caffe"
-  branch = "master"
-
-[[constraint]]
-  name = "github.com/rai-project/caffe2"
-  branch = "master"
-
-[[constraint]]
   branch = "master"
   name = "github.com/rai-project/cmd"
 

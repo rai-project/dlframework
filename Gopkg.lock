@@ -973,20 +973,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/rai-project/caffe"
-  packages = [
-    ".",
-    "predict"
-  ]
+  packages = ["."]
   revision = "8b331d4cb719c7ab70ad5bae9a1dca8eda3481f4"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/caffe2"
-  packages = [
-    ".",
-    "predict"
-  ]
-  revision = "4aa8b5956ebc0da8c2b5df7be9ecc325dd6eaeba"
 
 [[projects]]
   branch = "master"
@@ -1060,21 +1048,6 @@
     "eventflow"
   ]
   revision = "80087c7c969609c2095a0e538f7476e34c0b0cdb"
-
-[[projects]]
-  name = "github.com/rai-project/go-caffe"
-  packages = [
-    ".",
-    "proto"
-  ]
-  revision = "0f2c8b6aaf1280fef1e4e447efc91c616db98587"
-  version = "v0.3.11"
-
-[[projects]]
-  name = "github.com/rai-project/go-caffe2"
-  packages = ["."]
-  revision = "2c50317d80939fa9a1fd1167952b3d3b46684ee9"
-  version = "v0.3.19"
 
 [[projects]]
   branch = "master"
@@ -1235,7 +1208,6 @@
   packages = [
     ".",
     "all",
-    "ctimer",
     "defaults",
     "jaeger",
     "middleware/grpc",
@@ -1806,6 +1778,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8f4a6cde33e99323a355634f8463e19ecec15bae6697a2b2c87b04f4677cb32d"
+  inputs-digest = "da74bd503391aa914d7a9838b34dbda2da4ea2b34cb9ad3596a8113cb193e048"
   solver-name = "gps-cdcl"
   solver-version = 1

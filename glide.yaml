@@ -72,10 +72,6 @@ import:
   version: ^1.0.2
 - package: github.com/pkg/errors
   version: ~0.8.0
-- package: github.com/rai-project/caffe
-  version: master
-  subpackages:
-  - predict
 - package: github.com/rai-project/cmd
 - package: github.com/rai-project/config
 - package: github.com/rai-project/database
