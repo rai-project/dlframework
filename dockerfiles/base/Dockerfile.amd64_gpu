@@ -75,7 +75,7 @@ ENV GOPATH "/go"
 ENV PATH $GOPATH/bin:$PATH
 
 # Install Go packages
-RUN go get github.com/Masterminds/glide && \
+RUN go get -u github.com/golang/dep/cmd/dep && \
     go get -u github.com/jteeuwen/go-bindata/... && \
 	  go get -u github.com/elazarl/go-bindata-assetfs/... && \
 	  go get -u google.golang.org/grpc && \
