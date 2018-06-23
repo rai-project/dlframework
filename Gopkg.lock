@@ -996,15 +996,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/rai-project/cntk"
-  packages = [
-    ".",
-    "predict"
-  ]
-  revision = "80eeaab83551ef176d1dbc5c49ad7a55f49e0f0b"
-
-[[projects]]
-  branch = "master"
   name = "github.com/rai-project/config"
   packages = ["."]
   revision = "c84109ab2515e922a25930ea437d20d2e86d1840"
@@ -1084,12 +1075,6 @@
   packages = ["."]
   revision = "2c50317d80939fa9a1fd1167952b3d3b46684ee9"
   version = "v0.3.19"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/go-cntk"
-  packages = ["."]
-  revision = "09c2137227f5207a88a05fdc755f0086864c82df"
 
 [[projects]]
   branch = "master"
@@ -1821,6 +1806,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "59d9076d5d52c588586fc2343a2a88f111ad5571fd8c7d6e684b953455bfcf6d"
+  inputs-digest = "8f4a6cde33e99323a355634f8463e19ecec15bae6697a2b2c87b04f4677cb32d"
   solver-name = "gps-cdcl"
   solver-version = 1

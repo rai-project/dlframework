@@ -179,10 +179,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/rai-project/cntk"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/rai-project/config"
 
 [[constraint]]
