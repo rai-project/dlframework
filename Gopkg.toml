@@ -259,10 +259,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/rai-project/tensorrt"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/rai-project/tracer"
 
 [[constraint]]

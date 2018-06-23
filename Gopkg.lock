@@ -1108,12 +1108,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/rai-project/go-tensorrt"
-  packages = ["."]
-  revision = "4b7786911b69f256b60891661a3b05b273938683"
-
-[[projects]]
-  branch = "master"
   name = "github.com/rai-project/godotenv"
   packages = ["."]
   revision = "a501614c3b8d510e2ae9a92ffa9477d880a48157"
@@ -1249,15 +1243,6 @@
   name = "github.com/rai-project/tegra"
   packages = ["."]
   revision = "e67904ef854ae00a55270b7bc2a3a2bd875ee080"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/tensorrt"
-  packages = [
-    ".",
-    "predict"
-  ]
-  revision = "73b44c59ffd8dc4428127ec07227760754e12f57"
 
 [[projects]]
   branch = "master"
@@ -1836,6 +1821,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "be23cf6f3bd3bcd173f46cb2b9d54c4bc04f8e844985d298f9a8c2e1e3e1977e"
+  inputs-digest = "59d9076d5d52c588586fc2343a2a88f111ad5571fd8c7d6e684b953455bfcf6d"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -122,10 +122,6 @@ import:
 - package: github.com/rai-project/pipeline
 - package: github.com/rai-project/registry
 - package: github.com/rai-project/serializer
-- package: github.com/rai-project/tensorrt
-  version: master
-  subpackages:
-  - predict
 - package: github.com/rai-project/tracer
   version: master
   subpackages:
