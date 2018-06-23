@@ -107,19 +107,6 @@
   version = "v9"
 
 [[projects]]
-  name = "github.com/awalterschulze/gographviz"
-  packages = [
-    ".",
-    "ast",
-    "internal/errors",
-    "internal/lexer",
-    "internal/parser",
-    "internal/token"
-  ]
-  revision = "c84395e536e1a1199093a4e6253d1bee99e4cd2a"
-  version = "v2.0"
-
-[[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -1120,12 +1107,6 @@
   revision = "a3eb81100bdb1b634dce526e43ea57aa80bf4f0d"
 
 [[projects]]
-  name = "github.com/rai-project/go-mxnet-predictor"
-  packages = ["mxnet"]
-  revision = "ab9f2d3ece1903e5a574887aea4ac9340378a81d"
-  version = "v0.3.14"
-
-[[projects]]
   branch = "master"
   name = "github.com/rai-project/go-tensorrt"
   packages = ["."]
@@ -1218,15 +1199,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/rai-project/mxnet"
-  packages = [
-    ".",
-    "predict"
-  ]
-  revision = "d716259a70295a75e945315eada1b86c1eb921e8"
-
-[[projects]]
-  branch = "master"
   name = "github.com/rai-project/nvidia-smi"
   packages = ["."]
   revision = "6ed0fc7dfd4e4f87ccc14ad7fd2c3f31fb5d8afd"
@@ -1302,7 +1274,6 @@
   packages = [
     ".",
     "all",
-    "chrome",
     "ctimer",
     "defaults",
     "jaeger",
@@ -1832,12 +1803,6 @@
   version = "v1.7.0"
 
 [[projects]]
-  name = "gopkg.in/fatih/set.v0"
-  packages = ["."]
-  revision = "57907de300222151a123d29255ed17f5ed43fad3"
-  version = "v0.1.0"
-
-[[projects]]
   name = "gopkg.in/mattn/go-colorable.v0"
   packages = ["."]
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
@@ -1886,6 +1851,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5412852f9846a7d7cf9beb6ef05abb4ceb8cabbf8e3cd6c9ac300b889a2f3aa5"
+  inputs-digest = "90d434ddbeb92edd008295b25a6aeb230d082edd7bafd67a8cd8e3447c845395"
   solver-name = "gps-cdcl"
   solver-version = 1

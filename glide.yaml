@@ -115,10 +115,6 @@ import:
 - package: github.com/rai-project/monitoring
   subpackages:
   - monitors
-- package: github.com/rai-project/mxnet
-  version: master
-  subpackages:
-  - predict
 - package: github.com/rai-project/nvidia-smi
 - package: github.com/rai-project/parallel
   subpackages:
