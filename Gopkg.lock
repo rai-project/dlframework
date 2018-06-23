@@ -1252,15 +1252,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/rai-project/tensorflow"
-  packages = [
-    ".",
-    "predict"
-  ]
-  revision = "761d0a3913d4d968eca9ddbee31920c8cea77f83"
-
-[[projects]]
-  branch = "master"
   name = "github.com/rai-project/tensorrt"
   packages = [
     ".",
@@ -1425,12 +1416,6 @@
   ]
   revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
   version = "v1.2.2"
-
-[[projects]]
-  name = "github.com/tensorflow/tensorflow"
-  packages = ["tensorflow/go"]
-  revision = "93bc2e2072e0daccbcff7a90d397b704a9e8f778"
-  version = "v1.8.0"
 
 [[projects]]
   name = "github.com/tinylib/msgp"
@@ -1851,6 +1836,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "90d434ddbeb92edd008295b25a6aeb230d082edd7bafd67a8cd8e3447c845395"
+  inputs-digest = "be23cf6f3bd3bcd173f46cb2b9d54c4bc04f8e844985d298f9a8c2e1e3e1977e"
   solver-name = "gps-cdcl"
   solver-version = 1

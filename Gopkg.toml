@@ -258,10 +258,6 @@
   name = "github.com/rai-project/serializer"
 
 [[constraint]]
-  name = "github.com/rai-project/tensorflow"
-  branch = "master"
-
-[[constraint]]
   branch = "master"
   name = "github.com/rai-project/tensorrt"
 
