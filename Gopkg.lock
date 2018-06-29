@@ -938,12 +938,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/philopon/go-toposort"
-  packages = ["."]
-  revision = "9be86dbd762f98b5b9a4eca110a3f40ef31d0375"
-
-[[projects]]
   name = "github.com/pierrec/lz4"
   packages = [
     ".",
@@ -969,12 +963,6 @@
   name = "github.com/rai-project/aws"
   packages = ["."]
   revision = "deb7e58459467392822a2822f2e193f9ccfdd68f"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/caffe"
-  packages = ["."]
-  revision = "8b331d4cb719c7ab70ad5bae9a1dca8eda3481f4"
 
 [[projects]]
   branch = "master"
@@ -1012,17 +1000,6 @@
     "vision"
   ]
   revision = "d6ee55e6087fd967d088465c96f656fe2f142cb8"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/dllayer"
-  packages = [
-    ".",
-    "cmd",
-    "layer",
-    "network"
-  ]
-  revision = "c585f7d2fb2cf79792ffe8b7426c828397b2f528"
 
 [[projects]]
   branch = "master"
@@ -1160,12 +1137,6 @@
   name = "github.com/rai-project/nvml-go"
   packages = ["."]
   revision = "0e9aca10dd005adf793355171158783ff8ad930f"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/rai-project/onnx"
-  packages = ["."]
-  revision = "869983b2ed7aba2d59bd0bf63f4bba7867f6f9de"
 
 [[projects]]
   branch = "master"
@@ -1778,6 +1749,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "da74bd503391aa914d7a9838b34dbda2da4ea2b34cb9ad3596a8113cb193e048"
+  inputs-digest = "2d627172ffa77043809eba766755428a164afe289cedfb447d1132f0969b2006"
   solver-name = "gps-cdcl"
   solver-version = 1

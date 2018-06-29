@@ -185,9 +185,6 @@
   branch = "master"
   name = "github.com/rai-project/dldataset"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/rai-project/dllayer"
 
 [[constraint]]
   branch = "master"

@@ -80,9 +80,6 @@ import:
 - package: github.com/rai-project/dldataset
   subpackages:
   - vision
-- package: github.com/rai-project/dllayer
-  subpackages:
-  - cmd
 - package: github.com/rai-project/docker
   version: master
 - package: github.com/rai-project/evaluation

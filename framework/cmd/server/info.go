@@ -3,7 +3,7 @@ package server
 import (
 	"os"
 
-	dllayer "github.com/rai-project/dllayer/cmd"
+	//dllayer "github.com/rai-project/dllayer/cmd"
 	evaluations "github.com/rai-project/evaluation/cmd"
 	"github.com/spf13/cobra"
 )
@@ -13,6 +13,7 @@ var infoCmd = &cobra.Command{
 	Short: "Get model and other information from CarML",
 }
 
+/*
 var infoMLArcCmd = &cobra.Command{
 	Use: "mlarc",
 	Aliases: []string{
@@ -31,9 +32,10 @@ var infoMLArcCmd = &cobra.Command{
 		return nil
 	},
 }
+*/
 
 func init() {
-	infoCmd.AddCommand(dllayer.FlopsInfoCmd)
+	//infoCmd.AddCommand(dllayer.FlopsInfoCmd)
 	infoCmd.AddCommand(evaluations.EvaluationCmd)
 	infoCmd.AddCommand(infoModelsCmd)
 	infoCmd.AddCommand(infoMLArcCmd)
