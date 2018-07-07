@@ -20,11 +20,9 @@ install-deps: ## Install dependencies
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
-glide-install: ## Performs glide install
-	glide install -v --force
 
 dep-ensure: ## Performs dep ensure
-	dep ensure
+	dep ensure -v
 
 logrus-fix: ## Fixes logrus
 	rm -fr vendor/github.com/Sirupsen
