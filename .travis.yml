@@ -20,6 +20,7 @@ addons:
 before_install:
 - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 install:
+- dep ensure -v
 - rm -fr vendor/github.com/Sirupsen
 - find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
 - make travis
