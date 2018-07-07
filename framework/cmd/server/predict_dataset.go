@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cheggaaa/pb"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
@@ -32,6 +31,7 @@ import (
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
 	"github.com/ulule/deepcopier"
+	"gopkg.in/cheggaaa/pb.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
