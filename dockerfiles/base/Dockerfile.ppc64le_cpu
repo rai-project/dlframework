@@ -60,7 +60,7 @@ RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubunt
     apt-get update
 
 # Install Go
-ENV GIMME_GO_VERSION "1.9.2"
+ENV GIMME_GO_VERSION "1.10.3"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 
