@@ -1,7 +1,7 @@
 package server
 
 import (
-	"os"
+	//"os"
 
 	//dllayer "github.com/rai-project/dllayer/cmd"
 	evaluations "github.com/rai-project/evaluation/cmd"
@@ -38,5 +38,5 @@ func init() {
 	//infoCmd.AddCommand(dllayer.FlopsInfoCmd)
 	infoCmd.AddCommand(evaluations.EvaluationCmd)
 	infoCmd.AddCommand(infoModelsCmd)
-	infoCmd.AddCommand(infoMLArcCmd)
+	//infoCmd.AddCommand(infoMLArcCmd)
 }

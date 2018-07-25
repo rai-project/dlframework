@@ -59,7 +59,9 @@ var (
 func newProgress(prefix string, count int) *pb.ProgressBar {
 	// get the new original progress bar.
 	//bar := pb.New(count).Prefix(prefix)
-        bar := pb.New(count).Set("prefix", prefix)
+        // TODO: set prefix of bar
+        bar := pb.New(count)
+        //bar.Set("prefix", prefix)
 
 	// Refresh rate for progress bar is set to 100 milliseconds.
 	bar.SetRefreshRate(time.Millisecond * 100)
