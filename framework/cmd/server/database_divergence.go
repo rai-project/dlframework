@@ -79,7 +79,8 @@ func doComputeDivergence(
 	numEvals := len(sourceEvaluation.InputPredictionIDs)
 
 	progress := newProgress("checking prediction divergence step", numEvals)
-	defer progress.FinishPrint("finished prediction divergence step")
+	//defer progress.FinishPrint("finished prediction divergence step")
+        defer progress.Finish()
 
 	var wg sync.WaitGroup
 	wg.Add(numEvals)

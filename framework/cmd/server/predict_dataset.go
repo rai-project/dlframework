@@ -58,7 +58,8 @@ var (
 
 func newProgress(prefix string, count int) *pb.ProgressBar {
 	// get the new original progress bar.
-	bar := pb.New(count).Prefix(prefix)
+	//bar := pb.New(count).Prefix(prefix)
+        bar := pb.New(count).Set("prefix", prefix)
 
 	// Refresh rate for progress bar is set to 100 milliseconds.
 	bar.SetRefreshRate(time.Millisecond * 100)
@@ -320,8 +321,10 @@ var datasetCmd = &cobra.Command{
 
 			for o := range output {
 				if err, ok := o.(error); ok && failOnFirstError {
-					inferenceProgress.FinishPrint("inference halted")
-					log.WithError(err).Error("encountered an error while performing inference")
+					//inferenceProgress.FinishPrint("inference halted")
+				        inferenceProgress.Finish()
+
+                                        log.WithError(err).Error("encountered an error while performing inference")
 					os.Exit(-1)
 				}
 				outputs <- o
@@ -333,7 +336,8 @@ var datasetCmd = &cobra.Command{
 			span = nil
 		}()
 
-		inferenceProgress.FinishPrint("inference complete")
+		//inferenceProgress.FinishPrint("inference complete")
+                inferenceProgress.Finish()
 
 		close(outputs)
 
@@ -390,7 +394,8 @@ var datasetCmd = &cobra.Command{
 			}
 		}
 
-		databaseInsertProgress.FinishPrint("inserting prediction complete")
+		//databaseInsertProgress.FinishPrint("inserting prediction complete")
+                databaseInsertProgress.Finish()
 
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),

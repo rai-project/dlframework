@@ -71,16 +71,16 @@
   version = "v1"
 
 [[projects]]
+  branch = "master"
   name = "github.com/VividCortex/ewma"
   packages = ["."]
-  revision = "b24eb346a94c3ba12c1da1e564dbac1b498a77ce"
-  version = "v1.1.1"
+  revision = "43880d236f695d39c62cf7aa4ebd4508c258e6c0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/VividCortex/robustly"
   packages = ["."]
-  revision = "ec98a8cbdc2b0b064c49ccfea6102f6d35bdec4d"
-  version = "v1.0"
+  revision = "6d4b5835c602cfa84eac0ff03021de37983cdaeb"
 
 [[projects]]
   name = "github.com/airbrake/gobrake"
@@ -98,10 +98,10 @@
   version = "v0.10.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/apache/thrift"
   packages = ["lib/go/thrift"]
-  revision = "327ebb6c2b6df8bf075da02ef45a2a034e9b79ba"
-  version = "0.11.0"
+  revision = "f2867c24984aa53edec54a138c03db934221bdea"
 
 [[projects]]
   branch = "master"
@@ -292,7 +292,6 @@
     "pkg/jsonmessage",
     "pkg/longpath",
     "pkg/mount",
-    "pkg/parsers",
     "pkg/pools",
     "pkg/progress",
     "pkg/signal",
@@ -1734,6 +1733,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d8fd38e2dccbdf0195d54f7014453a3b7e15778a9a7ba45cfdfb91459a2ac5d1"
+  inputs-digest = "e50c27ba12a99cdfcd3e7fe6f9771560ffdb9027df87c0fe83fa272da2ce6d8a"
   solver-name = "gps-cdcl"
   solver-version = 1

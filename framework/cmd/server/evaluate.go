@@ -33,8 +33,8 @@ var (
 		"caffe2",
 		"tensorflow",
 		"caffe",
-		// "cntk",
-		// "tensorrt",
+		"cntk",
+		"tensorrt",
 	}
 
 	models = []string{
@@ -91,7 +91,8 @@ func main() {
 				device = "cpu"
 			}
 			for _, framework := range frameworks {
-				mainFile := filepath.Join(sourcePath, framework+".go")
+                                var agentPath ="../../../../"+framework+"/"+framework+"-agent/"+"main.go"
+				mainFile := filepath.Join(sourcePath,agentPath)
 				compileArgs := []string{
 					"build",
 				}
@@ -117,7 +118,7 @@ func main() {
 						shellCmd := "dataset" +
 							" --debug" +
 							" --verbose" +
-							" --publish=true" +
+							" --publish=false" +
 							" --fail_on_error=true" +
 							// " --num_file_parts=64" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
