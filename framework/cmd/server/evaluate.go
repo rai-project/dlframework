@@ -91,22 +91,21 @@ func main() {
 				device = "cpu"
 			}
 			for _, framework := range frameworks {
-                                var agentPath ="../../../../"+framework+"/"+framework+"-agent/"+"main.go"
-				mainFile := filepath.Join(sourcePath,agentPath)
 				compileArgs := []string{
 					"build",
 				}
 				if runtime.GOARCH == "amd64" && !cpuid.SupportsAVX() {
 					compileArgs = append(compileArgs, "-tags=noasm")
 				}
-				compileArgs = append(compileArgs, mainFile)
 				fmt.Printf("Compiling using :: go %#v\n", compileArgs)
 				cmd := exec.Command("go", compileArgs...)
+				var agentPath = "../../../../"+framework+"/"+framework+"-agent/"
+				cmd.Dir = filepath.Join(sourcePath,agentPath) 
 				err := cmd.Run()
 				if err != nil {
 					log.WithError(err).
 						WithField("framework", framework).
-						Error("failed to compile " + mainFile)
+						Error("failed to compile agent")
 					continue
 				}
 
@@ -120,12 +119,12 @@ func main() {
 							" --verbose" +
 							" --publish=false" +
 							" --fail_on_error=true" +
-							// " --num_file_parts=64" +
+							" --num_file_parts=8" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
-							// " --publish_predictions=true" +
-							fmt.Sprintf(" --model_version=%v", modelVersion)
+							" --publish_predictions=false" +
+							fmt.Sprintf(" --model_version=%v", modelVersion) + " --database_name=tx2_carml_step_trace" + " --database_address=minsky1-1.csl.illinois.edu" + " --trace_level=STEP_TRACE"
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
@@ -134,7 +133,9 @@ func main() {
 							continue
 						}
 						fmt.Println("Running " + shellCmd)
-						cmd := exec.Command(filepath.Join(sourcePath, "main"), args...)
+						var agentCmd = "../../../../"+framework+"/"+framework+"-agent/"+framework+"-agent"
+						cmd := exec.Command(filepath.Join(sourcePath,agentCmd), args...)
+						cmd.Dir = filepath.Join(sourcePath,agentPath)
 						cmd.Stdout = os.Stdout
 						cmd.Stderr = os.Stderr
 
