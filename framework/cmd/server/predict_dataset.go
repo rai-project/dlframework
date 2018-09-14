@@ -215,8 +215,16 @@ var datasetCmd = &cobra.Command{
 			}
 		}
 
+		// Dummy userID and runID hardcoded
+		// TODO read userID from manifest file
+		// calculate runID from table
+		var userID = "admin"
+		var runID = 1
+
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),
+			UserID:							 userID,
+			RunID:							 runID,
 			CreatedAt:           time.Now(),
 			Framework:           *model.GetFramework(),
 			Model:               *model,
