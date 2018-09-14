@@ -242,6 +242,14 @@
   version = "v2.0.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:78097abc20f73ec968b3f67bf74deda55009caa4b801d0d04f36145c869ab3c3"
+  name = "github.com/cevaris/ordered_map"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0efaee1733e3399a3cb88fc7d2ce340bf2e863d7"
+
+[[projects]]
   digest = "1:7471447f18b90de5d6adfd51fe8ced6be2dc160d264ccbcd6fcefbd4b79f639e"
   name = "github.com/chewxy/hm"
   packages = ["."]
@@ -1294,7 +1302,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:896377c0400c7ab7580a7455a55d1d2592070c56e36cf8b4d58f0f5d8463dc6f"
+  digest = "1:78f9c28d1e22e9979849ed0888dc67eed5cb392814e7a64b95e4ad2f6a2c1184"
   name = "github.com/rai-project/evaluation"
   packages = [
     ".",
@@ -1302,7 +1310,7 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "9833192412b353c2b27949e91881d6808095bd6d"
+  revision = "a4b51155520010578fd7d85473598ff66b29e3ce"
 
 [[projects]]
   branch = "master"
