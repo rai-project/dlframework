@@ -30,11 +30,11 @@ var (
 
 	frameworks = []string{
 		"mxnet",
-		//"caffe2",
-		//"tensorflow",
-		//"caffe",
-		//"cntk",
-		//"tensorrt",
+		"caffe2",
+		"tensorflow",
+		"caffe",
+		"tensorrt",
+		// "cntk",
 	}
 
 	models = []string{
@@ -56,17 +56,17 @@ var (
 
 	batchSizes = []int{
 		// 384,
-		320,
-		256,
-		196,
-		128,
-		96,
-		32,
-		48,
-		32,
-		16,
-		8,
-		4,
+		// 320,
+		// 256,
+		// 196,
+		// 128,
+		// 96,
+		// 32,
+		// 48,
+		// 32,
+		// 16,
+		// 8,
+		// 4,
 		2,
 		1,
 	}
