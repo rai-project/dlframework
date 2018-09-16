@@ -493,5 +493,5 @@ func init() {
 	datasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which would be a few gigabytes of data for one dataset")
 	datasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 22 ")
 	datasetCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
-	datasetCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
+	datasetCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "34.207.139.117:16686", "the address of the jaeger or the zipking trace server")
 }

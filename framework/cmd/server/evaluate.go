@@ -39,36 +39,36 @@ var (
 
 	models = []string{
 		"SqueezeNet_1.0",
-		//"SqueezeNet_1.1",
-		//"BVLC-AlexNet_1.0",
-		//"BVLC-Reference-CaffeNet_1.0",
-		//"BVLC-GoogLeNet_1.0",
-		//"ResNet101_1.0",
-		//"ResNet101_2.0",
-		//"WRN50_2.0",
-		//"BVLC-Reference-RCNN-ILSVRC13_1.0",
-		//"Inception_3.0",
-		//"Inception_4.0",
-		//"ResNeXt50-32x4d_1.0",
-		//"VGG16_1.0",
-		//"VGG19_1.0",
+		"SqueezeNet_1.1",
+		"BVLC-AlexNet_1.0",
+		"BVLC-Reference-CaffeNet_1.0",
+		"BVLC-GoogLeNet_1.0",
+		"ResNet101_1.0",
+		"ResNet101_2.0",
+		"WRN50_2.0",
+		"BVLC-Reference-RCNN-ILSVRC13_1.0",
+		"Inception_3.0",
+		"Inception_4.0",
+		"ResNeXt50-32x4d_1.0",
+		"VGG16_1.0",
+		"VGG19_1.0",
 	}
 
 	batchSizes = []int{
 		// 384,
-		// 320,
-		// 256,
-		// 196,
-		// 128,
-		// 96,
+		320,
+		256,
+		196,
+		128,
+		96,
 		32,
-		// 48,
-		// 32,
-		// 16,
-		// 8,
-		// 4,
-		// 2,
-		// 1,
+		48,
+		32,
+		16,
+		8,
+		4,
+		2,
+		1,
 	}
 	timeout                  = 30 * time.Minute
 	usingGPU                 = true
@@ -99,8 +99,8 @@ func main() {
 				}
 				fmt.Printf("Compiling using :: go %#v\n", compileArgs)
 				cmd := exec.Command("go", compileArgs...)
-				var agentPath = "../../../../"+framework+"/"+framework+"-agent/"
-				cmd.Dir = filepath.Join(sourcePath,agentPath) 
+				var agentPath = "../../../../" + framework + "/" + framework + "-agent/"
+				cmd.Dir = filepath.Join(sourcePath, agentPath)
 				err := cmd.Run()
 				if err != nil {
 					log.WithError(err).
@@ -124,7 +124,7 @@ func main() {
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							" --publish_predictions=false" +
-							fmt.Sprintf(" --model_version=%v", modelVersion) + " --database_name=tx2_carml_step_trace" + " --database_address=minsky1-1.csl.illinois.edu" + " --trace_level=STEP_TRACE"
+							fmt.Sprintf(" --model_version=%v", modelVersion) + " --database_name=tx2_carml_step_trace" + " --database_address=34.207.139.117" + " --trace_level=STEP_TRACE"
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
@@ -133,9 +133,9 @@ func main() {
 							continue
 						}
 						fmt.Println("Running " + shellCmd)
-						var agentCmd = "../../../../"+framework+"/"+framework+"-agent/"+framework+"-agent"
-						cmd := exec.Command(filepath.Join(sourcePath,agentCmd), args...)
-						cmd.Dir = filepath.Join(sourcePath,agentPath)
+						var agentCmd = "../../../../" + framework + "/" + framework + "-agent/" + framework + "-agent"
+						cmd := exec.Command(filepath.Join(sourcePath, agentCmd), args...)
+						cmd.Dir = filepath.Join(sourcePath, agentPath)
 						cmd.Stdout = os.Stdout
 						cmd.Stderr = os.Stderr
 
