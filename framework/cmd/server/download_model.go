@@ -18,12 +18,16 @@ func downloadModels(ctx context.Context) error {
 		)
 
 	}
-	for _, model := range framework.Models() {
-		_, err := predictorFramework.Load(ctx, model)
+	models := framework.Models()
+	pb := newProgress("download models", len(models))
+	for _, model := range models {
+		err := predictorFramework.Download(ctx, model)
 		if err != nil {
 			return errors.Wrapf(err, "failed to download %s model", model.MustCanonicalName())
 		}
+		pb.Increment()
 	}
+	pb.Finish()
 
 	return nil
 }

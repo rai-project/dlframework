@@ -12,6 +12,8 @@ import (
 type Predictor interface {
 	// Gets framework and model manifests
 	Info() (dlframework.FrameworkManifest, dlframework.ModelManifest, error)
+	// Downloads model from manifest
+	Download(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) error
 	// Load model from manifest
 	Load(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (Predictor, error)
 	// Returns the prediction options
