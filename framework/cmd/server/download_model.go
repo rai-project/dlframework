@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/spf13/cobra"
+	"golang.org/x/sync/errgroup"
 )
 
 func downloadModels(ctx context.Context) error {
@@ -20,16 +21,23 @@ func downloadModels(ctx context.Context) error {
 	}
 	models := framework.Models()
 	pb := newProgress("download models", len(models))
+	var g errgroup.Group
 	for _, model := range models {
-		err := predictorFramework.Download(ctx, model)
-		if err != nil {
-			return errors.Wrapf(err, "failed to download %s model", model.MustCanonicalName())
-		}
-		pb.Increment()
+		model := model // https://golang.org/doc/faq#closures_and_goroutines
+		g.Go(func() error {
+			err := predictorFramework.Download(ctx, model)
+			if err != nil {
+				return errors.Wrapf(err, "failed to download %s model", model.MustCanonicalName())
+			}
+			pb.Increment()
+			return nil
+		})
 	}
+
+	err = g.Wait()
 	pb.Finish()
 
-	return nil
+	return err
 }
 
 var downloadModelsCmd = &cobra.Command{
