@@ -112,7 +112,7 @@ func main() {
 				for _, model := range models {
 					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
-						pp.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
+						fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "dataset" +
 							" --debug" +
