@@ -104,6 +104,12 @@ var datasetCmd = &cobra.Command{
 			opts = append(opts, database.Endpoints(databaseEndpoints))
 		}
 		db, err := mongodb.NewDatabase(databaseName, opts...)
+		if err != nil {
+			return errors.Wrapf(err,
+				"⚠️ failed to create new database %s at %v",
+				databaseName, databaseEndpoints,
+			)
+		}
 		defer db.Close()
 
 		predictorFramework, err := agent.GetPredictor(framework)
