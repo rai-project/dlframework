@@ -13,8 +13,8 @@ import (
 
 	"context"
 
+	"github.com/fatih/color"
 	shellwords "github.com/junegunn/go-shellwords"
-	"github.com/k0kubun/pp"
 	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
@@ -112,19 +112,23 @@ func main() {
 				for _, model := range models {
 					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
-						fmt.Println("Running", framework, "::", model, "on", device, "with batch size", batchSize)
+						color.Red("⇛ Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "dataset" +
 							" --debug" +
 							" --verbose" +
 							" --publish=false" +
 							" --fail_on_error=true" +
+							" --warmup_num_file_parts=0" +
 							" --num_file_parts=8" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							" --publish_predictions=false" +
-							fmt.Sprintf(" --model_version=%v", modelVersion) + " --database_name=tx2_carml_step_trace" + " --database_address=34.207.139.117" + " --trace_level=STEP_TRACE"
+							fmt.Sprintf(" --model_version=%v", modelVersion) +
+							" --database_name=tx2_carml_step_trace" +
+							" --database_address=34.207.139.117" +
+							" --trace_level=STEP_TRACE"
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
@@ -158,7 +162,7 @@ func main() {
 							log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
 						}
 					}
-					pp.Println("Finished running", framework, "::", model, "on", device)
+					color.Red("⇛ Finished running", framework, "::", model, "on", device)
 				}
 			}
 		}
