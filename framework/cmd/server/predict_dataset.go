@@ -42,6 +42,7 @@ var (
 	modelVersion         string
 	batchSize            int
 	numFileParts         int
+	numWarmupFileParts   int
 	partitionDatasetSize int
 	publishEvaluation    bool
 	publishPredictions   bool
@@ -213,8 +214,8 @@ var datasetCmd = &cobra.Command{
 		// Dummy userID and runID hardcoded
 		// TODO read userID from manifest file
 		// calculate runID from table
-		var userID = "admin"
-		var runID = 1
+		userID := "admin"
+		runID := 1
 
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),
@@ -277,6 +278,10 @@ var datasetCmd = &cobra.Command{
 			WithField("file_list_length", len(fileList)).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on dataset")
+
+		if numWarmupFileParts != 0 && numFileParts != -1 {
+			panic("todo")
+		}
 
 		if numFileParts == -1 {
 			numFileParts = len(fileNameParts)
@@ -485,6 +490,7 @@ func init() {
 	datasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
 	datasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "the chunk size to partition the input dataset. By default this is the same as the batch size")
 	datasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "the batch size to use while performing inference")
+	datasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 10, "the number of file parts to process during the warmup period. this is ignored if num_file_parts=-1")
 	datasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 	datasetCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
 	datasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
