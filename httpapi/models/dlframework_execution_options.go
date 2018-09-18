@@ -29,7 +29,10 @@ type DlframeworkExecutionOptions struct {
 	GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
 
 	// Time to wait for operation to complete in milliseconds.
-	TimeoutInMs int64 `json:"timeout_in_ms,omitempty"`
+	TimeoutInMs string `json:"timeout_in_ms,omitempty"`
+
+	// trace id
+	TraceID *DlframeworkTraceID `json:"trace_id,omitempty"`
 
 	// trace level
 	TraceLevel ExecutionOptionsTraceLevel `json:"trace_level,omitempty"`
@@ -40,6 +43,10 @@ func (m *DlframeworkExecutionOptions) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateGpuOptions(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTraceID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,6 +70,24 @@ func (m *DlframeworkExecutionOptions) validateGpuOptions(formats strfmt.Registry
 		if err := m.GpuOptions.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("gpu_options")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkExecutionOptions) validateTraceID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TraceID) { // not required
+		return nil
+	}
+
+	if m.TraceID != nil {
+		if err := m.TraceID.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("trace_id")
 			}
 			return err
 		}

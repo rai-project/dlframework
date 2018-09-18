@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DlframeworkFrameworkManifest dlframework framework manifest
@@ -17,7 +18,7 @@ import (
 type DlframeworkFrameworkManifest struct {
 
 	// container
-	Container DlframeworkFrameworkManifestContainer `json:"container,omitempty"`
+	Container map[string]DlframeworkContainerHardware `json:"container,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`
@@ -46,11 +47,17 @@ func (m *DlframeworkFrameworkManifest) validateContainer(formats strfmt.Registry
 		return nil
 	}
 
-	if err := m.Container.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("container")
+	for k := range m.Container {
+
+		if err := validate.Required("container"+"."+k, "body", m.Container[k]); err != nil {
+			return err
 		}
-		return err
+		if val, ok := m.Container[k]; ok {
+			if err := val.Validate(formats); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

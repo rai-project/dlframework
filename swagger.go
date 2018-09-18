@@ -491,6 +491,9 @@ const (
     "dlframeworkExecutionOptions": {
       "type": "object",
       "properties": {
+        "trace_id": {
+          "$ref": "#/definitions/dlframeworkTraceID"
+        },
         "trace_level": {
           "$ref": "#/definitions/ExecutionOptionsTraceLevel"
         },
@@ -571,6 +574,9 @@ const (
         "id": {
           "type": "string"
         },
+        "trace_id": {
+          "$ref": "#/definitions/dlframeworkTraceID"
+        },
         "responses": {
           "type": "array",
           "items": {
@@ -647,6 +653,9 @@ const (
       "properties": {
         "id": {
           "type": "string"
+        },
+        "trace_id": {
+          "$ref": "#/definitions/dlframeworkTraceID"
         }
       }
     },
@@ -689,6 +698,14 @@ const (
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkTraceID": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
         }
       }
     },

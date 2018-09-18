@@ -23,6 +23,9 @@ type DlframeworkFeaturesResponse struct {
 
 	// responses
 	Responses []*DlframeworkFeatureResponse `json:"responses"`
+
+	// trace id
+	TraceID *DlframeworkTraceID `json:"trace_id,omitempty"`
 }
 
 // Validate validates this dlframework features response
@@ -30,6 +33,10 @@ func (m *DlframeworkFeaturesResponse) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateResponses(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTraceID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -59,6 +66,24 @@ func (m *DlframeworkFeaturesResponse) validateResponses(formats strfmt.Registry)
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeaturesResponse) validateTraceID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TraceID) { // not required
+		return nil
+	}
+
+	if m.TraceID != nil {
+		if err := m.TraceID.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("trace_id")
+			}
+			return err
+		}
 	}
 
 	return nil

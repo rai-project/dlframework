@@ -229,6 +229,15 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 		})
 }
 
+func toDlframeworkFeaturesResponse(traceId *dl.TraceID) *webmodels.DlframeworkTraceID {
+	if traceId == nil {
+		return nil
+	}
+	return &webmodels.DlframeworkTraceID{
+		Id: traceId.Id,
+	}
+}
+
 func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels.DlframeworkFeatureResponse {
 	resps := make([]*webmodels.DlframeworkFeatureResponse, len(responses))
 	for ii, fr := range responses {
@@ -294,6 +303,7 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 	return predict.NewImagesOK().
 		WithPayload(&webmodels.DlframeworkFeaturesResponse{
 			ID:        predictorID,
+			TraceID:   toDlframeworkTraceID(ret.TraceId),
 			Responses: resps,
 		})
 }
@@ -339,6 +349,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 	return predict.NewUrlsOK().
 		WithPayload(&webmodels.DlframeworkFeaturesResponse{
 			ID:        predictorID,
+			TraceID:   toDlframeworkTraceID(ret.TraceId),
 			Responses: resps,
 		})
 }

@@ -83,35 +83,40 @@ message GPUOptions {
       [ (gogoproto.moretags) = "yaml:\"force_gpu_compatible,omitempty\"" ];
 };
 
+message TraceID {
+  string id = 1 [ (gogoproto.moretags) = "yaml:\"id,omitempty\"" ];
+}
+
 message ExecutionOptions {
   enum TraceLevel {
     NO_TRACE = 0;
-    STEP_TRACE = 1; // pipelines within carml
+    STEP_TRACE = 1;      // pipelines within carml
     FRAMEWORK_TRACE = 2; // traces layers within the framework
     CPU_ONLY_TRACE = 3;  // perf, papi, ...
     HARDWARE_TRACE = 4;  // cupti, cpu, ...
     FULL_TRACE = 5;      // includes all of the above
   }
-  TraceLevel trace_level = 1
+  TraceID trace_id = 1 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
+  TraceLevel trace_level = 2
       [ (gogoproto.moretags) = "yaml:\"trace_level,omitempty\"" ];
 
   // Time to wait for operation to complete in milliseconds.
-  int64 timeout_in_ms = 2
+  int64 timeout_in_ms = 3
       [ (gogoproto.moretags) = "yaml:\"timeout_in_ms,omitempty\"" ];
 
   // Map from device type name (e.g., "CPU" or "GPU" ) to maximum
   // number of devices of that type to use.  If a particular device
   // type is not found in the map, the system picks an appropriate
   // number.
-  map<string, int32> device_count = 3
+  map<string, int32> device_count = 4
       [ (gogoproto.moretags) = "yaml:\"device_count,omitempty\"" ];
 
   // Options that apply to all CPUs.
-  CPUOptions cpu_options = 4
+  CPUOptions cpu_options = 5
       [ (gogoproto.moretags) = "yaml:\"cpu_options,omitempty\"" ];
 
   // Options that apply to all GPUs.
-  GPUOptions gpu_options = 5
+  GPUOptions gpu_options = 6
       [ (gogoproto.moretags) = "yaml:\"gpu_options,omitempty\"" ];
 }
 
@@ -128,8 +133,7 @@ message PredictionOptions {
       [ (gogoproto.moretags) = "yaml:\"batch_size,omitempty\"" ];
   ExecutionOptions execution_options = 4
       [ (gogoproto.moretags) = "yaml:\"execution_options,omitempty\"" ];
-  string agent = 5
-      [ (gogoproto.moretags) = "yaml:\"agent,omitempty\"" ];
+  string agent = 5 [ (gogoproto.moretags) = "yaml:\"agent,omitempty\"" ];
 }
 
 message PredictorOpenRequest {
@@ -155,6 +159,7 @@ message Predictor {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
+  TraceID trace_id = 2 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
 }
 
 message URLsRequest {
@@ -257,7 +262,8 @@ message FeaturesResponse {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
-  repeated FeatureResponse responses = 2
+  TraceID trace_id = 2 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
+  repeated FeatureResponse responses = 3
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
 }
 

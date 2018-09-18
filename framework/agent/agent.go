@@ -3,13 +3,17 @@ package agent
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 	"sync"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rai-project/tracer"
+	jaeger "github.com/uber/jaeger-client-go"
 
 	// _ "github.com/rai-project/dldataset/vision"
 
 	context "context"
+
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/utils"
@@ -151,12 +155,31 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	return &dl.PredictorCloseResponse{}, nil
 }
 
-func (p *Agent) toFeaturesResponse(output <-chan interface{}, options *dl.PredictionOptions) (*dl.FeaturesResponse, error) {
+func getTraceID(ctx context.Context) (string, error) {
+	span := opentracing.SpanFromContext(ctx)
+	if span == nil {
+		return "", errors.New("unable to find span")
+	}
+	jaegerSpan, ok := span.Context().(jaeger.SpanContext)
+	if !ok {
+		return "", errors.New("invalid cast")
+	}
+
+	return strconv.FormatUint(jaegerSpan.TraceID().Low, 16), nil
+}
+
+func (p *Agent) toFeaturesResponse(ctx context.Context, output <-chan interface{}, options *dl.PredictionOptions) (*dl.FeaturesResponse, error) {
 
 	var wg sync.WaitGroup
 	var mutex sync.Mutex
 
 	res := &dl.FeaturesResponse{}
+
+	if traceId, err := getTraceID(ctx); err == nil {
+		res.TraceId = &dl.TraceID{
+			Id: traceId,
+		}
+	}
 
 	if options == nil {
 		options = &dl.PredictionOptions{
@@ -284,7 +307,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 		return nil, err
 	}
 
-	return p.toFeaturesResponse(output, req.GetOptions())
+	return p.toFeaturesResponse(ctx, output, req.GetOptions())
 }
 
 // Image method receives a stream of urls and runs
@@ -374,7 +397,7 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 		return nil, err
 	}
 
-	return p.toFeaturesResponse(output, req.GetOptions())
+	return p.toFeaturesResponse(ctx, output, req.GetOptions())
 }
 
 // Image method receives a list base64 encoded images and runs
@@ -468,7 +491,7 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 		return nil, err
 	}
 
-	return p.toFeaturesResponse(output, req.GetOptions())
+	return p.toFeaturesResponse(ctx, output, req.GetOptions())
 }
 
 // Dataset method receives a single dataset and runs

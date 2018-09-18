@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // DlframeworkModelManifestType dlframework model manifest type
@@ -20,7 +21,7 @@ type DlframeworkModelManifestType struct {
 	Description string `json:"description,omitempty"`
 
 	// parameters
-	Parameters DlframeworkModelManifestTypeParameters `json:"parameters,omitempty"`
+	Parameters map[string]TypeParameter `json:"parameters,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`
@@ -46,11 +47,17 @@ func (m *DlframeworkModelManifestType) validateParameters(formats strfmt.Registr
 		return nil
 	}
 
-	if err := m.Parameters.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("parameters")
+	for k := range m.Parameters {
+
+		if err := validate.Required("parameters"+"."+k, "body", m.Parameters[k]); err != nil {
+			return err
 		}
-		return err
+		if val, ok := m.Parameters[k]; ok {
+			if err := val.Validate(formats); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // ImagesRequestImage images request image
@@ -45,9 +44,7 @@ func (m *ImagesRequestImage) validateData(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.FormatOf("data", "body", "byte", m.Data.String(), formats); err != nil {
-		return err
-	}
+	// Format "byte" (base64 string) is already validated when unmarshalled
 
 	return nil
 }
