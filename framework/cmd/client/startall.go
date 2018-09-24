@@ -72,16 +72,21 @@ var startallCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(startallCmd)
-	agents = []string{"mxnet", "tensorflow", "caffe", "caffe2"}
+	agents = []string{
+		//"mxnet",
+		//	"tensorflow",
+		"caffe",
+		//"caffe2",
+	}
 	if runtime.GOOS != "linux" {
 		return
 	}
 	if runtime.GOARCH == "ppc64le" {
 		return
 	}
-	agents = append(agents, "tensorrt")
+	//	agents = append(agents, "tensorrt")
 	if runtime.GOARCH == "arm64" {
 		return
 	}
-	agents = append(agents, "cntk")
+	// agents = append(agents, "cntk")
 }

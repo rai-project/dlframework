@@ -57,3 +57,5 @@ key.pem
 
 
 /build/bin/
+
+*_nvprof*
