@@ -15,6 +15,7 @@ import (
 	"github.com/rai-project/grpc"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cast"
 	"golang.org/x/sync/syncmap"
 	gogrpc "google.golang.org/grpc"
 )
@@ -42,7 +43,7 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 			TraceLevel: dl.ExecutionOptions_TraceLevel(
 				tracer.LevelFromName(string(opts.ExecutionOptions.TraceLevel)),
 			),
-			TimeoutInMs: opts.ExecutionOptions.TimeoutInMs,
+			TimeoutInMs: cast.ToInt64(opts.ExecutionOptions.TimeoutInMs),
 			DeviceCount: opts.ExecutionOptions.DeviceCount,
 			// CPUOptions: opts.ExecutionOptions.CPUOptions,
 			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
@@ -229,12 +230,12 @@ func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder 
 		})
 }
 
-func toDlframeworkFeaturesResponse(traceId *dl.TraceID) *webmodels.DlframeworkTraceID {
+func toDlframeworkTraceID(traceId *dl.TraceID) *webmodels.DlframeworkTraceID {
 	if traceId == nil {
 		return nil
 	}
 	return &webmodels.DlframeworkTraceID{
-		Id: traceId.Id,
+		ID: traceId.Id,
 	}
 }
 
@@ -244,7 +245,7 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
 		for jj, f := range fr.Features {
 			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       f.Index,
+				Index:       cast.ToString(f.Index),
 				Metadata:    f.Metadata,
 				Name:        f.Name,
 				Probability: f.Probability,
