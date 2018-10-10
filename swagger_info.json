@@ -13,6 +13,106 @@
 			"url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
 		}
 	},
+	"paths": {
+    "/login": {
+      "post": {
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "tags": [
+          "Login"
+        ]
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "tags": [
+          "Signup"
+        ]
+      }
+    }
+	},
+	"definitions": {
+		"dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+	},
 	"host": "carml.org",
 	"basePath": "/api",
 	"externalDocs": {

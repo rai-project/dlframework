@@ -33,7 +33,7 @@ const (
         "operationId": "Close",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -61,7 +61,7 @@ const (
         "operationId": "Dataset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -89,7 +89,7 @@ const (
         "operationId": "Images",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -116,7 +116,7 @@ const (
         "operationId": "Open",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -143,7 +143,7 @@ const (
         "operationId": "Reset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -171,7 +171,7 @@ const (
         "operationId": "DatasetStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -199,7 +199,7 @@ const (
         "operationId": "ImagesStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -227,7 +227,7 @@ const (
         "operationId": "URLsStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -255,7 +255,7 @@ const (
         "operationId": "URLs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -281,7 +281,7 @@ const (
         "operationId": "FrameworkAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -311,7 +311,7 @@ const (
         "operationId": "FrameworkManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -341,7 +341,7 @@ const (
         "operationId": "ModelAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -383,7 +383,7 @@ const (
         "operationId": "ModelManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
@@ -417,6 +417,60 @@ const (
         ],
         "tags": [
           "Registry"
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "tags": [
+          "Login"
+        ]
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "tags": [
+          "Signup"
         ]
       }
     }
@@ -946,6 +1000,48 @@ const (
           }
         }
       }
+    },
+    "dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
     }
   },
   "host": "carml.org",
@@ -969,6 +1065,106 @@ const (
 			"name": "NCSA/UIUC",
 			"url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
 		}
+	},
+	"paths": {
+    "/login": {
+      "post": {
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "tags": [
+          "Login"
+        ]
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "tags": [
+          "Signup"
+        ]
+      }
+    }
+	},
+	"definitions": {
+		"dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
 	},
 	"host": "carml.org",
 	"basePath": "/api",
