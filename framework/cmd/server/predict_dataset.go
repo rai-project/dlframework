@@ -144,7 +144,7 @@ var datasetCmd = &cobra.Command{
 			DeviceCount: dc,
 		}
 		predOpts := &dl.PredictionOptions{
-			// FeatureLimit:     5,
+			FeatureLimit:     uint32(10),
 			BatchSize:        uint32(batchSize),
 			ExecutionOptions: execOpts,
 		}

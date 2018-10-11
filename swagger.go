@@ -33,7 +33,7 @@ const (
         "operationId": "Close",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -61,7 +61,7 @@ const (
         "operationId": "Dataset",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -89,7 +89,7 @@ const (
         "operationId": "Images",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -116,7 +116,7 @@ const (
         "operationId": "Open",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -143,7 +143,7 @@ const (
         "operationId": "Reset",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -171,7 +171,7 @@ const (
         "operationId": "DatasetStream",
         "responses": {
           "200": {
-            "description": "A successful response.(streaming responses)",
+            "description": "(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -199,7 +199,7 @@ const (
         "operationId": "ImagesStream",
         "responses": {
           "200": {
-            "description": "A successful response.(streaming responses)",
+            "description": "(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -227,7 +227,7 @@ const (
         "operationId": "URLsStream",
         "responses": {
           "200": {
-            "description": "A successful response.(streaming responses)",
+            "description": "(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -255,7 +255,7 @@ const (
         "operationId": "URLs",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -281,7 +281,7 @@ const (
         "operationId": "FrameworkAgents",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -311,7 +311,7 @@ const (
         "operationId": "FrameworkManifests",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -341,7 +341,7 @@ const (
         "operationId": "ModelAgents",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -383,7 +383,7 @@ const (
         "operationId": "ModelManifests",
         "responses": {
           "200": {
-            "description": "A successful response.",
+            "description": "",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }

@@ -45,6 +45,32 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
     "/predict/close": {
       "post": {
         "tags": [
@@ -415,6 +441,32 @@ func init() {
           }
         }
       }
+    },
+    "/signup": {
+      "post": {
+        "tags": [
+          "Signup"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -743,6 +795,25 @@ func init() {
         }
       }
     },
+    "dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLoginResponse": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkModelManifest": {
       "type": "object",
       "properties": {
@@ -915,6 +986,37 @@ func init() {
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
         }
       }
     },
@@ -976,6 +1078,32 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
     "/predict/close": {
       "post": {
         "tags": [
@@ -1346,6 +1474,32 @@ func init() {
           }
         }
       }
+    },
+    "/signup": {
+      "post": {
+        "tags": [
+          "Signup"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1674,6 +1828,25 @@ func init() {
         }
       }
     },
+    "dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLoginResponse": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkModelManifest": {
       "type": "object",
       "properties": {
@@ -1846,6 +2019,37 @@ func init() {
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
         }
       }
     },

@@ -11,8 +11,10 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/rai-project/dlframework/httpapi/client/login"
 	"github.com/rai-project/dlframework/httpapi/client/predict"
 	"github.com/rai-project/dlframework/httpapi/client/registry"
+	"github.com/rai-project/dlframework/httpapi/client/signup"
 )
 
 // Default dlframework HTTP client.
@@ -58,9 +60,13 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Dlframewor
 	cli := new(Dlframework)
 	cli.Transport = transport
 
+	cli.Login = login.New(transport, formats)
+
 	cli.Predict = predict.New(transport, formats)
 
 	cli.Registry = registry.New(transport, formats)
+
+	cli.Signup = signup.New(transport, formats)
 
 	return cli
 }
@@ -106,9 +112,13 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // Dlframework is a client for dlframework
 type Dlframework struct {
+	Login *login.Client
+
 	Predict *predict.Client
 
 	Registry *registry.Client
+
+	Signup *signup.Client
 
 	Transport runtime.ClientTransport
 }
@@ -117,8 +127,12 @@ type Dlframework struct {
 func (c *Dlframework) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
+	c.Login.SetTransport(transport)
+
 	c.Predict.SetTransport(transport)
 
 	c.Registry.SetTransport(transport)
+
+	c.Signup.SetTransport(transport)
 
 }

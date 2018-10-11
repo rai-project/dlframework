@@ -19,8 +19,10 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/login"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
 )
 
 // NewDlframeworkAPI creates a new Dlframework instance
@@ -61,6 +63,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		PredictImagesStreamHandler: predict.ImagesStreamHandlerFunc(func(params predict.ImagesStreamParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictImagesStream has not yet been implemented")
 		}),
+		LoginLoginHandler: login.LoginHandlerFunc(func(params login.LoginParams) middleware.Responder {
+			return middleware.NotImplemented("operation LoginLogin has not yet been implemented")
+		}),
 		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
 		}),
@@ -72,6 +77,9 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		}),
 		PredictResetHandler: predict.ResetHandlerFunc(func(params predict.ResetParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictReset has not yet been implemented")
+		}),
+		SignupSignupHandler: signup.SignupHandlerFunc(func(params signup.SignupParams) middleware.Responder {
+			return middleware.NotImplemented("operation SignupSignup has not yet been implemented")
 		}),
 		PredictUrlsHandler: predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictUrls has not yet been implemented")
@@ -124,6 +132,8 @@ type DlframeworkAPI struct {
 	PredictImagesHandler predict.ImagesHandler
 	// PredictImagesStreamHandler sets the operation handler for the images stream operation
 	PredictImagesStreamHandler predict.ImagesStreamHandler
+	// LoginLoginHandler sets the operation handler for the login operation
+	LoginLoginHandler login.LoginHandler
 	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
@@ -132,6 +142,8 @@ type DlframeworkAPI struct {
 	PredictOpenHandler predict.OpenHandler
 	// PredictResetHandler sets the operation handler for the reset operation
 	PredictResetHandler predict.ResetHandler
+	// SignupSignupHandler sets the operation handler for the signup operation
+	SignupSignupHandler signup.SignupHandler
 	// PredictUrlsHandler sets the operation handler for the urls operation
 	PredictUrlsHandler predict.UrlsHandler
 	// PredictUrlsStreamHandler sets the operation handler for the urls stream operation
@@ -227,6 +239,10 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "predict.ImagesStreamHandler")
 	}
 
+	if o.LoginLoginHandler == nil {
+		unregistered = append(unregistered, "login.LoginHandler")
+	}
+
 	if o.RegistryModelAgentsHandler == nil {
 		unregistered = append(unregistered, "registry.ModelAgentsHandler")
 	}
@@ -241,6 +257,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.PredictResetHandler == nil {
 		unregistered = append(unregistered, "predict.ResetHandler")
+	}
+
+	if o.SignupSignupHandler == nil {
+		unregistered = append(unregistered, "signup.SignupHandler")
 	}
 
 	if o.PredictUrlsHandler == nil {
@@ -384,6 +404,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/predict/stream/images"] = predict.NewImagesStream(o.context, o.PredictImagesStreamHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/login"] = login.NewLogin(o.context, o.LoginLoginHandler)
+
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -403,6 +428,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/predict/reset"] = predict.NewReset(o.context, o.PredictResetHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/signup"] = signup.NewSignup(o.context, o.SignupSignupHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
