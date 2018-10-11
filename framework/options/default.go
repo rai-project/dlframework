@@ -4,8 +4,9 @@ import "github.com/rai-project/config"
 import "github.com/rai-project/nvidia-smi"
 
 var (
-	DefaultBatchSize uint32 = 1
-	DefaultDevice    device
+	DefaultBatchSize      uint32 = 1
+	DefaultFeatureLimit uint32 = 10
+	DefaultDevice         device
 )
 
 func init() {

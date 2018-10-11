@@ -10,15 +10,15 @@ import (
 )
 
 type Options struct {
-	ctx            context.Context
-	devices        devices
-	batchSize      uint32
-	numPredictions uint32
-	traceLevel     tracer.Level
-	symbol         []byte
-	weights        []byte
-	inputNodes     []inputNode
-	outputNode     string
+	ctx          context.Context
+	devices      devices
+	batchSize    uint32
+	featureLimit uint32
+	traceLevel   tracer.Level
+	symbol       []byte
+	weights      []byte
+	inputNodes   []inputNode
+	outputNode   string
 }
 
 type Option func(*Options)
@@ -52,14 +52,14 @@ func (o *Options) BatchSize() uint32 {
 	return o.batchSize
 }
 
-func NumPredictions(num uint32) Option {
+func FeatureLimit(num uint32) Option {
 	return func(o *Options) {
-		o.numPredictions = num
+		o.featureLimit = num
 	}
 }
 
-func (o *Options) NumPredictions() string {
-	return o.numPredictions
+func (o *Options) FeatureLimit() string {
+	return o.featureLimit
 }
 
 func Device(deviceType DeviceType, id int) Option {
@@ -153,10 +153,11 @@ func (o *Options) OutputNode() string {
 
 func New(opts ...Option) *Options {
 	options := &Options{
-		ctx:        context.Background(),
-		devices:    []device{},
-		batchSize:  Config.BatchSize,
-		traceLevel: tracer.NO_TRACE,
+		ctx:          context.Background(),
+		devices:      []device{},
+		batchSize:    Config.BatchSize,
+		featureLimit: Config.FeatureLimit,
+		traceLevel:   tracer.NO_TRACE,
 	}
 
 	for _, o := range opts {
@@ -186,7 +187,7 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 			}
 		}
 		o.batchSize = p.BatchSize
-		o.numPredictions = p.FeatureLimit
+		o.featureLimit = p.FeatureLimit
 		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
 	}
 }

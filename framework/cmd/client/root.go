@@ -24,6 +24,7 @@ var (
 	modelName        string
 	modelVersion     string
 	batchSize        int
+	featureLimit     int
 )
 
 var RootCmd = &cobra.Command{
@@ -40,6 +41,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
 	RootCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	RootCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
+	RootCmd.PersistentFlags().IntVarP(&featureLimit, "featureLimit", "f", 10, "feature limit")
 	cleanNames()
 }
 

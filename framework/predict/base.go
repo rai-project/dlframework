@@ -2,6 +2,7 @@ package predict
 
 import (
 	"context"
+
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/tracer"
@@ -23,6 +24,10 @@ func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error
 
 func (b Base) BatchSize() uint32 {
 	return b.Options.BatchSize()
+}
+
+func (b Base) FeatureLimit() uint32 {
+	return b.Options.FeatureLimit()
 }
 
 func (b Base) TraceLevel() tracer.Level {

@@ -8,6 +8,7 @@ import (
 
 type optionsConfig struct {
 	BatchSize           uint32        `json:"batch_size" config:"predictor.batch_size"`
+	FeatureLimit        uint32        `json:"feature_limit" config:"predictor.batch_size"`
 	DefaultDeviceString string        `json:"default_device" config:"predictor.default_device"`
 	DefaultDevice       device        `json:"-" config:"-"`
 	done                chan struct{} `json:"-" config:"-"`
@@ -32,6 +33,9 @@ func (a *optionsConfig) Read() {
 	vipertags.Fill(a)
 	if a.BatchSize == 0 {
 		a.BatchSize = DefaultBatchSize
+	}
+	if a.FeatureLimit == 0 {
+		a.FeatureLimit = DefaultFeatureLimit
 	}
 	if a.DefaultDeviceString == "" {
 		a.DefaultDevice = DefaultDevice

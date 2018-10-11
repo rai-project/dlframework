@@ -101,7 +101,7 @@ var urlsCmd = &cobra.Command{
 		client := dlframework.NewPredictClient(conn)
 
 		ExecutionOptions := &dlframework.ExecutionOptions{
-			DeviceCount: map[string]int32{"gpu": 0},
+			DeviceCount: map[string]uint32{"gpu": 0},
 		}
 
 		predictor, err := client.Open(ctx, &dlframework.PredictorOpenRequest{
@@ -148,7 +148,7 @@ var urlsCmd = &cobra.Command{
 		for ii, f := range fr[:5] {
 			span.SetTag("predictions_"+strconv.Itoa(ii), struct {
 				Pos   int
-				Index int64
+				Index uint32
 				Name  string
 				Prob  float32
 			}{

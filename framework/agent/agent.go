@@ -85,17 +85,6 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 
 	tracer.SetLevel(getTraceLevelOption(opts))
 
-	// predOpts := options.New(options.PredictorOptions(opts))
-	// if predOpts.UsesGPU() && predOpts.TraceLevel() >= tracer.HARDWARE_TRACE {
-	// 	cu, err := cupti.New(cupti.Context(ctx))
-	// 	if err == nil {
-	// 		defer func() {
-	// 			cu.Wait()
-	// 			cu.Close()
-	// 		}()
-	// 	}
-	// }
-
 	predictor, err := p.predictor.Load(ctx, *model, options.PredictorOptions(opts))
 	if err != nil {
 		return nil, err
@@ -132,22 +121,6 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	if err != nil {
 		return nil, err
 	}
-
-	// opts, err := predictor.GetPredictionOptions(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// pp.Println(opts)
-	// if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
-	// 	cu, err := cupti.New(cupti.Context(ctx))
-	// 	if err == nil {
-	// 		defer func() {
-	// 			cu.Wait()
-	// 			cu.Close()
-	// 		}()
-	// 	}
-	// }
 
 	predictor.Close()
 

@@ -2,6 +2,7 @@ package steps
 
 import (
 	"context"
+
 	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/tracer"
 
@@ -64,6 +65,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		"framework_name":    framework.GetName(),
 		"framework_version": framework.GetVersion(),
 		"batch_size":        opts.BatchSize(),
+		"feature_limit":     opts.FeatureLimit(),
 		"device":            opts.Devices().String(),
 		"trace_level":       opts.TraceLevel().String(),
 		"uses_gpu":          opts.UsesGPU(),
