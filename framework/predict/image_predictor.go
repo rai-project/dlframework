@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"context"
+
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/image"
@@ -102,7 +103,7 @@ func (p ImagePredictor) GetMeanPath() string {
 	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
-func (p ImagePredictor) GetImageDimensions() ([]uint32, error) {
+func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -118,7 +119,7 @@ func (p ImagePredictor) GetImageDimensions() ([]uint32, error) {
 		return nil, errors.New("invalid image dimensions")
 	}
 
-	var dims []uint32
+	var dims []int
 	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
 		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
 	}

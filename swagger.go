@@ -560,7 +560,7 @@ const (
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int64"
+            "format": "int32"
           },
           "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber."
         },
@@ -579,7 +579,7 @@ const (
       "properties": {
         "index": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "name": {
           "type": "string"
@@ -688,11 +688,11 @@ const (
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "batch_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "execution_options": {
           "$ref": "#/definitions/dlframeworkExecutionOptions"

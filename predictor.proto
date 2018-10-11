@@ -108,7 +108,7 @@ message ExecutionOptions {
   // number of devices of that type to use.  If a particular device
   // type is not found in the map, the system picks an appropriate
   // number.
-  map<string, uint32> device_count = 4
+  map<string, int32> device_count = 4
       [ (gogoproto.moretags) = "yaml:\"device_count,omitempty\"" ];
 
   // Options that apply to all CPUs.
@@ -127,9 +127,9 @@ message PredictionOptions {
     (gogoproto.jsontag) = "request_id,omitempty",
     (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
   ];
-  uint32 feature_limit = 2
+  int32 feature_limit = 2
       [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
-  uint32 batch_size = 3
+  int32 batch_size = 3
       [ (gogoproto.moretags) = "yaml:\"batch_size,omitempty\"" ];
   ExecutionOptions execution_options = 4
       [ (gogoproto.moretags) = "yaml:\"execution_options,omitempty\"" ];
@@ -224,7 +224,7 @@ message DatasetRequest {
 
 message Feature {
   option (gogoproto.description) = true;
-  uint32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   float probability = 3
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];

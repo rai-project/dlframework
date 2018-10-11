@@ -651,7 +651,7 @@ func init() {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int64"
+            "format": "int32"
           }
         },
         "gpu_options": {
@@ -676,7 +676,7 @@ func init() {
       "properties": {
         "index": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "metadata": {
           "type": "object",
@@ -932,14 +932,14 @@ func init() {
         },
         "batch_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "execution_options": {
           "$ref": "#/definitions/dlframeworkExecutionOptions"
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "request_id": {
           "type": "string"
@@ -1694,7 +1694,7 @@ func init() {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int64"
+            "format": "int32"
           }
         },
         "gpu_options": {
@@ -1719,7 +1719,7 @@ func init() {
       "properties": {
         "index": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "metadata": {
           "type": "object",
@@ -1975,14 +1975,14 @@ func init() {
         },
         "batch_size": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "execution_options": {
           "$ref": "#/definitions/dlframeworkExecutionOptions"
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int64"
+          "format": "int32"
         },
         "request_id": {
           "type": "string"

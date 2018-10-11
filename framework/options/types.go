@@ -57,14 +57,14 @@ func (d devices) String() string {
 }
 
 type inputNode struct {
-	key   string   // name
-	shape []uint32 // shape of ndarray
+	key   string // name
+	shape []int  // shape of ndarray
 }
 
 func (n inputNode) Key() string {
 	return n.key
 }
 
-func (n inputNode) Shape() []uint32 {
+func (n inputNode) Shape() []int {
 	return n.shape
 }

@@ -66,8 +66,8 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 	predOpts := &dl.PredictionOptions{
 		RequestID:        opts.RequestID,
 		FeatureLimit:     opts.,
-		BatchSize:        uint32(opts.BatchSize),
-		FeatureLimit:     uint32(opts.FeatureLimit),
+		BatchSize:        int(opts.BatchSize),
+		FeatureLimit:     int(opts.FeatureLimit),
 		ExecutionOptions: execOpts,
 	}
 

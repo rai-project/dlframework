@@ -101,7 +101,7 @@ var urlsCmd = &cobra.Command{
 		client := dlframework.NewPredictClient(conn)
 
 		ExecutionOptions := &dlframework.ExecutionOptions{
-			DeviceCount: map[string]uint32{"gpu": 0},
+			DeviceCount: map[string]int32{"gpu": 0},
 		}
 
 		predictor, err := client.Open(ctx, &dlframework.PredictorOpenRequest{
@@ -110,7 +110,7 @@ var urlsCmd = &cobra.Command{
 			FrameworkName:    frameworkName,
 			FrameworkVersion: frameworkVersion,
 			Options: &dlframework.PredictionOptions{
-				BatchSize:        uint32(batchSize),
+				BatchSize:        int32(batchSize),
 				ExecutionOptions: ExecutionOptions,
 			},
 		})
@@ -132,7 +132,7 @@ var urlsCmd = &cobra.Command{
 			Predictor: predictor,
 			Urls:      urls,
 			Options: &dlframework.PredictionOptions{
-				BatchSize: uint32(batchSize),
+				BatchSize: int32(batchSize),
 			},
 		}
 
@@ -148,12 +148,12 @@ var urlsCmd = &cobra.Command{
 		for ii, f := range fr[:5] {
 			span.SetTag("predictions_"+strconv.Itoa(ii), struct {
 				Pos   int
-				Index uint32
+				Index int
 				Name  string
 				Prob  float32
 			}{
 				Pos:   ii,
-				Index: f.GetIndex(),
+				Index: int(f.GetIndex()),
 				Name:  f.GetName(),
 				Prob:  f.GetProbability(),
 			})

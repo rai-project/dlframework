@@ -16,7 +16,7 @@ import (
 type DlframeworkFeature struct {
 
 	// index
-	Index int64 `json:"index,omitempty"`
+	Index int32 `json:"index,omitempty"`
 
 	// metadata
 	Metadata map[string]string `json:"metadata,omitempty"`

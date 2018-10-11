@@ -22,11 +22,11 @@ func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error
 	return b.Options, nil
 }
 
-func (b Base) BatchSize() uint32 {
+func (b Base) BatchSize() int {
 	return b.Options.BatchSize()
 }
 
-func (b Base) FeatureLimit() uint32 {
+func (b Base) FeatureLimit() int {
 	return b.Options.FeatureLimit()
 }
 

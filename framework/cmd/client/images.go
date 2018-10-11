@@ -53,8 +53,8 @@ var imagesCmd = &cobra.Command{
 			FrameworkName:    frameworkName,
 			FrameworkVersion: frameworkVersion,
 			Options: &dlframework.PredictionOptions{
-				BatchSize:    uint32(batchSize),
-				FeatureLimit: uint32(featureLimit),
+				BatchSize:    int32(batchSize),
+				FeatureLimit: int32(featureLimit),
 			},
 		})
 		if err != nil {
@@ -98,8 +98,8 @@ var imagesCmd = &cobra.Command{
 			Predictor: predictor,
 			Images:    imgs,
 			Options: &dlframework.PredictionOptions{
-				BatchSize:    uint32(batchSize),
-				FeatureLimit: uint32(featureLimit),
+				BatchSize:    int32(batchSize),
+				FeatureLimit: int32(featureLimit),
 			},
 		}
 

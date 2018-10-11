@@ -7,8 +7,8 @@ import (
 )
 
 type optionsConfig struct {
-	BatchSize           uint32        `json:"batch_size" config:"predictor.batch_size"`
-	FeatureLimit        uint32        `json:"feature_limit" config:"predictor.batch_size"`
+	BatchSize           int           `json:"batch_size" config:"predictor.batch_size"`
+	FeatureLimit        int           `json:"feature_limit" config:"predictor.batch_size"`
 	DefaultDeviceString string        `json:"default_device" config:"predictor.default_device"`
 	DefaultDevice       device        `json:"-" config:"-"`
 	done                chan struct{} `json:"-" config:"-"`

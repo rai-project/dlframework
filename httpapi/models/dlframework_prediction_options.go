@@ -20,13 +20,13 @@ type DlframeworkPredictionOptions struct {
 	Agent string `json:"agent,omitempty"`
 
 	// batch size
-	BatchSize int64 `json:"batch_size,omitempty"`
+	BatchSize int32 `json:"batch_size,omitempty"`
 
 	// execution options
 	ExecutionOptions *DlframeworkExecutionOptions `json:"execution_options,omitempty"`
 
 	// feature limit
-	FeatureLimit int64 `json:"feature_limit,omitempty"`
+	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
 	// request id
 	RequestID string `json:"request_id,omitempty"`
