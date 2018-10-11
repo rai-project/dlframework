@@ -69,15 +69,10 @@ func getTraceLevelOption(opts *dl.PredictionOptions) tracer.Level {
 	return level
 }
 
-var predictorHack *dl.Predictor
-
 // Opens a predictor and returns an id where the predictor
 // is accessible. The id can be used to perform inference
 // requests.
 func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Predictor, error) {
-	if predictorHack != nil {
-		return predictorHack, nil
-	}
 	_, model, err := p.FindFrameworkModel(ctx, req)
 	if err != nil {
 		return nil, err
@@ -112,8 +107,6 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	id := uuid.NewV4()
 	p.loadedPredictors.Store(id, predictor)
 
-	predictorHack = &dl.Predictor{ID: id}
-
 	return &dl.Predictor{ID: id}, nil
 }
 
@@ -140,7 +133,6 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 		return nil, err
 	}
 
-	_ = predictor
 	// opts, err := predictor.GetPredictionOptions(ctx)
 	// if err != nil {
 	// 	return nil, err
@@ -157,9 +149,9 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 	// 	}
 	// }
 
-	//predictor.Close()
+	predictor.Close()
 
-	//p.loadedPredictors.Delete(id)
+	p.loadedPredictors.Delete(id)
 
 	return &dl.PredictorCloseResponse{}, nil
 }

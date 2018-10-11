@@ -2264,6 +2264,7 @@
     "github.com/ulule/deepcopier",
     "golang.org/x/net/context",
     "golang.org/x/net/netutil",
+    "golang.org/x/sync/errgroup",
     "golang.org/x/sync/syncmap",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",

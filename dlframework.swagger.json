@@ -30,7 +30,7 @@
         "operationId": "Close",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -58,7 +58,7 @@
         "operationId": "Dataset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -86,7 +86,7 @@
         "operationId": "Images",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -113,7 +113,7 @@
         "operationId": "Open",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -140,7 +140,7 @@
         "operationId": "Reset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -168,7 +168,7 @@
         "operationId": "DatasetStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -196,7 +196,7 @@
         "operationId": "ImagesStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -224,7 +224,7 @@
         "operationId": "URLsStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -252,7 +252,7 @@
         "operationId": "URLs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -278,7 +278,7 @@
         "operationId": "FrameworkAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -308,7 +308,7 @@
         "operationId": "FrameworkManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -338,7 +338,7 @@
         "operationId": "ModelAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -380,7 +380,7 @@
         "operationId": "ModelManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
@@ -414,6 +414,60 @@
         ],
         "tags": [
           "Registry"
+        ]
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login to MLModelScope platform",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogin"
+            }
+          }
+        ],
+        "tags": [
+          "Login"
+        ]
+      }
+    },
+    "/signup": {
+      "post": {
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "tags": [
+          "Signup"
         ]
       }
     }
@@ -941,6 +995,48 @@
           "items": {
             "$ref": "#/definitions/dlframeworkModelManifest"
           }
+        }
+      }
+    },
+    "dlframeworkLogin": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignupResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkSignup": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     }
