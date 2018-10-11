@@ -90,6 +90,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -117,6 +118,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -144,6 +146,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -170,6 +173,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -196,6 +200,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -223,7 +228,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -251,7 +256,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -279,7 +284,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -307,6 +312,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -334,6 +340,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -361,6 +368,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -398,6 +406,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -435,6 +444,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
@@ -809,7 +819,7 @@ func init() {
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
-        "username": {
+        "outcome": {
           "type": "string"
         }
       }
@@ -1123,6 +1133,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -1150,6 +1161,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -1177,6 +1189,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -1203,6 +1216,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -1229,6 +1243,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -1256,7 +1271,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -1284,7 +1299,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -1312,7 +1327,7 @@ func init() {
         ],
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -1340,6 +1355,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -1367,6 +1383,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -1394,6 +1411,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -1431,6 +1449,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -1468,6 +1487,7 @@ func init() {
         ],
         "responses": {
           "200": {
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
@@ -1842,7 +1862,7 @@ func init() {
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
-        "username": {
+        "outcome": {
           "type": "string"
         }
       }

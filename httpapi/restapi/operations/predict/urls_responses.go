@@ -16,7 +16,7 @@ import (
 // UrlsOKCode is the HTTP code returned for type UrlsOK
 const UrlsOKCode int = 200
 
-/*UrlsOK urls o k
+/*UrlsOK A successful response.
 
 swagger:response urlsOK
 */

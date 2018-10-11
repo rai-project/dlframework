@@ -16,7 +16,7 @@ import (
 // DatasetStreamOKCode is the HTTP code returned for type DatasetStreamOK
 const DatasetStreamOKCode int = 200
 
-/*DatasetStreamOK (streaming responses)
+/*DatasetStreamOK A successful response.(streaming responses)
 
 swagger:response datasetStreamOK
 */

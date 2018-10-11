@@ -44,7 +44,7 @@ func NewImagesOK() *ImagesOK {
 
 /*ImagesOK handles this case with default header values.
 
-ImagesOK images o k
+A successful response.
 */
 type ImagesOK struct {
 	Payload *models.DlframeworkFeaturesResponse

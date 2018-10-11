@@ -44,7 +44,7 @@ func NewImagesStreamOK() *ImagesStreamOK {
 
 /*ImagesStreamOK handles this case with default header values.
 
-(streaming responses)
+A successful response.(streaming responses)
 */
 type ImagesStreamOK struct {
 	Payload *models.DlframeworkFeatureResponse

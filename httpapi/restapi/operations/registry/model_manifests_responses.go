@@ -16,7 +16,7 @@ import (
 // ModelManifestsOKCode is the HTTP code returned for type ModelManifestsOK
 const ModelManifestsOKCode int = 200
 
-/*ModelManifestsOK model manifests o k
+/*ModelManifestsOK A successful response.
 
 swagger:response modelManifestsOK
 */

@@ -16,7 +16,7 @@ import (
 // DatasetOKCode is the HTTP code returned for type DatasetOK
 const DatasetOKCode int = 200
 
-/*DatasetOK dataset o k
+/*DatasetOK A successful response.
 
 swagger:response datasetOK
 */

@@ -44,7 +44,7 @@ func NewResetOK() *ResetOK {
 
 /*ResetOK handles this case with default header values.
 
-ResetOK reset o k
+A successful response.
 */
 type ResetOK struct {
 	Payload *models.DlframeworkResetResponse

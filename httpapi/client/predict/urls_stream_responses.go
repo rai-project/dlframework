@@ -44,7 +44,7 @@ func NewUrlsStreamOK() *UrlsStreamOK {
 
 /*UrlsStreamOK handles this case with default header values.
 
-(streaming responses)
+A successful response.(streaming responses)
 */
 type UrlsStreamOK struct {
 	Payload *models.DlframeworkFeatureResponse

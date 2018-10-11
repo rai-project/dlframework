@@ -44,7 +44,7 @@ func NewDatasetStreamOK() *DatasetStreamOK {
 
 /*DatasetStreamOK handles this case with default header values.
 
-(streaming responses)
+A successful response.(streaming responses)
 */
 type DatasetStreamOK struct {
 	Payload *models.DlframeworkFeatureResponse

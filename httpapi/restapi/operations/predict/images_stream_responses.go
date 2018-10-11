@@ -16,7 +16,7 @@ import (
 // ImagesStreamOKCode is the HTTP code returned for type ImagesStreamOK
 const ImagesStreamOKCode int = 200
 
-/*ImagesStreamOK (streaming responses)
+/*ImagesStreamOK A successful response.(streaming responses)
 
 swagger:response imagesStreamOK
 */

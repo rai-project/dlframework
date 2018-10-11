@@ -44,7 +44,7 @@ func NewOpenOK() *OpenOK {
 
 /*OpenOK handles this case with default header values.
 
-OpenOK open o k
+A successful response.
 */
 type OpenOK struct {
 	Payload *models.DlframeworkPredictor

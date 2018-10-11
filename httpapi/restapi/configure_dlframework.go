@@ -17,7 +17,7 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
 )
 
-//go:generate swagger generate server --target ../httpapi --name dlframework --spec ../dlframework.swagger.json
+//go:generate swagger generate server --target ../httpapi --name Dlframework --spec ../dlframework.swagger.json
 
 func configureFlags(api *operations.DlframeworkAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }

@@ -44,7 +44,7 @@ func NewModelAgentsOK() *ModelAgentsOK {
 
 /*ModelAgentsOK handles this case with default header values.
 
-ModelAgentsOK model agents o k
+A successful response.
 */
 type ModelAgentsOK struct {
 	Payload *models.DlframeworkAgents

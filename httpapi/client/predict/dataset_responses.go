@@ -44,7 +44,7 @@ func NewDatasetOK() *DatasetOK {
 
 /*DatasetOK handles this case with default header values.
 
-DatasetOK dataset o k
+A successful response.
 */
 type DatasetOK struct {
 	Payload *models.DlframeworkFeaturesResponse

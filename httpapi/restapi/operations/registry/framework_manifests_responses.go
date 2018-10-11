@@ -16,7 +16,7 @@ import (
 // FrameworkManifestsOKCode is the HTTP code returned for type FrameworkManifestsOK
 const FrameworkManifestsOKCode int = 200
 
-/*FrameworkManifestsOK framework manifests o k
+/*FrameworkManifestsOK A successful response.
 
 swagger:response frameworkManifestsOK
 */

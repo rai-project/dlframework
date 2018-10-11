@@ -44,7 +44,7 @@ func NewFrameworkManifestsOK() *FrameworkManifestsOK {
 
 /*FrameworkManifestsOK handles this case with default header values.
 
-FrameworkManifestsOK framework manifests o k
+A successful response.
 */
 type FrameworkManifestsOK struct {
 	Payload *models.DlframeworkFrameworkManifestsResponse

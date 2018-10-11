@@ -16,7 +16,7 @@ import (
 // CloseOKCode is the HTTP code returned for type CloseOK
 const CloseOKCode int = 200
 
-/*CloseOK close o k
+/*CloseOK A successful response.
 
 swagger:response closeOK
 */

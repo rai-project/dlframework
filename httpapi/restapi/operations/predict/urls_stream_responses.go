@@ -16,7 +16,7 @@ import (
 // UrlsStreamOKCode is the HTTP code returned for type UrlsStreamOK
 const UrlsStreamOKCode int = 200
 
-/*UrlsStreamOK (streaming responses)
+/*UrlsStreamOK A successful response.(streaming responses)
 
 swagger:response urlsStreamOK
 */

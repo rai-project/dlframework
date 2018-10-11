@@ -16,7 +16,7 @@ import (
 // ResetOKCode is the HTTP code returned for type ResetOK
 const ResetOKCode int = 200
 
-/*ResetOK reset o k
+/*ResetOK A successful response.
 
 swagger:response resetOK
 */

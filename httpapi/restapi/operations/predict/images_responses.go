@@ -16,7 +16,7 @@ import (
 // ImagesOKCode is the HTTP code returned for type ImagesOK
 const ImagesOKCode int = 200
 
-/*ImagesOK images o k
+/*ImagesOK A successful response.
 
 swagger:response imagesOK
 */

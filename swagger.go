@@ -33,7 +33,7 @@ const (
         "operationId": "Close",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictorCloseResponse"
             }
@@ -61,7 +61,7 @@ const (
         "operationId": "Dataset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -89,7 +89,7 @@ const (
         "operationId": "Images",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -116,7 +116,7 @@ const (
         "operationId": "Open",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkPredictor"
             }
@@ -143,7 +143,7 @@ const (
         "operationId": "Reset",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
             }
@@ -171,7 +171,7 @@ const (
         "operationId": "DatasetStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -199,7 +199,7 @@ const (
         "operationId": "ImagesStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -227,7 +227,7 @@ const (
         "operationId": "URLsStream",
         "responses": {
           "200": {
-            "description": "(streaming responses)",
+            "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
@@ -255,7 +255,7 @@ const (
         "operationId": "URLs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
@@ -281,7 +281,7 @@ const (
         "operationId": "FrameworkAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -311,7 +311,7 @@ const (
         "operationId": "FrameworkManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkFrameworkManifestsResponse"
             }
@@ -341,7 +341,7 @@ const (
         "operationId": "ModelAgents",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkAgents"
             }
@@ -383,7 +383,7 @@ const (
         "operationId": "ModelManifests",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
             }
@@ -1012,6 +1012,14 @@ const (
         }
       }
     },
+    "dlframeworkLoginResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkSignupResponse": {
       "type": "object",
       "properties": {
@@ -1052,21 +1060,20 @@ const (
 }
 `
 	swagger_info = `{
-	"info": {
-		"title": "CarML DLFramework",
-		"description":
-			"CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
-		"version": "0.2.18",
-		"contact": {
-			"name": "Abdul Dakkak, Cheng Li",
-			"url": "https://github.com/rai-project/carml"
-		},
-		"license": {
-			"name": "NCSA/UIUC",
-			"url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
-		}
-	},
-	"paths": {
+  "info": {
+    "title": "CarML DLFramework",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "version": "0.2.18",
+    "contact": {
+      "name": "Abdul Dakkak, Cheng Li",
+      "url": "https://github.com/rai-project/carml"
+    },
+    "license": {
+      "name": "NCSA/UIUC",
+      "url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
+    }
+  },
+  "paths": {
     "/login": {
       "post": {
         "summary": "Login to MLModelScope platform",
@@ -1089,9 +1096,7 @@ const (
             }
           }
         ],
-        "tags": [
-          "Login"
-        ]
+        "tags": ["Login"]
       }
     },
     "/signup": {
@@ -1116,20 +1121,26 @@ const (
             }
           }
         ],
-        "tags": [
-          "Signup"
-        ]
+        "tags": ["Signup"]
       }
     }
-	},
-	"definitions": {
-		"dlframeworkLogin": {
+  },
+  "definitions": {
+    "dlframeworkLogin": {
       "type": "object",
       "properties": {
         "username": {
           "type": "string"
         },
         "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLoginResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
           "type": "string"
         }
       }
@@ -1165,12 +1176,12 @@ const (
         }
       }
     }
-	},
-	"host": "carml.org",
-	"basePath": "/api",
-	"externalDocs": {
-		"url": "https://rai-project.github.io/carml"
-	}
+  },
+  "host": "carml.org",
+  "basePath": "/api",
+  "externalDocs": {
+    "url": "https://rai-project.github.io/carml"
+  }
 }
 `
 )

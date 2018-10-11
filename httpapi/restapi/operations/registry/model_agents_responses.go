@@ -16,7 +16,7 @@ import (
 // ModelAgentsOKCode is the HTTP code returned for type ModelAgentsOK
 const ModelAgentsOKCode int = 200
 
-/*ModelAgentsOK model agents o k
+/*ModelAgentsOK A successful response.
 
 swagger:response modelAgentsOK
 */

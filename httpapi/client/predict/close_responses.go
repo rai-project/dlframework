@@ -44,7 +44,7 @@ func NewCloseOK() *CloseOK {
 
 /*CloseOK handles this case with default header values.
 
-CloseOK close o k
+A successful response.
 */
 type CloseOK struct {
 	Payload models.DlframeworkPredictorCloseResponse

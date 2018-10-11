@@ -16,7 +16,7 @@ import (
 // OpenOKCode is the HTTP code returned for type OpenOK
 const OpenOKCode int = 200
 
-/*OpenOK open o k
+/*OpenOK A successful response.
 
 swagger:response openOK
 */

@@ -1,19 +1,18 @@
 {
-	"info": {
-		"title": "CarML DLFramework",
-		"description":
-			"CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
-		"version": "0.2.18",
-		"contact": {
-			"name": "Abdul Dakkak, Cheng Li",
-			"url": "https://github.com/rai-project/carml"
-		},
-		"license": {
-			"name": "NCSA/UIUC",
-			"url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
-		}
-	},
-	"paths": {
+  "info": {
+    "title": "CarML DLFramework",
+    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "version": "0.2.18",
+    "contact": {
+      "name": "Abdul Dakkak, Cheng Li",
+      "url": "https://github.com/rai-project/carml"
+    },
+    "license": {
+      "name": "NCSA/UIUC",
+      "url": "https://raw.githubusercontent.com/rai-project/dlframework/master/LICENSE.TXT"
+    }
+  },
+  "paths": {
     "/login": {
       "post": {
         "summary": "Login to MLModelScope platform",
@@ -36,9 +35,7 @@
             }
           }
         ],
-        "tags": [
-          "Login"
-        ]
+        "tags": ["Login"]
       }
     },
     "/signup": {
@@ -63,20 +60,26 @@
             }
           }
         ],
-        "tags": [
-          "Signup"
-        ]
+        "tags": ["Signup"]
       }
     }
-	},
-	"definitions": {
-		"dlframeworkLogin": {
+  },
+  "definitions": {
+    "dlframeworkLogin": {
       "type": "object",
       "properties": {
         "username": {
           "type": "string"
         },
         "password": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLoginResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
           "type": "string"
         }
       }
@@ -112,10 +115,10 @@
         }
       }
     }
-	},
-	"host": "carml.org",
-	"basePath": "/api",
-	"externalDocs": {
-		"url": "https://rai-project.github.io/carml"
-	}
+  },
+  "host": "carml.org",
+  "basePath": "/api",
+  "externalDocs": {
+    "url": "https://rai-project.github.io/carml"
+  }
 }

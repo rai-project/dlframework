@@ -16,7 +16,7 @@ import (
 // FrameworkAgentsOKCode is the HTTP code returned for type FrameworkAgentsOK
 const FrameworkAgentsOKCode int = 200
 
-/*FrameworkAgentsOK framework agents o k
+/*FrameworkAgentsOK A successful response.
 
 swagger:response frameworkAgentsOK
 */
