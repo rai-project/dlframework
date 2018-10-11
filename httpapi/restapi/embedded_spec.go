@@ -589,7 +589,7 @@ func init() {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           }
         },
         "gpu_options": {
@@ -599,7 +599,7 @@ func init() {
         "timeout_in_ms": {
           "description": "Time to wait for operation to complete in milliseconds.",
           "type": "string",
-          "format": "int64"
+          "format": "uint64"
         },
         "trace_id": {
           "$ref": "#/definitions/dlframeworkTraceID"
@@ -613,7 +613,7 @@ func init() {
       "type": "object",
       "properties": {
         "index": {
-          "type": "string",
+          "type": "integer",
           "format": "int64"
         },
         "metadata": {
@@ -858,7 +858,7 @@ func init() {
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "request_id": {
           "type": "string"
@@ -1520,7 +1520,7 @@ func init() {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           }
         },
         "gpu_options": {
@@ -1530,7 +1530,7 @@ func init() {
         "timeout_in_ms": {
           "description": "Time to wait for operation to complete in milliseconds.",
           "type": "string",
-          "format": "int64"
+          "format": "uint64"
         },
         "trace_id": {
           "$ref": "#/definitions/dlframeworkTraceID"
@@ -1544,7 +1544,7 @@ func init() {
       "type": "object",
       "properties": {
         "index": {
-          "type": "string",
+          "type": "integer",
           "format": "int64"
         },
         "metadata": {
@@ -1789,7 +1789,7 @@ func init() {
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "request_id": {
           "type": "string"

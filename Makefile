@@ -20,7 +20,6 @@ install-deps: ## Install dependencies
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
-
 dep-ensure: ## Performs dep ensure
 	dep ensure -v
 

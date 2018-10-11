@@ -23,7 +23,7 @@ type DlframeworkExecutionOptions struct {
 	// number of devices of that type to use.  If a particular device
 	// type is not found in the map, the system picks an appropriate
 	// number.
-	DeviceCount map[string]int32 `json:"device_count,omitempty"`
+	DeviceCount map[string]int64 `json:"device_count,omitempty"`
 
 	// Options that apply to all GPUs.
 	GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`

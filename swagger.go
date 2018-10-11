@@ -499,14 +499,14 @@ const (
         },
         "timeout_in_ms": {
           "type": "string",
-          "format": "int64",
+          "format": "uint64",
           "description": "Time to wait for operation to complete in milliseconds."
         },
         "device_count": {
           "type": "object",
           "additionalProperties": {
             "type": "integer",
-            "format": "int32"
+            "format": "int64"
           },
           "description": "Map from device type name (e.g., \"CPU\" or \"GPU\" ) to maximum\nnumber of devices of that type to use.  If a particular device\ntype is not found in the map, the system picks an appropriate\nnumber."
         },
@@ -524,7 +524,7 @@ const (
       "type": "object",
       "properties": {
         "index": {
-          "type": "string",
+          "type": "integer",
           "format": "int64"
         },
         "name": {
@@ -634,7 +634,7 @@ const (
         },
         "feature_limit": {
           "type": "integer",
-          "format": "int32"
+          "format": "int64"
         },
         "batch_size": {
           "type": "integer",

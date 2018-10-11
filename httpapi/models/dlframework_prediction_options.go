@@ -26,7 +26,7 @@ type DlframeworkPredictionOptions struct {
 	ExecutionOptions *DlframeworkExecutionOptions `json:"execution_options,omitempty"`
 
 	// feature limit
-	FeatureLimit int32 `json:"feature_limit,omitempty"`
+	FeatureLimit int64 `json:"feature_limit,omitempty"`
 
 	// request id
 	RequestID string `json:"request_id,omitempty"`

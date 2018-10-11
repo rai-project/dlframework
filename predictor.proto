@@ -101,14 +101,14 @@ message ExecutionOptions {
       [ (gogoproto.moretags) = "yaml:\"trace_level,omitempty\"" ];
 
   // Time to wait for operation to complete in milliseconds.
-  int64 timeout_in_ms = 3
+  uint64 timeout_in_ms = 3
       [ (gogoproto.moretags) = "yaml:\"timeout_in_ms,omitempty\"" ];
 
   // Map from device type name (e.g., "CPU" or "GPU" ) to maximum
   // number of devices of that type to use.  If a particular device
   // type is not found in the map, the system picks an appropriate
   // number.
-  map<string, int32> device_count = 4
+  map<string, uint32> device_count = 4
       [ (gogoproto.moretags) = "yaml:\"device_count,omitempty\"" ];
 
   // Options that apply to all CPUs.
@@ -127,7 +127,7 @@ message PredictionOptions {
     (gogoproto.jsontag) = "request_id,omitempty",
     (gogoproto.moretags) = "yaml:\"request_id,omitempty\""
   ];
-  int32 feature_limit = 2
+  uint32 feature_limit = 2
       [ (gogoproto.moretags) = "yaml:\"feature_limit,omitempty\"" ];
   uint32 batch_size = 3
       [ (gogoproto.moretags) = "yaml:\"batch_size,omitempty\"" ];
@@ -224,7 +224,7 @@ message DatasetRequest {
 
 message Feature {
   option (gogoproto.description) = true;
-  int64 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  uint32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
   float probability = 3
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];

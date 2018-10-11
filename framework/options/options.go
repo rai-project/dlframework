@@ -4,19 +4,21 @@ import (
 	"strings"
 
 	context "context"
+
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/tracer"
 )
 
 type Options struct {
-	ctx        context.Context
-	devices    devices
-	batchSize  uint32
-	traceLevel tracer.Level
-	symbol     []byte
-	weights    []byte
-	inputNodes []inputNode
-	outputNode string
+	ctx            context.Context
+	devices        devices
+	batchSize      uint32
+	numPredictions uint32
+	traceLevel     tracer.Level
+	symbol         []byte
+	weights        []byte
+	inputNodes     []inputNode
+	outputNode     string
 }
 
 type Option func(*Options)
@@ -37,27 +39,6 @@ func (o *Options) Context() context.Context {
 	return o.ctx
 }
 
-func PredictorOptions(p *dl.PredictionOptions) Option {
-	return func(o *Options) {
-		for k, v := range p.GetExecutionOptions().GetDeviceCount() {
-			k = strings.ToLower(k)
-			if k == "cpu" {
-				o.devices = append(o.devices, device{deviceType: CPU_DEVICE, id: int(v)})
-			} else {
-				o.devices = append(o.devices, device{deviceType: CUDA_DEVICE, id: int(v)})
-			}
-		}
-		o.batchSize = p.BatchSize
-		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
-	}
-}
-
-// func (o *Options) PredictorOptions() dl.PredictionOptions {
-// 	return dl.PredictionOptions{
-// 		BatchSize: o.batchSize,
-// 	}
-// }
-
 func BatchSize(n uint32) Option {
 	return func(o *Options) {
 		o.batchSize = n
@@ -69,6 +50,16 @@ func (o *Options) BatchSize() uint32 {
 		return uint32(1)
 	}
 	return o.batchSize
+}
+
+func NumPredictions(num uint32) Option {
+	return func(o *Options) {
+		o.numPredictions = num
+	}
+}
+
+func (o *Options) NumPredictions() string {
+	return o.numPredictions
 }
 
 func Device(deviceType DeviceType, id int) Option {
@@ -182,4 +173,20 @@ func New(opts ...Option) *Options {
 	}
 
 	return options
+}
+
+func PredictorOptions(p *dl.PredictionOptions) Option {
+	return func(o *Options) {
+		for k, v := range p.GetExecutionOptions().GetDeviceCount() {
+			k = strings.ToLower(k)
+			if k == "cpu" {
+				o.devices = append(o.devices, device{deviceType: CPU_DEVICE, id: int(v)})
+			} else {
+				o.devices = append(o.devices, device{deviceType: CUDA_DEVICE, id: int(v)})
+			}
+		}
+		o.batchSize = p.BatchSize
+		o.numPredictions = p.FeatureLimit
+		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
+	}
 }
