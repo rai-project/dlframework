@@ -23,14 +23,17 @@ const (
 	// ExecutionOptionsTraceLevelNOTRACE captures enum value "NO_TRACE"
 	ExecutionOptionsTraceLevelNOTRACE ExecutionOptionsTraceLevel = "NO_TRACE"
 
-	// ExecutionOptionsTraceLevelSTEPTRACE captures enum value "STEP_TRACE"
-	ExecutionOptionsTraceLevelSTEPTRACE ExecutionOptionsTraceLevel = "STEP_TRACE"
+	// ExecutionOptionsTraceLevelAPPLICATIONTRACE captures enum value "APPLICATION_TRACE"
+	ExecutionOptionsTraceLevelAPPLICATIONTRACE ExecutionOptionsTraceLevel = "APPLICATION_TRACE"
+
+	// ExecutionOptionsTraceLevelPIPELINETRACE captures enum value "PIPELINE_TRACE"
+	ExecutionOptionsTraceLevelPIPELINETRACE ExecutionOptionsTraceLevel = "PIPELINE_TRACE"
 
 	// ExecutionOptionsTraceLevelFRAMEWORKTRACE captures enum value "FRAMEWORK_TRACE"
 	ExecutionOptionsTraceLevelFRAMEWORKTRACE ExecutionOptionsTraceLevel = "FRAMEWORK_TRACE"
 
-	// ExecutionOptionsTraceLevelCPUONLYTRACE captures enum value "CPU_ONLY_TRACE"
-	ExecutionOptionsTraceLevelCPUONLYTRACE ExecutionOptionsTraceLevel = "CPU_ONLY_TRACE"
+	// ExecutionOptionsTraceLevelLIBRARYTRACE captures enum value "LIBRARY_TRACE"
+	ExecutionOptionsTraceLevelLIBRARYTRACE ExecutionOptionsTraceLevel = "LIBRARY_TRACE"
 
 	// ExecutionOptionsTraceLevelHARDWARETRACE captures enum value "HARDWARE_TRACE"
 	ExecutionOptionsTraceLevelHARDWARETRACE ExecutionOptionsTraceLevel = "HARDWARE_TRACE"
@@ -44,7 +47,7 @@ var executionOptionsTraceLevelEnum []interface{}
 
 func init() {
 	var res []ExecutionOptionsTraceLevel
-	if err := json.Unmarshal([]byte(`["NO_TRACE","STEP_TRACE","FRAMEWORK_TRACE","CPU_ONLY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NO_TRACE","APPLICATION_TRACE","PIPELINE_TRACE","FRAMEWORK_TRACE","LIBRARY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
