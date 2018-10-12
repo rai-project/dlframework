@@ -43,7 +43,7 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 			TraceLevel: dl.ExecutionOptions_TraceLevel(
 				tracer.LevelFromName(string(opts.ExecutionOptions.TraceLevel)),
 			),
-			TimeoutInMs: cast.ToInt64(opts.ExecutionOptions.TimeoutInMs),
+			TimeoutInMs: cast.ToUint64(opts.ExecutionOptions.TimeoutInMs),
 			DeviceCount: opts.ExecutionOptions.DeviceCount,
 			// CPUOptions: opts.ExecutionOptions.CPUOptions,
 			// GpuOptions *DlframeworkGPUOptions `json:"gpu_options,omitempty"`
@@ -65,9 +65,8 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 
 	predOpts := &dl.PredictionOptions{
 		RequestID:        opts.RequestID,
-		FeatureLimit:     opts.,
-		BatchSize:        int(opts.BatchSize),
-		FeatureLimit:     int(opts.FeatureLimit),
+		BatchSize:        cast.ToInt32(opts.BatchSize),
+		FeatureLimit:     cast.ToInt32(opts.FeatureLimit),
 		ExecutionOptions: execOpts,
 	}
 
@@ -246,7 +245,7 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
 		for jj, f := range fr.Features {
 			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       cast.ToString(f.Index),
+				Index:       cast.ToInt32(f.Index),
 				Metadata:    f.Metadata,
 				Name:        f.Name,
 				Probability: f.Probability,

@@ -7,6 +7,8 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/login"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
 )
 
 func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
@@ -16,6 +18,9 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
+
+	api.LoginLoginHandler = login.LoginHandlerFunc(LoginHandler)
+	api.SignupSignupHandler = signup.SignupHandlerFunc(SignupHandler)
 
 	api.RegistryFrameworkAgentsHandler = registry.FrameworkAgentsHandlerFunc(RegistryFrameworkAgentsHandler)
 	api.RegistryFrameworkManifestsHandler = registry.FrameworkManifestsHandlerFunc(RegistryFrameworkManifestsHandler)
