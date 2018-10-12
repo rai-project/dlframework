@@ -9,6 +9,8 @@ import (
 
 type Features []*Feature
 
+type PredictionHandle int64
+
 // Len is the number of elements in the collection.
 func (p Features) Len() int {
 	return len(p)

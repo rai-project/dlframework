@@ -496,9 +496,10 @@ func init() {
       "default": "NO_TRACE",
       "enum": [
         "NO_TRACE",
-        "STEP_TRACE",
+        "APPLICATION_TRACE",
+        "PIPELINE_TRACE",
         "FRAMEWORK_TRACE",
-        "CPU_ONLY_TRACE",
+        "LIBRARY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ]
@@ -1539,9 +1540,10 @@ func init() {
       "default": "NO_TRACE",
       "enum": [
         "NO_TRACE",
-        "STEP_TRACE",
+        "APPLICATION_TRACE",
+        "PIPELINE_TRACE",
         "FRAMEWORK_TRACE",
-        "CPU_ONLY_TRACE",
+        "LIBRARY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ]

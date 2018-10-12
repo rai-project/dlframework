@@ -72,19 +72,24 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 	})
 	defer span.Finish()
 
+	var cu *cupti.CUPTI
+
 	if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
-		cu, err := cupti.New(cupti.Context(ctx))
-		if err == nil {
-			defer func() {
-				cu.Wait()
-				cu.Close()
-			}()
-		}
+		cu, err = cupti.New(cupti.Context(ctx))
 	}
 
 	features, err := p.predictor.Predict(ctx, data, options.WithOptions(opts))
 	if err != nil {
+		if cu != nil {
+			cu.Wait()
+			cu.Close()
+		}
 		return err
+	}
+
+	if cu != nil {
+		cu.Wait()
+		cu.Close()
 	}
 
 	lst := make([]interface{}, len(data))
