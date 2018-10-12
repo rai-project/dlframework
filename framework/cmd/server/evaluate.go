@@ -126,9 +126,9 @@ func main() {
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							" --publish_predictions=false" +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							" --database_name=tx2_carml_step_trace" +
+							" --database_name=tx2_carml_application_trace" +
 							" --database_address=34.207.139.117" +
-							" --trace_level=STEP_TRACE"
+							" --trace_level=APPLICATION_TRACE"
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {

@@ -52,7 +52,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 
 func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
 	if p.options.Context != nil {
-		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
+		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
 		ctx = ctx0
 		defer span.Finish()
 	}

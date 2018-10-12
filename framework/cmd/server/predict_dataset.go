@@ -49,7 +49,7 @@ var (
 	useGPU               bool
 	failOnFirstError     bool
 	traceLevelName       string
-	traceLevel           tracer.Level = tracer.STEP_TRACE
+	traceLevel           tracer.Level = tracer.APPLICATION_TRACE
 	databaseAddress      string
 	databaseName         string
 	databaseEndpoints    []string
