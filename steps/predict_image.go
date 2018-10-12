@@ -59,7 +59,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		return err
 	}
 
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Predict", opentracing.Tags{
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "Predict", opentracing.Tags{
 		"model_name":        model.GetName(),
 		"model_version":     model.GetVersion(),
 		"framework_name":    framework.GetName(),

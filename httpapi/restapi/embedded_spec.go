@@ -497,7 +497,7 @@ func init() {
       "enum": [
         "NO_TRACE",
         "APPLICATION_TRACE",
-        "PIPELINE_TRACE",
+        "MODEL_TRACE",
         "FRAMEWORK_TRACE",
         "LIBRARY_TRACE",
         "HARDWARE_TRACE",
@@ -1541,7 +1541,7 @@ func init() {
       "enum": [
         "NO_TRACE",
         "APPLICATION_TRACE",
-        "PIPELINE_TRACE",
+        "MODEL_TRACE",
         "FRAMEWORK_TRACE",
         "LIBRARY_TRACE",
         "HARDWARE_TRACE",

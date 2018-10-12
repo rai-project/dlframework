@@ -91,7 +91,7 @@ message ExecutionOptions {
   enum TraceLevel {
     NO_TRACE = 0;
     APPLICATION_TRACE = 1; // pipelines within carml
-    PIPELINE_TRACE = 2; // pipelines within model
+    MODEL_TRACE = 2; // pipelines within model
     FRAMEWORK_TRACE = 3; // layers within framework
     LIBRARY_TRACE = 4; // cudnn, ...
     HARDWARE_TRACE = 5; // perf, papi, cupti, ...

@@ -27,7 +27,7 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 }
 
 func (p getDataset) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	if span, newCtx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Get Dataset Step"); span != nil {
+	if span, newCtx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info()); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

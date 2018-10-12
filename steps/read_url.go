@@ -28,7 +28,7 @@ func NewReadURL() pipeline.Step {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, p.Info())
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
 	defer span.Finish()
 
 	url := ""
