@@ -26,8 +26,8 @@ const (
 	// ExecutionOptionsTraceLevelAPPLICATIONTRACE captures enum value "APPLICATION_TRACE"
 	ExecutionOptionsTraceLevelAPPLICATIONTRACE ExecutionOptionsTraceLevel = "APPLICATION_TRACE"
 
-	// ExecutionOptionsTraceLevelPIPELINETRACE captures enum value "PIPELINE_TRACE"
-	ExecutionOptionsTraceLevelPIPELINETRACE ExecutionOptionsTraceLevel = "PIPELINE_TRACE"
+	// ExecutionOptionsTraceLevelMODELTRACE captures enum value "MODEL_TRACE"
+	ExecutionOptionsTraceLevelMODELTRACE ExecutionOptionsTraceLevel = "MODEL_TRACE"
 
 	// ExecutionOptionsTraceLevelFRAMEWORKTRACE captures enum value "FRAMEWORK_TRACE"
 	ExecutionOptionsTraceLevelFRAMEWORKTRACE ExecutionOptionsTraceLevel = "FRAMEWORK_TRACE"
@@ -47,7 +47,7 @@ var executionOptionsTraceLevelEnum []interface{}
 
 func init() {
 	var res []ExecutionOptionsTraceLevel
-	if err := json.Unmarshal([]byte(`["NO_TRACE","APPLICATION_TRACE","PIPELINE_TRACE","FRAMEWORK_TRACE","LIBRARY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NO_TRACE","APPLICATION_TRACE","MODEL_TRACE","FRAMEWORK_TRACE","LIBRARY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
