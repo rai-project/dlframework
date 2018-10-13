@@ -37,7 +37,7 @@ func easyjsonCb9d4455DecodeGithubComRaiProjectDlframeworkFrameworkAgent(in *jlex
        continue
     }
     switch key {
-    case "Framework":
+    case "framework":
       easyjsonCb9d4455DecodeGithubComRaiProjectDlframework(in, &out.Framework)
     default:
       in.SkipRecursive()
@@ -54,7 +54,7 @@ func easyjsonCb9d4455EncodeGithubComRaiProjectDlframeworkFrameworkAgent(out *jwr
   first := true
   _ = first
   {
-    const prefix string = ",\"Framework\":"
+    const prefix string = ",\"framework\":"
     if first {
       first = false
       out.RawString(prefix[1:])
@@ -274,7 +274,7 @@ func easyjsonCb9d4455DecodeGithubComRaiProjectDlframeworkFrameworkAgent1(in *jle
        continue
     }
     switch key {
-    case "Framework":
+    case "framework":
       easyjsonCb9d4455DecodeGithubComRaiProjectDlframework(in, &out.Framework)
     default:
       in.SkipRecursive()
@@ -291,7 +291,7 @@ func easyjsonCb9d4455EncodeGithubComRaiProjectDlframeworkFrameworkAgent1(out *jw
   first := true
   _ = first
   {
-    const prefix string = ",\"Framework\":"
+    const prefix string = ",\"framework\":"
     if first {
       first = false
       out.RawString(prefix[1:])
@@ -396,7 +396,7 @@ func easyjsonCb9d4455DecodeGithubComRaiProjectDlframeworkFrameworkAgent3(in *jle
        continue
     }
     switch key {
-    case "Framework":
+    case "framework":
       easyjsonCb9d4455DecodeGithubComRaiProjectDlframework(in, &out.Framework)
     default:
       in.SkipRecursive()
@@ -413,7 +413,7 @@ func easyjsonCb9d4455EncodeGithubComRaiProjectDlframeworkFrameworkAgent3(out *jw
   first := true
   _ = first
   {
-    const prefix string = ",\"Framework\":"
+    const prefix string = ",\"framework\":"
     if first {
       first = false
       out.RawString(prefix[1:])
