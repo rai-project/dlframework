@@ -145,7 +145,7 @@ var datasetCmd = &cobra.Command{
 		}
 		predOpts := &dl.PredictionOptions{
 			FeatureLimit:     10,
-			BatchSize:        batchSize,
+			BatchSize:        int32(batchSize),
 			ExecutionOptions: execOpts,
 		}
 
