@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+//easyjson:json
 type Features []*Feature
 
 type PredictionHandle int64

@@ -19,8 +19,7 @@ install-deps: ## Install dependencies
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
-	go get -u github.com/ugorji/go/codec/codecgen
-
+	go get -u github.com/mailru/easyjson
 
 dep-ensure: ## Performs dep ensure
 	dep ensure -v
@@ -42,7 +41,7 @@ generate-proto: ## Generates Go, GRPC Gateway and Swagger code
 	go run scripts/includetext.go
 	gofmt -s -w *pb.go *pb.gw.go *pb_test.go swagger.go
 
-generate: generate-proto generate-swagger
+generate: generate-proto generate-swagger generate-go
 
 generate-swagger: clean-httpapi ## Generates Go Swagger code
 	mkdir -p httpapi
@@ -50,10 +49,9 @@ generate-swagger: clean-httpapi ## Generates Go Swagger code
 	swagger generate client -f dlframework.swagger.json -t httpapi -A dlframework
 	swagger generate support -f dlframework.swagger.json -t httpapi -A dlframework
 	gofmt -s -w httpapi
-	pushd httpapi/models/
-	rm -fr codec.generated.go
-	codecgen -nx -u=true -o codec.generated.go *go
-	popd
+
+generate-go:
+	go generate
 
 clean: clean-httpapi  ## Deletes generated code
 	rm -fr *pb.go *pb.gw.go *pb_test.go swagger.go

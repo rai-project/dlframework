@@ -78,7 +78,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		cu, err = cupti.New(cupti.Context(ctx))
 	}
 
-	features, err := p.predictor.Predict(ctx, data, options.WithOptions(opts))
+	handle, err := p.predictor.Predict(ctx, data, options.WithOptions(opts))
 	if err != nil {
 		if cu != nil {
 			cu.Wait()
@@ -92,10 +92,12 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 		cu.Close()
 	}
 
+	panic("need to implement")
+	_ = handle
 	lst := make([]interface{}, len(data))
-	for ii := 0; ii < len(in); ii++ {
-		lst[ii] = features[ii]
-	}
+	// for ii := 0; ii < len(in); ii++ {
+	// 	lst[ii] = features[ii]
+	// }
 
 	return lst
 }
