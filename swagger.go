@@ -1044,6 +1044,9 @@ const (
         "affiliation": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        },
         "username": {
           "type": "string"
         },
@@ -1167,6 +1170,9 @@ const (
           "type": "string"
         },
         "affiliation": {
+          "type": "string"
+        },
+	"email": {
           "type": "string"
         },
         "username": {

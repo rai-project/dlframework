@@ -9,6 +9,7 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rai-project/tracer"
 	jaeger "github.com/uber/jaeger-client-go"
+        "github.com/k0kubun/pp"
 
 	// _ "github.com/rai-project/dldataset/vision"
 
@@ -122,6 +123,9 @@ func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorClos
 		return nil, err
 	}
 
+if false {
+        pp.Println(predictor)
+}
 	predictor.Close()
 
 	p.loadedPredictors.Delete(id)
