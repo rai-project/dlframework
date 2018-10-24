@@ -1006,6 +1006,9 @@ func init() {
         "affiliation": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -2048,6 +2051,9 @@ func init() {
       "type": "object",
       "properties": {
         "affiliation": {
+          "type": "string"
+        },
+        "email": {
           "type": "string"
         },
         "first_name": {

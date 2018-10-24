@@ -18,7 +18,6 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/login"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"

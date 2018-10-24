@@ -7,7 +7,6 @@ package models
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/swag"
 )
 
@@ -17,6 +16,9 @@ type DlframeworkSignup struct {
 
 	// affiliation
 	Affiliation string `json:"affiliation,omitempty"`
+
+	// email
+	Email string `json:"email,omitempty"`
 
 	// first name
 	FirstName string `json:"first_name,omitempty"`

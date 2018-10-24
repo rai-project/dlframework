@@ -8,12 +8,16 @@ package client
 import (
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
-
 	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/rai-project/dlframework/httpapi/client/login"
 	"github.com/rai-project/dlframework/httpapi/client/predict"
 	"github.com/rai-project/dlframework/httpapi/client/registry"
+	"github.com/rai-project/dlframework/httpapi/client/signup"
+
+	"github.com/rai-project/dlframework/httpapi/client/predict"
+
+	"github.com/rai-project/dlframework/httpapi/client/registry"
+
 	"github.com/rai-project/dlframework/httpapi/client/signup"
 )
 

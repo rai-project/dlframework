@@ -7,7 +7,6 @@ package registry
 
 import (
 	"github.com/go-openapi/runtime"
-
 	strfmt "github.com/go-openapi/strfmt"
 )
 

@@ -14,7 +14,8 @@ type userRecord struct {
 	lastname		string
 	username		string
 	password		string
-	affiliation	string
+	affiliation		string
+	email			string
 }
 var userTable = map[string]*userRecord{}
 
@@ -37,17 +38,18 @@ func SignupHandler(params signup.SignupParams) middleware.Responder {
 	username := params.Body.Username
 	password := params.Body.Password
 	affiliation := params.Body.Affiliation
+	email := params.Body.Email
 
-	if (len(firstName) == 0 || len(lastName) == 0 || len(username) == 0 || len(password) == 0 || len(affiliation) == 0) {
-    return NewError("Signup", errors.New("Incomplete Information"))
-  }
+	if (len(firstName) == 0 || len(lastName) == 0 || len(username) == 0 || len(password) == 0 || len(affiliation) == 0 || len(email) == 0) {
+    		return NewError("Signup", errors.New("Incomplete Information"))
+  	}
 
 	encryption := GenerateHash(password)
 	if encryption == "xxx" {
 		return NewError("Signup", errors.New("Could not generate password"))
 	}
 
-	userTable[username] = &userRecord{firstname: firstName, lastname: lastName, username: username, password: encryption, affiliation: affiliation}
+	userTable[username] = &userRecord{firstname: firstName, lastname: lastName, username: username, password: encryption, affiliation: affiliation, email: email}
 
 	return signup.NewSignupOK()
 
