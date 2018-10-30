@@ -243,7 +243,7 @@ func NewMemStorer() *MemStorer {
                                 ID:                 1,
                                 FirstName:          "Abhishek",
 				LastName:	    "Srivastava",
-				Username:           "as29"
+				Username:           "as29",
                                 Password:           "$2a$10$XtW/BrS5HeYIuOCXYe8DFuInetDMdaarMUJEOg/VA/JAIDgw3l4aG", // pass = 1234
                                 Email:              "as29@illinois.edu",
                                 Confirmed:          true,
@@ -259,7 +259,7 @@ func (m MemStorer) Save(ctx context.Context, user authboss.User) error {
         u := user.(*User)
         m.Users[u.Username] = *u
 
-        debugln("Saved user:", u.FirstName)
+        //debugln("Saved user:", u.FirstName)
         return nil
 }
 
@@ -270,7 +270,7 @@ func (m MemStorer) Load(ctx context.Context, key string) (user authboss.User, er
         if err == nil {
                 for _, u := range m.Users {
                         if u.OAuth2Provider == provider && u.OAuth2UID == uid {
-                                debugln("Loaded OAuth2 user:", u.Email)
+                                //debugln("Loaded OAuth2 user:", u.Email)
                                 return &u, nil
                         }
                 }
@@ -283,7 +283,7 @@ func (m MemStorer) Load(ctx context.Context, key string) (user authboss.User, er
                 return nil, authboss.ErrUserNotFound
         }
 
-        debugln("Loaded user:", u.FirstName)
+        //debugln("Loaded user:", u.FirstName)
         return &u, nil
 }
 
@@ -300,7 +300,7 @@ func (m MemStorer) Create(ctx context.Context, user authboss.User) error {
                 return authboss.ErrUserFound
         }
 
-        debugln("Created new user:", u.FirstName)
+        //debugln("Created new user:", u.FirstName)
         m.Users[u.Username] = *u
         return nil
 }
@@ -309,7 +309,7 @@ func (m MemStorer) Create(ctx context.Context, user authboss.User) error {
 func (m MemStorer) LoadByConfirmSelector(ctx context.Context, selector string) (user authboss.ConfirmableUser, err error) {
         for _, v := range m.Users {
                 if v.ConfirmSelector == selector {
-                        debugln("Loaded user by confirm selector:", selector, v.FirstName)
+                        //debugln("Loaded user by confirm selector:", selector, v.FirstName)
                         return &v, nil
                 }
         }
@@ -321,7 +321,7 @@ func (m MemStorer) LoadByConfirmSelector(ctx context.Context, selector string) (
 func (m MemStorer) LoadByRecoverSelector(ctx context.Context, selector string) (user authboss.RecoverableUser, err error) {
         for _, v := range m.Users {
                 if v.RecoverSelector == selector {
-                        debugln("Loaded user by recover selector:", selector, v.FirstName)
+                        //debugln("Loaded user by recover selector:", selector, v.FirstName)
                         return &v, nil
                 }
         }
@@ -332,7 +332,7 @@ func (m MemStorer) LoadByRecoverSelector(ctx context.Context, selector string) (
 // AddRememberToken to a user
 func (m MemStorer) AddRememberToken(ctx context.Context, pid, token string) error {
         m.Tokens[pid] = append(m.Tokens[pid], token)
-        debugf("Adding rm token to %s: %s\n", pid, token)
+        //debugf("Adding rm token to %s: %s\n", pid, token)
         spew.Dump(m.Tokens)
         return nil
 }
@@ -340,7 +340,7 @@ func (m MemStorer) AddRememberToken(ctx context.Context, pid, token string) erro
 // DelRememberTokens removes all tokens for the given pid
 func (m MemStorer) DelRememberTokens(ctx context.Context, pid string) error {
         delete(m.Tokens, pid)
-        debugln("Deleting rm tokens from:", pid)
+        //debugln("Deleting rm tokens from:", pid)
         spew.Dump(m.Tokens)
         return nil
 }
@@ -350,7 +350,7 @@ func (m MemStorer) DelRememberTokens(ctx context.Context, pid string) error {
 func (m MemStorer) UseRememberToken(ctx context.Context, pid, token string) error {
         tokens, ok := m.Tokens[pid]
         if !ok {
-                debugln("Failed to find rm tokens for:", pid)
+                //debugln("Failed to find rm tokens for:", pid)
                 return authboss.ErrTokenNotFound
         }
 
@@ -358,7 +358,7 @@ func (m MemStorer) UseRememberToken(ctx context.Context, pid, token string) erro
                 if tok == token {
                         tokens[len(tokens)-1] = tokens[i]
                         m.Tokens[pid] = tokens[:len(tokens)-1]
-                        debugf("Used remember for %s: %s\n", pid, token)
+                        //debugf("Used remember for %s: %s\n", pid, token)
                         return nil
                 }
         }
