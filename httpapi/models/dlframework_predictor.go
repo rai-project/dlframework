@@ -8,7 +8,6 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
@@ -18,40 +17,10 @@ type DlframeworkPredictor struct {
 
 	// id
 	ID string `json:"id,omitempty"`
-
-	// trace id
-	TraceID *DlframeworkTraceID `json:"trace_id,omitempty"`
 }
 
 // Validate validates this dlframework predictor
 func (m *DlframeworkPredictor) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateTraceID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *DlframeworkPredictor) validateTraceID(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.TraceID) { // not required
-		return nil
-	}
-
-	if m.TraceID != nil {
-		if err := m.TraceID.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("trace_id")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

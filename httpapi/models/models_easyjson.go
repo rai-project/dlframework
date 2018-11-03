@@ -1020,6 +1020,8 @@ func easyjsonD2b7633eDecodeGithubComRaiProjectDlframeworkHttpapiModels10(in *jle
         }
         (*out.Options).UnmarshalEasyJSON(in)
       }
+    case "persist":
+      out.Persist = bool(in.Bool())
     default:
       in.AddError(&jlexer.LexerError{
           Offset: in.GetPos(),
@@ -1088,6 +1090,16 @@ func easyjsonD2b7633eEncodeGithubComRaiProjectDlframeworkHttpapiModels10(out *jw
     }
       (*in.Options).MarshalEasyJSON(out)
   }
+  if in.Persist {
+    const prefix string = ",\"persist\":"
+    if first {
+      first = false
+      out.RawString(prefix[1:])
+    } else {
+      out.RawString(prefix)
+    }
+    out.Bool(bool(in.Persist))
+  }
   out.RawByte('}')
 }
 // MarshalJSON supports json.Marshaler interface
@@ -1131,16 +1143,6 @@ func easyjsonD2b7633eDecodeGithubComRaiProjectDlframeworkHttpapiModels11(in *jle
     switch key {
     case "id":
       out.ID = string(in.String())
-    case "trace_id":
-      if in.IsNull() {
-        in.Skip()
-        out.TraceID = nil
-      } else {
-        if out.TraceID == nil {
-          out.TraceID = new(DlframeworkTraceID)
-        }
-        (*out.TraceID).UnmarshalEasyJSON(in)
-      }
     default:
       in.AddError(&jlexer.LexerError{
           Offset: in.GetPos(),
@@ -1168,16 +1170,6 @@ func easyjsonD2b7633eEncodeGithubComRaiProjectDlframeworkHttpapiModels11(out *jw
       out.RawString(prefix)
     }
     out.String(string(in.ID))
-  }
-  if in.TraceID != nil {
-    const prefix string = ",\"trace_id\":"
-    if first {
-      first = false
-      out.RawString(prefix[1:])
-    } else {
-      out.RawString(prefix)
-    }
-      (*in.TraceID).MarshalEasyJSON(out)
   }
   out.RawByte('}')
 }

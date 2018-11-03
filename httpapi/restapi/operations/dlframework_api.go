@@ -89,7 +89,7 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 	}
 }
 
-/*DlframeworkAPI CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration. */
+/*DlframeworkAPI MLModelScope is a hardware/software agnostic platform to facilitate the evaluation, measurement, and introspection of ML models within AI pipelines. MLModelScope aids application developers in discovering and experimenting with models, data scientists developers in replicating and evaluating for publishing models, and system architects in understanding the performance of AI workloads. */
 type DlframeworkAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context

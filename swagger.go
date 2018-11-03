@@ -4,9 +4,9 @@ const (
 	dlframework_swagger = `{
   "swagger": "2.0",
   "info": {
-    "title": "CarML DLFramework",
+    "title": "MLModelScope",
     "version": "0.2.18",
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "description": "MLModelScope is a hardware/software agnostic platform to facilitate the evaluation, measurement, and introspection of ML models within AI pipelines. MLModelScope aids application developers in discovering and experimenting with models, data scientists developers in replicating and evaluating for publishing models, and system architects in understanding the performance of AI workloads.",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
       "url": "https://github.com/rai-project/carml"
@@ -708,9 +708,6 @@ const (
       "properties": {
         "id": {
           "type": "string"
-        },
-        "trace_id": {
-          "$ref": "#/definitions/dlframeworkTraceID"
         }
       }
     },
@@ -731,6 +728,10 @@ const (
         },
         "framework_version": {
           "type": "string"
+        },
+        "persist": {
+          "type": "boolean",
+          "format": "boolean"
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
@@ -1062,8 +1063,8 @@ const (
 `
 	swagger_info = `{
   "info": {
-    "title": "CarML DLFramework",
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
+    "title": "MLModelScope",
+    "description": "MLModelScope is a hardware/software agnostic platform to facilitate the evaluation, measurement, and introspection of ML models within AI pipelines. MLModelScope aids application developers in discovering and experimenting with models, data scientists developers in replicating and evaluating for publishing models, and system architects in understanding the performance of AI workloads.",
     "version": "0.2.18",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
