@@ -13,7 +13,7 @@
     }
   },
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -35,10 +35,10 @@
             }
           }
         ],
-        "tags": ["Login"]
+        "tags": ["Authentication"]
       }
     },
-    "/signup": {
+    "/auth/signup": {
       "post": {
         "summary": "Signup to MLModelScope platform",
         "operationId": "Signup",
@@ -60,7 +60,7 @@
             }
           }
         ],
-        "tags": ["Signup"]
+        "tags": ["Authentication"]
       }
     }
   },
