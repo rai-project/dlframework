@@ -45,10 +45,10 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -66,6 +66,32 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -447,32 +473,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
-            }
-          }
-        }
-      }
-    },
-    "/signup": {
-      "post": {
-        "tags": [
-          "Signup"
-        ],
-        "summary": "Signup to MLModelScope platform",
-        "operationId": "Signup",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignup"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -1089,10 +1089,10 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -1110,6 +1110,32 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -1491,32 +1517,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
-            }
-          }
-        }
-      }
-    },
-    "/signup": {
-      "post": {
-        "tags": [
-          "Signup"
-        ],
-        "summary": "Signup to MLModelScope platform",
-        "operationId": "Signup",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignup"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }

@@ -48,7 +48,7 @@ func datasetDownloadAll(ctx context.Context) error {
 
 var downloadDatasetCmd = &cobra.Command{
 	Use:   "dataset",
-	Short: "Download CarML datasets",
+	Short: "Download MLModelScope datasets",
 	RunE: func(c *cobra.Command, args []string) error {
 		ctx := context.Background()
 

@@ -28,8 +28,8 @@ var (
 )
 
 var RootCmd = &cobra.Command{
-	Use:          "carml client",
-	Short:        "Runs the carml client",
+	Use:          "mlmodelscope client",
+	Short:        "Runs the mlmodelscope client",
 	SilenceUsage: true,
 }
 

@@ -420,7 +420,7 @@ const (
         ]
       }
     },
-    "/login": {
+    "/auth/login": {
       "post": {
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -443,11 +443,11 @@ const (
           }
         ],
         "tags": [
-          "Login"
+          "Authentication"
         ]
       }
     },
-    "/signup": {
+    "/auth/signup": {
       "post": {
         "summary": "Signup to MLModelScope platform",
         "operationId": "Signup",
@@ -470,7 +470,7 @@ const (
           }
         ],
         "tags": [
-          "Signup"
+          "Authentication"
         ]
       }
     }
@@ -1075,7 +1075,7 @@ const (
     }
   },
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -1097,10 +1097,10 @@ const (
             }
           }
         ],
-        "tags": ["Login"]
+        "tags": ["Authentication"]
       }
     },
-    "/signup": {
+    "/auth/signup": {
       "post": {
         "summary": "Signup to MLModelScope platform",
         "operationId": "Signup",
@@ -1122,7 +1122,7 @@ const (
             }
           }
         ],
-        "tags": ["Signup"]
+        "tags": ["Authentication"]
       }
     }
   },

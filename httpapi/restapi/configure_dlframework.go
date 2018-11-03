@@ -11,10 +11,9 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
-	"github.com/rai-project/dlframework/httpapi/restapi/operations/login"
+	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
-	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
 )
 
 //go:generate swagger generate server --target ../httpapi --name Dlframework --spec ../dlframework.swagger.json
@@ -58,8 +57,8 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.PredictImagesStreamHandler = predict.ImagesStreamHandlerFunc(func(params predict.ImagesStreamParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.ImagesStream has not yet been implemented")
 	})
-	api.LoginLoginHandler = login.LoginHandlerFunc(func(params login.LoginParams) middleware.Responder {
-		return middleware.NotImplemented("operation login.Login has not yet been implemented")
+	api.AuthenticationLoginHandler = authentication.LoginHandlerFunc(func(params authentication.LoginParams) middleware.Responder {
+		return middleware.NotImplemented("operation authentication.Login has not yet been implemented")
 	})
 	api.RegistryModelAgentsHandler = registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 		return middleware.NotImplemented("operation registry.ModelAgents has not yet been implemented")
@@ -73,8 +72,8 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.PredictResetHandler = predict.ResetHandlerFunc(func(params predict.ResetParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Reset has not yet been implemented")
 	})
-	api.SignupSignupHandler = signup.SignupHandlerFunc(func(params signup.SignupParams) middleware.Responder {
-		return middleware.NotImplemented("operation signup.Signup has not yet been implemented")
+	api.AuthenticationSignupHandler = authentication.SignupHandlerFunc(func(params authentication.SignupParams) middleware.Responder {
+		return middleware.NotImplemented("operation authentication.Signup has not yet been implemented")
 	})
 	api.PredictUrlsHandler = predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
