@@ -1,10 +1,8 @@
 package http
 
 import (
-
-  "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
-  "github.com/rai-project/dlframework/httpapi/restapi/operations/login"
 	"github.com/rai-project/passlib"
 )
 
@@ -43,7 +41,6 @@ func LoginHandler(params login.LoginParams) middleware.Responder {
 	} else {
 		return NewError("Login", errors.New("Not signed up!"))
 	}
-
 
 	return login.NewLoginOK()
 
