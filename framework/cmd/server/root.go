@@ -21,6 +21,7 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
+
 	//dllayer "github.com/rai-project/dllayer/cmd"
 	_ "github.com/rai-project/logger/hooks"
 	monitors "github.com/rai-project/monitoring/monitors"
@@ -200,10 +201,11 @@ func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 
 	rootCmd := &cobra.Command{
 		Use:   frameworkName + "-agent",
 		Short: "Runs the carml " + frameworkName + " agent",
-		PersistentPreRun: func(c *cobra.Command, args []string) {
+		PersistentPreRunE: func(c *cobra.Command, args []string) error {
 			frameworkRegisterFunc()
 			framework = framework0
 			//dllayer.Framework = framework
+			return nil
 		},
 		RunE: func(c *cobra.Command, args []string) error {
 			e := robustly.Run(
@@ -241,6 +243,12 @@ func SetupFlags(c *cobra.Command) {
 	c.AddCommand(raicmd.CompletionCmd)
 	c.AddCommand(raicmd.BuildTimeCmd)
 
+	c.AddCommand(predictCmd)
+	c.AddCommand(downloadCmd)
+	c.AddCommand(containerCmd)
+	c.AddCommand(infoCmd)
+	c.AddCommand(databaseCmd)
+
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
 	c.PersistentFlags().BoolVarP(&cmd.IsDebug, "debug", "d", false, "Toggle debug mode.")
@@ -255,12 +263,6 @@ func SetupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.secret", c.PersistentFlags().Lookup("secret"))
 	viper.BindPFlag("app.debug", c.PersistentFlags().Lookup("debug"))
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
-
-	c.AddCommand(datasetCmd)
-	c.AddCommand(downloadCmd)
-	c.AddCommand(containerCmd)
-	c.AddCommand(infoCmd)
-	c.AddCommand(databaseCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
