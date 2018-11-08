@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	sourcepath "github.com/GeertJohan/go-sourcepath"
+	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
@@ -131,7 +133,7 @@ var predictUrlsCmd = &cobra.Command{
 		log.WithField("urls_file_path", urlsFilePath).
 			Debug("using the specified urls file path")
 
-		if len(urls == 0) {
+		if len(urls) == 0 {
 			log.WithError(err).Error("the urls file has no url")
 			os.Exit(-1)
 		}
@@ -398,6 +400,11 @@ var predictUrlsCmd = &cobra.Command{
 }
 
 func init() {
-	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", "", "the path of the file containing the urls to perform the evaluations on.")
+	sourcePath := sourcepath.MustAbsoluteDir()
+	defaultURLsPath := filepath.Join(sourcePath, "..", "client", "run", "urlsfile")
+	if !com.IsFile(defaultURLsPath) {
+		defaultURLsPath = ""
+	}
+	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
 	predictDatasetCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 }

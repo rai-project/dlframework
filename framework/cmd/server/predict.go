@@ -63,6 +63,12 @@ var predictCmd = &cobra.Command{
 	Use:   "predict",
 	Short: "Predicts using the MLModelScope agent",
 	PersistentPreRunE: func(c *cobra.Command, args []string) error {
+		rootCmd := c.Parent()
+		for rootCmd.HasParent() {
+			rootCmd = rootCmd.Parent()
+		}
+		rootCmd.PersistentPreRunE(c, args)
+
 		if partitionListSize == 0 {
 			partitionListSize = batchSize
 		}
