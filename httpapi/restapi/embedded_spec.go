@@ -610,36 +610,18 @@ func init() {
         }
       }
     },
-    "dlframeworkAudioFeature": {
-      "type": "object",
-      "properties": {
-        "audio": {
-          "$ref": "#/definitions/dlframeworkAudio"
-        }
-      }
-    },
     "dlframeworkCPUOptions": {
       "type": "object"
     },
-    "dlframeworkClassificationFeature": {
+    "dlframeworkClassification": {
       "type": "object",
       "properties": {
         "index": {
           "type": "integer",
           "format": "int32"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
         "name": {
           "type": "string"
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
         }
       }
     },
@@ -704,17 +686,19 @@ func init() {
       "type": "object",
       "properties": {
         "audio": {
-          "$ref": "#/definitions/dlframeworkAudioFeature"
+          "$ref": "#/definitions/dlframeworkAudio"
         },
         "classification": {
-          "$ref": "#/definitions/dlframeworkClassificationFeature"
+          "$ref": "#/definitions/dlframeworkClassification"
+        },
+        "geolocation": {
+          "$ref": "#/definitions/dlframeworkGeoLocation"
+        },
+        "id": {
+          "type": "string"
         },
         "image": {
-          "$ref": "#/definitions/dlframeworkImageFeature"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/dlframeworkImage"
         },
         "metadata": {
           "type": "object",
@@ -727,13 +711,13 @@ func init() {
           "format": "float"
         },
         "region": {
-          "$ref": "#/definitions/dlframeworkRegionFeature"
+          "$ref": "#/definitions/dlframeworkRegion"
         },
         "text": {
-          "$ref": "#/definitions/dlframeworkTextFeature"
+          "$ref": "#/definitions/dlframeworkText"
         },
         "type": {
-          "type": "string"
+          "$ref": "#/definitions/dlframeworkFeatureType"
         }
       }
     },
@@ -762,6 +746,19 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "dlframeworkFeatureType": {
+      "type": "string",
+      "default": "UNKNOWN",
+      "enum": [
+        "UNKNOWN",
+        "IMAGE",
+        "CLASSIFICATON",
+        "GEOLOCATION",
+        "REGION",
+        "TEXT",
+        "AUDIO"
+      ]
     },
     "dlframeworkFeaturesResponse": {
       "type": "object",
@@ -831,59 +828,24 @@ func init() {
         }
       }
     },
-    "dlframeworkGeometryRegion": {
+    "dlframeworkGeoLocation": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "format": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkImageFeature": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "$ref": "#/definitions/orgdlframeworkImage"
-        },
         "index": {
           "type": "integer",
           "format": "int32"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
+        "latitude": {
           "type": "number",
-          "format": "float"
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
-    "dlframeworkImagesRequest": {
-      "type": "object",
-      "properties": {
-        "images": {
-          "type": "array",
-          "title": "A list of Base64 encoded images",
-          "items": {
-            "$ref": "#/definitions/dlframeworkImagesRequestImage"
-          }
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        },
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        }
-      }
-    },
-    "dlframeworkImagesRequestImage": {
+    "dlframeworkImage": {
       "type": "object",
       "properties": {
         "data": {
@@ -894,6 +856,24 @@ func init() {
         "id": {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
+        }
+      }
+    },
+    "dlframeworkImagesRequest": {
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "title": "A list of Base64 encoded images",
+          "items": {
+            "$ref": "#/definitions/dlframeworkImage"
+          }
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
@@ -1073,25 +1053,15 @@ func init() {
         }
       }
     },
-    "dlframeworkRegionFeature": {
+    "dlframeworkRegion": {
       "type": "object",
       "properties": {
-        "index": {
-          "type": "integer",
-          "format": "int32"
+        "data": {
+          "type": "string",
+          "format": "byte"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
-        },
-        "region": {
-          "$ref": "#/definitions/dlframeworkGeometryRegion"
+        "format": {
+          "type": "string"
         }
       }
     },
@@ -1145,26 +1115,12 @@ func init() {
         }
       }
     },
-    "dlframeworkTextFeature": {
+    "dlframeworkText": {
       "type": "object",
       "properties": {
         "data": {
           "type": "string",
           "format": "byte"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
         }
       }
     },
@@ -1190,18 +1146,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/URLsRequestURL"
           }
-        }
-      }
-    },
-    "orgdlframeworkImage": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "format": {
-          "type": "string"
         }
       }
     }
@@ -1803,36 +1747,18 @@ func init() {
         }
       }
     },
-    "dlframeworkAudioFeature": {
-      "type": "object",
-      "properties": {
-        "audio": {
-          "$ref": "#/definitions/dlframeworkAudio"
-        }
-      }
-    },
     "dlframeworkCPUOptions": {
       "type": "object"
     },
-    "dlframeworkClassificationFeature": {
+    "dlframeworkClassification": {
       "type": "object",
       "properties": {
         "index": {
           "type": "integer",
           "format": "int32"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
         "name": {
           "type": "string"
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
         }
       }
     },
@@ -1897,17 +1823,19 @@ func init() {
       "type": "object",
       "properties": {
         "audio": {
-          "$ref": "#/definitions/dlframeworkAudioFeature"
+          "$ref": "#/definitions/dlframeworkAudio"
         },
         "classification": {
-          "$ref": "#/definitions/dlframeworkClassificationFeature"
+          "$ref": "#/definitions/dlframeworkClassification"
+        },
+        "geolocation": {
+          "$ref": "#/definitions/dlframeworkGeoLocation"
+        },
+        "id": {
+          "type": "string"
         },
         "image": {
-          "$ref": "#/definitions/dlframeworkImageFeature"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/dlframeworkImage"
         },
         "metadata": {
           "type": "object",
@@ -1920,13 +1848,13 @@ func init() {
           "format": "float"
         },
         "region": {
-          "$ref": "#/definitions/dlframeworkRegionFeature"
+          "$ref": "#/definitions/dlframeworkRegion"
         },
         "text": {
-          "$ref": "#/definitions/dlframeworkTextFeature"
+          "$ref": "#/definitions/dlframeworkText"
         },
         "type": {
-          "type": "string"
+          "$ref": "#/definitions/dlframeworkFeatureType"
         }
       }
     },
@@ -1955,6 +1883,19 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "dlframeworkFeatureType": {
+      "type": "string",
+      "default": "UNKNOWN",
+      "enum": [
+        "UNKNOWN",
+        "IMAGE",
+        "CLASSIFICATON",
+        "GEOLOCATION",
+        "REGION",
+        "TEXT",
+        "AUDIO"
+      ]
     },
     "dlframeworkFeaturesResponse": {
       "type": "object",
@@ -2024,59 +1965,24 @@ func init() {
         }
       }
     },
-    "dlframeworkGeometryRegion": {
+    "dlframeworkGeoLocation": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "format": {
-          "type": "string"
-        }
-      }
-    },
-    "dlframeworkImageFeature": {
-      "type": "object",
-      "properties": {
-        "image": {
-          "$ref": "#/definitions/orgdlframeworkImage"
-        },
         "index": {
           "type": "integer",
           "format": "int32"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
+        "latitude": {
           "type": "number",
-          "format": "float"
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },
-    "dlframeworkImagesRequest": {
-      "type": "object",
-      "properties": {
-        "images": {
-          "type": "array",
-          "title": "A list of Base64 encoded images",
-          "items": {
-            "$ref": "#/definitions/dlframeworkImagesRequestImage"
-          }
-        },
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        },
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        }
-      }
-    },
-    "dlframeworkImagesRequestImage": {
+    "dlframeworkImage": {
       "type": "object",
       "properties": {
         "data": {
@@ -2087,6 +1993,24 @@ func init() {
         "id": {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
+        }
+      }
+    },
+    "dlframeworkImagesRequest": {
+      "type": "object",
+      "properties": {
+        "images": {
+          "type": "array",
+          "title": "A list of Base64 encoded images",
+          "items": {
+            "$ref": "#/definitions/dlframeworkImage"
+          }
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
         }
       }
     },
@@ -2266,25 +2190,15 @@ func init() {
         }
       }
     },
-    "dlframeworkRegionFeature": {
+    "dlframeworkRegion": {
       "type": "object",
       "properties": {
-        "index": {
-          "type": "integer",
-          "format": "int32"
+        "data": {
+          "type": "string",
+          "format": "byte"
         },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
-        },
-        "region": {
-          "$ref": "#/definitions/dlframeworkGeometryRegion"
+        "format": {
+          "type": "string"
         }
       }
     },
@@ -2338,26 +2252,12 @@ func init() {
         }
       }
     },
-    "dlframeworkTextFeature": {
+    "dlframeworkText": {
       "type": "object",
       "properties": {
         "data": {
           "type": "string",
           "format": "byte"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "probability": {
-          "type": "number",
-          "format": "float"
         }
       }
     },
@@ -2383,18 +2283,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/URLsRequestURL"
           }
-        }
-      }
-    },
-    "orgdlframeworkImage": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
-        "format": {
-          "type": "string"
         }
       }
     }

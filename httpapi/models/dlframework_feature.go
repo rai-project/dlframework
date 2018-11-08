@@ -17,16 +17,19 @@ import (
 type DlframeworkFeature struct {
 
 	// audio
-	Audio *DlframeworkAudioFeature `json:"audio,omitempty"`
+	Audio *DlframeworkAudio `json:"audio,omitempty"`
 
 	// classification
-	Classification *DlframeworkClassificationFeature `json:"classification,omitempty"`
+	Classification *DlframeworkClassification `json:"classification,omitempty"`
+
+	// geolocation
+	Geolocation *DlframeworkGeoLocation `json:"geolocation,omitempty"`
+
+	// id
+	ID string `json:"id,omitempty"`
 
 	// image
-	Image *DlframeworkImageFeature `json:"image,omitempty"`
-
-	// index
-	Index int32 `json:"index,omitempty"`
+	Image *DlframeworkImage `json:"image,omitempty"`
 
 	// metadata
 	Metadata map[string]string `json:"metadata,omitempty"`
@@ -35,13 +38,13 @@ type DlframeworkFeature struct {
 	Probability float32 `json:"probability,omitempty"`
 
 	// region
-	Region *DlframeworkRegionFeature `json:"region,omitempty"`
+	Region *DlframeworkRegion `json:"region,omitempty"`
 
 	// text
-	Text *DlframeworkTextFeature `json:"text,omitempty"`
+	Text *DlframeworkText `json:"text,omitempty"`
 
 	// type
-	Type string `json:"type,omitempty"`
+	Type DlframeworkFeatureType `json:"type,omitempty"`
 }
 
 // Validate validates this dlframework feature
@@ -56,6 +59,10 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateGeolocation(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
@@ -65,6 +72,10 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateText(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -102,6 +113,24 @@ func (m *DlframeworkFeature) validateClassification(formats strfmt.Registry) err
 		if err := m.Classification.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("classification")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateGeolocation(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Geolocation) { // not required
+		return nil
+	}
+
+	if m.Geolocation != nil {
+		if err := m.Geolocation.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("geolocation")
 			}
 			return err
 		}
@@ -159,6 +188,22 @@ func (m *DlframeworkFeature) validateText(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		}
+		return err
 	}
 
 	return nil
