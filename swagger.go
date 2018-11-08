@@ -655,7 +655,7 @@ const (
       "enum": [
         "UNKNOWN",
         "IMAGE",
-        "CLASSIFICATON",
+        "CLASSIFICATION",
         "GEOLOCATION",
         "REGION",
         "TEXT",

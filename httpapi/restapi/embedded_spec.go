@@ -753,7 +753,7 @@ func init() {
       "enum": [
         "UNKNOWN",
         "IMAGE",
-        "CLASSIFICATON",
+        "CLASSIFICATION",
         "GEOLOCATION",
         "REGION",
         "TEXT",
@@ -1890,7 +1890,7 @@ func init() {
       "enum": [
         "UNKNOWN",
         "IMAGE",
-        "CLASSIFICATON",
+        "CLASSIFICATION",
         "GEOLOCATION",
         "REGION",
         "TEXT",

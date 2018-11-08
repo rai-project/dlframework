@@ -33,7 +33,7 @@ option go_package = "dlframework";
 enum FeatureType {
   UNKNOWN = 0;
   IMAGE = 1;
-  CLASSIFICATON = 2; 
+  CLASSIFICATION = 2; 
   GEOLOCATION = 3;      
   REGION = 4;   
   TEXT = 5;    

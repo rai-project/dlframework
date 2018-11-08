@@ -26,8 +26,8 @@ const (
 	// DlframeworkFeatureTypeIMAGE captures enum value "IMAGE"
 	DlframeworkFeatureTypeIMAGE DlframeworkFeatureType = "IMAGE"
 
-	// DlframeworkFeatureTypeCLASSIFICATON captures enum value "CLASSIFICATON"
-	DlframeworkFeatureTypeCLASSIFICATON DlframeworkFeatureType = "CLASSIFICATON"
+	// DlframeworkFeatureTypeCLASSIFICATION captures enum value "CLASSIFICATION"
+	DlframeworkFeatureTypeCLASSIFICATION DlframeworkFeatureType = "CLASSIFICATION"
 
 	// DlframeworkFeatureTypeGEOLOCATION captures enum value "GEOLOCATION"
 	DlframeworkFeatureTypeGEOLOCATION DlframeworkFeatureType = "GEOLOCATION"
@@ -47,7 +47,7 @@ var dlframeworkFeatureTypeEnum []interface{}
 
 func init() {
 	var res []DlframeworkFeatureType
-	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATON","GEOLOCATION","REGION","TEXT","AUDIO"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","GEOLOCATION","REGION","TEXT","AUDIO"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
