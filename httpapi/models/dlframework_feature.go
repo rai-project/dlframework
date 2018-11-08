@@ -8,6 +8,7 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
@@ -15,21 +16,151 @@ import (
 // swagger:model dlframeworkFeature
 type DlframeworkFeature struct {
 
+	// audio
+	Audio *DlframeworkAudioFeature `json:"audio,omitempty"`
+
+	// classification
+	Classification *DlframeworkClassificationFeature `json:"classification,omitempty"`
+
+	// image
+	Image *DlframeworkImageFeature `json:"image,omitempty"`
+
 	// index
 	Index int32 `json:"index,omitempty"`
 
 	// metadata
 	Metadata map[string]string `json:"metadata,omitempty"`
 
-	// name
-	Name string `json:"name,omitempty"`
-
 	// probability
 	Probability float32 `json:"probability,omitempty"`
+
+	// region
+	Region *DlframeworkRegionFeature `json:"region,omitempty"`
+
+	// text
+	Text *DlframeworkTextFeature `json:"text,omitempty"`
+
+	// type
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this dlframework feature
 func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateAudio(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateClassification(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRegion(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateText(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DlframeworkFeature) validateAudio(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Audio) { // not required
+		return nil
+	}
+
+	if m.Audio != nil {
+		if err := m.Audio.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("audio")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateClassification(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Classification) { // not required
+		return nil
+	}
+
+	if m.Classification != nil {
+		if err := m.Classification.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("classification")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateImage(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Image) { // not required
+		return nil
+	}
+
+	if m.Image != nil {
+		if err := m.Image.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("image")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateRegion(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Region) { // not required
+		return nil
+	}
+
+	if m.Region != nil {
+		if err := m.Region.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("region")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateText(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Text) { // not required
+		return nil
+	}
+
+	if m.Text != nil {
+		if err := m.Text.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("text")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

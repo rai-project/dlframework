@@ -224,7 +224,7 @@ message DatasetRequest {
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
-message Feature {
+message ClassificationFeature {
   option (gogoproto.description) = true;
   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
@@ -232,6 +232,82 @@ message Feature {
       [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
   map<string, string> metadata = 4
       [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
+}
+
+message GeometryRegion {
+  option (gogoproto.description) = true;
+  bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
+}
+
+message RegionFeature {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  GeometryRegion region = 2
+      [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
+  float probability = 3
+      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+  map<string, string> metadata = 4
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
+}
+
+message TextFeature {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  bytes data = 2 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  float probability = 3
+      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+  map<string, string> metadata = 4
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
+}
+
+message Image {
+  option (gogoproto.description) = true;
+  bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
+}
+
+message ImageFeature {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  Image image = 2 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+  float probability = 3
+      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+  map<string, string> metadata = 4
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
+}
+
+message Audio {
+  option (gogoproto.description) = true;
+  bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
+}
+
+message AudioFeature {
+  option (gogoproto.description) = true;
+  Audio audio = 2 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
+}
+
+message Feature {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string type = 2 [ (gogoproto.moretags) = "yaml:\"type,omitempty\"" ];
+  float probability = 3
+      [ (gogoproto.moretags) = "yaml:\"probability,omitempty\"" ];
+  map<string, string> metadata = 4
+      [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
+  oneof feature {
+    ClassificationFeature classification = 5
+        [ (gogoproto.moretags) = "classification:\"index,omitempty\"" ];
+    ImageFeature image = 6
+        [ (gogoproto.moretags) = "image:\"index,omitempty\"" ];
+    TextFeature text = 7
+        [ (gogoproto.moretags) = "text:\"index,omitempty\"" ];
+    RegionFeature region = 8
+        [ (gogoproto.moretags) = "region:\"index,omitempty\"" ];
+    AudioFeature audio = 9
+        [ (gogoproto.moretags) = "audio:\"index,omitempty\"" ];
+  }
 }
 
 message FeatureResponse {

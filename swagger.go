@@ -500,20 +500,6 @@ const (
       ],
       "default": "NO_TRACE"
     },
-    "ImagesRequestImage": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "title": "An id used to identify the output feature: maps to input_id for output"
-        },
-        "data": {
-          "type": "string",
-          "format": "byte",
-          "title": "The image is base64 encoded"
-        }
-      }
-    },
     "URLsRequestURL": {
       "type": "object",
       "properties": {
@@ -526,8 +512,50 @@ const (
         }
       }
     },
+    "dlframeworkAudio": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAudioFeature": {
+      "type": "object",
+      "properties": {
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudio"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
+    },
+    "dlframeworkClassificationFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
     },
     "dlframeworkDatasetRequest": {
       "type": "object",
@@ -582,7 +610,7 @@ const (
           "type": "integer",
           "format": "int32"
         },
-        "name": {
+        "type": {
           "type": "string"
         },
         "probability": {
@@ -594,6 +622,21 @@ const (
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "classification": {
+          "$ref": "#/definitions/dlframeworkClassificationFeature"
+        },
+        "image": {
+          "$ref": "#/definitions/dlframeworkImageFeature"
+        },
+        "text": {
+          "$ref": "#/definitions/dlframeworkTextFeature"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkRegionFeature"
+        },
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudioFeature"
         }
       }
     },
@@ -663,6 +706,40 @@ const (
         }
       }
     },
+    "dlframeworkGeometryRegion": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkImageFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "image": {
+          "$ref": "#/definitions/orgdlframeworkImage"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "dlframeworkImagesRequest": {
       "type": "object",
       "properties": {
@@ -672,12 +749,26 @@ const (
         "images": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ImagesRequestImage"
+            "$ref": "#/definitions/dlframeworkImagesRequestImage"
           },
           "title": "A list of Base64 encoded images"
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
         }
       }
     },
@@ -738,6 +829,28 @@ const (
         }
       }
     },
+    "dlframeworkRegionFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkGeometryRegion"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "dlframeworkResetRequest": {
       "type": "object",
       "properties": {
@@ -754,6 +867,29 @@ const (
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkTextFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       }
     },
@@ -779,6 +915,18 @@ const (
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "orgdlframeworkImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     },

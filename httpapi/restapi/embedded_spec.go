@@ -504,20 +504,6 @@ func init() {
         "FULL_TRACE"
       ]
     },
-    "ImagesRequestImage": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte",
-          "title": "The image is base64 encoded"
-        },
-        "id": {
-          "type": "string",
-          "title": "An id used to identify the output feature: maps to input_id for output"
-        }
-      }
-    },
     "ModelManifestModel": {
       "type": "object",
       "properties": {
@@ -612,8 +598,50 @@ func init() {
         }
       }
     },
+    "dlframeworkAudio": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAudioFeature": {
+      "type": "object",
+      "properties": {
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudio"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
+    },
+    "dlframeworkClassificationFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
     },
     "dlframeworkContainerHardware": {
       "type": "object",
@@ -675,6 +703,15 @@ func init() {
     "dlframeworkFeature": {
       "type": "object",
       "properties": {
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudioFeature"
+        },
+        "classification": {
+          "$ref": "#/definitions/dlframeworkClassificationFeature"
+        },
+        "image": {
+          "$ref": "#/definitions/dlframeworkImageFeature"
+        },
         "index": {
           "type": "integer",
           "format": "int32"
@@ -685,12 +722,18 @@ func init() {
             "type": "string"
           }
         },
-        "name": {
-          "type": "string"
-        },
         "probability": {
           "type": "number",
           "format": "float"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkRegionFeature"
+        },
+        "text": {
+          "$ref": "#/definitions/dlframeworkTextFeature"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -788,6 +831,40 @@ func init() {
         }
       }
     },
+    "dlframeworkGeometryRegion": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkImageFeature": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/orgdlframeworkImage"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
     "dlframeworkImagesRequest": {
       "type": "object",
       "properties": {
@@ -795,7 +872,7 @@ func init() {
           "type": "array",
           "title": "A list of Base64 encoded images",
           "items": {
-            "$ref": "#/definitions/ImagesRequestImage"
+            "$ref": "#/definitions/dlframeworkImagesRequestImage"
           }
         },
         "options": {
@@ -803,6 +880,20 @@ func init() {
         },
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
         }
       }
     },
@@ -982,6 +1073,28 @@ func init() {
         }
       }
     },
+    "dlframeworkRegionFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkGeometryRegion"
+        }
+      }
+    },
     "dlframeworkResetRequest": {
       "type": "object",
       "properties": {
@@ -1032,6 +1145,29 @@ func init() {
         }
       }
     },
+    "dlframeworkTextFeature": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
     "dlframeworkTraceID": {
       "type": "object",
       "properties": {
@@ -1054,6 +1190,18 @@ func init() {
           "items": {
             "$ref": "#/definitions/URLsRequestURL"
           }
+        }
+      }
+    },
+    "orgdlframeworkImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     }
@@ -1549,20 +1697,6 @@ func init() {
         "FULL_TRACE"
       ]
     },
-    "ImagesRequestImage": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte",
-          "title": "The image is base64 encoded"
-        },
-        "id": {
-          "type": "string",
-          "title": "An id used to identify the output feature: maps to input_id for output"
-        }
-      }
-    },
     "ModelManifestModel": {
       "type": "object",
       "properties": {
@@ -1657,8 +1791,50 @@ func init() {
         }
       }
     },
+    "dlframeworkAudio": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkAudioFeature": {
+      "type": "object",
+      "properties": {
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudio"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
+    },
+    "dlframeworkClassificationFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
     },
     "dlframeworkContainerHardware": {
       "type": "object",
@@ -1720,6 +1896,15 @@ func init() {
     "dlframeworkFeature": {
       "type": "object",
       "properties": {
+        "audio": {
+          "$ref": "#/definitions/dlframeworkAudioFeature"
+        },
+        "classification": {
+          "$ref": "#/definitions/dlframeworkClassificationFeature"
+        },
+        "image": {
+          "$ref": "#/definitions/dlframeworkImageFeature"
+        },
         "index": {
           "type": "integer",
           "format": "int32"
@@ -1730,12 +1915,18 @@ func init() {
             "type": "string"
           }
         },
-        "name": {
-          "type": "string"
-        },
         "probability": {
           "type": "number",
           "format": "float"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkRegionFeature"
+        },
+        "text": {
+          "$ref": "#/definitions/dlframeworkTextFeature"
+        },
+        "type": {
+          "type": "string"
         }
       }
     },
@@ -1833,6 +2024,40 @@ func init() {
         }
       }
     },
+    "dlframeworkGeometryRegion": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkImageFeature": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "$ref": "#/definitions/orgdlframeworkImage"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
     "dlframeworkImagesRequest": {
       "type": "object",
       "properties": {
@@ -1840,7 +2065,7 @@ func init() {
           "type": "array",
           "title": "A list of Base64 encoded images",
           "items": {
-            "$ref": "#/definitions/ImagesRequestImage"
+            "$ref": "#/definitions/dlframeworkImagesRequestImage"
           }
         },
         "options": {
@@ -1848,6 +2073,20 @@ func init() {
         },
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkImagesRequestImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte",
+          "title": "The image is base64 encoded"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
         }
       }
     },
@@ -2027,6 +2266,28 @@ func init() {
         }
       }
     },
+    "dlframeworkRegionFeature": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        },
+        "region": {
+          "$ref": "#/definitions/dlframeworkGeometryRegion"
+        }
+      }
+    },
     "dlframeworkResetRequest": {
       "type": "object",
       "properties": {
@@ -2077,6 +2338,29 @@ func init() {
         }
       }
     },
+    "dlframeworkTextFeature": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "probability": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
     "dlframeworkTraceID": {
       "type": "object",
       "properties": {
@@ -2099,6 +2383,18 @@ func init() {
           "items": {
             "$ref": "#/definitions/URLsRequestURL"
           }
+        }
+      }
+    },
+    "orgdlframeworkImage": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     }

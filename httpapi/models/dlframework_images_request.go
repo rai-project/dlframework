@@ -19,7 +19,7 @@ import (
 type DlframeworkImagesRequest struct {
 
 	// A list of Base64 encoded images
-	Images []*ImagesRequestImage `json:"images"`
+	Images []*DlframeworkImagesRequestImage `json:"images"`
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
