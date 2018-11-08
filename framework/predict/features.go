@@ -2,25 +2,24 @@ package predict
 
 import (
 	"github.com/rai-project/dlframework"
-	"github.com/spf13/cast"
 )
 
-func ToFeatures(fs0 interface{}) dlframework.Features {
-	fs, err := cast.ToSliceE(fs0)
-	if err != nil {
-		panic("expecting a list")
-	}
-	features := make([]*dlframework.Feature, len(f))
-	for ii, f := range fs {
-		features[ii] = ToFeature(f)
-	}
-	return features
-}
+// func ToFeatures(fs0 interface{}) dlframework.Features {
+// 	fs, err := cast.ToSliceE(fs0)
+// 	if err != nil {
+// 		panic("expecting a list")
+// 	}
+// 	features := make([]*dlframework.Feature, len(f))
+// 	for ii, f := range fs {
+// 		features[ii] = ToFeature(f)
+// 	}
+// 	return features
+// }
 
-func ToFeature(f interface{}) dlframework.Feature {
-	switch f := f.(type) {
+func ToFeature(feature dlframework.Feature, data interface{}) dlframework.Feature {
+	switch data := data.(type) {
 	case dlframework.Classification, *dlframework.Classification:
-		panic("unhandled classification")
+		feature.Feature = data
 	case dlframework.GeoLocation, *dlframework.GeoLocation:
 		panic("unhandled geolocation")
 	case dlframework.Region, *dlframework.Region:

@@ -44,7 +44,7 @@ type DlframeworkFeature struct {
 	Text *DlframeworkText `json:"text,omitempty"`
 
 	// type
-	Type string `json:"type,omitempty"`
+	Type DlframeworkFeatureType `json:"type,omitempty"`
 }
 
 // Validate validates this dlframework feature
@@ -72,6 +72,10 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateText(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -184,6 +188,22 @@ func (m *DlframeworkFeature) validateText(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateType(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	if err := m.Type.Validate(formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("type")
+		}
+		return err
 	}
 
 	return nil

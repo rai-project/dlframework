@@ -717,7 +717,7 @@ func init() {
           "$ref": "#/definitions/dlframeworkText"
         },
         "type": {
-          "type": "string"
+          "$ref": "#/definitions/dlframeworkFeatureType"
         }
       }
     },
@@ -746,6 +746,19 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "dlframeworkFeatureType": {
+      "type": "string",
+      "default": "UNKNOWN",
+      "enum": [
+        "UNKNOWN",
+        "IMAGE",
+        "CLASSIFICATON",
+        "GEOLOCATION",
+        "REGION",
+        "TEXT",
+        "AUDIO"
+      ]
     },
     "dlframeworkFeaturesResponse": {
       "type": "object",
@@ -1841,7 +1854,7 @@ func init() {
           "$ref": "#/definitions/dlframeworkText"
         },
         "type": {
-          "type": "string"
+          "$ref": "#/definitions/dlframeworkFeatureType"
         }
       }
     },
@@ -1870,6 +1883,19 @@ func init() {
           "type": "string"
         }
       }
+    },
+    "dlframeworkFeatureType": {
+      "type": "string",
+      "default": "UNKNOWN",
+      "enum": [
+        "UNKNOWN",
+        "IMAGE",
+        "CLASSIFICATON",
+        "GEOLOCATION",
+        "REGION",
+        "TEXT",
+        "AUDIO"
+      ]
     },
     "dlframeworkFeaturesResponse": {
       "type": "object",

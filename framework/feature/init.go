@@ -1,4 +1,4 @@
-package predict
+package feature
 
 import (
 	"github.com/rai-project/config"
@@ -12,6 +12,6 @@ var (
 
 func init() {
 	config.AfterInit(func() {
-		log = logger.New().WithField("pkg", "dlframework/framework/predict")
+		log = logger.New().WithField("pkg", "dlframework/framework/feature")
 	})
 }

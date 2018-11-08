@@ -592,7 +592,7 @@ const (
           "type": "string"
         },
         "type": {
-          "type": "string"
+          "$ref": "#/definitions/dlframeworkFeatureType"
         },
         "probability": {
           "type": "number",
@@ -649,6 +649,19 @@ const (
           }
         }
       }
+    },
+    "dlframeworkFeatureType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "IMAGE",
+        "CLASSIFICATON",
+        "GEOLOCATION",
+        "REGION",
+        "TEXT",
+        "AUDIO"
+      ],
+      "default": "UNKNOWN"
     },
     "dlframeworkFeaturesResponse": {
       "type": "object",
