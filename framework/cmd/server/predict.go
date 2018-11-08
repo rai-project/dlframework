@@ -54,7 +54,7 @@ func init() {
 	predictCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
 	predictCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
 	predictCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
-	predictCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to pub lish the evaluation results to. By default the app name in the config `app.name` is used")
+	predictCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to. By default the app name in the config `app.name` is used")
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
 
 	predictCmd.AddCommand(predictDatasetCmd)

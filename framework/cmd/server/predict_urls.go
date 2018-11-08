@@ -39,9 +39,9 @@ var (
 )
 
 var predictUrlsCmd = &cobra.Command{
-	Use:     "url",
+	Use:     "urls",
 	Short:   "Evaluates the urls using the specified model and framework",
-	Aliases: []string{"urls"},
+	Aliases: []string{"url"},
 	PreRunE: func(c *cobra.Command, args []string) error {
 		traceLevel = tracer.LevelFromName(traceLevelName)
 		if useGPU && !nvidiasmi.HasGPU {
@@ -117,17 +117,6 @@ var predictUrlsCmd = &cobra.Command{
 		if err != nil {
 			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
-		// dims, err = imagePredictor.GetImageDimensions()
-		// if err != nil {
-		// 	return err
-		// }
-		// if len(dims) != 3 {
-		// 	return errors.Errorf("expecting a 3 element vector for dimensions %v", dims)
-		// }
-		// width, height := dims[1], dims[2]
-		// if width != height {
-		// 	return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
-		// }
 
 		inputPredictionIds := []bson.ObjectId{}
 
@@ -405,5 +394,5 @@ var predictUrlsCmd = &cobra.Command{
 }
 
 func init() {
-	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", "../run/urls_file", "the path of the file containing the urls to perform the evaluations on.")
+	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", "", "the path of the file containing the urls to perform the evaluations on.")
 }
