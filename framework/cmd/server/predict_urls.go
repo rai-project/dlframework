@@ -1,10 +1,12 @@
 package server
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -13,10 +15,8 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/rai-project/config"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
-	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
@@ -35,35 +35,22 @@ import (
 )
 
 var (
-	datasetCategory      string
-	datasetName          string
-	numFileParts         int
-	numWarmupFileParts   int
-	partitionDatasetSize int
+	urlsfile string
 )
 
-var predictDatasetCmd = &cobra.Command{
-	Use:   "dataset",
-	Short: "Evaluates the dataset using the specified model and framework",
+var predictUrlsCmd = &cobra.Command{
+	Use:     "url",
+	Short:   "Evaluates the urls using the specified model and framework",
+	Aliases: []string{"urls"},
 	PreRunE: func(c *cobra.Command, args []string) error {
-		if partitionDatasetSize == 0 {
-			partitionDatasetSize = batchSize
-		}
 		traceLevel = tracer.LevelFromName(traceLevelName)
-
-		if databaseName == "" {
-			databaseName = config.App.Name
-		}
-		if databaseAddress != "" {
-			databaseEndpoints = []string{databaseAddress}
-		}
 		if useGPU && !nvidiasmi.HasGPU {
 			return errors.New("unable to find gpu on the system")
 		}
 		return nil
 	},
 	RunE: func(c *cobra.Command, args []string) error {
-		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
+		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "urls")
 		defer func() {
 			if span != nil {
 				span.Finish()
@@ -115,7 +102,7 @@ var predictDatasetCmd = &cobra.Command{
 		}
 		predOpts := &dl.PredictionOptions{
 			FeatureLimit:     10,
-			BatchSize:        int32(batchSize),
+			BatchSize:        batchSize,
 			ExecutionOptions: execOpts,
 		}
 
@@ -124,52 +111,23 @@ var predictDatasetCmd = &cobra.Command{
 			return err
 		}
 
-		if datasetName == "ilsvrc2012_validation" {
-			var imagePredictor common.ImagePredictor
+		var imagePredictor common.ImagePredictor
 
-			err := deepcopier.Copy(predictor).To(&imagePredictor)
-			if err != nil {
-				return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
-			}
-			dims, err := imagePredictor.GetImageDimensions()
-			if err != nil {
-				return err
-			}
-			if len(dims) != 3 {
-				return errors.Errorf("expecting a 3 element vector for dimensions %v", dims)
-			}
-			width, height := dims[1], dims[2]
-			if width != height {
-				return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
-			}
-
-			datasetName = fmt.Sprintf("%s_%v", datasetName, width)
-		}
-
-		log.WithField("dataset_category", datasetCategory).
-			WithField("dataset_name", datasetName).
-			Debug("using specified dataset")
-
-		dataset, err := dldataset.Get(datasetCategory, datasetName)
+		err := deepcopier.Copy(predictor).To(&imagePredictor)
 		if err != nil {
-			return err
+			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
-		defer dataset.Close()
-
-		err = dataset.Download(ctx)
-		if err != nil {
-			return err
-		}
-
-		fileList, err := dataset.List(ctx)
-		if err != nil {
-			return err
-		}
-
-		err = dataset.Load(ctx)
-		if err != nil {
-			return err
-		}
+		// dims, err := imagePredictor.GetImageDimensions()
+		// if err != nil {
+		// 	return err
+		// }
+		// if len(dims) != 3 {
+		// 	return errors.Errorf("expecting a 3 element vector for dimensions %v", dims)
+		// }
+		// width, height := dims[1], dims[2]
+		// if width != height {
+		// 	return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
+		// }
 
 		inputPredictionIds := []bson.ObjectId{}
 
@@ -194,8 +152,8 @@ var predictDatasetCmd = &cobra.Command{
 			CreatedAt:           time.Now(),
 			Framework:           *model.GetFramework(),
 			Model:               *model,
-			DatasetCategory:     dataset.Category(),
-			DatasetName:         dataset.Name(),
+			DatasetCategory:     DatasetCategory,
+			DatasetName:         DatasetName,
 			Public:              false,
 			Hostname:            hostName,
 			UsingGPU:            useGPU,
@@ -235,46 +193,53 @@ var predictDatasetCmd = &cobra.Command{
 		}
 		_ = preprocessOptions
 
-		fileNameParts := partitionDataset(fileList, partitionDatasetSize)
-
 		cntTop1 := 0
 		cntTop5 := 0
+
+		var urls []string
+		urlsFilePath, err := filepath.Abs(urlsFilePath)
+		if err != nil {
+			return errors.Wrapf(err, "cannot get absolute path of %s", urlsFilePath)
+		}
+		f, err := os.Open(urlsFilePath)
+		if err != nil {
+			return errors.Wrapf(err, "cannot read %s", urlsFilePath)
+		}
+		defer f.Close()
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := scanner.Text()
+			urls = append(urls, line)
+		}
+		// fill the batch with the same image
+		if len(urls) == 1 {
+			for ii := 0; ii < batchSize; ii++ {
+				urls = append(urls, urls[0])
+			}
+		}
+		// cleanNames()
 
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("file_name_parts_length", len(fileNameParts)).
-			WithField("file_name_parts_element_length", len(fileNameParts[0])).
-			WithField("file_list_length", len(fileList)).
+		log.WithField("urls_file_path", urlsFilePath).
+			WithField("urls_length", len(urls)).
 			WithField("using_gpu", useGPU).
-			Info("starting inference on dataset")
+			Info("starting inference on urls")
 
-		if numWarmupFileParts != 0 && numFileParts != -1 {
-			panic("todo")
-		}
-
-		if numFileParts == -1 {
-			numFileParts = len(fileNameParts)
-		}
-		inferenceProgress := newProgress("infering", numFileParts)
-		for _, part := range fileNameParts[0:numFileParts] {
+		inferenceProgress := newProgress("infering", len(urls))
+		for _, url := range urls {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for range part {
-					lda, err := dataset.Next(ctx)
-					if err != nil {
-						continue
-					}
-					id := uuid.NewV4()
-					lbl := steps.NewIDWrapper(id, lda)
-					partlabels[lbl.GetID()] = lda.Label()
-					input <- lbl
-				}
+				id := uuid.NewV4()
+				lbl := steps.NewIDWrapper(id, url)
+				partlabels[lbl.GetID()] = lda.Label()
+				input <- lbl
 			}()
 
 			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-				Then(steps.NewReadImage(preprocessOptions)).
+				Then(steps.NewReadURL(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
 				Run(input)
 
@@ -327,7 +292,7 @@ var predictDatasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionDatasetSize)
+		databaseInsertProgress := newProgress("inserting prediction", batchSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
@@ -438,36 +403,19 @@ var predictDatasetCmd = &cobra.Command{
 	},
 }
 
-func partitionDataset(in []string, partitionSize int) (out [][]string) {
-	cnt := (len(in)-1)/partitionSize + 1
-	for i := 0; i < cnt; i++ {
-		start := i * partitionSize
-		end := (i + 1) * partitionSize
-		if end > len(in) {
-			end = len(in)
-		}
-		part := in[start:end]
-		out = append(out, part)
-	}
-
-	return out
-}
-
 func init() {
-	predictDatasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
-	predictDatasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
-	predictDatasetCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
-	predictDatasetCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to. By default the app name in the config `app.name` is used")
-	predictDatasetCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "the name of the model to use for prediction")
-	predictDatasetCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
-	predictDatasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "the chunk size to partition the input dataset. By default this is the same as the batch size")
-	predictDatasetCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "the batch size to use while performing inference")
-	predictDatasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
-	predictDatasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictDatasetCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
-	predictDatasetCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", true, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
-	predictDatasetCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
-	predictDatasetCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
-	predictDatasetCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
-	predictDatasetCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
+	predictUrlsCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
+	predictUrlsCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "urls", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
+	predictUrlsCmd.PersistentFlags().StringVar(&urlsfile, "urls_file", "../run/urls_file", "the path of the file containing the urls to perform the evaluations on. ")
+	predictUrlsCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "the name of the model to use for prediction")
+	predictUrlsCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
+	predictUrlsCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
+	predictUrlsCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
+	predictUrlsCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
+	predictUrlsCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
+	predictUrlsCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
+	predictUrlsCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
+	predictUrlsCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to pub lish the evaluation results to. By default the app name in the config `app.name` is used")
+	predictUrlsCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
+
 }

@@ -21,6 +21,7 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
+
 	//dllayer "github.com/rai-project/dllayer/cmd"
 	_ "github.com/rai-project/logger/hooks"
 	monitors "github.com/rai-project/monitoring/monitors"
@@ -256,7 +257,7 @@ func SetupFlags(c *cobra.Command) {
 	viper.BindPFlag("app.debug", c.PersistentFlags().Lookup("debug"))
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
 
-	c.AddCommand(datasetCmd)
+	c.AddCommand(predictCmd)
 	c.AddCommand(downloadCmd)
 	c.AddCommand(containerCmd)
 	c.AddCommand(infoCmd)
