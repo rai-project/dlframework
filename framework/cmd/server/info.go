@@ -10,7 +10,7 @@ import (
 
 var infoCmd = &cobra.Command{
 	Use:   "info",
-	Short: "Get model and other information from CarML",
+	Short: "Get model and other information from MLModelScope",
 }
 
 /*
@@ -21,7 +21,7 @@ var infoMLArcCmd = &cobra.Command{
 		"all",
 		"mlarc-web",
 	},
-	Short: "Get mlarc information from CarML",
+	Short: "Get mlarc information from MLModelScope",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dllayer.FlopsInfoCmd.SetArgs(os.Args[2:])
 		evaluations.EvaluationCmd.SetArgs(append([]string{"all"}, os.Args[2:]...))

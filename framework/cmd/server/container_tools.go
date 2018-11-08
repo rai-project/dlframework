@@ -62,12 +62,12 @@ var containerCmd = &cobra.Command{
 	Aliases: []string{
 		"docker",
 	},
-	Short: "Administer CarML containers",
+	Short: "Administer MLModelScope containers",
 }
 
 var containerRestartCmd = &cobra.Command{
 	Use:   "restart",
-	Short: "Restarts a CarML container",
+	Short: "Restarts a MLModelScope container",
 	RunE: func(c *cobra.Command, args []string) error {
 		containers := []string{}
 		if containerAll {
@@ -102,7 +102,7 @@ var containerRestartCmd = &cobra.Command{
 
 var containerPullCmd = &cobra.Command{
 	Use:   "pull",
-	Short: "Pulls a CarML container",
+	Short: "Pulls a MLModelScope container",
 	RunE: func(c *cobra.Command, args []string) error {
 		containers := []string{}
 		if containerAll {
@@ -152,6 +152,6 @@ func init() {
 	}
 
 	containerCmd.PersistentFlags().StringVar(&containerName, "name", "", "name of the container")
-	containerCmd.PersistentFlags().BoolVar(&containerAll, "all", false, "perform operations on all carml containers")
+	containerCmd.PersistentFlags().BoolVar(&containerAll, "all", false, "perform operations on all mlmodelscope containers")
 	containerCmd.AddCommand(containerRestartCmd, containerPullCmd)
 }

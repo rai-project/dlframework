@@ -42,7 +42,7 @@ func downloadModels(ctx context.Context) error {
 
 var downloadModelsCmd = &cobra.Command{
 	Use:   "models",
-	Short: "Download CarML models",
+	Short: "Download MLModelScope models",
 	RunE: func(c *cobra.Command, args []string) error {
 		ctx := context.Background()
 		return downloadModels(ctx)

@@ -30,8 +30,8 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
-    "title": "CarML DLFramework",
+    "description": "MLModelScope is a hardware/software agnostic platform to facilitate the evaluation, measurement, and introspection of ML models within AI pipelines. MLModelScope aids application developers in discovering and experimenting with models, data scientists developers in replicating and evaluating for publishing models, and system architects in understanding the performance of AI workloads.",
+    "title": "MLModelScope",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
       "url": "https://github.com/rai-project/carml"
@@ -45,10 +45,10 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -66,6 +66,32 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -447,32 +473,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
-            }
-          }
-        }
-      }
-    },
-    "/signup": {
-      "post": {
-        "tags": [
-          "Signup"
-        ],
-        "summary": "Signup to MLModelScope platform",
-        "operationId": "Signup",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignup"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -952,9 +952,6 @@ func init() {
       "properties": {
         "id": {
           "type": "string"
-        },
-        "trace_id": {
-          "$ref": "#/definitions/dlframeworkTraceID"
         }
       }
     },
@@ -978,6 +975,10 @@ func init() {
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "persist": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
@@ -1074,8 +1075,8 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing people to develop and deploy machine learning models. It allows machine learning (ML) developers to publish and evaluate their models, users to experiment with different models and frameworks through a web user interface or a REST api, and system architects to capture system resource usage to inform future system and hardware configuration.",
-    "title": "CarML DLFramework",
+    "description": "MLModelScope is a hardware/software agnostic platform to facilitate the evaluation, measurement, and introspection of ML models within AI pipelines. MLModelScope aids application developers in discovering and experimenting with models, data scientists developers in replicating and evaluating for publishing models, and system architects in understanding the performance of AI workloads.",
+    "title": "MLModelScope",
     "contact": {
       "name": "Abdul Dakkak, Cheng Li",
       "url": "https://github.com/rai-project/carml"
@@ -1089,10 +1090,10 @@ func init() {
   "host": "carml.org",
   "basePath": "/api",
   "paths": {
-    "/login": {
+    "/auth/login": {
       "post": {
         "tags": [
-          "Login"
+          "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
@@ -1110,6 +1111,32 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Signup to MLModelScope platform",
+        "operationId": "Signup",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignup"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -1491,32 +1518,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkModelManifestsResponse"
-            }
-          }
-        }
-      }
-    },
-    "/signup": {
-      "post": {
-        "tags": [
-          "Signup"
-        ],
-        "summary": "Signup to MLModelScope platform",
-        "operationId": "Signup",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignup"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/dlframeworkSignupResponse"
             }
           }
         }
@@ -1996,9 +1997,6 @@ func init() {
       "properties": {
         "id": {
           "type": "string"
-        },
-        "trace_id": {
-          "$ref": "#/definitions/dlframeworkTraceID"
         }
       }
     },
@@ -2022,6 +2020,10 @@ func init() {
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        },
+        "persist": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },

@@ -4,7 +4,7 @@ import "github.com/spf13/cobra"
 
 var downloadCmd = &cobra.Command{
 	Use:   "download",
-	Short: "Downloads CarML resource files",
+	Short: "Downloads MLModelScope resource files",
 }
 
 func init() {

@@ -22,7 +22,7 @@ var startallCmd = &cobra.Command{
 	Use:     "startall",
 	Short:   "starts the " + strings.Join(agents, " ") + " agents",
 	Aliases: []string{"startall", "start"},
-	Long:    `starts all the CarML agents`,
+	Long:    `starts all the MLModelScope agents`,
 	RunE: func(c *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
 		quitAll := make(chan struct{})
@@ -84,9 +84,9 @@ func init() {
 	if runtime.GOARCH == "ppc64le" {
 		return
 	}
-		agents = append(agents, "tensorrt")
+	agents = append(agents, "tensorrt")
 	if runtime.GOARCH == "arm64" {
 		return
 	}
-	 agents = append(agents, "cntk")
+	agents = append(agents, "cntk")
 }

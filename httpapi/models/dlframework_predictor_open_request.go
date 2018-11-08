@@ -30,6 +30,9 @@ type DlframeworkPredictorOpenRequest struct {
 
 	// options
 	Options *DlframeworkPredictionOptions `json:"options,omitempty"`
+
+	// persist
+	Persist bool `json:"persist,omitempty"`
 }
 
 // Validate validates this dlframework predictor open request

@@ -4,7 +4,7 @@ import "github.com/spf13/cobra"
 
 var databaseCmd = &cobra.Command{
 	Use:   "database",
-	Short: "Database operations for CarML evaluations",
+	Short: "Database operations for MLModelScope evaluations",
 }
 
 func init() {

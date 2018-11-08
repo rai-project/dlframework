@@ -1,15 +1,16 @@
 syntax = "proto3";
 
-// CarML DLFramework
+// MLModelScope
 //
-// CarML (Cognitive ARtifacts for Machine Learning) is a framework allowing
-// people to develop and deploy machine learning models. It allows machine
-// learning (ML) developers to publish and evaluate their models, users to
-// experiment with different models and frameworks through a web user
-// interface or a REST api, and system architects to capture system resource
-// usage to inform future system and hardware configuration.
+// MLModelScope is a hardware/software agnostic platform
+// to facilitate the evaluation, measurement, and introspection
+// of ML models within AI pipelines. MLModelScope aids application
+// developers in discovering and experimenting with models, data
+// scientists developers in replicating and evaluating for publishing
+// models, and system architects in understanding the performance of AI
+// workloads.
 
-package carml.org.dlframework;
+package mlmodelscope.org.dlframework;
 
 import "google/api/annotations.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -91,11 +92,11 @@ message ExecutionOptions {
   enum TraceLevel {
     NO_TRACE = 0;
     APPLICATION_TRACE = 1; // pipelines within carml
-    MODEL_TRACE = 2; // pipelines within model
-    FRAMEWORK_TRACE = 3; // layers within framework
-    LIBRARY_TRACE = 4; // cudnn, ...
-    HARDWARE_TRACE = 5; // perf, papi, cupti, ...
-    FULL_TRACE = 6; // includes all of the above
+    MODEL_TRACE = 2;       // pipelines within model
+    FRAMEWORK_TRACE = 3;   // layers within framework
+    LIBRARY_TRACE = 4;     // cudnn, ...
+    HARDWARE_TRACE = 5;    // perf, papi, cupti, ...
+    FULL_TRACE = 6;        // includes all of the above
   }
   TraceID trace_id = 1 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
   TraceLevel trace_level = 2
@@ -147,7 +148,8 @@ message PredictorOpenRequest {
       [ (gogoproto.moretags) = "yaml:\"framework_name,omitempty\"" ];
   string framework_version = 4
       [ (gogoproto.moretags) = "yaml:\"framework_version,omitempty\"" ];
-  PredictionOptions options = 5
+  bool persist = 5 [ (gogoproto.moretags) = "yaml:\"persist,omitempty\"" ];
+  PredictionOptions options = 6
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
@@ -160,7 +162,6 @@ message Predictor {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
-  TraceID trace_id = 2 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
 }
 
 message URLsRequest {
