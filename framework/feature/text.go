@@ -3,9 +3,7 @@ package feature
 import "github.com/rai-project/dlframework"
 
 func TextType() Option {
-	return func(o *dlframework.Feature) {
-		o.Type = dlframework.FeatureType_TEXT
-	}
+	return Type(dlframework.FeatureType_TEXT)
 }
 
 func Text(e *dlframework.Text) Option {

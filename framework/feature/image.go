@@ -3,9 +3,7 @@ package feature
 import "github.com/rai-project/dlframework"
 
 func ImageType() Option {
-	return func(o *dlframework.Feature) {
-		o.Type = dlframework.FeatureType_IMAGE
-	}
+	return Type(dlframework.FeatureType_IMAGE)
 }
 
 func Image(e *dlframework.Image) Option {

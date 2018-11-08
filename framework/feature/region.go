@@ -3,9 +3,7 @@ package feature
 import "github.com/rai-project/dlframework"
 
 func RegionType() Option {
-	return func(o *dlframework.Feature) {
-		o.Type = dlframework.FeatureType_REGION
-	}
+	return Type(dlframework.FeatureType_REGION)
 }
 
 func Region(e *dlframework.Region) Option {

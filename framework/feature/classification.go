@@ -3,9 +3,7 @@ package feature
 import "github.com/rai-project/dlframework"
 
 func ClassificationType() Option {
-	return func(o *dlframework.Feature) {
-		o.Type = dlframework.FeatureType_CLASSIFICATON
-	}
+	return Type(dlframework.FeatureType_CLASSIFICATON)
 }
 
 func Classification(e *dlframework.Classification) Option {
