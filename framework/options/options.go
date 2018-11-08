@@ -151,6 +151,13 @@ func (o *Options) OutputNode() string {
 	return o.outputNode
 }
 
+func (o *Options) Append(opts ...Option) *Options {
+	for _, oi := range opts {
+		oi(o)
+	}
+	return o
+}
+
 func New(opts ...Option) *Options {
 	options := &Options{
 		ctx:          context.Background(),

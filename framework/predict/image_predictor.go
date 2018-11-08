@@ -6,6 +6,7 @@ import (
 
 	"context"
 
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/image"
@@ -106,6 +107,7 @@ func (p ImagePredictor) GetMeanPath() string {
 func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
+	pp.Println(modelInputs)
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
 		return nil, errors.New("invalid type parameters")
