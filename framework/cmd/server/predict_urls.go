@@ -35,7 +35,7 @@ import (
 )
 
 var (
-	urlsfile string
+	urlsFilePath string
 )
 
 var predictUrlsCmd = &cobra.Command{
@@ -102,7 +102,7 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		predOpts := &dl.PredictionOptions{
 			FeatureLimit:     10,
-			BatchSize:        batchSize,
+			BatchSize:        int32(batchSize),
 			ExecutionOptions: execOpts,
 		}
 
@@ -113,11 +113,11 @@ var predictUrlsCmd = &cobra.Command{
 
 		var imagePredictor common.ImagePredictor
 
-		err := deepcopier.Copy(predictor).To(&imagePredictor)
+		err = deepcopier.Copy(predictor).To(&imagePredictor)
 		if err != nil {
 			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
-		// dims, err := imagePredictor.GetImageDimensions()
+		// dims, err = imagePredictor.GetImageDimensions()
 		// if err != nil {
 		// 	return err
 		// }
@@ -152,8 +152,8 @@ var predictUrlsCmd = &cobra.Command{
 			CreatedAt:           time.Now(),
 			Framework:           *model.GetFramework(),
 			Model:               *model,
-			DatasetCategory:     DatasetCategory,
-			DatasetName:         DatasetName,
+			DatasetCategory:     "",
+			DatasetName:         "",
 			Public:              false,
 			Hostname:            hostName,
 			UsingGPU:            useGPU,
@@ -234,12 +234,13 @@ var predictUrlsCmd = &cobra.Command{
 				defer close(input)
 				id := uuid.NewV4()
 				lbl := steps.NewIDWrapper(id, url)
-				partlabels[lbl.GetID()] = lda.Label()
+				partlabels[lbl.GetID()] = "" // no label for the input url
 				input <- lbl
 			}()
 
 			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-				Then(steps.NewReadURL(preprocessOptions)).
+				Then(steps.NewReadURL()).
+				Then(steps.NewReadImage(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
 				Run(input)
 
@@ -345,8 +346,8 @@ var predictUrlsCmd = &cobra.Command{
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
 			CreatedAt: time.Now(),
-			Top1:      float64(cntTop1) / float64(len(fileList)),
-			Top5:      float64(cntTop5) / float64(len(fileList)),
+			Top1:      float64(cntTop1) / float64(len(urls)),
+			Top5:      float64(cntTop5) / float64(len(urls)),
 		}
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")
@@ -404,18 +405,5 @@ var predictUrlsCmd = &cobra.Command{
 }
 
 func init() {
-	predictUrlsCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
-	predictUrlsCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "urls", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
-	predictUrlsCmd.PersistentFlags().StringVar(&urlsfile, "urls_file", "../run/urls_file", "the path of the file containing the urls to perform the evaluations on. ")
-	predictUrlsCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "the name of the model to use for prediction")
-	predictUrlsCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
-	predictUrlsCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
-	predictUrlsCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
-	predictUrlsCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
-	predictUrlsCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
-	predictUrlsCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
-	predictUrlsCmd.PersistentFlags().StringVar(&traceServerAddress, "tracer_address", "localhost:16686", "the address of the jaeger or the zipking trace server")
-	predictUrlsCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to pub lish the evaluation results to. By default the app name in the config `app.name` is used")
-	predictUrlsCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
-
+	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", "../run/urls_file", "the path of the file containing the urls to perform the evaluations on.")
 }
