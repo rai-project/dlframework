@@ -3,6 +3,9 @@ package server
 import (
 	"time"
 
+	"github.com/pkg/errors"
+	"github.com/rai-project/config"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/tracer"
 	"github.com/spf13/cobra"
 	pb "gopkg.in/cheggaaa/pb.v2"
@@ -13,6 +16,7 @@ var (
 	modelVersion         string
 	useGPU               bool
 	batchSize            int
+	partitionListSize    int
 	publishEvaluation    bool
 	publishPredictions   bool
 	failOnFirstError     bool
@@ -40,14 +44,47 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 	return bar
 }
 
+func partitionList(in []string, partitionSize int) (out [][]string) {
+	cnt := (len(in)-1)/partitionSize + 1
+	for ii := 0; ii < cnt; ii++ {
+		start := ii * partitionSize
+		end := (ii + 1) * partitionSize
+		if end > len(in) {
+			end = len(in)
+		}
+		part := in[start:end]
+		out = append(out, part)
+	}
+
+	return out
+}
+
 var predictCmd = &cobra.Command{
 	Use:   "predict",
 	Short: "Predicts using the MLModelScope agent",
+	PersistentPreRunE: func(c *cobra.Command, args []string) error {
+		if partitionListSize == 0 {
+			partitionListSize = batchSize
+		}
+		traceLevel = tracer.LevelFromName(traceLevelName)
+		if databaseName == "" {
+			databaseName = config.App.Name
+		}
+		if databaseAddress != "" {
+			databaseEndpoints = []string{databaseAddress}
+		}
+		if useGPU && !nvidiasmi.HasGPU {
+			return errors.New("unable to find gpu on the system")
+		}
+		return nil
+	},
 }
 
 func init() {
 	predictCmd.PersistentFlags().StringVar(&modelName, "model_name", "BVLC-AlexNet", "the name of the model to use for prediction")
 	predictCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
+	predictCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 64, "the batch size to use while performing inference")
+	predictCmd.PersistentFlags().IntVarP(&partitionListSize, "partition_list_size", "p", 64, "the chunk size to partition the input list. By default this is the same as the batch size")
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
 	predictCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
@@ -58,5 +95,5 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
 
 	predictCmd.AddCommand(predictDatasetCmd)
-	predictCmd.AddCommand(predictCmd)
+	predictCmd.AddCommand(predictUrlsCmd)
 }

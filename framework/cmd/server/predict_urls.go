@@ -36,19 +36,13 @@ import (
 
 var (
 	urlsFilePath string
+	numUrlParts  int
 )
 
 var predictUrlsCmd = &cobra.Command{
 	Use:     "urls",
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
-	PreRunE: func(c *cobra.Command, args []string) error {
-		traceLevel = tracer.LevelFromName(traceLevelName)
-		if useGPU && !nvidiasmi.HasGPU {
-			return errors.New("unable to find gpu on the system")
-		}
-		return nil
-	},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "urls")
 		defer func() {
@@ -118,6 +112,30 @@ var predictUrlsCmd = &cobra.Command{
 			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
 
+		var urls []string
+		urlsFilePath, err := filepath.Abs(urlsFilePath)
+		if err != nil {
+			return errors.Wrapf(err, "cannot get absolute path of %s", urlsFilePath)
+		}
+		f, err := os.Open(urlsFilePath)
+		if err != nil {
+			return errors.Wrapf(err, "cannot read %s", urlsFilePath)
+		}
+		defer f.Close()
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := scanner.Text()
+			urls = append(urls, line)
+		}
+
+		log.WithField("urls_file_path", urlsFilePath).
+			Debug("using the specified urls file path")
+
+		if len(urls == 0) {
+			log.WithError(err).Error("the urls file has no url")
+			os.Exit(-1)
+		}
+
 		inputPredictionIds := []bson.ObjectId{}
 
 		hostName, _ := os.Hostname()
@@ -182,49 +200,35 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		_ = preprocessOptions
 
+		urlParts := partitionList(urls, partitionListSize)
+
 		cntTop1 := 0
 		cntTop5 := 0
-
-		var urls []string
-		urlsFilePath, err := filepath.Abs(urlsFilePath)
-		if err != nil {
-			return errors.Wrapf(err, "cannot get absolute path of %s", urlsFilePath)
-		}
-		f, err := os.Open(urlsFilePath)
-		if err != nil {
-			return errors.Wrapf(err, "cannot read %s", urlsFilePath)
-		}
-		defer f.Close()
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			line := scanner.Text()
-			urls = append(urls, line)
-		}
-		// fill the batch with the same image
-		if len(urls) == 1 {
-			for ii := 0; ii < batchSize; ii++ {
-				urls = append(urls, urls[0])
-			}
-		}
-		// cleanNames()
 
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("urls_file_path", urlsFilePath).
+		log.WithField("url_parts_length", len(urlParts)).
+			WithField("url_parts_element_length", len(urlParts[0])).
 			WithField("urls_length", len(urls)).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on urls")
 
+		if numUrlParts == -1 {
+			numUrlParts = len(urlParts)
+		}
+
 		inferenceProgress := newProgress("infering", len(urls))
-		for _, url := range urls {
+		for _, part := range urlParts[0:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				id := uuid.NewV4()
-				lbl := steps.NewIDWrapper(id, url)
-				partlabels[lbl.GetID()] = "" // no label for the input url
-				input <- lbl
+				for _, url := range part {
+					id := uuid.NewV4()
+					lbl := steps.NewIDWrapper(id, url)
+					partlabels[lbl.GetID()] = "" // no label for the input url
+					input <- lbl
+				}
 			}()
 
 			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
@@ -395,4 +399,5 @@ var predictUrlsCmd = &cobra.Command{
 
 func init() {
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", "", "the path of the file containing the urls to perform the evaluations on.")
+	predictDatasetCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 }

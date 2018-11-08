@@ -13,7 +13,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/rai-project/config"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
@@ -35,33 +34,15 @@ import (
 )
 
 var (
-	datasetCategory      string
-	datasetName          string
-	numFileParts         int
-	numWarmupFileParts   int
-	partitionDatasetSize int
+	datasetCategory    string
+	datasetName        string
+	numFileParts       int
+	numWarmupFileParts int
 )
 
 var predictDatasetCmd = &cobra.Command{
 	Use:   "dataset",
 	Short: "Evaluates the dataset using the specified model and framework",
-	PreRunE: func(c *cobra.Command, args []string) error {
-		if partitionDatasetSize == 0 {
-			partitionDatasetSize = batchSize
-		}
-		traceLevel = tracer.LevelFromName(traceLevelName)
-
-		if databaseName == "" {
-			databaseName = config.App.Name
-		}
-		if databaseAddress != "" {
-			databaseEndpoints = []string{databaseAddress}
-		}
-		if useGPU && !nvidiasmi.HasGPU {
-			return errors.New("unable to find gpu on the system")
-		}
-		return nil
-	},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
 		defer func() {
@@ -148,7 +129,7 @@ var predictDatasetCmd = &cobra.Command{
 
 		log.WithField("dataset_category", datasetCategory).
 			WithField("dataset_name", datasetName).
-			Debug("using specified dataset")
+			Debug("using the specified dataset")
 
 		dataset, err := dldataset.Get(datasetCategory, datasetName)
 		if err != nil {
@@ -161,7 +142,7 @@ var predictDatasetCmd = &cobra.Command{
 			return err
 		}
 
-		fileList, err := dataset.List(ctx)
+		files, err := dataset.List(ctx)
 		if err != nil {
 			return err
 		}
@@ -235,7 +216,7 @@ var predictDatasetCmd = &cobra.Command{
 		}
 		_ = preprocessOptions
 
-		fileNameParts := partitionDataset(fileList, partitionDatasetSize)
+		fileParts := partitionList(files, partitionListSize)
 
 		cntTop1 := 0
 		cntTop5 := 0
@@ -243,9 +224,9 @@ var predictDatasetCmd = &cobra.Command{
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("file_name_parts_length", len(fileNameParts)).
-			WithField("file_name_parts_element_length", len(fileNameParts[0])).
-			WithField("file_list_length", len(fileList)).
+		log.WithField("file_parts_length", len(fileParts)).
+			WithField("file_parts_element_length", len(fileParts[0])).
+			WithField("files_length", len(files)).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on dataset")
 
@@ -254,10 +235,11 @@ var predictDatasetCmd = &cobra.Command{
 		}
 
 		if numFileParts == -1 {
-			numFileParts = len(fileNameParts)
+			numFileParts = len(fileParts)
 		}
+
 		inferenceProgress := newProgress("infering", numFileParts)
-		for _, part := range fileNameParts[0:numFileParts] {
+		for _, part := range fileParts[0:numFileParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -327,7 +309,7 @@ var predictDatasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionDatasetSize)
+		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionListSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
@@ -380,8 +362,8 @@ var predictDatasetCmd = &cobra.Command{
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
 			CreatedAt: time.Now(),
-			Top1:      float64(cntTop1) / float64(len(fileList)),
-			Top5:      float64(cntTop5) / float64(len(fileList)),
+			Top1:      float64(cntTop1) / float64(len(files)),
+			Top5:      float64(cntTop5) / float64(len(files)),
 		}
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")
@@ -438,25 +420,9 @@ var predictDatasetCmd = &cobra.Command{
 	},
 }
 
-func partitionDataset(in []string, partitionSize int) (out [][]string) {
-	cnt := (len(in)-1)/partitionSize + 1
-	for i := 0; i < cnt; i++ {
-		start := i * partitionSize
-		end := (i + 1) * partitionSize
-		if end > len(in) {
-			end = len(in)
-		}
-		part := in[start:end]
-		out = append(out, part)
-	}
-
-	return out
-}
-
 func init() {
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
-	predictDatasetCmd.PersistentFlags().IntVarP(&partitionDatasetSize, "partition_dataset_size", "p", 0, "the chunk size to partition the input dataset. By default this is the same as the batch size")
-	predictDatasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
 	predictDatasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
+	predictDatasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }
