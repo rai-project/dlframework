@@ -12,26 +12,20 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkTextFeature dlframework text feature
-// swagger:model dlframeworkTextFeature
-type DlframeworkTextFeature struct {
+// DlframeworkImage dlframework image
+// swagger:model dlframeworkImage
+type DlframeworkImage struct {
 
-	// data
+	// The image is base64 encoded
 	// Format: byte
 	Data strfmt.Base64 `json:"data,omitempty"`
 
-	// index
-	Index int32 `json:"index,omitempty"`
-
-	// metadata
-	Metadata map[string]string `json:"metadata,omitempty"`
-
-	// probability
-	Probability float32 `json:"probability,omitempty"`
+	// An id used to identify the output feature: maps to input_id for output
+	ID string `json:"id,omitempty"`
 }
 
-// Validate validates this dlframework text feature
-func (m *DlframeworkTextFeature) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework image
+func (m *DlframeworkImage) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateData(formats); err != nil {
@@ -44,7 +38,7 @@ func (m *DlframeworkTextFeature) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkTextFeature) validateData(formats strfmt.Registry) error {
+func (m *DlframeworkImage) validateData(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Data) { // not required
 		return nil
@@ -56,7 +50,7 @@ func (m *DlframeworkTextFeature) validateData(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkTextFeature) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkImage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -64,8 +58,8 @@ func (m *DlframeworkTextFeature) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkTextFeature) UnmarshalBinary(b []byte) error {
-	var res DlframeworkTextFeature
+func (m *DlframeworkImage) UnmarshalBinary(b []byte) error {
+	var res DlframeworkImage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
