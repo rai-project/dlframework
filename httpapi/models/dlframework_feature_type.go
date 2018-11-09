@@ -40,6 +40,9 @@ const (
 
 	// DlframeworkFeatureTypeAUDIO captures enum value "AUDIO"
 	DlframeworkFeatureTypeAUDIO DlframeworkFeatureType = "AUDIO"
+
+	// DlframeworkFeatureTypeRAW captures enum value "RAW"
+	DlframeworkFeatureTypeRAW DlframeworkFeatureType = "RAW"
 )
 
 // for schema
@@ -47,7 +50,7 @@ var dlframeworkFeatureTypeEnum []interface{}
 
 func init() {
 	var res []DlframeworkFeatureType
-	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","GEOLOCATION","REGION","TEXT","AUDIO"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

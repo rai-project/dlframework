@@ -37,7 +37,8 @@ enum FeatureType {
   GEOLOCATION = 3;      
   REGION = 4;   
   TEXT = 5;    
-  AUDIO = 6;     
+  AUDIO = 6;  
+  RAW = 100;     
 }
 
 message Image {
@@ -89,6 +90,13 @@ message Audio {
   string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
 }
 
+message Raw {
+  option (gogoproto.description) = true;
+  bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
+}
+
+
 message Feature {
   option (gogoproto.description) = true;
   string id = 1 [
@@ -108,6 +116,7 @@ message Feature {
     Text text = 8 [ (gogoproto.moretags) = "text:\"index,omitempty\"" ];
     Region region = 9 [ (gogoproto.moretags) = "region:\"index,omitempty\"" ];
     Audio audio = 10 [ (gogoproto.moretags) = "audio:\"index,omitempty\"" ];
-    GeoLocation geolocation = 101[ (gogoproto.moretags) = "geolocation:\"index,omitempty\"" ];
+    GeoLocation geolocation = 11[ (gogoproto.moretags) = "geolocation:\"index,omitempty\"" ];
+    Raw raw = 1000 [ (gogoproto.moretags) = "audio:\"raw,omitempty\"" ];
   }
 }

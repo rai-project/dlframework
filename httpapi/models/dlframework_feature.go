@@ -37,6 +37,9 @@ type DlframeworkFeature struct {
 	// probability
 	Probability float32 `json:"probability,omitempty"`
 
+	// raw
+	Raw *DlframeworkRaw `json:"raw,omitempty"`
+
 	// region
 	Region *DlframeworkRegion `json:"region,omitempty"`
 
@@ -64,6 +67,10 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateImage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRaw(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -149,6 +156,24 @@ func (m *DlframeworkFeature) validateImage(formats strfmt.Registry) error {
 		if err := m.Image.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("image")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateRaw(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Raw) { // not required
+		return nil
+	}
+
+	if m.Raw != nil {
+		if err := m.Raw.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("raw")
 			}
 			return err
 		}

@@ -710,6 +710,9 @@ func init() {
           "type": "number",
           "format": "float"
         },
+        "raw": {
+          "$ref": "#/definitions/dlframeworkRaw"
+        },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
@@ -757,7 +760,8 @@ func init() {
         "GEOLOCATION",
         "REGION",
         "TEXT",
-        "AUDIO"
+        "AUDIO",
+        "RAW"
       ]
     },
     "dlframeworkFeaturesResponse": {
@@ -1050,6 +1054,18 @@ func init() {
         "persist": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "dlframeworkRaw": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     },
@@ -1847,6 +1863,9 @@ func init() {
           "type": "number",
           "format": "float"
         },
+        "raw": {
+          "$ref": "#/definitions/dlframeworkRaw"
+        },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
@@ -1894,7 +1913,8 @@ func init() {
         "GEOLOCATION",
         "REGION",
         "TEXT",
-        "AUDIO"
+        "AUDIO",
+        "RAW"
       ]
     },
     "dlframeworkFeaturesResponse": {
@@ -2187,6 +2207,18 @@ func init() {
         "persist": {
           "type": "boolean",
           "format": "boolean"
+        }
+      }
+    },
+    "dlframeworkRaw": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     },

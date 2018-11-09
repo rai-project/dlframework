@@ -618,6 +618,9 @@
         },
         "geolocation": {
           "$ref": "#/definitions/dlframeworkGeoLocation"
+        },
+        "raw": {
+          "$ref": "#/definitions/dlframeworkRaw"
         }
       }
     },
@@ -656,7 +659,8 @@
         "GEOLOCATION",
         "REGION",
         "TEXT",
-        "AUDIO"
+        "AUDIO",
+        "RAW"
       ],
       "default": "UNKNOWN"
     },
@@ -803,6 +807,18 @@
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkRaw": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "format": {
+          "type": "string"
         }
       }
     },
