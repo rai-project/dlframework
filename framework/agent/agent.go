@@ -37,7 +37,7 @@ type Agent struct {
 	loadedPredictors syncmap.Map
 	predictor        predict.Predictor
 	options          *Options
-	channelBuffer    int
+  channelBuffer    int
 }
 
 var (
@@ -190,21 +190,13 @@ func (p *Agent) toFeaturesResponse(ctx context.Context, output <-chan interface{
 			return nil, errors.Errorf("expecting an ider or []*Feature type, but got %v", reflect.TypeOf(out))
 		}
 
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			mutex.Lock()
-			defer mutex.Unlock()
 			res.Responses = append(res.Responses, &dl.FeatureResponse{
 				ID:        uuid.NewV4(),
 				InputID:   inputId,
 				RequestID: options.GetRequestID(),
 				Features:  features,
-			})
-		}()
+			}
 	}
-
-	wg.Wait()
 
 	return res, nil
 }

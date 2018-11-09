@@ -36,7 +36,7 @@ type CloseParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.DlframeworkPredictor
+	Body *models.DlframeworkPredictorCloseRequest
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -50,7 +50,7 @@ func (o *CloseParams) BindRequest(r *http.Request, route *middleware.MatchedRout
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body models.DlframeworkPredictor
+		var body models.DlframeworkPredictorCloseRequest
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("body", "body"))

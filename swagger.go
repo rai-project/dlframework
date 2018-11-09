@@ -45,7 +45,7 @@ const (
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/dlframeworkPredictor"
+              "$ref": "#/definitions/dlframeworkPredictorCloseRequest"
             }
           }
         ],
@@ -220,6 +220,34 @@ const (
         ]
       }
     },
+    "/predict/stream/text": {
+      "post": {
+        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
+        "description": "The result is a prediction feature stream for each text.",
+        "operationId": "TextsStream",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFeatureResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkTextRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
     "/predict/stream/urls": {
       "post": {
         "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
@@ -240,6 +268,34 @@ const (
             "required": true,
             "schema": {
               "$ref": "#/definitions/dlframeworkURLsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Predict"
+        ]
+      }
+    },
+    "/predict/text": {
+      "post": {
+        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
+        "description": "The result is a prediction feature list for each text.",
+        "operationId": "Texts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkFeaturesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dlframeworkTextRequest"
             }
           }
         ],
@@ -786,6 +842,18 @@ const (
         }
       }
     },
+    "dlframeworkPredictorCloseRequest": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
+        "force": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "dlframeworkPredictorCloseResponse": {
       "type": "object"
     },
@@ -862,6 +930,24 @@ const (
         "data": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "dlframeworkTextRequest": {
+      "type": "object",
+      "properties": {
+        "predictor": {
+          "$ref": "#/definitions/dlframeworkPredictor"
+        },
+        "texts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dlframeworkText"
+          },
+          "title": "A list of Base64 encoded texts"
+        },
+        "options": {
+          "$ref": "#/definitions/dlframeworkPredictionOptions"
         }
       }
     },

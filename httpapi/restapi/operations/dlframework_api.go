@@ -80,6 +80,12 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		AuthenticationSignupHandler: authentication.SignupHandlerFunc(func(params authentication.SignupParams) middleware.Responder {
 			return middleware.NotImplemented("operation AuthenticationSignup has not yet been implemented")
 		}),
+		PredictTextsHandler: predict.TextsHandlerFunc(func(params predict.TextsParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictTexts has not yet been implemented")
+		}),
+		PredictTextsStreamHandler: predict.TextsStreamHandlerFunc(func(params predict.TextsStreamParams) middleware.Responder {
+			return middleware.NotImplemented("operation PredictTextsStream has not yet been implemented")
+		}),
 		PredictUrlsHandler: predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictUrls has not yet been implemented")
 		}),
@@ -143,6 +149,10 @@ type DlframeworkAPI struct {
 	PredictResetHandler predict.ResetHandler
 	// AuthenticationSignupHandler sets the operation handler for the signup operation
 	AuthenticationSignupHandler authentication.SignupHandler
+	// PredictTextsHandler sets the operation handler for the texts operation
+	PredictTextsHandler predict.TextsHandler
+	// PredictTextsStreamHandler sets the operation handler for the texts stream operation
+	PredictTextsStreamHandler predict.TextsStreamHandler
 	// PredictUrlsHandler sets the operation handler for the urls operation
 	PredictUrlsHandler predict.UrlsHandler
 	// PredictUrlsStreamHandler sets the operation handler for the urls stream operation
@@ -260,6 +270,14 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.AuthenticationSignupHandler == nil {
 		unregistered = append(unregistered, "authentication.SignupHandler")
+	}
+
+	if o.PredictTextsHandler == nil {
+		unregistered = append(unregistered, "predict.TextsHandler")
+	}
+
+	if o.PredictTextsStreamHandler == nil {
+		unregistered = append(unregistered, "predict.TextsStreamHandler")
 	}
 
 	if o.PredictUrlsHandler == nil {
@@ -432,6 +450,16 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/auth/signup"] = authentication.NewSignup(o.context, o.AuthenticationSignupHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/predict/text"] = predict.NewTexts(o.context, o.PredictTextsHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/predict/stream/text"] = predict.NewTextsStream(o.context, o.PredictTextsStreamHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

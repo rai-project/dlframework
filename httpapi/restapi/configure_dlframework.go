@@ -75,6 +75,12 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.AuthenticationSignupHandler = authentication.SignupHandlerFunc(func(params authentication.SignupParams) middleware.Responder {
 		return middleware.NotImplemented("operation authentication.Signup has not yet been implemented")
 	})
+	api.PredictTextsHandler = predict.TextsHandlerFunc(func(params predict.TextsParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.Texts has not yet been implemented")
+	})
+	api.PredictTextsStreamHandler = predict.TextsStreamHandlerFunc(func(params predict.TextsStreamParams) middleware.Responder {
+		return middleware.NotImplemented("operation predict.TextsStream has not yet been implemented")
+	})
 	api.PredictUrlsHandler = predict.UrlsHandlerFunc(func(params predict.UrlsParams) middleware.Responder {
 		return middleware.NotImplemented("operation predict.Urls has not yet been implemented")
 	})

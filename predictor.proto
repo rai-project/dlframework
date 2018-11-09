@@ -154,6 +154,13 @@ message PredictorOpenRequest {
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
 
+message PredictorCloseRequest {
+  option (gogoproto.description) = true;
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  bool force = 2 [ (gogoproto.moretags) = "yaml:\"force,omitempty\"" ];
+}
+
 message PredictorCloseResponse {}
 
 message Predictor {
@@ -190,6 +197,17 @@ message ImagesRequest {
   // A list of Base64 encoded images
   repeated Image images = 2
       [ (gogoproto.moretags) = "yaml:\"images,omitempty\"" ];
+  PredictionOptions options = 3
+      [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
+}
+
+message TextRequest {
+  option (gogoproto.description) = true;
+  Predictor predictor = 1
+      [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
+  // A list of Base64 encoded texts
+  repeated Text texts = 2
+      [ (gogoproto.moretags) = "yaml:\"texts,omitempty\"" ];
   PredictionOptions options = 3
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
@@ -281,7 +299,7 @@ service Predict {
   // }
 
   // Close a predictor clear it's memory.
-  rpc Close(Predictor) returns (PredictorCloseResponse) {
+  rpc Close(PredictorCloseRequest) returns (PredictorCloseResponse) {
     option (google.api.http) = {
       post : "/predict/close",
       body : "*"
@@ -328,6 +346,28 @@ service Predict {
   rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
       post : "/predict/stream/images",
+      body : "*"
+    };
+  }
+
+  // Text method receives a list base64 encoded texts and runs
+  // the predictor on all the texts.
+  //
+  // The result is a prediction feature list for each text.
+  rpc Texts(TextRequest) returns (FeaturesResponse) {
+    option (google.api.http) = {
+      post : "/predict/text",
+      body : "*"
+    };
+  }
+
+  // Text method receives a list base64 encoded texts and runs
+  // the predictor on all the texts.
+  //
+  // The result is a prediction feature stream for each text.
+  rpc TextsStream(TextRequest) returns (stream FeatureResponse) {
+    option (google.api.http) = {
+      post : "/predict/stream/text",
       body : "*"
     };
   }
