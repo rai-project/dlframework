@@ -229,66 +229,6 @@ func (a *Client) Reset(params *ResetParams) (*ResetOK, error) {
 }
 
 /*
-Texts texts method receives a list base64 encoded texts and runs the predictor on all the texts
-
-The result is a prediction feature list for each text.
-*/
-func (a *Client) Texts(params *TextsParams) (*TextsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewTextsParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "Texts",
-		Method:             "POST",
-		PathPattern:        "/predict/text",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &TextsReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*TextsOK), nil
-
-}
-
-/*
-TextsStream texts method receives a list base64 encoded texts and runs the predictor on all the texts
-
-The result is a prediction feature stream for each text.
-*/
-func (a *Client) TextsStream(params *TextsStreamParams) (*TextsStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewTextsStreamParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "TextsStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/text",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &TextsStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*TextsStreamOK), nil
-
-}
-
-/*
 Urls images method receives a stream of urls and runs the predictor on all the urls the
 
 The result is a prediction feature stream for each url.

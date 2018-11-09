@@ -350,27 +350,27 @@ service Predict {
     };
   }
 
-  // Text method receives a list base64 encoded texts and runs
-  // the predictor on all the texts.
-  //
-  // The result is a prediction feature list for each text.
-  rpc Texts(TextRequest) returns (FeaturesResponse) {
-    option (google.api.http) = {
-      post : "/predict/text",
-      body : "*"
-    };
-  }
+  // // Text method receives a list base64 encoded texts and runs
+  // // the predictor on all the texts.
+  // //
+  // // The result is a prediction feature list for each text.
+  // rpc Texts(TextRequest) returns (FeaturesResponse) {
+  //   option (google.api.http) = {
+  //     post : "/predict/text",
+  //     body : "*"
+  //   };
+  // }
 
-  // Text method receives a list base64 encoded texts and runs
-  // the predictor on all the texts.
-  //
-  // The result is a prediction feature stream for each text.
-  rpc TextsStream(TextRequest) returns (stream FeatureResponse) {
-    option (google.api.http) = {
-      post : "/predict/stream/text",
-      body : "*"
-    };
-  }
+  // // Text method receives a list base64 encoded texts and runs
+  // // the predictor on all the texts.
+  // //
+  // // The result is a prediction feature stream for each text.
+  // rpc TextsStream(TextRequest) returns (stream FeatureResponse) {
+  //   option (google.api.http) = {
+  //     post : "/predict/stream/text",
+  //     body : "*"
+  //   };
+  // }
 
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.

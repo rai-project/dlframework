@@ -37,7 +37,7 @@ type Agent struct {
 	loadedPredictors syncmap.Map
 	predictor        predict.Predictor
 	options          *Options
-  channelBuffer    int
+	channelBuffer    int
 }
 
 var (
@@ -115,8 +115,8 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Pred
 }
 
 // Close a predictor clear it's memory.
-func (p *Agent) Close(ctx context.Context, req *dl.Predictor) (*dl.PredictorCloseResponse, error) {
-	id := req.ID
+func (p *Agent) Close(ctx context.Context, req *dl.PredictorCloseRequest) (*dl.PredictorCloseResponse, error) {
+	id := req.GetPredictor().GetID()
 	predictor, err := p.getLoadedPredictor(ctx, id)
 	if err != nil {
 		return nil, err
@@ -190,12 +190,12 @@ func (p *Agent) toFeaturesResponse(ctx context.Context, output <-chan interface{
 			return nil, errors.Errorf("expecting an ider or []*Feature type, but got %v", reflect.TypeOf(out))
 		}
 
-			res.Responses = append(res.Responses, &dl.FeatureResponse{
-				ID:        uuid.NewV4(),
-				InputID:   inputId,
-				RequestID: options.GetRequestID(),
-				Features:  features,
-			}
+		res.Responses = append(res.Responses, &dl.FeatureResponse{
+			ID:        uuid.NewV4(),
+			InputID:   inputId,
+			RequestID: options.GetRequestID(),
+			Features:  features,
+		})
 	}
 
 	return res, nil

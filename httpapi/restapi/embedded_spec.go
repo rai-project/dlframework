@@ -290,34 +290,6 @@ func init() {
         }
       }
     },
-    "/predict/stream/text": {
-      "post": {
-        "description": "The result is a prediction feature stream for each text.",
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
-        "operationId": "TextsStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkTextRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
     "/predict/stream/urls": {
       "post": {
         "description": "The result is a prediction feature stream for each url.",
@@ -341,34 +313,6 @@ func init() {
             "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/text": {
-      "post": {
-        "description": "The result is a prediction feature list for each text.",
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
-        "operationId": "Texts",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkTextRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         }
@@ -1205,24 +1149,6 @@ func init() {
         "data": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "dlframeworkTextRequest": {
-      "type": "object",
-      "properties": {
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        },
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        },
-        "texts": {
-          "type": "array",
-          "title": "A list of Base64 encoded texts",
-          "items": {
-            "$ref": "#/definitions/dlframeworkText"
-          }
         }
       }
     },
@@ -1529,34 +1455,6 @@ func init() {
         }
       }
     },
-    "/predict/stream/text": {
-      "post": {
-        "description": "The result is a prediction feature stream for each text.",
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
-        "operationId": "TextsStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkTextRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
     "/predict/stream/urls": {
       "post": {
         "description": "The result is a prediction feature stream for each url.",
@@ -1580,34 +1478,6 @@ func init() {
             "description": "A successful response.(streaming responses)",
             "schema": {
               "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/text": {
-      "post": {
-        "description": "The result is a prediction feature list for each text.",
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Text method receives a list base64 encoded texts and runs\nthe predictor on all the texts.",
-        "operationId": "Texts",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkTextRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeaturesResponse"
             }
           }
         }
@@ -2444,24 +2314,6 @@ func init() {
         "data": {
           "type": "string",
           "format": "byte"
-        }
-      }
-    },
-    "dlframeworkTextRequest": {
-      "type": "object",
-      "properties": {
-        "options": {
-          "$ref": "#/definitions/dlframeworkPredictionOptions"
-        },
-        "predictor": {
-          "$ref": "#/definitions/dlframeworkPredictor"
-        },
-        "texts": {
-          "type": "array",
-          "title": "A list of Base64 encoded texts",
-          "items": {
-            "$ref": "#/definitions/dlframeworkText"
-          }
         }
       }
     },

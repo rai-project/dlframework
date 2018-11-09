@@ -1,6 +1,8 @@
 package agent
 
+import "github.com/rai-project/dlframework/framework/predict"
+
 type PredictorLifetime struct {
-	Predictor      *Predictor
+	Predictor      *predict.Predictor
 	ReferenceCount uint64
 }
