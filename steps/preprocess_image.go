@@ -3,7 +3,6 @@ package steps
 import (
 	"context"
 
-	"github.com/anthonynsimon/bild/parallel"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/image"
@@ -82,31 +81,27 @@ func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) 
 	out := make([]float32, 3*height*width)
 
 	if mode == types.RGBMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[y*width+x] = (float32(r) - mean[0]) / scale
-					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-					out[2*width*height+y*width+x] = (float32(b) - mean[2]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[y*width+x] = (float32(r) - mean[0]) / scale
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+				out[2*width*height+y*width+x] = (float32(b) - mean[2]) / scale
 			}
-		})
+		}
 	} else if mode == types.BGRMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[y*width+x] = (float32(b) - mean[2]) / scale
-					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-					out[2*width*height+y*width+x] = (float32(r) - mean[0]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[y*width+x] = (float32(b) - mean[2]) / scale
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+				out[2*width*height+y*width+x] = (float32(r) - mean[0]) / scale
 			}
-		})
+		}
 	} else {
 		panic("invalid mode in preprocess image step")
 	}
@@ -124,31 +119,27 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 	out := make([]float32, 3*height*width)
 
 	if mode == types.RGBMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[offset+0] = (float32(r) - mean[0]) / scale
-					out[offset+1] = (float32(g) - mean[1]) / scale
-					out[offset+2] = (float32(b) - mean[2]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[offset+0] = (float32(r) - mean[0]) / scale
+				out[offset+1] = (float32(g) - mean[1]) / scale
+				out[offset+2] = (float32(b) - mean[2]) / scale
 			}
-		})
+		}
 	} else if mode == types.BGRMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[offset+0] = (float32(b) - mean[2]) / scale
-					out[offset+1] = (float32(g) - mean[1]) / scale
-					out[offset+2] = (float32(r) - mean[0]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[offset+0] = (float32(b) - mean[2]) / scale
+				out[offset+1] = (float32(g) - mean[1]) / scale
+				out[offset+2] = (float32(r) - mean[0]) / scale
 			}
-		})
+		}
 	} else {
 		panic("invalid mode in preprocess image step")
 	}
@@ -165,31 +156,27 @@ func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) 
 
 	out := make([]float32, 3*height*width)
 	if mode == types.RGBMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[y*width+x] = (float32(b) - mean[0]) / scale
-					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-					out[2*width*height+y*width+x] = (float32(r) - mean[2]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[y*width+x] = (float32(b) - mean[0]) / scale
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+				out[2*width*height+y*width+x] = (float32(r) - mean[2]) / scale
 			}
-		})
+		}
 	} else if mode == types.BGRMode {
-		parallel.Line(height, func(start, end int) {
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					offset := y*in.Stride + x*3
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[y*width+x] = (float32(r) - mean[2]) / scale
-					out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-					out[2*width*height+y*width+x] = (float32(b) - mean[0]) / scale
-				}
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				offset := y*in.Stride + x*3
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[y*width+x] = (float32(r) - mean[2]) / scale
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
+				out[2*width*height+y*width+x] = (float32(b) - mean[0]) / scale
 			}
-		})
+		}
 	} else {
 		panic("invalid mode in preprocess image step")
 	}
@@ -207,33 +194,29 @@ func (p preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) 
 	out := make([]float32, 3*height*width)
 
 	if mode == types.RGBMode {
-		parallel.Line(height, func(start, end int) {
-			offset := start * in.Stride
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[offset+0] = (float32(b) - mean[0]) / scale
-					out[offset+1] = (float32(g) - mean[1]) / scale
-					out[offset+2] = (float32(r) - mean[2]) / scale
-					offset = offset + 3
-				}
+		offset := 0
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[offset+0] = (float32(b) - mean[0]) / scale
+				out[offset+1] = (float32(g) - mean[1]) / scale
+				out[offset+2] = (float32(r) - mean[2]) / scale
+				offset = offset + 3
 			}
-		})
+		}
 	} else if mode == types.BGRMode {
-		parallel.Line(height, func(start, end int) {
-			offset := start * in.Stride
-			for y := start; y < end; y++ {
-				for x := 0; x < width; x++ {
-					rgb := in.Pix[offset : offset+3]
-					r, g, b := rgb[0], rgb[1], rgb[2]
-					out[offset+0] = (float32(r) - mean[2]) / scale
-					out[offset+1] = (float32(g) - mean[1]) / scale
-					out[offset+2] = (float32(b) - mean[0]) / scale
-					offset = offset + 3
-				}
+		offset := 0
+		for y := 0; y < height; y++ {
+			for x := 0; x < width; x++ {
+				rgb := in.Pix[offset : offset+3]
+				r, g, b := rgb[0], rgb[1], rgb[2]
+				out[offset+0] = (float32(r) - mean[2]) / scale
+				out[offset+1] = (float32(g) - mean[1]) / scale
+				out[offset+2] = (float32(b) - mean[0]) / scale
+				offset = offset + 3
 			}
-		})
+		}
 	} else {
 		panic("invalid mode in preprocess image step")
 	}
