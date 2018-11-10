@@ -2,12 +2,10 @@ package predict
 
 import (
 	"path/filepath"
-	"strings"
 
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/rai-project/dlframework"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	yaml "gopkg.in/yaml.v2"
@@ -25,77 +23,6 @@ type PreprocessOptions struct {
 type ImagePredictor struct {
 	Base
 	WorkDir string
-}
-
-func (p ImagePredictor) baseURL(model dlframework.ModelManifest) string {
-	baseURL := ""
-	if model.GetModel().GetBaseUrl() != "" {
-		baseURL = strings.TrimSuffix(model.GetModel().GetBaseUrl(), "/") + "/"
-	}
-	return baseURL
-}
-
-func (p ImagePredictor) GetWeightsUrl() string {
-	model := p.Model
-	if model.GetModel().GetIsArchive() {
-		return model.GetModel().GetBaseUrl()
-	}
-	return p.baseURL(model) + model.GetModel().GetWeightsPath()
-}
-
-func (p ImagePredictor) GetGraphUrl() string {
-	model := p.Model
-	if model.GetModel().GetIsArchive() {
-		return model.GetModel().GetBaseUrl()
-	}
-	return p.baseURL(model) + model.GetModel().GetGraphPath()
-}
-
-func (p ImagePredictor) GetFeaturesUrl() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_url"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
-}
-
-func (p ImagePredictor) GetWeightsChecksum() string {
-	model := p.Model
-	return model.GetModel().GetWeightsChecksum()
-}
-
-func (p ImagePredictor) GetGraphChecksum() string {
-	model := p.Model
-	return model.GetModel().GetGraphChecksum()
-}
-
-func (p ImagePredictor) GetFeaturesChecksum() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_checksum"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
-}
-
-func (p ImagePredictor) GetWeightsPath() string {
-	model := p.Model
-	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
-	return cleanPath(filepath.Join(p.WorkDir, graphPath))
-}
-
-func (p ImagePredictor) GetGraphPath() string {
-	model := p.Model
-	graphPath := filepath.Base(model.GetModel().GetGraphPath())
-	return cleanPath(filepath.Join(p.WorkDir, graphPath))
-}
-
-func (p ImagePredictor) GetFeaturesPath() string {
-	model := p.Model
-	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".features"))
 }
 
 func (p ImagePredictor) GetMeanPath() string {
@@ -248,58 +175,6 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 		log.Error("invalid image mode specified " + val)
 		return types.InvalidMode
 	}
-}
-
-func (p ImagePredictor) GetLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
-	if typeParameters == nil {
-		return "", errors.New("invalid type parameters")
-	}
-	pdims, ok := typeParameters["layer_name"]
-	if !ok {
-		return "", errors.New("expecting a layer name")
-	}
-	pdimsVal := pdims.Value
-	if pdimsVal == "" {
-		return "", errors.New("invalid layer name")
-	}
-
-	var name string
-	if err := yaml.Unmarshal([]byte(pdimsVal), &name); err != nil {
-		return "", errors.Errorf("unable to get the layer name %v as a string", pdimsVal)
-	}
-	return name, nil
-}
-
-func (p ImagePredictor) GetInputLayerName(defaultValue string) string {
-	model := p.Model
-	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	name, err := p.GetLayerName(typeParameters)
-	if err != nil {
-		if defaultValue == "" {
-			return DefaultInputLayerName
-		}
-		return defaultValue
-	}
-	return name
-}
-
-func (p ImagePredictor) GetOutputLayerName(defaultValue string) string {
-	model := p.Model
-	modelOutput := model.GetOutput()
-	typeParameters := modelOutput.GetParameters()
-	name, err := p.GetLayerName(typeParameters)
-	if err != nil {
-		if defaultValue == "" {
-			return DefaultOutputLayerName
-		}
-		return defaultValue
-	}
-	return name
-}
-
-func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
-	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
 
 func (p ImagePredictor) Reset(ctx context.Context) error {
