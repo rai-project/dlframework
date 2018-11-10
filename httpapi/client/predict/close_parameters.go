@@ -65,7 +65,7 @@ for the close operation typically these are written to a http.Request
 type CloseParams struct {
 
 	/*Body*/
-	Body *models.DlframeworkPredictor
+	Body *models.DlframeworkPredictorCloseRequest
 
 	timeout    time.Duration
 	Context    context.Context
@@ -106,13 +106,13 @@ func (o *CloseParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the close params
-func (o *CloseParams) WithBody(body *models.DlframeworkPredictor) *CloseParams {
+func (o *CloseParams) WithBody(body *models.DlframeworkPredictorCloseRequest) *CloseParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the close params
-func (o *CloseParams) SetBody(body *models.DlframeworkPredictor) {
+func (o *CloseParams) SetBody(body *models.DlframeworkPredictorCloseRequest) {
 	o.Body = body
 }
 

@@ -12,9 +12,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkImagesRequestImage dlframework images request image
-// swagger:model dlframeworkImagesRequestImage
-type DlframeworkImagesRequestImage struct {
+// DlframeworkImage dlframework image
+// swagger:model dlframeworkImage
+type DlframeworkImage struct {
 
 	// The image is base64 encoded
 	// Format: byte
@@ -24,8 +24,8 @@ type DlframeworkImagesRequestImage struct {
 	ID string `json:"id,omitempty"`
 }
 
-// Validate validates this dlframework images request image
-func (m *DlframeworkImagesRequestImage) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework image
+func (m *DlframeworkImage) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateData(formats); err != nil {
@@ -38,7 +38,7 @@ func (m *DlframeworkImagesRequestImage) Validate(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *DlframeworkImagesRequestImage) validateData(formats strfmt.Registry) error {
+func (m *DlframeworkImage) validateData(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Data) { // not required
 		return nil
@@ -50,7 +50,7 @@ func (m *DlframeworkImagesRequestImage) validateData(formats strfmt.Registry) er
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkImagesRequestImage) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkImage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -58,8 +58,8 @@ func (m *DlframeworkImagesRequestImage) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkImagesRequestImage) UnmarshalBinary(b []byte) error {
-	var res DlframeworkImagesRequestImage
+func (m *DlframeworkImage) UnmarshalBinary(b []byte) error {
+	var res DlframeworkImage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

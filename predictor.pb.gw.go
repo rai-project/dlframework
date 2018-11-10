@@ -42,7 +42,7 @@ func request_Predict_Open_0(ctx context.Context, marshaler runtime.Marshaler, cl
 }
 
 func request_Predict_Close_0(ctx context.Context, marshaler runtime.Marshaler, client PredictClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq Predictor
+	var protoReq PredictorCloseRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {

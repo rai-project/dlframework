@@ -12,20 +12,17 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkGeometryRegion dlframework geometry region
-// swagger:model dlframeworkGeometryRegion
-type DlframeworkGeometryRegion struct {
+// DlframeworkText dlframework text
+// swagger:model dlframeworkText
+type DlframeworkText struct {
 
 	// data
 	// Format: byte
 	Data strfmt.Base64 `json:"data,omitempty"`
-
-	// format
-	Format string `json:"format,omitempty"`
 }
 
-// Validate validates this dlframework geometry region
-func (m *DlframeworkGeometryRegion) Validate(formats strfmt.Registry) error {
+// Validate validates this dlframework text
+func (m *DlframeworkText) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateData(formats); err != nil {
@@ -38,7 +35,7 @@ func (m *DlframeworkGeometryRegion) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkGeometryRegion) validateData(formats strfmt.Registry) error {
+func (m *DlframeworkText) validateData(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Data) { // not required
 		return nil
@@ -50,7 +47,7 @@ func (m *DlframeworkGeometryRegion) validateData(formats strfmt.Registry) error 
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkGeometryRegion) MarshalBinary() ([]byte, error) {
+func (m *DlframeworkText) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -58,8 +55,8 @@ func (m *DlframeworkGeometryRegion) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkGeometryRegion) UnmarshalBinary(b []byte) error {
-	var res DlframeworkGeometryRegion
+func (m *DlframeworkText) UnmarshalBinary(b []byte) error {
+	var res DlframeworkText
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

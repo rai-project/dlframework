@@ -345,12 +345,16 @@ var predictDatasetCmd = &cobra.Command{
 
 			features.Sort()
 
+			if features[0].Type != dl.FeatureType_CLASSIFICATION {
+				panic("expecting a Classification type")
+			}
+
 			label = strings.TrimSpace(strings.ToLower(label))
-			if strings.TrimSpace(strings.ToLower(features[0].GetName())) == label {
+			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetName())) == label {
 				cntTop1++
 			}
 			for _, f := range features[:5] {
-				if strings.TrimSpace(strings.ToLower(f.GetName())) == label {
+				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetName())) == label {
 					cntTop5++
 				}
 			}
