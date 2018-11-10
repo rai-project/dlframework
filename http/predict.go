@@ -165,12 +165,12 @@ func (p *PredictHandler) getConnection(id string) (*gogrpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (p *PredictHandler) closeClient(ctx context.Context, id string) error {
+func (p *PredictHandler) closeClient(ctx context.Context, id string, force bool) error {
 	client, err := p.getClient(id)
 	if err != nil {
 		return err
 	}
-	if _, err := client.Close(ctx, &dl.Predictor{ID: id}); err != nil {
+	if _, err := client.Close(ctx, &dl.PredictorCloseRequest{Predictor: &dl.Predictor{ID: id}, Force: force}); err != nil {
 		return err
 	}
 	return nil
@@ -186,9 +186,10 @@ func (p *PredictHandler) closeConnection(ctx context.Context, id string) error {
 
 func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder {
 	ctx := params.HTTPRequest.Context()
-	id := params.Body.ID
+	id := params.Body.Predictor.ID
+	force := params.Body.Force
 
-	if err := p.closeClient(ctx, id); err != nil {
+	if err := p.closeClient(ctx, id, force); err != nil {
 		defer p.closeConnection(ctx, id)
 		return NewError("Predict/Close", errors.Wrap(err, "failed to close predictor client"))
 	}
