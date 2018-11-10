@@ -252,39 +252,39 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 				Type:        webmodels.DlframeworkFeatureType(dl.FeatureType_name[int32(f.Type)]),
 			}
 			switch feature := f.Feature.(type) {
-			case *dl.Classification:
+			case *dl.Feature_Classification:
 				features[jj].Classification = &webmodels.DlframeworkClassification{
-					Index: feature.Index,
-					Name:  feature.Name,
+					Index: feature.Classification.Index,
+					Name:  feature.Classification.Name,
 				}
-			case *dl.Image:
+			case *dl.Feature_Image:
 				features[jj].Image = &webmodels.DlframeworkImage{
-					Data: feature.Data,
+					Data: feature.Image.Data,
 				}
-			case *dl.Text:
+			case *dl.Feature_Text:
 				features[jj].Text = &webmodels.DlframeworkText{
-					Data: feature.Data,
+					Data: feature.Text.Data,
 				}
-			case *dl.Region:
+			case *dl.Feature_Region:
 				features[jj].Region = &webmodels.DlframeworkRegion{
-					Data:   feature.Data,
-					Format: feature.Format,
+					Data:   feature.Region.Data,
+					Format: feature.Region.Format,
 				}
-			case *dl.Audio:
+			case *dl.Feature_Audio:
 				features[jj].Audio = &webmodels.DlframeworkAudio{
-					Data:   feature.Data,
-					Format: feature.Format,
+					Data:   feature.Audio.Data,
+					Format: feature.Audio.Format,
 				}
-			case *dl.GeoLocation:
+			case *dl.Feature_Geolocation:
 				features[jj].Geolocation = &webmodels.DlframeworkGeoLocation{
-					Index:     feature.Index,
-					Latitude:  feature.Latitude,
-					Longitude: feature.Longitude,
+					Index:     feature.Geolocation.Index,
+					Latitude:  feature.Geolocation.Latitude,
+					Longitude: feature.Geolocation.Longitude,
 				}
-			case *dl.Raw:
+			case *dl.Feature_Raw:
 				features[jj].Raw = &webmodels.DlframeworkRaw{
-					Data:   feature.Data,
-					Format: feature.Format,
+					Data:   feature.Raw.Data,
+					Format: feature.Raw.Format,
 				}
 			}
 
