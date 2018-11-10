@@ -1,21 +1,24 @@
 package server
 
 import (
+	"bufio"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
+	sourcepath "github.com/GeertJohan/go-sourcepath"
+	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
-	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
@@ -34,17 +37,16 @@ import (
 )
 
 var (
-	datasetCategory    string
-	datasetName        string
-	numFileParts       int
-	numWarmupFileParts int
+	urlsFilePath string
+	numUrlParts  int
 )
 
-var predictDatasetCmd = &cobra.Command{
-	Use:   "dataset",
-	Short: "Evaluates the dataset using the specified model and framework",
+var predictUrlsCmd = &cobra.Command{
+	Use:     "urls",
+	Short:   "Evaluates the urls using the specified model and framework",
+	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
-		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "dataset")
+		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "urls")
 		defer func() {
 			if span != nil {
 				span.Finish()
@@ -105,51 +107,35 @@ var predictDatasetCmd = &cobra.Command{
 			return err
 		}
 
-		if datasetName == "ilsvrc2012_validation" {
-			var imagePredictor common.ImagePredictor
+		var imagePredictor common.ImagePredictor
 
-			err := deepcopier.Copy(predictor).To(&imagePredictor)
-			if err != nil {
-				return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
-			}
-			dims, err := imagePredictor.GetImageDimensions()
-			if err != nil {
-				return err
-			}
-			if len(dims) != 3 {
-				return errors.Errorf("expecting a 3 element vector for dimensions %v", dims)
-			}
-			width, height := dims[1], dims[2]
-			if width != height {
-				return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
-			}
-
-			datasetName = fmt.Sprintf("%s_%v", datasetName, width)
+		err = deepcopier.Copy(predictor).To(&imagePredictor)
+		if err != nil {
+			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
 
-		log.WithField("dataset_category", datasetCategory).
-			WithField("dataset_name", datasetName).
-			Debug("using the specified dataset")
-
-		dataset, err := dldataset.Get(datasetCategory, datasetName)
+		var urls []string
+		urlsFilePath, err := filepath.Abs(urlsFilePath)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "cannot get absolute path of %s", urlsFilePath)
 		}
-		defer dataset.Close()
-
-		err = dataset.Download(ctx)
+		f, err := os.Open(urlsFilePath)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "cannot read %s", urlsFilePath)
 		}
-
-		files, err := dataset.List(ctx)
-		if err != nil {
-			return err
+		defer f.Close()
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			line := scanner.Text()
+			urls = append(urls, line)
 		}
 
-		err = dataset.Load(ctx)
-		if err != nil {
-			return err
+		log.WithField("urls_file_path", urlsFilePath).
+			Debug("using the specified urls file path")
+
+		if len(urls) == 0 {
+			log.WithError(err).Error("the urls file has no url")
+			os.Exit(-1)
 		}
 
 		inputPredictionIds := []bson.ObjectId{}
@@ -175,8 +161,8 @@ var predictDatasetCmd = &cobra.Command{
 			CreatedAt:           time.Now(),
 			Framework:           *model.GetFramework(),
 			Model:               *model,
-			DatasetCategory:     dataset.Category(),
-			DatasetName:         dataset.Name(),
+			DatasetCategory:     "",
+			DatasetName:         "",
 			Public:              false,
 			Hostname:            hostName,
 			UsingGPU:            useGPU,
@@ -216,7 +202,7 @@ var predictDatasetCmd = &cobra.Command{
 		}
 		_ = preprocessOptions
 
-		fileParts := partitionList(files, partitionListSize)
+		urlParts := partitionList(urls, partitionListSize)
 
 		cntTop1 := 0
 		cntTop5 := 0
@@ -224,38 +210,31 @@ var predictDatasetCmd = &cobra.Command{
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("file_parts_length", len(fileParts)).
-			WithField("file_parts_element_length", len(fileParts[0])).
-			WithField("files_length", len(files)).
+		log.WithField("url_parts_length", len(urlParts)).
+			WithField("url_parts_element_length", len(urlParts[0])).
+			WithField("urls_length", len(urls)).
 			WithField("using_gpu", useGPU).
-			Info("starting inference on dataset")
+			Info("starting inference on urls")
 
-		if numWarmupFileParts != 0 && numFileParts != -1 {
-			panic("todo")
+		if numUrlParts == -1 {
+			numUrlParts = len(urlParts)
 		}
 
-		if numFileParts == -1 {
-			numFileParts = len(fileParts)
-		}
-
-		inferenceProgress := newProgress("infering", numFileParts)
-		for _, part := range fileParts[0:numFileParts] {
+		inferenceProgress := newProgress("infering", len(urls))
+		for _, part := range urlParts[0:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for range part {
-					lda, err := dataset.Next(ctx)
-					if err != nil {
-						continue
-					}
+				for _, url := range part {
 					id := uuid.NewV4()
-					lbl := steps.NewIDWrapper(id, lda)
-					partlabels[lbl.GetID()] = lda.Label()
+					lbl := steps.NewIDWrapper(id, url)
+					partlabels[lbl.GetID()] = "" // no label for the input url
 					input <- lbl
 				}
 			}()
 
 			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+				Then(steps.NewReadURL()).
 				Then(steps.NewReadImage(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
 				Run(input)
@@ -309,7 +288,7 @@ var predictDatasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionListSize)
+		databaseInsertProgress := newProgress("inserting prediction", batchSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)
@@ -362,8 +341,8 @@ var predictDatasetCmd = &cobra.Command{
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
 			CreatedAt: time.Now(),
-			Top1:      float64(cntTop1) / float64(len(files)),
-			Top5:      float64(cntTop5) / float64(len(files)),
+			Top1:      float64(cntTop1) / float64(len(urls)),
+			Top5:      float64(cntTop5) / float64(len(urls)),
 		}
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")
@@ -421,8 +400,11 @@ var predictDatasetCmd = &cobra.Command{
 }
 
 func init() {
-	predictDatasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
-	predictDatasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
-	predictDatasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictDatasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	sourcePath := sourcepath.MustAbsoluteDir()
+	defaultURLsPath := filepath.Join(sourcePath, "..", "client", "run", "urlsfile")
+	if !com.IsFile(defaultURLsPath) {
+		defaultURLsPath = ""
+	}
+	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
+	predictDatasetCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 }

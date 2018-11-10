@@ -114,7 +114,7 @@ func main() {
 					for _, batchSize := range batchSizes {
 						color.Red("⇛ Running", framework, "::", model, "on", device, "with batch size", batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
-						shellCmd := "dataset" +
+						shellCmd := "predict dataset" +
 							" --debug" +
 							" --verbose" +
 							" --publish=false" +
