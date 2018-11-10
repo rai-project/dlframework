@@ -246,11 +246,50 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
 		for jj, f := range fr.Features {
 			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       cast.ToInt32(f.Index),
+				ID:          f.ID,
 				Metadata:    f.Metadata,
-				Name:        f.Name,
 				Probability: f.Probability,
+				Type:        webmodels.DlframeworkFeatureType(dl.FeatureType_name[int32(f.Type)]),
 			}
+			switch feature := f.Feature.(type) {
+			case *dl.Classification:
+				features[jj].Classification = &webmodels.DlframeworkClassification{
+					Index: feature.Index,
+					Name:  feature.Name,
+				}
+			case *dl.Image:
+				features[jj].Image = &webmodels.DlframeworkImage{
+					Data: feature.Data,
+				}
+			case *dl.Text:
+				features[jj].Text = &webmodels.DlframeworkText{
+					Data: feature.Data,
+				}
+			case *dl.Region:
+				features[jj].Region = &webmodels.DlframeworkRegion{
+					Data:   feature.Data,
+					Format: feature.Format,
+				}
+			case *dl.Audio:
+				features[jj].Audio = &webmodels.DlframeworkAudio{
+					Data:   feature.Data,
+					Format: feature.Format,
+				}
+			case *dl.GeoLocation:
+				features[jj].Geolocation = &webmodels.DlframeworkGeoLocation{
+					Index:     feature.Index,
+					Latitude:  feature.Latitude,
+					Longitude: feature.Longitude,
+				}
+			case *dl.Raw:
+				features[jj].Raw = &webmodels.DlframeworkRaw{
+					Data:   feature.Data,
+					Format: feature.Format,
+				}
+			}
+
+			// Index:       cast.ToInt32(f.Index),
+			// Name:        f.Name,
 		}
 		resps[ii] = &webmodels.DlframeworkFeatureResponse{
 			Features:  features,
@@ -277,9 +316,9 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 
 	ctx := params.HTTPRequest.Context()
 
-	images := make([]*dl.ImagesRequest_Image, len(params.Body.Images))
+	images := make([]*dl.Image, len(params.Body.Images))
 	for ii, image := range params.Body.Images {
-		images[ii] = &dl.ImagesRequest_Image{
+		images[ii] = &dl.Image{
 			ID:   image.ID,
 			Data: image.Data,
 			// Preprocessed: image.Preprocessed,
