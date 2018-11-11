@@ -165,12 +165,12 @@ func (p *PredictHandler) getConnection(id string) (*gogrpc.ClientConn, error) {
 	return conn, nil
 }
 
-func (p *PredictHandler) closeClient(ctx context.Context, id string) error {
+func (p *PredictHandler) closeClient(ctx context.Context, id string, force bool) error {
 	client, err := p.getClient(id)
 	if err != nil {
 		return err
 	}
-	if _, err := client.Close(ctx, &dl.Predictor{ID: id}); err != nil {
+	if _, err := client.Close(ctx, &dl.PredictorCloseRequest{Predictor: &dl.Predictor{ID: id}, Force: force}); err != nil {
 		return err
 	}
 	return nil
@@ -186,9 +186,10 @@ func (p *PredictHandler) closeConnection(ctx context.Context, id string) error {
 
 func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder {
 	ctx := params.HTTPRequest.Context()
-	id := params.Body.ID
+	id := params.Body.Predictor.ID
+	force := params.Body.Force
 
-	if err := p.closeClient(ctx, id); err != nil {
+	if err := p.closeClient(ctx, id, force); err != nil {
 		defer p.closeConnection(ctx, id)
 		return NewError("Predict/Close", errors.Wrap(err, "failed to close predictor client"))
 	}
@@ -245,11 +246,50 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 		features := make([]*webmodels.DlframeworkFeature, len(fr.Features))
 		for jj, f := range fr.Features {
 			features[jj] = &webmodels.DlframeworkFeature{
-				Index:       cast.ToInt32(f.Index),
+				ID:          f.ID,
 				Metadata:    f.Metadata,
-				Name:        f.Name,
 				Probability: f.Probability,
+				Type:        webmodels.DlframeworkFeatureType(dl.FeatureType_name[int32(f.Type)]),
 			}
+			switch feature := f.Feature.(type) {
+			case *dl.Feature_Classification:
+				features[jj].Classification = &webmodels.DlframeworkClassification{
+					Index: feature.Classification.Index,
+					Name:  feature.Classification.Name,
+				}
+			case *dl.Feature_Image:
+				features[jj].Image = &webmodels.DlframeworkImage{
+					Data: feature.Image.Data,
+				}
+			case *dl.Feature_Text:
+				features[jj].Text = &webmodels.DlframeworkText{
+					Data: feature.Text.Data,
+				}
+			case *dl.Feature_Region:
+				features[jj].Region = &webmodels.DlframeworkRegion{
+					Data:   feature.Region.Data,
+					Format: feature.Region.Format,
+				}
+			case *dl.Feature_Audio:
+				features[jj].Audio = &webmodels.DlframeworkAudio{
+					Data:   feature.Audio.Data,
+					Format: feature.Audio.Format,
+				}
+			case *dl.Feature_Geolocation:
+				features[jj].Geolocation = &webmodels.DlframeworkGeoLocation{
+					Index:     feature.Geolocation.Index,
+					Latitude:  feature.Geolocation.Latitude,
+					Longitude: feature.Geolocation.Longitude,
+				}
+			case *dl.Feature_Raw:
+				features[jj].Raw = &webmodels.DlframeworkRaw{
+					Data:   feature.Raw.Data,
+					Format: feature.Raw.Format,
+				}
+			}
+
+			// Index:       cast.ToInt32(f.Index),
+			// Name:        f.Name,
 		}
 		resps[ii] = &webmodels.DlframeworkFeatureResponse{
 			Features:  features,
@@ -276,9 +316,9 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 
 	ctx := params.HTTPRequest.Context()
 
-	images := make([]*dl.ImagesRequest_Image, len(params.Body.Images))
+	images := make([]*dl.Image, len(params.Body.Images))
 	for ii, image := range params.Body.Images {
-		images[ii] = &dl.ImagesRequest_Image{
+		images[ii] = &dl.Image{
 			ID:   image.ID,
 			Data: image.Data,
 			// Preprocessed: image.Preprocessed,

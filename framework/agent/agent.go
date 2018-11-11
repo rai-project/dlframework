@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-	"sync"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rai-project/tracer"
@@ -143,9 +142,6 @@ func getTraceID(ctx context.Context) (string, error) {
 }
 
 func (p *Agent) toFeaturesResponse(ctx context.Context, output <-chan interface{}, options *dl.PredictionOptions) (*dl.FeaturesResponse, error) {
-
-	var wg sync.WaitGroup
-	var mutex sync.Mutex
 
 	res := &dl.FeaturesResponse{}
 
