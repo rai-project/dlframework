@@ -1,4 +1,4 @@
-FROM ppc64le/ubuntu:16.04
+FROM ppc64le/ubuntu:18.04
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
 
 # Build-time metadata as defined at http://label-schema.org
@@ -60,7 +60,7 @@ RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubunt
     apt-get update
 
 # Install Go
-ENV GIMME_GO_VERSION "1.10.3"
+ENV GIMME_GO_VERSION "1.11"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 
@@ -81,21 +81,21 @@ ENV PATH $GOPATH/bin:$PATH
 #Install Go packages
 RUN go get github.com/Masterminds/glide && \
     go get -u github.com/jteeuwen/go-bindata/... && \
-	  go get -u github.com/elazarl/go-bindata-assetfs/... && \
-	  go get -u google.golang.org/grpc && \
+	go get -u github.com/elazarl/go-bindata-assetfs/... && \
+	go get -u google.golang.org/grpc && \
     go get -u gonum.org/v1/gonum/... && \
     go get -u github.com/golang/dep/cmd/dep && \
-	  go get -u github.com/gogo/protobuf/proto && \
-	  go get -u github.com/gogo/protobuf/gogoproto && \
-	  go get -u github.com/golang/protobuf/protoc-gen-go && \
-	  go get -u github.com/gogo/protobuf/protoc-gen-gofast && \
-	  go get -u github.com/gogo/protobuf/protoc-gen-gogofaster && \
-	  go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
-	  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-	  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-	  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-	  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-	  go get -u github.com/go-swagger/go-swagger/cmd/swagger
+	go get -u github.com/gogo/protobuf/proto && \
+	go get -u github.com/gogo/protobuf/gogoproto && \
+	go get -u github.com/golang/protobuf/protoc-gen-go && \
+	go get -u github.com/gogo/protobuf/protoc-gen-gofast && \
+	go get -u github.com/gogo/protobuf/protoc-gen-gogofaster && \
+	go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
+	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 ENV FRAMEWORKS_DIR=/opt
 ENV GODEBUG=cgocheck=0
