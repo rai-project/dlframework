@@ -2,10 +2,13 @@ package predict
 
 import (
 	"path/filepath"
+	"sort"
 
 	"context"
 
 	"github.com/pkg/errors"
+	"github.com/rai-project/dlframework"
+	"github.com/rai-project/dlframework/framework/feature"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	yaml "gopkg.in/yaml.v2"
@@ -22,6 +25,7 @@ type PreprocessOptions struct {
 
 type ImagePredictor struct {
 	Base
+	Metadata map[string]interface{}
 }
 
 func (p ImagePredictor) GetMeanPath() string {
@@ -174,6 +178,28 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 		log.Error("invalid image mode specified " + val)
 		return types.InvalidMode
 	}
+}
+
+// ReadPredictedFeatures ...
+func (p ImagePredictor) CreatePredictedFeatures(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	featureLen := len(probabilities) / batchSize
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		for jj := 0; jj < featureLen; jj++ {
+			rprobs[jj] = feature.New(
+				feature.ClassificationIndex(int32(jj)),
+				feature.ClassificationName(labels[jj]),
+				feature.Probability(probabilities[ii*featureLen+jj]),
+			)
+		}
+		sort.Sort(dlframework.Features(rprobs))
+		features[ii] = rprobs
+	}
+
+	return features, nil
 }
 
 func (p ImagePredictor) Reset(ctx context.Context) error {
