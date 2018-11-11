@@ -16,7 +16,7 @@ func Classification(e *dlframework.Classification) Option {
 }
 
 func ensureClassification(o *dlframework.Feature) *dlframework.Classification {
-	if o.Type != dlframework.FeatureType_IMAGE && !isUnknownType(o) {
+	if o.Type != dlframework.FeatureType_CLASSIFICATION && !isUnknownType(o) {
 		panic("unexpected feature type")
 	}
 	if o.Feature == nil {

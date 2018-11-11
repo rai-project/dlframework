@@ -15,6 +15,7 @@ import (
 type Base struct {
 	Framework dlframework.FrameworkManifest
 	Model     dlframework.ModelManifest
+	WorkDir   string
 	Options   *options.Options
 }
 

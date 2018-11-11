@@ -22,7 +22,6 @@ type PreprocessOptions struct {
 
 type ImagePredictor struct {
 	Base
-	WorkDir string
 }
 
 func (p ImagePredictor) GetMeanPath() string {
