@@ -350,11 +350,11 @@ var predictDatasetCmd = &cobra.Command{
 			}
 
 			label = strings.TrimSpace(strings.ToLower(label))
-			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetName())) == label {
+			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
 				cntTop1++
 			}
 			for _, f := range features[:5] {
-				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetName())) == label {
+				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
 					cntTop5++
 				}
 			}

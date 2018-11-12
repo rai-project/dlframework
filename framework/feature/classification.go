@@ -40,9 +40,9 @@ func ClassificationIndex(index int32) Option {
 	}
 }
 
-func ClassificationLabel(name string) Option {
+func ClassificationLabel(label string) Option {
 	return func(o *dlframework.Feature) {
 		cls := ensureClassification(o)
-		cls.Name = name
+		cls.Label = label
 	}
 }
