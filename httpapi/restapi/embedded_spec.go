@@ -620,7 +620,7 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
-        "name": {
+        "label": {
           "type": "string"
         }
       }
@@ -1785,7 +1785,7 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
-        "name": {
+        "label": {
           "type": "string"
         }
       }

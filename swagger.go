@@ -534,7 +534,7 @@ const (
           "type": "integer",
           "format": "int32"
         },
-        "name": {
+        "label": {
           "type": "string"
         }
       }

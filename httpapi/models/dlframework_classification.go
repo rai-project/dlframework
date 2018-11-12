@@ -18,8 +18,8 @@ type DlframeworkClassification struct {
 	// index
 	Index int32 `json:"index,omitempty"`
 
-	// name
-	Name string `json:"name,omitempty"`
+	// label
+	Label string `json:"label,omitempty"`
 }
 
 // Validate validates this dlframework classification

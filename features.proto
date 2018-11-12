@@ -62,7 +62,7 @@ message Image {
 message Classification {
   option (gogoproto.description) = true;
   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
 
 message GeoLocation {
