@@ -191,7 +191,7 @@ func (p ImagePredictor) CreatePredictedFeatures(ctx context.Context, probabiliti
 		for jj := 0; jj < featureLen; jj++ {
 			rprobs[jj] = feature.New(
 				feature.ClassificationIndex(int32(jj)),
-				feature.ClassificationName(labels[jj]),
+				feature.ClassificationLabel(labels[jj]),
 				feature.Probability(probabilities[ii*featureLen+jj]),
 			)
 		}
