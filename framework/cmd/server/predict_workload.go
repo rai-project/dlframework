@@ -2,21 +2,20 @@ package server
 
 import (
 	"context"
-
-	"github.com/k0kubun/pp"
-	"github.com/rai-project/batching"
-	"github.com/rai-project/pipeline"
-	"github.com/rai-project/synthetic_load"
-	"github.com/rai-project/uuid"
+	"fmt"
 
 	"github.com/pkg/errors"
+	"github.com/rai-project/batching"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/options"
 	common "github.com/rai-project/dlframework/framework/predict"
 	"github.com/rai-project/dlframework/steps"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
+	"github.com/rai-project/pipeline"
+	"github.com/rai-project/synthetic_load"
 	"github.com/rai-project/tracer"
+	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
 	"github.com/ulule/deepcopier"
 )
@@ -86,10 +85,10 @@ var predictWorkloadCmd = &cobra.Command{
 			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
 
-		batchQueue := make(chan []byte)
+		batchQueue := make(chan []byte, DefaultChannelBuffer)
 		go func() {
-			tr := synthetic_load.NewTrace(
-				synthetic_load.Context(ctx),
+			defer close(batchQueue)
+			opts := []synthetic_load.Option{synthetic_load.Context(ctx),
 				synthetic_load.QPS(512),
 				synthetic_load.InputGenerator(func(idx int) ([]byte, error) {
 					return []byte("http://ww4.hdnux.com/photos/41/15/35/8705883/4/920x920.jpg"), nil
@@ -97,16 +96,16 @@ var predictWorkloadCmd = &cobra.Command{
 				synthetic_load.InputRunner(batchingRunner{
 					queue: batchQueue,
 				}),
-			)
-			close(batchQueue)
-			pp.Println(tr.QPS())
+			}
+			tr := synthetic_load.NewTrace(opts...)
+			latency := tr.Replay(opts...)
+			fmt.Printf("qps = %v latency = %v", tr.QPS(), latency)
 		}()
 
 		partlabels := map[string]string{}
 
 		batching.NewNaive(
 			func(data [][]byte) {
-
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
 					defer close(input)
@@ -145,6 +144,7 @@ var predictWorkloadCmd = &cobra.Command{
 
 			},
 			batchQueue,
+			batching.BatchSize(128),
 		)
 		return nil
 	},
@@ -155,6 +155,7 @@ type batchingRunner struct {
 }
 
 func (s batchingRunner) Run(input []byte, onFinish func()) error {
+	s.queue <- input
 	go func() { // HACK
 		for {
 			if len(s.queue) == cap(s.queue) {
