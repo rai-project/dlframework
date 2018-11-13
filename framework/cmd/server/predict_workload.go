@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/batching"
@@ -88,13 +89,15 @@ var predictWorkloadCmd = &cobra.Command{
 
 		var bar *pb.ProgressBar
 
-		println("Starting workload generation process")
+		println("Starting inference workload generation process")
 
 		batchQueue := make(chan []byte)
 		go func() {
 			defer close(batchQueue)
 			opts := []synthetic_load.Option{synthetic_load.Context(ctx),
 				synthetic_load.QPS(512),
+				synthetic_load.MinQueries(64),
+				synthetic_load.MinDuration(50 * time.Millisecond),
 				synthetic_load.InputGenerator(func(idx int) ([]byte, error) {
 					return []byte("http://ww4.hdnux.com/photos/41/15/35/8705883/4/920x920.jpg"), nil
 				}),
@@ -103,9 +106,10 @@ var predictWorkloadCmd = &cobra.Command{
 				}),
 			}
 			tr := synthetic_load.NewTrace(opts...)
-			bar = newProgress("workload", len(tr))
+			bar = newProgress("inference workload prediction", len(tr))
 			latency := tr.Replay(opts...)
-			fmt.Printf("qps = %v latency = %v", tr.QPS(), latency)
+			qps := tr.QPS()
+			fmt.Printf("qps = %v latency = %v \n", qps, latency)
 		}()
 
 		partlabels := map[string]string{}
