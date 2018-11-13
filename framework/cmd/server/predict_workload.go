@@ -18,6 +18,7 @@ import (
 	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
 	"github.com/ulule/deepcopier"
+	pb "gopkg.in/cheggaaa/pb.v2"
 )
 
 var predictWorkloadCmd = &cobra.Command{
@@ -85,6 +86,8 @@ var predictWorkloadCmd = &cobra.Command{
 			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
 
+		var bar = *pb.ProgressBar
+
 		batchQueue := make(chan []byte, DefaultChannelBuffer)
 		go func() {
 			defer close(batchQueue)
@@ -98,6 +101,7 @@ var predictWorkloadCmd = &cobra.Command{
 				}),
 			}
 			tr := synthetic_load.NewTrace(opts...)
+			bar = newProgress("workload", len(tr))
 			latency := tr.Replay(opts...)
 			fmt.Printf("qps = %v latency = %v", tr.QPS(), latency)
 		}()
@@ -106,6 +110,7 @@ var predictWorkloadCmd = &cobra.Command{
 
 		batching.NewNaive(
 			func(data [][]byte) {
+				defer bar.Add(len(data))
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
 					defer close(input)
@@ -146,6 +151,7 @@ var predictWorkloadCmd = &cobra.Command{
 			batchQueue,
 			batching.BatchSize(128),
 		)
+		bar.Finish()
 		return nil
 	},
 }
