@@ -98,6 +98,7 @@ var predictWorkloadCmd = &cobra.Command{
 					queue: batchQueue,
 				}),
 			)
+			close(batchQueue)
 			pp.Println(tr.QPS())
 		}()
 
