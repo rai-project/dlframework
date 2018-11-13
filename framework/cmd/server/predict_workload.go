@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/batching"
 	dl "github.com/rai-project/dlframework"
@@ -89,7 +88,9 @@ var predictWorkloadCmd = &cobra.Command{
 
 		var bar *pb.ProgressBar
 
-		batchQueue := make(chan []byte, DefaultChannelBuffer)
+		println("Starting workload generation process")
+
+		batchQueue := make(chan []byte)
 		go func() {
 			defer close(batchQueue)
 			opts := []synthetic_load.Option{synthetic_load.Context(ctx),
@@ -112,7 +113,6 @@ var predictWorkloadCmd = &cobra.Command{
 		batching.NewNaive(
 			func(data [][]byte) {
 				defer bar.Add(len(data))
-				pp.Println(len(data))
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
 					defer close(input)
@@ -123,30 +123,21 @@ var predictWorkloadCmd = &cobra.Command{
 						input <- lbl
 					}
 				}()
-				pp.Println("fda")
 
 				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 					Then(steps.NewReadURL()).
 					Then(steps.NewReadImage(preprocessOptions)).
 					Then(steps.NewPreprocessImage(preprocessOptions)).
 					Run(input)
-				pp.Println("fda")
 				var images []interface{}
 				for out := range output {
-					pp.Println("read image")
 					images = append(images, out)
 				}
-				pp.Println("part image")
-				parts := []interface{}{images}
 
 				input = make(chan interface{}, DefaultChannelBuffer)
 				go func() {
-					defer close(input)
-					for _, part := range parts {
-						input <- part
-					}
+					input <- images
 				}()
-				pp.Println("fda")
 				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 					Then(steps.NewPredictImage(predictor)).
 					Run(input)
