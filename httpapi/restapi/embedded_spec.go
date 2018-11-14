@@ -610,6 +610,27 @@ func init() {
         }
       }
     },
+    "dlframeworkBoundingBox": {
+      "type": "object",
+      "properties": {
+        "xmax": {
+          "type": "number",
+          "format": "double"
+        },
+        "xmin": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
     },
@@ -688,6 +709,9 @@ func init() {
         "audio": {
           "$ref": "#/definitions/dlframeworkAudio"
         },
+        "bounding_box": {
+          "$ref": "#/definitions/dlframeworkBoundingBox"
+        },
         "classification": {
           "$ref": "#/definitions/dlframeworkClassification"
         },
@@ -761,6 +785,7 @@ func init() {
         "REGION",
         "TEXT",
         "AUDIO",
+        "BOUNDINGBOX",
         "RAW"
       ]
     },
@@ -1775,6 +1800,27 @@ func init() {
         }
       }
     },
+    "dlframeworkBoundingBox": {
+      "type": "object",
+      "properties": {
+        "xmax": {
+          "type": "number",
+          "format": "double"
+        },
+        "xmin": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
     },
@@ -1853,6 +1899,9 @@ func init() {
         "audio": {
           "$ref": "#/definitions/dlframeworkAudio"
         },
+        "bounding_box": {
+          "$ref": "#/definitions/dlframeworkBoundingBox"
+        },
         "classification": {
           "$ref": "#/definitions/dlframeworkClassification"
         },
@@ -1926,6 +1975,7 @@ func init() {
         "REGION",
         "TEXT",
         "AUDIO",
+        "BOUNDINGBOX",
         "RAW"
       ]
     },
