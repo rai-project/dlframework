@@ -118,7 +118,9 @@ var urlsCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to open the predictor")
 		}
 
-		defer client.Close(ctx, predictor)
+		defer client.Close(ctx, &dlframework.PredictorCloseRequest{
+      Predictor: predictor,
+    })
 
 		var urls []*dlframework.URLsRequest_URL
 		for i, url := range data {
@@ -153,8 +155,8 @@ var urlsCmd = &cobra.Command{
 				Prob  float32
 			}{
 				Pos:   ii,
-				Index: int(f.GetIndex()),
-				Name:  f.GetName(),
+				Index: int(f.GetClassification().GetIndex()),
+				Name:  f.GetClassification().GetLabel(),
 				Prob:  f.GetProbability(),
 			})
 		}

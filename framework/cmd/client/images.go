@@ -61,7 +61,9 @@ var imagesCmd = &cobra.Command{
 			return errors.Wrap(err, "unable to open the predictor")
 		}
 
-		defer client.Close(ctx, predictor)
+		defer client.Close(ctx, &dlframework.PredictorCloseRequest{
+      Predictor: predictor,
+    })
 
 		var data [][]byte
 		err = filepath.Walk(imgDir, func(path string, info os.FileInfo, err error) error {
@@ -85,9 +87,9 @@ var imagesCmd = &cobra.Command{
 			return errors.Wrap(err, "failed to walk image dir")
 		}
 
-		var imgs []*dlframework.ImagesRequest_Image
+		var imgs []*dlframework.Image
 		for i, v := range data {
-			imgs = append(imgs, &dlframework.ImagesRequest_Image{
+			imgs = append(imgs, &dlframework.Image{
 				ID:   string(i),
 				Data: v,
 				// Preprocessed: false,
