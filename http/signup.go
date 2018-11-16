@@ -5,16 +5,16 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
-	"github.com/rai-project/passlib"
-	"github.com/volatiletech/authboss"
-        _ "github.com/volatiletech/authboss/auth"
-	register "github.com/volatiletech/authboss/register"
-	//"github.com/rai-project/mlmodelscope/pkg"
+	"github.com/k0kubun/pp"
+	//"github.com/rai-project/passlib"
+	//"github.com/volatiletech/authboss"
+        //_ "github.com/volatiletech/authboss/auth"
+	//register "github.com/volatiletech/authboss/register"
 )
 
 
 // dummy for MongoDB User Database
-type userRecord struct {
+/*type userRecord struct {
 	firstname		string
 	lastname		string
 	username		string
@@ -34,7 +34,7 @@ func GenerateHash(password string) string {
 
 	return hash
 
-}
+}*/
 
 func SignupHandler(params signup.SignupParams) middleware.Responder {
 
@@ -49,26 +49,28 @@ func SignupHandler(params signup.SignupParams) middleware.Responder {
 		return NewError("Signup", errors.New("Incomplete Information"))
 	}
 
-	encryption := GenerateHash(password)
-	if encryption == "xxx" {
-		return NewError("Signup", errors.New("Could not generate password"))
-	}
+	pp.Println("ABCDCDCDCDCDCCDCD")
+	//encryption := GenerateHash(password)
+	//if encryption == "xxx" {
+	//	return NewError("Signup", errors.New("Could not generate password"))
+	//}
 
-	ctx := params.HTTPRequest.Context()
+	//ctx := params.HTTPRequest.Context()
 	//userTable[username] = &userRecord{firstname: firstName, lastname: lastName, username: username, password: encryption, affiliation: affiliation, email: email}
 
 	// interface with storer
 	// fetch ab instance
-	ab_instance := ctx.Value("authboss_instance").(*authboss.Authboss)
+	//ab_instance := ctx.Value("authboss_instance").(*authboss.Authboss)
 
 	// fetch user instance/current user from ab
-	abuser := ab_instance.CurrentUserP(params.HTTPRequest)
+	//abuser := ab_instance.CurrentUserP(params.HTTPRequest)
 	// refer to example to see what else we can do for authentication
 	//abuser := ab.CurrentUserP(r)
-	user := abuser.(*User)
-	reg := &register.Register{}
-_ = user 
-_ = reg
+	//user := abuser.(*User)
+
+	// Register user
+	//reg := &register.Register{ab_instance}
+	//reg.Post(params.HTTPResponseWriter, params.HTTPRequest)
 
 	// initiate register library at the mlmodelscope/pkg end
 	// and probably pass it through context/or 

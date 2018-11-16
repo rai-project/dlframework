@@ -3,11 +3,12 @@ package http
 import (
 
   "github.com/go-openapi/runtime/middleware"
-	"github.com/pkg/errors"
+	//"github.com/pkg/errors"
   "github.com/rai-project/dlframework/httpapi/restapi/operations/login"
-	"github.com/rai-project/passlib"
+	//"github.com/rai-project/passlib"
 )
 
+/*
 func CheckPassword(username string, password string) bool {
 
 	hash := userTable[username].password
@@ -30,19 +31,20 @@ func CheckPassword(username string, password string) bool {
 	return true
 
 }
+*/
 
 func LoginHandler(params login.LoginParams) middleware.Responder {
 
-	username := params.Body.Username
-	password := params.Body.Password
+	//username := params.Body.Username
+	//password := params.Body.Password
 
-	if val, ok := userTable[username]; ok {
+	/*if val, ok := userTable[username]; ok {
 		if CheckPassword(val.username, password) == false {
 			return NewError("Login", errors.New("Incorrect credentials"))
 		}
 	} else {
 		return NewError("Login", errors.New("Not signed up!"))
-	}
+	}*/
 
 
 	return login.NewLoginOK()

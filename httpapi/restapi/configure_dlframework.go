@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"net/http"
 
+	"github.com/k0kubun/pp"
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
@@ -14,8 +15,10 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/signup"
-
-
+	"github.com/volatiletech/authboss"
+        //auth "github.com/volatiletech/authboss/auth"
+	register "github.com/volatiletech/authboss/register"
+	//logout "github.com/volatiletech/authboss/logout"
 )
 
 //go:generate swagger generate server --target ../httpapi --name Dlframework --spec ../dlframework.swagger.json
@@ -104,6 +107,37 @@ func configureServer(s *http.Server, scheme, addr string) {
 // The middleware configuration is for the handler executors. These do not apply to the swagger.json document.
 // The middleware executes after routing but before authentication, binding and validation
 func setupMiddlewares(handler http.Handler) http.Handler {
+	// perform authboss related stuff here
+	return  http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		// fetch route from context
+		ctx := r.Context()
+		ab_instance := ctx.Value("authboss_instance").(*authboss.Authboss)
+		// perform actions based on routing info
+
+		//TODO: route, rCtx, _ := ctx.RouteInfo(r)
+		// call register if route -> register
+		pp.Println("ABCDCDCDCDCDCCDCD")
+		reg := &register.Register{ab_instance}
+		reg.Post(rw, r)
+		// test
+		ab_instance.CurrentUserP(r)
+
+		// call login if route -> login
+		// redirect them to Login form if data not entered
+		//login := &auth.Auth{ab_instance}
+		//login.LoginGet(rw, r)
+		//login.LoginPost(rw, r)
+		// call logout if route -> logout
+		//logout := &logout.Logout{ab_instance}
+		//logout.Logout(rw, r)
+		// look for other modules based on our use cases
+
+
+		// call serveHTTP on next handler
+		handler.ServeHTTP(rw, r)
+
+	})
+
 	return handler
 }
 
