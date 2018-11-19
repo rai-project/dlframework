@@ -203,6 +203,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:927f2f9632311e72cc76586aebff836c12c0132150afc2fe251f616e41522595"
+  name = "github.com/benesch/cgosymbolizer"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "70e1ee2b39d3b616a6ab9996820dde224c27f351"
+
+[[projects]]
+  branch = "master"
   digest = "1:37011b20a70e205b93ebea5287e1afa5618db54bf3998c36ff5a8e4b146a170a"
   name = "github.com/bgentry/go-netrc"
   packages = ["netrc"]
@@ -240,14 +248,6 @@
   pruneopts = "UT"
   revision = "2ea60e5f094469f9e65adb9cd103795b73ae743e"
   version = "v2.0.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:78097abc20f73ec968b3f67bf74deda55009caa4b801d0d04f36145c869ab3c3"
-  name = "github.com/cevaris/ordered_map"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "0efaee1733e3399a3cb88fc7d2ce340bf2e863d7"
 
 [[projects]]
   digest = "1:7471447f18b90de5d6adfd51fe8ced6be2dc160d264ccbcd6fcefbd4b79f639e"
@@ -837,6 +837,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:755e508e9ef8f15227aac3ab9f6a6ea8c90cc2716a152732e6a7ea20e253d96c"
+  name = "github.com/iancoleman/orderedmap"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "fec04b9a4f6dd6d27c3f0b2c4df147fab396bc7f"
+
+[[projects]]
+  branch = "master"
   digest = "1:e345ab0697f8f63d0ff3cc4c4c90fa470fa79c8d3c0b461a1d16df2f5b0c1fd1"
   name = "github.com/ianlancetaylor/cgosymbolizer"
   packages = ["."]
@@ -1318,7 +1326,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:78f9c28d1e22e9979849ed0888dc67eed5cb392814e7a64b95e4ad2f6a2c1184"
+  digest = "1:965e37ed0bc04e8e00fbe8c400fe40f330c13db4f6958b1c101e7ed445fd5977"
   name = "github.com/rai-project/evaluation"
   packages = [
     ".",
@@ -1326,18 +1334,18 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "a4b51155520010578fd7d85473598ff66b29e3ce"
+  revision = "192cbc55d455b2194f76f745ceca53aa0b6ba62f"
 
 [[projects]]
   branch = "master"
-  digest = "1:f132eb8f2a5dfc22c90af4440ba1fa9059e53f51bc5017c87ce32ac885ecfe0a"
+  digest = "1:088b202a3d625e1dc301f2d99e75786788f589c90ff164c75d1ad3b4c9ba0f84"
   name = "github.com/rai-project/go-cupti"
   packages = [
     ".",
     "types",
   ]
   pruneopts = "UT"
-  revision = "0e5955dd3e908ad8fd3d0a8e2f0726d12ac209fd"
+  revision = "fef5dd06e505b02990fc30e92491906553568d86"
 
 [[projects]]
   branch = "master"
@@ -1365,15 +1373,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8cf2bf13f584c2732491bd5f2bea690fb3b5608e4b0302756a74cb385ae66c1f"
+  digest = "1:2bdd2e663b042f2be374a58eff0fbec3b10dd1935ca11eca39db4ae3aa56c981"
   name = "github.com/rai-project/grpc"
   packages = ["."]
   pruneopts = "UT"
-  revision = "bcd36efa10520ffb8fc133cdfa2a1e336cafea13"
+  revision = "bed6f8e760628d2725f5fbf21f52ecb4da448217"
 
 [[projects]]
   branch = "master"
-  digest = "1:4186225185dcec0344acbd756de1fd47a5c2ec279c03e7b8c0df292c604a4563"
+  digest = "1:ab3638281055a1230487a062234ec0b36733ace6fce5cb5456add9f42c2ce7d4"
   name = "github.com/rai-project/image"
   packages = [
     ".",
@@ -1381,7 +1389,7 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "8ad53a4237a346c48183d005c5bbd9e141c69e51"
+  revision = "ac2b99ebb689aaf5beca7c005bb803c0dba19734"
 
 [[projects]]
   branch = "master"
@@ -1543,8 +1551,7 @@
   revision = "6670bcd508d44c4b41f640cd14c3226d718d4a95"
 
 [[projects]]
-  branch = "master"
-  digest = "1:d466ea7d21d5902ac3cd73e1bddb411e0a64a2557ba41fb4c354da9e05df4210"
+  digest = "1:d761113e86546b520e4a5044a173878e60b1220a25531fae9a0698b39d4407f2"
   name = "github.com/rai-project/tracer"
   packages = [
     ".",
@@ -1558,7 +1565,8 @@
     "zipkin",
   ]
   pruneopts = "UT"
-  revision = "998ccdd66169eed23cf862d380840772767091ab"
+  revision = "99de7d4e81ce7fc75f5d12a31cddd5db8f233281"
+  version = "v0.2.0"
 
 [[projects]]
   branch = "master"
