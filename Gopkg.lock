@@ -967,6 +967,14 @@
   revision = "7a285b4a65ce116fae73281c456d26c763ee181d"
 
 [[projects]]
+  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
+
+[[projects]]
   branch = "master"
   digest = "1:a64e323dc06b73892e5bb5d040ced475c4645d456038333883f58934abbf6f72"
   name = "github.com/kr/logfmt"
@@ -1236,6 +1244,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:2275f7dd0654bd7454178744f577d493805db13a12d6559d8eccbd58d941bb1f"
+  name = "github.com/rai-project/batching"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "b6dda290ef0dafa7ddea8b31987579d5766e3103"
+
+[[projects]]
+  branch = "master"
   digest = "1:4295f881efddd8bb8eb1ba82cf3d7d8ac1ca2bac6914e4f23ef205f3733df1e2"
   name = "github.com/rai-project/cmd"
   packages = ["."]
@@ -1464,6 +1480,25 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:9d02f708b212a861aafe938b7361584b3c85f3678e1292a443a5e0b1e798284d"
+  name = "github.com/rai-project/passlib"
+  packages = [
+    ".",
+    "abstract",
+    "hash/argon2",
+    "hash/argon2/raw",
+    "hash/bcrypt",
+    "hash/bcryptsha256",
+    "hash/scrypt",
+    "hash/scrypt/raw",
+    "hash/sha2crypt",
+    "hash/sha2crypt/raw",
+  ]
+  pruneopts = "UT"
+  revision = "cdf39dc0b8eaeadaaff6d1911c3ab40d9db62162"
+
+[[projects]]
+  branch = "master"
   digest = "1:fbb9a65faad7b9ae6ad5d1f35fff57793682422a8d03f8f86ef68eaee1d35275"
   name = "github.com/rai-project/pipeline"
   packages = ["."]
@@ -1490,6 +1525,14 @@
   ]
   pruneopts = "UT"
   revision = "55ef49250fca75b7a22ef5aa394e22b89943a70c"
+
+[[projects]]
+  branch = "master"
+  digest = "1:822fa7683d9aaabfd49cc75a252bc60acae1beb765f6c266e41cf77b25f0bd33"
+  name = "github.com/rai-project/synthetic_load"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bec3d2a6d052f1590d3eb29ad0495ea963122b4b"
 
 [[projects]]
   branch = "master"
@@ -1593,6 +1636,14 @@
   revision = "3235eccb8edc74d09a3e9727b13cce44644188f1"
 
 [[projects]]
+  branch = "master"
+  digest = "1:5872a011cd88c3f563afc9a390a5cca80a76cae19e94698e418e0ef7b8d7b7cd"
+  name = "github.com/seehuhn/mt19937"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cc7708819361f78dfcab8d72169c86917da88816"
+
+[[projects]]
   digest = "1:54bd573538ca13ccf85d18c99249d934f17957f17263256b42565a11c854c1de"
   name = "github.com/segmentio/go-loggly"
   packages = ["."]
@@ -1612,15 +1663,15 @@
   version = "v2.18.06"
 
 [[projects]]
-  digest = "1:c3addbf9fe72664f65b519d0d629fc59e63d3112f927375a30b12ab8bb047ae8"
+  digest = "1:d567a75ca7997f273776fc257f338d329c2e5877a8105ff8bd0234f75d45d4c0"
   name = "github.com/sirupsen/logrus"
   packages = [
     ".",
     "hooks/syslog",
   ]
   pruneopts = "UT"
-  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
-  version = "v1.0.5"
+  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:bd1ae00087d17c5a748660b8e89e1043e1e5479d0fea743352cda2f8dd8c4f84"
@@ -1927,11 +1978,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f4bcade9f430d286c2b2bbe25e21ca7550dbfcd4dead165705f11c9092f8b9d8"
+  digest = "1:8e6be77df3ed418a93ccdd52af966174a70a0f3c452e007f85b95b38bd340058"
   name = "golang.org/x/crypto"
   packages = [
     "acme",
     "acme/autocert",
+    "argon2",
+    "bcrypt",
+    "blake2b",
+    "blowfish",
     "cast5",
     "openpgp",
     "openpgp/armor",
@@ -1939,6 +1994,8 @@
     "openpgp/errors",
     "openpgp/packet",
     "openpgp/s2k",
+    "pbkdf2",
+    "scrypt",
     "ssh/terminal",
   ]
   pruneopts = "UT"
@@ -1954,7 +2011,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4e776b6f671c6926069e57e707d53f9926e523fba72bc33fa8799737d12a3091"
+  digest = "1:6a0f0dc7ee0bff6edaabee9f127545998b934c331425c7f8a647b88dff726278"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -1969,6 +2026,8 @@
     "proxy",
     "publicsuffix",
     "trace",
+    "webdav",
+    "webdav/internal/xml",
     "websocket",
   ]
   pruneopts = "UT"
@@ -2001,9 +2060,10 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:56316ade0990ab33f21769b12ebc69d0b81875615c3a4e23c487e68d499f3e96"
+  digest = "1:3796a86216cd912ab1a77b4154ed7ec5c68d954ae627e24550f173f1e291f1b6"
   name = "golang.org/x/sys"
   packages = [
+    "cpu",
     "unix",
     "windows",
   ]
@@ -2143,6 +2203,22 @@
   version = "v2.0.7"
 
 [[projects]]
+  digest = "1:174d05aec0155083f9b461f21a0a5c94f396c3cdb44f62445009ca05eef1372b"
+  name = "gopkg.in/hlandau/easymetric.v1"
+  packages = ["cexp"]
+  pruneopts = "UT"
+  revision = "1c173222e345c2ba115e0f483821c6da2d3b0fa9"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:7bd63ad360d64ba912bee8cbcafe8ffe63e7cb800c8d49d76ed709f2bb8ba103"
+  name = "gopkg.in/hlandau/measurable.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d96a009bd9bda94dd1294105e67e8c1794e533d3"
+  version = "v1.0.1"
+
+[[projects]]
   branch = "v2"
   digest = "1:988de7520a09024d5d94cd99bd545afbf194893994ec759b1cda0a0bbb6adb80"
   name = "gopkg.in/mgo.v2"
@@ -2184,7 +2260,6 @@
     "github.com/Masterminds/semver",
     "github.com/Unknwon/com",
     "github.com/VividCortex/robustly",
-    "github.com/anthonynsimon/bild/parallel",
     "github.com/chewxy/hm",
     "github.com/cockroachdb/cmux",
     "github.com/davecgh/go-spew/spew",
@@ -2223,6 +2298,7 @@
     "github.com/olekukonko/tablewriter",
     "github.com/opentracing/opentracing-go",
     "github.com/pkg/errors",
+    "github.com/rai-project/batching",
     "github.com/rai-project/cmd",
     "github.com/rai-project/config",
     "github.com/rai-project/cpu/cpuid",
@@ -2244,9 +2320,11 @@
     "github.com/rai-project/monitoring/monitors",
     "github.com/rai-project/nvidia-smi",
     "github.com/rai-project/parallel/tunny",
+    "github.com/rai-project/passlib",
     "github.com/rai-project/pipeline",
     "github.com/rai-project/registry",
     "github.com/rai-project/serializer",
+    "github.com/rai-project/synthetic_load",
     "github.com/rai-project/tracer",
     "github.com/rai-project/tracer/jaeger",
     "github.com/rai-project/tracer/noop",
