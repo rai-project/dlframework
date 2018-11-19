@@ -76,11 +76,12 @@ ENV PATH $GOPATH/bin:$PATH
 
 # Install Go packages
 RUN go get -u github.com/golang/dep/cmd/dep && \
-    go get -u github.com/jteeuwen/go-bindata/... && \
+  go get -u github.com/jteeuwen/go-bindata/... && \
 	go get -u github.com/elazarl/go-bindata-assetfs/... && \
 	go get -u google.golang.org/grpc && \
-    go get -u gonum.org/v1/gonum/... && \
-    go get -u github.com/golang/dep/cmd/dep && \
+  go get -u gonum.org/v1/gonum/... && \
+  go get -u github.com/golang/dep/cmd/dep && \
+  go get -u github.com/UnnoTed/fileb0x && \
 	go get -u github.com/gogo/protobuf/proto && \
 	go get -u github.com/gogo/protobuf/gogoproto && \
 	go get -u github.com/golang/protobuf/protoc-gen-go && \
@@ -96,3 +97,5 @@ RUN go get -u github.com/golang/dep/cmd/dep && \
 
 ENV FRAMEWORKS_DIR=/opt
 ENV GODEBUG=cgocheck=0
+
+RUN mkdir -p $FRAMEWORKS_DIR
