@@ -133,7 +133,7 @@
   name = "github.com/apache/thrift"
   packages = ["lib/go/thrift"]
   pruneopts = "UT"
-  revision = "24918abba929282d6e405fedbc2ef68c3e894136"
+  revision = "0882354f28a259b7715df10a729cd76c3e8254a3"
 
 [[projects]]
   branch = "master"
@@ -193,8 +193,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "64fc3d5c40fffc817c1cc1c1d89a6e482bf1120d"
-  version = "v1.15.77"
+  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
+  version = "v1.15.78"
 
 [[projects]]
   branch = "master"
@@ -377,7 +377,7 @@
     "pkg/term/windows",
   ]
   pruneopts = "UT"
-  revision = "758255791e25767aeeb5b2509e2d54f9ec91b242"
+  revision = "287144db423cc951922ee3607f024f70f2a74d25"
 
 [[projects]]
   branch = "master"
@@ -580,7 +580,7 @@
   name = "github.com/go-openapi/errors"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d9664f9fab8994271e573ed69cf2adfc09b7a800"
+  revision = "7a7ff1b7b8020f22574411a32f28b4d168d69237"
 
 [[projects]]
   digest = "0:"
@@ -604,7 +604,7 @@
   name = "github.com/go-openapi/loads"
   packages = ["."]
   pruneopts = "UT"
-  revision = "150d36912387ec2f607be674c5be309ddccc0eed"
+  revision = "d72cd69e9468f55c6369c5481c3d011401728c72"
 
 [[projects]]
   branch = "master"
@@ -646,7 +646,7 @@
   name = "github.com/go-openapi/swag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5899d5c5e619fda5fa86e14795a835f473ca284c"
+  revision = "1d29f06aebd59ccdf11ae04aa0334ded96e2d909"
 
 [[projects]]
   branch = "master"
@@ -823,7 +823,7 @@
     "helper/url",
   ]
   pruneopts = "UT"
-  revision = "7ee49f69de937ddc17eb72bc669c020b33c364d4"
+  revision = "ffc6e96b5b40f06b5e95141610c43aba78e4e4ae"
 
 [[projects]]
   branch = "master"
@@ -1187,7 +1187,7 @@
     "libcontainer/user",
   ]
   pruneopts = "UT"
-  revision = "10d38b660a77168360df3522881e2dc2be5056bd"
+  revision = "785fd9c39da59273380dbcfe3e08b8cff69d386f"
 
 [[projects]]
   branch = "master"
@@ -1289,7 +1289,7 @@
   name = "github.com/rai-project/acl"
   packages = ["."]
   pruneopts = "UT"
-  revision = "a9995d5d1e6f234ce959f181c08ed8e2e119ef68"
+  revision = "037e0eb4d7466ce4ce0800836f87f6204fd7a1e3"
 
 [[projects]]
   branch = "master"
@@ -1297,7 +1297,7 @@
   name = "github.com/rai-project/aws"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c2385f07f2959d2dce9c4ccfa3e087664387ab51"
+  revision = "0989b18a4aeb9277319b28080a614a5161c3934e"
 
 [[projects]]
   branch = "master"
@@ -1305,7 +1305,7 @@
   name = "github.com/rai-project/batching"
   packages = ["."]
   pruneopts = "UT"
-  revision = "045cbed03314adb5a79201ed83049a088c1dcd4f"
+  revision = "b6dda290ef0dafa7ddea8b31987579d5766e3103"
 
 [[projects]]
   branch = "master"
@@ -1313,7 +1313,7 @@
   name = "github.com/rai-project/cmd"
   packages = ["."]
   pruneopts = "UT"
-  revision = "bcb7a61ab8feb570c70570972cb239ba9de53134"
+  revision = "69f8e596de1c7e6d9aee7e68d24a7ccb3acd5cfd"
 
 [[projects]]
   branch = "master"
@@ -1321,7 +1321,7 @@
   name = "github.com/rai-project/config"
   packages = ["."]
   pruneopts = "UT"
-  revision = "628ac79ac6e3bc58c01dc06e9c2fd0220094ed32"
+  revision = "4d0de45fe6c1a55b23670fb8d402451709cf21ba"
 
 [[projects]]
   branch = "master"
@@ -1329,7 +1329,7 @@
   name = "github.com/rai-project/cpu"
   packages = ["cpuid"]
   pruneopts = "UT"
-  revision = "56e7099a63503d6a20f1896321ae716627f00041"
+  revision = "5bc145cba8e061843bd1e71b6c4450d59578554c"
 
 [[projects]]
   branch = "master"
@@ -1340,7 +1340,7 @@
     "mongodb",
   ]
   pruneopts = "UT"
-  revision = "5ab33e426a17cd0d2fffcdbb94e4d58d4605ef51"
+  revision = "99321098fe1086b20a48bb5eead61377c7eb3a06"
 
 [[projects]]
   branch = "master"
@@ -1352,7 +1352,7 @@
     "vision",
   ]
   pruneopts = "UT"
-  revision = "e5e30d62ab667e8b62ad83f969f29755d88fbe50"
+  revision = "c28e4f89153bea9cb0e72562722a45b7345a6350"
 
 [[projects]]
   branch = "master"
@@ -1363,7 +1363,7 @@
     "cuda",
   ]
   pruneopts = "UT"
-  revision = "7ab4712a61eb437568c1958d1af3a461e1388094"
+  revision = "86779e24c596b48b85ad7f384755d9a52bd531fb"
 
 [[projects]]
   branch = "master"
@@ -1371,7 +1371,7 @@
   name = "github.com/rai-project/downloadmanager"
   packages = ["."]
   pruneopts = "UT"
-  revision = "419eb566d9547f217f43da6dabab4a888ab263b3"
+  revision = "abede5faa82fac78258b905c466590fd71113935"
 
 [[projects]]
   branch = "master"
@@ -1383,7 +1383,7 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "9499be3df7a4ce6fa1229b7a28a9e326edb98628"
+  revision = "6f3a3ea8de6967d99558e8d8f0231c088470c2d1"
 
 [[projects]]
   branch = "master"
@@ -1394,7 +1394,7 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "28071b0af94546f640e4b19deb1b32a94f57336c"
+  revision = "6f9f2d02082838a11fa6ca04fee56433277f0c98"
 
 [[projects]]
   branch = "master"
@@ -1402,7 +1402,7 @@
   name = "github.com/rai-project/go-libjpeg"
   packages = ["."]
   pruneopts = "UT"
-  revision = "924793b52a7c382e95f0211df76e96859b8faaf4"
+  revision = "40fd7b1bcbeb6ac72279d3db52b3e0b6e38ea9df"
 
 [[projects]]
   branch = "master"
@@ -1418,7 +1418,7 @@
   name = "github.com/rai-project/googlecloud"
   packages = ["."]
   pruneopts = "UT"
-  revision = "901a6506eab9da69609bd6d67ac6260cf75f8a69"
+  revision = "8938dc83da610b96d2ddbca3abf88b79f895ebe7"
 
 [[projects]]
   branch = "master"
@@ -1426,7 +1426,7 @@
   name = "github.com/rai-project/grpc"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ad95a99b38b761bc4debf6aa9d9b23f1a54a4322"
+  revision = "8d63d44139a55b0989680ce797b9e0d9e39c13a9"
 
 [[projects]]
   branch = "master"
@@ -1438,7 +1438,7 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "1163b9abb5a912eee22111cae00da7d9d4b46af4"
+  revision = "6ee654c6c3cd9b0d2c326dd014d6503c07772e8b"
 
 [[projects]]
   branch = "master"
@@ -1446,7 +1446,7 @@
   name = "github.com/rai-project/ldcache"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5e33790d87e51943b372a448326d7968d7053464"
+  revision = "af85cb316a450e5aff0c86e47bf23d260de60f72"
 
 [[projects]]
   branch = "master"
@@ -1462,7 +1462,7 @@
     "store/zookeeper",
   ]
   pruneopts = "UT"
-  revision = "1862f33ecb13bbd0dc809b147d0846b50c3a36d8"
+  revision = "49a14e78d856d5794ed87fdd082dc81f4186e943"
 
 [[projects]]
   branch = "master"
@@ -1473,7 +1473,7 @@
     "registry",
   ]
   pruneopts = "UT"
-  revision = "de0f0c49fc67435bdf09e70f5c9a79926266da93"
+  revision = "67e734de309bce106b8293e41af4944b3b5ce764"
 
 [[projects]]
   branch = "master"
@@ -1485,7 +1485,7 @@
     "hooks/logruzio",
   ]
   pruneopts = "UT"
-  revision = "1489285c3ccf666d2983e3746486db940813c60d"
+  revision = "3edfaed4af1c2be49ae65399a82fab15780e6549"
 
 [[projects]]
   branch = "master"
@@ -1493,7 +1493,7 @@
   name = "github.com/rai-project/machine"
   packages = ["os"]
   pruneopts = "UT"
-  revision = "49b3430c3dec8bfdd1424390669eed088b3eb3d0"
+  revision = "e20c9a49017c471cbd3cbcb38d88347c794bc83d"
 
 [[projects]]
   branch = "master"
@@ -1501,7 +1501,7 @@
   name = "github.com/rai-project/model"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ac2d1d1ff12d765797a4157f59c57c9c91a36ed0"
+  revision = "66be2e1deaae639c80884b7007a450ca353b69a3"
 
 [[projects]]
   branch = "master"
@@ -1517,7 +1517,7 @@
   name = "github.com/rai-project/nvidia-smi"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1889a3d3eeaf262887e308698a0dd419a1c27e41"
+  revision = "9318a34c190dad876a01bd2b5093dc6235d1c763"
 
 [[projects]]
   branch = "master"
@@ -1525,7 +1525,7 @@
   name = "github.com/rai-project/nvml-go"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fafad6695983303fbc70d31b48814d121994df62"
+  revision = "4ecfe802fabb03890e795c5c1375c2d95ae717f4"
 
 [[projects]]
   branch = "master"
@@ -1533,7 +1533,7 @@
   name = "github.com/rai-project/parallel"
   packages = ["tunny"]
   pruneopts = "UT"
-  revision = "989ca22b3bcfe84e568d73df2756e68730b4f2c5"
+  revision = "16f7855030a44d9839841beced62e6a94f62eb53"
 
 [[projects]]
   branch = "master"
@@ -1560,7 +1560,7 @@
   name = "github.com/rai-project/pipeline"
   packages = ["."]
   pruneopts = "UT"
-  revision = "98b21312a0ae900f22264b3988eec0b32df714f1"
+  revision = "78ece549980aafaf5352bfedba99ac178cbc9c3a"
 
 [[projects]]
   branch = "master"
@@ -1568,7 +1568,7 @@
   name = "github.com/rai-project/registry"
   packages = ["."]
   pruneopts = "UT"
-  revision = "631876e38e0bdda7804503e59c75060387f85dd5"
+  revision = "e1a4540d29a88f8944ad92ea564289b120898858"
 
 [[projects]]
   branch = "master"
@@ -1581,7 +1581,7 @@
     "jsonpb",
   ]
   pruneopts = "UT"
-  revision = "17f0f01644c8653b8e61bc83cd33706c6dbe3dc9"
+  revision = "c73b52fef2017617905a08210dcc65f0880cf11e"
 
 [[projects]]
   branch = "master"
@@ -1589,7 +1589,7 @@
   name = "github.com/rai-project/synthetic_load"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f553fc641a620b6143354e8cd896035e89b21481"
+  revision = "bec3d2a6d052f1590d3eb29ad0495ea963122b4b"
 
 [[projects]]
   branch = "master"
@@ -1597,7 +1597,7 @@
   name = "github.com/rai-project/tegra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c0fcae3ed932917905c46494a2cc9b2c4a47d1e8"
+  revision = "1d9901ca382bfae82f47b1ddb5fb67a019d254e8"
 
 [[projects]]
   branch = "master"
@@ -1615,7 +1615,7 @@
     "zipkin",
   ]
   pruneopts = "UT"
-  revision = "b8169d08c8bbfc193d3aaabab5e91ddb37f9d660"
+  revision = "b82207c34738938df7b8bf363cf421652d72ec97"
 
 [[projects]]
   branch = "master"
@@ -1626,7 +1626,7 @@
     "promise",
   ]
   pruneopts = "UT"
-  revision = "4f4bcfa3ccfa76a563dead2cf999310718bf9461"
+  revision = "be23e9dad62b9c5de665f502450144abd61d31a6"
 
 [[projects]]
   branch = "master"
@@ -1634,7 +1634,7 @@
   name = "github.com/rai-project/uuid"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9408958525cb3486f7ef41bf5691d4d9e081b08e"
+  revision = "2a4c8b922cc6a17bd16f236d4bb06134972289f2"
 
 [[projects]]
   branch = "master"
@@ -1642,7 +1642,7 @@
   name = "github.com/rai-project/vipertags"
   packages = ["."]
   pruneopts = "UT"
-  revision = "8dc2a1a8a7a32a0a2d482d545cc579e5fe839356"
+  revision = "8cbaab517f5d43e2d0bb7f1b237a0dfdc551cc81"
 
 [[projects]]
   branch = "master"
@@ -1785,7 +1785,7 @@
     "remote",
   ]
   pruneopts = "UT"
-  revision = "ae103d7e593e371c69e832d5eb3347e2b80cbbc9"
+  revision = "06c7c0d9b3c7cfca13deff6e353a052e08828ad4"
 
 [[projects]]
   digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
@@ -2056,7 +2056,7 @@
   name = "golang.org/x/image"
   packages = ["bmp"]
   pruneopts = "UT"
-  revision = "d9c2484c482e024a5de5ea73d456fb873fb7e8ac"
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
 
 [[projects]]
   branch = "master"
@@ -2117,7 +2117,7 @@
     "windows",
   ]
   pruneopts = "UT"
-  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
+  revision = "93218def8b18e66adbdab3eca8ec334700329f1f"
 
 [[projects]]
   digest = "1:0c56024909189aee3364b7f21a95a27459f718aa7c199a5c111c36cfffd9eaef"
