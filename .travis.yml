@@ -3,9 +3,6 @@ dist: trusty
 sudo: required
 services:
   - docker
-cache:
-  directories:
-    - $HOME/.linuxbrew/
 before_install:
   - cd dockerfiles/base
   - make docker_build_cpu
