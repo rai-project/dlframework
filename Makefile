@@ -24,10 +24,6 @@ install-deps: ## Install dependencies
 dep-ensure: ## Performs dep ensure
 	dep ensure -v
 
-logrus-fix: ## Fixes logrus
-	rm -fr vendor/github.com/Sirupsen
-	find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
-
 generate-proto: ## Generates Go, GRPC Gateway and Swagger code
 	rm -fr swagger.go
 	protoc --plugin=protoc-gen-go=${GOPATH}/bin/protoc-gen-go -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --gogofaster_out=Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,plugins=grpc:. registry.proto predictor.proto features.proto
@@ -62,7 +58,7 @@ clean-httpapi:  ## Deletes the httpapi directory
 install-proto:  ## Installs protobuf (used by travis)
 	./scripts/install-protobuf.sh
 
-travis: install-proto install-deps dep-ensure logrus-fix generate  ## Travis builder
+travis: install-proto install-deps dep-ensure generate  ## Travis builder
 	echo "building..."
 	go build
 
