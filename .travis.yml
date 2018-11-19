@@ -4,7 +4,7 @@ sudo: required
 services:
   - docker
 before_install:
-  - cd dockerfiles/base
+  - cd ${TRAVIS_BUILD_DIR}/dockerfiles/base
   - make docker_build_cpu
   - make docker_build_gpu
 script:
