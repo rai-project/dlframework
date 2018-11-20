@@ -23,175 +23,201 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/synthetic_load"
 	"github.com/rai-project/tracer"
+	"github.com/schollz/progressbar"
 	"github.com/spf13/cobra"
 	"github.com/ulule/deepcopier"
-	pb "gopkg.in/cheggaaa/pb.v2"
 )
+
+var (
+	qps                    float64
+	latencyBound           int64
+	latencyBoundPercentile float64
+	minDuration            int64
+	minQueries             int
+	maxQpsSearchIterations int
+)
+
+func computeLatency(qps float64) (trace synthetic_load.Trace, latency time.Duration, err error) {
+	span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "workload")
+	defer func() {
+		if span != nil {
+			span.Finish()
+		}
+	}()
+
+	predictorFramework, err := agent.GetPredictor(framework)
+	if err != nil {
+		err = errors.Wrapf(err,
+			"⚠️ failed to get predictor for %s. make sure you have "+
+				"imported the framework's predictor package",
+			framework.MustCanonicalName(),
+		)
+		return
+	}
+
+	model, err := framework.FindModel(modelName + ":" + modelVersion)
+	if err != nil {
+		return
+	}
+
+	var dc map[string]int32
+	if useGPU {
+		if !nvidiasmi.HasGPU {
+			err = errors.New("not gpu found")
+			return
+		}
+		dc = map[string]int32{"GPU": 0}
+	} else {
+		dc = map[string]int32{"CPU": 0}
+	}
+
+	execOpts := &dl.ExecutionOptions{
+		TraceLevel: dl.ExecutionOptions_TraceLevel(
+			dl.ExecutionOptions_TraceLevel_value[traceLevel.String()],
+		),
+		DeviceCount: dc,
+	}
+	predOpts := &dl.PredictionOptions{
+		FeatureLimit:     10,
+		BatchSize:        int32(batchSize),
+		ExecutionOptions: execOpts,
+	}
+
+	predictor, err := predictorFramework.Load(ctx, *model, options.PredictorOptions(predOpts))
+	if err != nil {
+		return
+	}
+
+	preprocessOptions, err := predictor.GetPreprocessOptions(nil)
+	if err != nil {
+		return
+	}
+
+	var imagePredictor common.ImagePredictor
+
+	err = deepcopier.Copy(predictor).To(&imagePredictor)
+	if err != nil {
+		err = errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
+		return
+	}
+
+	var bar *progressbar.ProgressBar
+	useBar := false
+
+	println("Starting inference workload generation process")
+
+	batchQueue := make(chan steps.IDer)
+	outputQueue := new(sync.Map)
+	go func() {
+		defer close(batchQueue)
+
+		imagePath := filepath.Join(sourcepath.MustAbsoluteDir(), "_fixtures", "chicken.jpg")
+		input, err := ioutil.ReadFile(imagePath)
+		if err != nil {
+			panic(err)
+		}
+
+		opts := []synthetic_load.Option{
+			synthetic_load.Context(ctx),
+			synthetic_load.QPS(qps),
+			synthetic_load.LatencyBoundPercentile(latencyBoundPercentile),
+			synthetic_load.MinQueries(minQueries),
+			synthetic_load.MinDuration(time.Duration(minDuration * int64(time.Millisecond))),
+			synthetic_load.InputGenerator(func(idx int) ([]byte, error) {
+				return input, nil
+			}),
+			synthetic_load.InputRunner(batchingRunner{
+				inputQueue:  batchQueue,
+				outputQueue: outputQueue,
+				batchSize:   batchSize,
+			}),
+		}
+
+		trace = synthetic_load.NewTrace(opts...)
+
+		if useBar {
+			bar = progressbar.NewOptions(len(trace), progressbar.OptionSetRenderBlankState(true))
+		}
+
+		latency, err = trace.Replay(opts...)
+		if err != nil {
+			return
+		}
+		// qps := trace.QPS()
+		// fmt.Printf("qps = %v latency = %v \n", qps, latency)
+	}()
+
+	btch, err := batching.NewNaive(
+		func(data []steps.IDer) {
+			if useBar {
+				defer bar.Add(len(data))
+			}
+
+			input := make(chan interface{}, DefaultChannelBuffer)
+			go func() {
+				defer close(input)
+				for _, elem := range data {
+					input <- elem
+				}
+			}()
+			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+				Then(steps.NewReadImage(preprocessOptions)).
+				Then(steps.NewPreprocessImage(preprocessOptions)).
+				Run(input)
+
+			var images []interface{}
+			for out := range output {
+				images = append(images, out)
+			}
+
+			input = make(chan interface{})
+			go func() {
+				defer close(input)
+				input <- images
+			}()
+			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+				Then(steps.NewPredictImage(predictor)).
+				Run(input)
+
+			for out0 := range output {
+				if err, ok := out0.(error); ok {
+					panic(err)
+				}
+
+				out := out0.(steps.IDer)
+				qu0, ok := outputQueue.Load(out.GetID())
+				if !ok {
+					panic("cannot find " + out.GetID() + " input output queue")
+				}
+				qu := qu0.(chan struct{})
+				qu <- struct{}{}
+			}
+		},
+		batchQueue,
+		batching.BatchSize(batchSize),
+	)
+	if err != nil {
+		panic(err)
+	}
+	btch.Wait()
+
+	return
+}
 
 var predictWorkloadCmd = &cobra.Command{
 	Use:     "workload",
 	Short:   "Evaluates the workload using the specified model and framework",
 	Aliases: []string{"work-load"},
 	RunE: func(c *cobra.Command, args []string) error {
-		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "workload")
-		defer func() {
-			if span != nil {
-				span.Finish()
-			}
-		}()
-
-		predictorFramework, err := agent.GetPredictor(framework)
-		if err != nil {
-			return errors.Wrapf(err,
-				"⚠️ failed to get predictor for %s. make sure you have "+
-					"imported the framework's predictor package",
-				framework.MustCanonicalName(),
-			)
-		}
-
-		model, err := framework.FindModel(modelName + ":" + modelVersion)
+		tr, latency, err := computeLatency(qps)
 		if err != nil {
 			return err
 		}
 
-		var dc map[string]int32
-		if useGPU {
-			if !nvidiasmi.HasGPU {
-				return errors.New("not gpu found")
-			}
-			dc = map[string]int32{"GPU": 0}
-		} else {
-			dc = map[string]int32{"CPU": 0}
-		}
-
-		execOpts := &dl.ExecutionOptions{
-			TraceLevel: dl.ExecutionOptions_TraceLevel(
-				dl.ExecutionOptions_TraceLevel_value[traceLevel.String()],
-			),
-			DeviceCount: dc,
-		}
-		predOpts := &dl.PredictionOptions{
-			FeatureLimit:     10,
-			BatchSize:        int32(batchSize),
-			ExecutionOptions: execOpts,
-		}
-
-		predictor, err := predictorFramework.Load(ctx, *model, options.PredictorOptions(predOpts))
-		if err != nil {
-			return err
-		}
-
-		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
-		if err != nil {
-			return err
-		}
-
-		var imagePredictor common.ImagePredictor
-
-		err = deepcopier.Copy(predictor).To(&imagePredictor)
-		if err != nil {
-			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
-		}
-
-		var bar *pb.ProgressBar
-		useBar := false
-
-		println("Starting inference workload generation process")
-
-		batchQueue := make(chan steps.IDer, DefaultChannelBuffer)
-		outputQueue := new(sync.Map)
-		go func() {
-			defer close(batchQueue)
-
-			imagePath := filepath.Join(sourcepath.MustAbsoluteDir(), "_fixtures", "chicken.jpg")
-			input, err := ioutil.ReadFile(imagePath)
-			if err != nil {
-				panic(err)
-			}
-			opts := []synthetic_load.Option{
-				synthetic_load.Context(ctx),
-				synthetic_load.QPS(512),
-				synthetic_load.MinQueries(64),
-				synthetic_load.LatencyBoundPercentile(0.99),
-				synthetic_load.MinDuration(1 * time.Second),
-				synthetic_load.InputGenerator(func(idx int) ([]byte, error) {
-					return input, nil
-				}),
-				synthetic_load.InputRunner(batchingRunner{
-					inputQueue:  batchQueue,
-					outputQueue: outputQueue,
-					batchSize:   batchSize,
-				}),
-			}
-			tr := synthetic_load.NewTrace(opts...)
-			if useBar {
-				bar = newProgress("inference workload prediction", len(tr))
-			}
-			latency, err := tr.Replay(opts...)
-			if err != nil {
-				return
-			}
-			qps := tr.QPS()
-			fmt.Printf("qps = %v latency = %v \n", qps, latency)
-		}()
-
-		btch, err := batching.NewNaive(
-			func(data []steps.IDer) {
-				if useBar {
-					defer bar.Add(len(data))
-				}
-
-				input := make(chan interface{}, DefaultChannelBuffer)
-				go func() {
-					defer close(input)
-					for _, elem := range data {
-						input <- elem
-					}
-				}()
-				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-					Then(steps.NewReadImage(preprocessOptions)).
-					Then(steps.NewPreprocessImage(preprocessOptions)).
-					Run(input)
-
-				var images []interface{}
-				for out := range output {
-					images = append(images, out)
-				}
-
-				input = make(chan interface{})
-				go func() {
-					input <- images
-				}()
-				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-					Then(steps.NewPredictImage(predictor)).
-					Run(input)
-
-				for out0 := range output {
-					if err, ok := out0.(error); ok {
-						panic(err)
-					}
-
-					out := out0.(steps.IDer)
-					qu0, ok := outputQueue.Load(out.GetID())
-					if !ok {
-						panic("cannot find " + out.GetID() + " input output queue")
-					}
-					qu := qu0.(chan struct{})
-					qu <- struct{}{}
-				}
-			},
-			batchQueue,
-			batching.BatchSize(batchSize),
+		fmt.Printf("qps = %v, latency = %v\n",
+			tr.QPS(),
+			latency,
 		)
-		if err != nil {
-			panic(err)
-		}
-		btch.Wait()
-
-		if useBar {
-			bar.Finish()
-		}
-
 		return nil
 	},
 }
@@ -234,4 +260,11 @@ func (s batchingRunner) Run(tr synthetic_load.TraceEntry, bts []byte, onFinish f
 		}
 	}()
 	return nil
+}
+
+func init() {
+	predictWorkloadCmd.PersistentFlags().Float64Var(&qps, "initial_qps", 16, "the initial QPS")
+	predictWorkloadCmd.PersistentFlags().Float64Var(&latencyBoundPercentile, "percentile", 95, "the minimum percent of queries meeting the latency bound")
+	predictWorkloadCmd.PersistentFlags().Int64Var(&minDuration, "min_duration", 100, "the minimum duration of the trace in ms")
+	predictWorkloadCmd.PersistentFlags().IntVar(&minQueries, "min_queries", 512, "the minimum number of queries")
 }
