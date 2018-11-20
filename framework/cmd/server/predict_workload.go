@@ -127,7 +127,10 @@ var predictWorkloadCmd = &cobra.Command{
 			if useBar {
 				bar = newProgress("inference workload prediction", len(tr))
 			}
-			latency := tr.Replay(opts...)
+			latency, err := tr.Replay(opts...)
+			if err != nil {
+				return
+			}
 			qps := tr.QPS()
 			fmt.Printf("qps = %v latency = %v \n", qps, latency)
 		}()
