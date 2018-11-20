@@ -1,10 +1,17 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"path/filepath"
+	"strconv"
+	"sync"
 	"time"
 
+	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/pkg/errors"
 	"github.com/rai-project/batching"
 	dl "github.com/rai-project/dlframework"
@@ -16,7 +23,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/synthetic_load"
 	"github.com/rai-project/tracer"
-	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
 	"github.com/ulule/deepcopier"
 	pb "gopkg.in/cheggaaa/pb.v2"
@@ -88,57 +94,68 @@ var predictWorkloadCmd = &cobra.Command{
 		}
 
 		var bar *pb.ProgressBar
+		useBar := false
 
 		println("Starting inference workload generation process")
 
-		batchQueue := make(chan []byte)
+		batchQueue := make(chan steps.IDer, DefaultChannelBuffer)
+		outputQueue := new(sync.Map)
 		go func() {
 			defer close(batchQueue)
-			opts := []synthetic_load.Option{synthetic_load.Context(ctx),
+
+			imagePath := filepath.Join(sourcepath.MustAbsoluteDir(), "_fixtures", "chicken.jpg")
+			input, err := ioutil.ReadFile(imagePath)
+			if err != nil {
+				panic(err)
+			}
+			opts := []synthetic_load.Option{
+				synthetic_load.Context(ctx),
 				synthetic_load.QPS(512),
 				synthetic_load.MinQueries(64),
-				synthetic_load.MinDuration(50 * time.Millisecond),
+				synthetic_load.LatencyBoundPercentile(0.99),
+				synthetic_load.MinDuration(1 * time.Second),
 				synthetic_load.InputGenerator(func(idx int) ([]byte, error) {
-					return []byte("http://ww4.hdnux.com/photos/41/15/35/8705883/4/920x920.jpg"), nil
+					return input, nil
 				}),
 				synthetic_load.InputRunner(batchingRunner{
-					queue: batchQueue,
+					inputQueue:  batchQueue,
+					outputQueue: outputQueue,
+					batchSize:   batchSize,
 				}),
 			}
 			tr := synthetic_load.NewTrace(opts...)
-			bar = newProgress("inference workload prediction", len(tr))
+			if useBar {
+				bar = newProgress("inference workload prediction", len(tr))
+			}
 			latency := tr.Replay(opts...)
 			qps := tr.QPS()
 			fmt.Printf("qps = %v latency = %v \n", qps, latency)
 		}()
 
-		partlabels := map[string]string{}
+		btch, err := batching.NewNaive(
+			func(data []steps.IDer) {
+				if useBar {
+					defer bar.Add(len(data))
+				}
 
-		batching.NewNaive(
-			func(data [][]byte) {
-				defer bar.Add(len(data))
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
 					defer close(input)
-					for _, url := range data {
-						id := uuid.NewV4()
-						lbl := steps.NewIDWrapper(id, string(url))
-						partlabels[lbl.GetID()] = "" // no label for the input url
-						input <- lbl
+					for _, elem := range data {
+						input <- elem
 					}
 				}()
-
 				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-					Then(steps.NewReadURL()).
 					Then(steps.NewReadImage(preprocessOptions)).
 					Then(steps.NewPreprocessImage(preprocessOptions)).
 					Run(input)
+
 				var images []interface{}
 				for out := range output {
 					images = append(images, out)
 				}
 
-				input = make(chan interface{}, DefaultChannelBuffer)
+				input = make(chan interface{})
 				go func() {
 					input <- images
 				}()
@@ -146,25 +163,70 @@ var predictWorkloadCmd = &cobra.Command{
 					Then(steps.NewPredictImage(predictor)).
 					Run(input)
 
+				for out0 := range output {
+					if err, ok := out0.(error); ok {
+						panic(err)
+					}
+
+					out := out0.(steps.IDer)
+					qu0, ok := outputQueue.Load(out.GetID())
+					if !ok {
+						panic("cannot find " + out.GetID() + " input output queue")
+					}
+					qu := qu0.(chan struct{})
+					qu <- struct{}{}
+				}
 			},
 			batchQueue,
 			batching.BatchSize(batchSize),
 		)
-		bar.Finish()
+		if err != nil {
+			panic(err)
+		}
+		btch.Wait()
+
+		if useBar {
+			bar.Finish()
+		}
+
 		return nil
 	},
 }
 
-type batchingRunner struct {
-	queue chan []byte
+type workloadInput struct {
+	id   string
+	data io.Reader
 }
 
-func (s batchingRunner) Run(input []byte, onFinish func()) error {
-	s.queue <- input
-	go func() { // HACK
+func (w workloadInput) GetID() string {
+	return w.id
+}
+
+func (w workloadInput) GetData() interface{} {
+	return w.data
+}
+
+type batchingRunner struct {
+	inputQueue  chan steps.IDer
+	outputQueue *sync.Map
+	batchSize   int
+}
+
+func (s batchingRunner) Run(tr synthetic_load.TraceEntry, bts []byte, onFinish func()) error {
+	id := strconv.Itoa(tr.Index)
+	s.inputQueue <- workloadInput{
+		id:   id,
+		data: bytes.NewBuffer(bts),
+	}
+	ch := make(chan struct{})
+	s.outputQueue.Store(id, ch)
+
+	go func() {
 		for {
-			if len(s.queue) == cap(s.queue) {
+			select {
+			case <-ch:
 				onFinish()
+				return
 			}
 		}
 	}()
