@@ -48,7 +48,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
         unzip \
         apt-transport-https \
-        cuda-nvml-dev-10-0 \
     && \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \

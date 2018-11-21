@@ -49,7 +49,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
 		    apt-transport-https \
         ca-certificates \
-        cuda-nvml-dev-10-0 \
         libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
         libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 \
     && \
