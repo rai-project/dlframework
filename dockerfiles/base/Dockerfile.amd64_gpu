@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
 
 # Build-time metadata as defined at http://label-schema.org
@@ -49,8 +49,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
 		    apt-transport-https \
         ca-certificates \
-        libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
-        libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 \
     && \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \
