@@ -42,10 +42,6 @@
   version = "1.0.0"
 
 [[constraint]]
-  name = "github.com/cheggaaa/pb"
-  version = "2.0.6"
-
-[[constraint]]
   branch = "master"
   name = "github.com/cockroachdb/cmux"
 
@@ -327,5 +323,5 @@
   unused-packages = true
 
 [[constraint]]
+  version = "2.0.6"
   name = "gopkg.in/cheggaaa/pb.v2"
-  revision = "2af8bbdea9e99e83b3ac400d8f6b6d1b8cbbf338"
