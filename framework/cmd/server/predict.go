@@ -103,4 +103,5 @@ func init() {
 	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
 	predictCmd.AddCommand(predictWorkloadCmd)
+	predictCmd.AddCommand(predictQPSCmd)
 }

@@ -214,7 +214,6 @@ var predictDatasetCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		_ = preprocessOptions
 
 		fileParts := partitionList(files, partitionListSize)
 

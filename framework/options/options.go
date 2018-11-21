@@ -3,6 +3,8 @@ package options
 import (
 	"strings"
 
+	"github.com/rai-project/nvidia-smi"
+
 	context "context"
 
 	dl "github.com/rai-project/dlframework"
@@ -64,6 +66,9 @@ func (o *Options) FeatureLimit() int {
 
 func Device(deviceType DeviceType, id int) Option {
 	return func(o *Options) {
+		if deviceType == CUDA_DEVICE && !nvidiasmi.HasGPU {
+			panic("cannot set CUDA device on systems with no GPU")
+		}
 		o.devices = append(o.devices, device{deviceType: deviceType, id: id})
 	}
 }
