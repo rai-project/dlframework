@@ -1391,7 +1391,7 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "eaccf644e04ac5f29565e8cb05f550b3ee5b6efc"
+  revision = "8174d1d627ca130a1a4df4dfee63490070aa816e"
 
 [[projects]]
   branch = "master"
@@ -1402,7 +1402,7 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "c65e88a8f6fa6a2fcd9ff164428e3dc3090ad86d"
+  revision = "ffa685874f19a86b0e6cbf9c8e1085d26987e999"
 
 [[projects]]
   branch = "master"
@@ -1623,7 +1623,7 @@
     "zipkin",
   ]
   pruneopts = "UT"
-  revision = "99de7d4e81ce7fc75f5d12a31cddd5db8f233281"
+  revision = "2f4b316a31705c787d114355f8cf4f54718e7e69"
 
 [[projects]]
   branch = "master"
