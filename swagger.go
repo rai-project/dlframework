@@ -524,6 +524,27 @@ const (
         }
       }
     },
+    "dlframeworkBoundingBox": {
+      "type": "object",
+      "properties": {
+        "xmin": {
+          "type": "number",
+          "format": "double"
+        },
+        "xmax": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "double"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
     "dlframeworkCPUOptions": {
       "type": "object"
     },
@@ -622,6 +643,9 @@ const (
         "geolocation": {
           "$ref": "#/definitions/dlframeworkGeoLocation"
         },
+        "bounding_box": {
+          "$ref": "#/definitions/dlframeworkBoundingBox"
+        },
         "raw": {
           "$ref": "#/definitions/dlframeworkRaw"
         }
@@ -663,6 +687,7 @@ const (
         "REGION",
         "TEXT",
         "AUDIO",
+        "BOUNDINGBOX",
         "RAW"
       ],
       "default": "UNKNOWN"

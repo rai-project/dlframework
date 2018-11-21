@@ -19,6 +19,9 @@ type DlframeworkFeature struct {
 	// audio
 	Audio *DlframeworkAudio `json:"audio,omitempty"`
 
+	// bounding box
+	BoundingBox *DlframeworkBoundingBox `json:"bounding_box,omitempty"`
+
 	// classification
 	Classification *DlframeworkClassification `json:"classification,omitempty"`
 
@@ -55,6 +58,10 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAudio(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateBoundingBox(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -102,6 +109,24 @@ func (m *DlframeworkFeature) validateAudio(formats strfmt.Registry) error {
 		if err := m.Audio.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("audio")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateBoundingBox(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.BoundingBox) { // not required
+		return nil
+	}
+
+	if m.BoundingBox != nil {
+		if err := m.BoundingBox.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("bounding_box")
 			}
 			return err
 		}

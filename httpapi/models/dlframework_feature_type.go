@@ -41,6 +41,9 @@ const (
 	// DlframeworkFeatureTypeAUDIO captures enum value "AUDIO"
 	DlframeworkFeatureTypeAUDIO DlframeworkFeatureType = "AUDIO"
 
+	// DlframeworkFeatureTypeBOUNDINGBOX captures enum value "BOUNDINGBOX"
+	DlframeworkFeatureTypeBOUNDINGBOX DlframeworkFeatureType = "BOUNDINGBOX"
+
 	// DlframeworkFeatureTypeRAW captures enum value "RAW"
 	DlframeworkFeatureTypeRAW DlframeworkFeatureType = "RAW"
 )
@@ -50,7 +53,7 @@ var dlframeworkFeatureTypeEnum []interface{}
 
 func init() {
 	var res []DlframeworkFeatureType
-	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","GEOLOCATION","REGION","TEXT","AUDIO","BOUNDINGBOX","RAW"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

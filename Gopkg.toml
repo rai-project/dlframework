@@ -42,16 +42,8 @@
   version = "1.0.0"
 
 [[constraint]]
-  name = "github.com/anthonynsimon/bild"
-  version = "0.10.0"
-
-[[constraint]]
   name = "github.com/cheggaaa/pb"
   version = "2.0.6"
-
-[[constraint]]
-  name = "github.com/chewxy/hm"
-  version = "1.0.0"
 
 [[constraint]]
   branch = "master"
