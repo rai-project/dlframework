@@ -54,10 +54,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     update-alternatives --config gcc && \
     gcc --version
 
-# Add powerai repo
-RUN curl -fsSL https://public.dhe.ibm.com/software/server/POWER/Linux/mldl/ubuntu/mldl-repo-network_4.0.0_ppc64el.deb -O && \
-    dpkg -i mldl-repo-network_4.0.0_ppc64el.deb && \
-    apt-get update
 
 # Install Go
 ENV GIMME_GO_VERSION "1.11"
