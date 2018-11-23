@@ -255,7 +255,7 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 			case *dl.Feature_Classification:
 				features[jj].Classification = &webmodels.DlframeworkClassification{
 					Index: feature.Classification.Index,
-					Name:  feature.Classification.Name,
+				        Label:  feature.Classification.Label,
 				}
 			case *dl.Feature_Image:
 				features[jj].Image = &webmodels.DlframeworkImage{

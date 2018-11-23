@@ -39,7 +39,6 @@ func newProgress(prefix string, count int) *pb.ProgressBar {
 	// Refresh rate for progress bar is set to 100 milliseconds.
 	bar.SetRefreshRate(time.Millisecond * 100)
 
-	bar.SetTemplateString(string(pb.Full))
 	bar.Start()
 	return bar
 }
@@ -102,4 +101,6 @@ func init() {
 
 	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
+	predictCmd.AddCommand(predictWorkloadCmd)
+	predictCmd.AddCommand(predictQPSCmd)
 }

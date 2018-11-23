@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
 
 # Build-time metadata as defined at http://label-schema.org
@@ -47,10 +47,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         wget \
         unzip \
-		apt-transport-https \
+		    apt-transport-https \
         ca-certificates \
-		libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
-		libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 \ 
     && \
     rm -rf /var/lib/apt/lists/* && \
     update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \
@@ -78,11 +76,12 @@ ENV PATH $GOPATH/bin:$PATH
 
 # Install Go packages
 RUN go get -u github.com/golang/dep/cmd/dep && \
-    go get -u github.com/jteeuwen/go-bindata/... && \
+  go get -u github.com/jteeuwen/go-bindata/... && \
 	go get -u github.com/elazarl/go-bindata-assetfs/... && \
 	go get -u google.golang.org/grpc && \
-    go get -u gonum.org/v1/gonum/... && \
-    go get -u github.com/golang/dep/cmd/dep && \
+  go get -u gonum.org/v1/gonum/... && \
+  go get -u github.com/golang/dep/cmd/dep && \
+  go get -u github.com/UnnoTed/fileb0x && \
 	go get -u github.com/gogo/protobuf/proto && \
 	go get -u github.com/gogo/protobuf/gogoproto && \
 	go get -u github.com/golang/protobuf/protoc-gen-go && \
@@ -91,9 +90,12 @@ RUN go get -u github.com/golang/dep/cmd/dep && \
 	go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
 	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
 	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
 	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
 	go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 ENV FRAMEWORKS_DIR=/opt
 ENV GODEBUG=cgocheck=0
+
+RUN mkdir -p $FRAMEWORKS_DIR

@@ -38,6 +38,7 @@ enum FeatureType {
   REGION = 4;   
   TEXT = 5;    
   AUDIO = 6;  
+  BOUNDINGBOX = 7;  
   RAW = 100;     
 }
 
@@ -62,7 +63,7 @@ message Image {
 message Classification {
   option (gogoproto.description) = true;
   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name,omitempty\"" ];
+  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
 
 message GeoLocation {
@@ -77,6 +78,14 @@ message Region {
   option (gogoproto.description) = true;
   bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
+}
+
+message BoundingBox {
+  option (gogoproto.description) = true;
+  double xmin = 1 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
+  double xmax = 2 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
+  double ymin = 3 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
+  double ymax = 4 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
 }
 
 message Text {
@@ -111,12 +120,13 @@ message Feature {
       [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
   oneof feature {
     Classification classification = 6
-        [ (gogoproto.moretags) = "classification:\"index,omitempty\"" ];
-    Image image = 7 [ (gogoproto.moretags) = "image:\"index,omitempty\"" ];
-    Text text = 8 [ (gogoproto.moretags) = "text:\"index,omitempty\"" ];
-    Region region = 9 [ (gogoproto.moretags) = "region:\"index,omitempty\"" ];
-    Audio audio = 10 [ (gogoproto.moretags) = "audio:\"index,omitempty\"" ];
-    GeoLocation geolocation = 11[ (gogoproto.moretags) = "geolocation:\"index,omitempty\"" ];
-    Raw raw = 1000 [ (gogoproto.moretags) = "audio:\"raw,omitempty\"" ];
+        [ (gogoproto.moretags) = "yaml:\"classification,omitempty\"" ];
+    Image image = 7 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+    Text text = 8 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
+    Region region = 9 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
+    Audio audio = 10 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
+    GeoLocation geolocation = 11[ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
+    BoundingBox bounding_box = 12 [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
+    Raw raw = 1000 [ (gogoproto.moretags) = "yaml:\"raw,omitempty\"" ];
   }
 }

@@ -10,6 +10,5 @@ var databaseCmd = &cobra.Command{
 func init() {
 	databaseCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "address of the database")
 	databaseCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "name of the database to use")
-
 	databaseCmd.AddCommand(divergenceCmds...)
 }

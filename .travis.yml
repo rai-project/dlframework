@@ -1,36 +1,12 @@
 language: go
-matrix:
-  include:
-    - go: 1.10.x
-    - go: 1.11.x
-    - go: tip
-  allow_failures:
-    - go: tip
-dist: trusty
-sudo: false
-cache:
-  directories:
-    - $HOME/.linuxbrew/
-addons:
-  apt:
-    sources:
-    - sourceline: ppa:ubuntu-toolchain-r/test
-    packages:
-    - build-essential
-    - jq
-before_install:
-- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-install:
-- dep ensure -v
-- rm -fr vendor/github.com/Sirupsen
-- find vendor -type f -exec sed -i 's/Sirupsen/sirupsen/g' {} +
-- make travis
+dist: xenial
+sudo: required
+services:
+  - docker
 script:
-  - echo "Skip tests..."
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - cd ${TRAVIS_BUILD_DIR}/dockerfiles/base
+  - make build
+  - make push
 after_script:
-  - go test -race -v $(glide novendor)
-
-env:
-  global:
-  - PROTOBUF_VER="3.3.0"
-  - PATH=$HOME/protobuf/bin:$PATH
+  - curl -X POST https://hooks.microbadger.com/images/carml/base/Y5oB6PYl8maUalSeWfNjOOUELjw=
