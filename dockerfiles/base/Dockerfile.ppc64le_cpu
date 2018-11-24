@@ -10,50 +10,59 @@ ARG ARCH
 ARG FRAMEWORK_VERSION
 ARG GCC_VERSION
 LABEL org.carml.base.build-date=$BUILD_DATE \
-      org.carml.base.name="base carml image" \
-      org.carml.base.description="" \
-      org.carml.base.url="https://www.carml.org/" \
-      org.carml.base.vcs-ref=$VCS_REF \
-      org.carml.base.vcs-url=$VCS_URL \
-      org.carml.base.vendor="CarML" \
-      org.carml.base.arch=$ARCH \
-      org.carml.base.gcc.version=$GCC_VERSION \
-      org.carml.base.version=$VERSION \
-      org.carml.base.schema-version="1.0"
+  org.carml.base.name="base carml image" \
+  org.carml.base.description="" \
+  org.carml.base.url="https://www.carml.org/" \
+  org.carml.base.vcs-ref=$VCS_REF \
+  org.carml.base.vcs-url=$VCS_URL \
+  org.carml.base.vendor="CarML" \
+  org.carml.base.arch=$ARCH \
+  org.carml.base.gcc.version=$GCC_VERSION \
+  org.carml.base.version=$VERSION \
+  org.carml.base.schema-version="1.0"
 
 #########################################################################
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential \
-        software-properties-common && \
-    add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
-    apt-get update && apt-get install -y --no-install-recommends \
-        gcc-${GCC_VERSION} \
-        g++-${GCC_VERSION}  \
-        libvips          \
-        libjpeg-turbo8-dev \
-        libturbojpeg \
-        libvips-dev \
-        libvips42 \
-        build-essential \
-        pkg-config \
-        git \
-        libopenblas-dev \
-        libopenblas-base \
-        python-dev \
-        libcurl4-openssl-dev \
-        libgtest-dev \
-        cmake \
-        curl \
-        wget \
-        unzip \
-        apt-transport-https \
-    && \
-    rm -rf /var/lib/apt/lists/* && \
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \
-    update-alternatives --config gcc && \
-    gcc --version
+  build-essential \
+  software-properties-common && \
+  add-apt-repository ppa:ubuntu-toolchain-r/test -y && \
+  apt-get update && apt-get install -y --no-install-recommends \
+  gcc-${GCC_VERSION} \
+  g++-${GCC_VERSION}  \
+  libvips          \
+  libjpeg-turbo8-dev \
+  libturbojpeg \
+  libvips-dev \
+  libvips42 \
+  build-essential \
+  pkg-config \
+  git \
+  libopenblas-dev \
+  libopenblas-base \
+  python-dev \
+  libcurl4-openssl-dev \
+  libgtest-dev \
+  cmake \
+  curl \
+  wget \
+  unzip \
+  apt-transport-https \
+  && \
+  rm -rf /var/lib/apt/lists/* && \
+  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCC_VERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCC_VERSION} && \
+  update-alternatives --config gcc && \
+  gcc --version
 
+# Install CMake
+RUN curl -sSL https://cmake.org/files/v3.13/cmake-3.13.0.tar.gz -o cmake.tar.gz \
+  && mkdir -p cmake \
+  && tar --strip-components=1 -C cmake -xf cmake.tar.gz \
+  && cd cmake \
+  && ./bootstrap --system-curl && make && make install \
+  && cd .. \
+  && rm -r cmake \
+  && rm cmake.tar.gz
 
 # Install Go
 ENV GIMME_GO_VERSION "1.11"
@@ -77,23 +86,23 @@ ENV PATH $GOPATH/bin:$PATH
 # Install Go packages
 RUN go get -u github.com/golang/dep/cmd/dep && \
   go get -u github.com/jteeuwen/go-bindata/... && \
-	go get -u github.com/elazarl/go-bindata-assetfs/... && \
-	go get -u google.golang.org/grpc && \
+  go get -u github.com/elazarl/go-bindata-assetfs/... && \
+  go get -u google.golang.org/grpc && \
   go get -u gonum.org/v1/gonum/... && \
   go get -u github.com/golang/dep/cmd/dep && \
   go get -u github.com/UnnoTed/fileb0x && \
-	go get -u github.com/gogo/protobuf/proto && \
-	go get -u github.com/gogo/protobuf/gogoproto && \
-	go get -u github.com/golang/protobuf/protoc-gen-go && \
-	go get -u github.com/gogo/protobuf/protoc-gen-gofast && \
-	go get -u github.com/gogo/protobuf/protoc-gen-gogofaster && \
-	go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
-	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-	go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
-	go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
-	go get -u github.com/go-swagger/go-swagger/cmd/swagger
+  go get -u github.com/gogo/protobuf/proto && \
+  go get -u github.com/gogo/protobuf/gogoproto && \
+  go get -u github.com/golang/protobuf/protoc-gen-go && \
+  go get -u github.com/gogo/protobuf/protoc-gen-gofast && \
+  go get -u github.com/gogo/protobuf/protoc-gen-gogofaster && \
+  go get -u github.com/gogo/protobuf/protoc-gen-gogoslick && \
+  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+  go get -u -d github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway && \
+  go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger && \
+  go get -u github.com/go-swagger/go-swagger/cmd/swagger
 
 
 ENV FRAMEWORKS_DIR=/opt
