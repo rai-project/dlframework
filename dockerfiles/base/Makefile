@@ -26,6 +26,7 @@ GIT_NOT_CLEAN_CHECK = $(shell git status --porcelain)
 
 # Version of gcc to install
 GCC_VERSION = 6
+GCC_VERSION_MLPERF = 5
 
 # If we're releasing to Docker Hub, and we're going to mark it with the latest tag, it should exactly match a version release
 ifeq ($(MAKECMDGOALS),release)
@@ -54,6 +55,13 @@ BUILD_ARGS = --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
 		         --build-arg ARCH=$(ARCH) \
 						 --build-arg GCC_VERSION=$(GCC_VERSION)
 
+BUILD_ARGS_MLPERF = --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+             --build-arg VERSION=$(CODE_VERSION) \
+             --build-arg VCS_URL=`git config --get remote.origin.url` \
+             --build-arg VCS_REF=$(GIT_COMMIT) \
+             --build-arg ARCH=$(ARCH) \
+             --build-arg GCC_VERSION=$(GCC_VERSION_MLPERF)
+
 docker_build_gpu: ## Build GPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_gpu \
@@ -62,6 +70,10 @@ docker_build_cpu:  ## Build CPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_cpu \
 		-t "$(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG)" .
+docker_build_cpu_mlperf:  ## Build CPU Docker image as per MLPerf requirements
+	@docker build $(BUILD_ARGS_MLPERF) \
+		-f Dockerfile.$(ARCH)_cpu_mlperf \
+		-t "$(DOCKER_IMAGE):$(ARCH)-cpu-mlperf-$(DOCKER_TAG)" .
 
 docker_build: docker_build_cpu docker_build_gpu
 
@@ -70,6 +82,11 @@ docker_push_cpu: ## Tag image as latest and Push to DockerHub
 	docker tag $(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-cpu-latest
 	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-$(DOCKER_TAG)
 	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-latest
+
+docker_push_cpu_mlperf: ## Tag image as latest and Push to DockerHub
+	docker tag $(DOCKER_IMAGE):$(ARCH)-cpu-mlperf-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-cpu-mlperf-latest
+	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-mlperf-$(DOCKER_TAG)
+	docker push $(DOCKER_IMAGE):$(ARCH)-cpu-mlperf-latest
 
 docker_push_gpu: ## Tag image as latest and Push to DockerHub
 	docker tag $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-gpu-latest
