@@ -29,32 +29,35 @@ var (
 	// frameworks = dlcmd.DefaultEvaluationFrameworks
 
 	frameworks = []string{
-		"mxnet",
+		// "mxnet",
 		//"caffe2",
 		//"tensorflow",
-		//"caffe",
+		"caffe",
 		//"tensorrt",
 		// "cntk",
 	}
 
 	models = []string{
-		"SqueezeNet_1.0",
-		"SqueezeNet_1.1",
-		"BVLC-AlexNet_1.0",
-		"BVLC-Reference-CaffeNet_1.0",
-		"BVLC-GoogLeNet_1.0",
-		"ResNet101_1.0",
-		"ResNet101_2.0",
-		"WRN50_2.0",
-		"BVLC-Reference-RCNN-ILSVRC13_1.0",
-		"Inception_3.0",
-		"Inception_4.0",
-		"ResNeXt50-32x4d_1.0",
-		"VGG16_1.0",
-		"VGG19_1.0",
+		// "SqueezeNet_1.0",
+		// "SqueezeNet_1.1",
+		// "BVLC-AlexNet_1.0",
+		// "BVLC-Reference-CaffeNet_1.0",
+		// "BVLC-GoogLeNet_1.0",
+		// "ResNet101_1.0",
+		// "ResNet101_2.0",
+		// "WRN50_2.0",
+		// "BVLC-Reference-RCNN-ILSVRC13_1.0",
+		// "Inception_3.0",
+		// "Inception_4.0",
+		// "ResNeXt50-32x4d_1.0",
+		// "VGG16_1.0",
+		// "VGG19_1.0",
+		"ResNet50_1.0",
 	}
 
 	batchSizes = []int{
+		512,
+		448,
 		384,
 		320,
 		256,
@@ -117,7 +120,7 @@ func main() {
 						shellCmd := "predict dataset" +
 							" --debug" +
 							" --verbose" +
-							" --publish=false" +
+							" --publish=true" +
 							" --fail_on_error=true" +
 							" --warmup_num_file_parts=0" +
 							" --num_file_parts=8" +
@@ -126,9 +129,9 @@ func main() {
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							" --publish_predictions=false" +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							" --database_name=tx2_carml_application_trace" +
-							" --database_address=34.207.139.117" +
-							" --trace_level=APPLICATION_TRACE"
+							" --database_name=carml_model_trace" +
+							" --database_address=192.17.102.10" +
+							" --trace_level=MODEL_TRACE"
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
