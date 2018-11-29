@@ -1,4 +1,4 @@
-# DLFramework [![Build Status](https://travis-ci.org/rai-project/dlframework.svg?branch=master)](https://travis-ci.org/rai-project/dlframework)
+# DLFramework [![Build Status](https://travis-ci.org/rai-project/dlframework.svg?branch=master)](https://travis-ci.org/rai-project/dlframework) [![Build Status](https://dev.azure.com/dakkak/rai/_apis/build/status/dlframework)](https://dev.azure.com/dakkak/rai/_build/latest?definitionId=13)
 
 ## Framework Manifest Format
 
