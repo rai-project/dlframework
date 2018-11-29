@@ -129,7 +129,7 @@ var predictDatasetCmd = &cobra.Command{
 
 		log.WithField("dataset_category", datasetCategory).
 			WithField("dataset_name", datasetName).
-			Debug("using the specified dataset")
+			Info("using the specified dataset")
 
 		dataset, err := dldataset.Get(datasetCategory, datasetName)
 		if err != nil {
@@ -297,7 +297,7 @@ var predictDatasetCmd = &cobra.Command{
 			span = nil
 		}()
 
-		//inferenceProgress.FinishPrint("inference complete")
+		// inferenceProgress.FinishPrint("inference complete")
 		inferenceProgress.Finish()
 
 		close(outputs)
@@ -359,7 +359,7 @@ var predictDatasetCmd = &cobra.Command{
 			}
 		}
 
-		//databaseInsertProgress.FinishPrint("inserting prediction complete")
+		// databaseInsertProgress.FinishPrint("inserting prediction complete")
 		databaseInsertProgress.Finish()
 
 		modelAccuracy := evaluation.ModelAccuracy{

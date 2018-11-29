@@ -1,6 +1,7 @@
 package server
 
 import (
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -74,6 +75,9 @@ var predictCmd = &cobra.Command{
 		traceLevel = tracer.LevelFromName(traceLevelName)
 		if databaseName == "" {
 			databaseName = config.App.Name
+		}
+		if databaseName != "" {
+			databaseName = strings.Replace(databaseName, ".", "_", -1)
 		}
 		if databaseAddress != "" {
 			databaseEndpoints = []string{databaseAddress}
