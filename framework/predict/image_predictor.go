@@ -30,7 +30,7 @@ type ImagePredictor struct {
 
 func (p ImagePredictor) GetMeanPath() string {
 	model := p.Model
-	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".mean"))
+	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
 func (p ImagePredictor) GetImageDimensions() ([]int, error) {

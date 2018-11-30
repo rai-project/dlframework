@@ -30,9 +30,9 @@ var (
 
 	frameworks = []string{
 		// "mxnet",
-		//"caffe2",
+		"caffe2",
 		//"tensorflow",
-		"caffe",
+		// "caffe",
 		//"tensorrt",
 		// "cntk",
 	}
@@ -40,7 +40,7 @@ var (
 	models = []string{
 		// "SqueezeNet_1.0",
 		// "SqueezeNet_1.1",
-		// "BVLC-AlexNet_1.0",
+		"BVLC-AlexNet_1.0",
 		// "BVLC-Reference-CaffeNet_1.0",
 		// "BVLC-GoogLeNet_1.0",
 		// "ResNet101_1.0",
@@ -52,32 +52,40 @@ var (
 		// "ResNeXt50-32x4d_1.0",
 		// "VGG16_1.0",
 		// "VGG19_1.0",
-		"ResNet50_1.0",
+		// "ResNet50_1.0",
 	}
 
 	batchSizes = []int{
-		512,
-		448,
-		384,
-		320,
-		256,
-		196,
-		128,
-		96,
-		32,
-		48,
-		32,
-		16,
-		8,
-		4,
-		2,
+		// 512,
+		// 448,
+		// 384,
+		// 320,
+		// 256,
+		// 196,
+		// 128,
+		// 96,
+		// 64,
+		// 48,
+		// 32,
+		// 16,
+		// 8,
+		// 4,
+		// 2,
 		1,
 	}
-	timeout                  = 30 * time.Minute
-	usingGPU                 = true
-	sourcePath               = sourcepath.MustAbsoluteDir()
-	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
+	timeout                       = 30 * time.Minute
+	usingGPU                      = true
+	databaseAddress               = "52.91.29.125"
+	traceLevel                    = "MODEL_TRACE"
+	sourcePath                    = sourcepath.MustAbsoluteDir()
+	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
 )
+
+func cleanString(str string) string {
+	r := strings.NewReplacer(":", "_", " ", "_", "-", "_")
+	res := r.Replace(str)
+	return strings.ToLower(res)
+}
 
 func main() {
 	config.AfterInit(func() {
@@ -86,7 +94,7 @@ func main() {
 
 	dlcmd.Init()
 	for i := 0; i < 1; i++ {
-		for _, usingGPU := range []bool{true} {
+		for _, usingGPU := range []bool{false} {
 			var device string
 			if usingGPU {
 				device = "gpu"
@@ -100,10 +108,13 @@ func main() {
 				if runtime.GOARCH == "amd64" && !cpuid.SupportsAVX() {
 					compileArgs = append(compileArgs, "-tags=noasm")
 				}
-				fmt.Printf("Compiling using :: go %#v\n", compileArgs)
+				if !usingGPU {
+					compileArgs = append(compileArgs, "-tags=nogpu")
+				}
 				cmd := exec.Command("go", compileArgs...)
 				var agentPath = "../../../../" + framework + "/" + framework + "-agent/"
 				cmd.Dir = filepath.Join(sourcePath, agentPath)
+				fmt.Println("Compiling using :: go %#v in %v", compileArgs, agentPath)
 				err := cmd.Run()
 				if err != nil {
 					log.WithError(err).
@@ -115,28 +126,27 @@ func main() {
 				for _, model := range models {
 					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
-						color.Red("⇛ Running", framework, "::", model, "on", device, "with batch size", batchSize)
+						color.Red("⇛ Running %v :: %v on %v with batch size %v", framework, model, device, batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "predict dataset" +
 							" --debug" +
 							" --verbose" +
 							" --publish=true" +
+							" --publish_predictions=false" +
 							" --fail_on_error=true" +
 							" --warmup_num_file_parts=0" +
-							" --num_file_parts=8" +
+							" --num_file_parts=10" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
-							" --publish_predictions=false" +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							" --database_name=carml_model_trace" +
-							" --database_address=192.17.102.10" +
-							" --trace_level=MODEL_TRACE"
+							fmt.Sprintf(" --database_name=%v", cleanString(modelName+"_"+modelVersion)) +
+							fmt.Sprintf(" --database_address=%v", databaseAddress) +
+							fmt.Sprintf(" --trace_level=%v", traceLevel)
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
 							log.WithError(err).WithField("cmd", shellCmd).Error("failed to parse shell command")
-							//os.Exit(-1)
 							continue
 						}
 						fmt.Println("Running " + shellCmd)
@@ -165,7 +175,7 @@ func main() {
 							log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
 						}
 					}
-					color.Red("⇛ Finished running", framework, "::", model, "on", device)
+					color.Red("⇛ Finished running %v :: %v on %v", framework, model, device)
 				}
 			}
 		}

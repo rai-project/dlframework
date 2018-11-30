@@ -148,16 +148,16 @@ func (p Base) GetFeaturesChecksum() string {
 func (p Base) GetWeightsPath() string {
 	model := p.Model
 	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
-	return cleanPath(filepath.Join(p.WorkDir, graphPath))
+	return cleanString(filepath.Join(p.WorkDir, graphPath))
 }
 
 func (p Base) GetGraphPath() string {
 	model := p.Model
 	graphPath := filepath.Base(model.GetModel().GetGraphPath())
-	return cleanPath(filepath.Join(p.WorkDir, graphPath))
+	return cleanString(filepath.Join(p.WorkDir, graphPath))
 }
 
 func (p Base) GetFeaturesPath() string {
 	model := p.Model
-	return cleanPath(filepath.Join(p.WorkDir, model.GetName()+".features"))
+	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".features"))
 }
