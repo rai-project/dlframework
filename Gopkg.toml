@@ -306,10 +306,6 @@
   name = "upper.io/db.v3"
   version = "3.5.3"
 
-[[constraint]]
-  name = "github.com/twpayne/go-geom"
-  branch = "master"
-
 [[override]]
   branch = "master"
   name = "github.com/apache/thrift"
