@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/database"
@@ -381,7 +380,6 @@ var predictDatasetCmd = &cobra.Command{
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
 		query := fmt.Sprintf("http://%s/api/traces/%v", traceServerAddress, traceIDVal)
-		pp.Println(query)
 		resp, err := grequests.Get(query, nil)
 
 		if err != nil {
