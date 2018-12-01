@@ -66,6 +66,10 @@ docker_build_gpu: ## Build GPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_gpu \
 		-t $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG) .
+docker_build_gpu_mlperf: ## Build GPU Docker image as per MLPerf requirements
+	@docker build $(BUILD_ARGS_MLPERF) \
+		-f Dockerfile.$(ARCH)_gpu_mlperf \
+		-t $(DOCKER_IMAGE):$(ARCH)-gpu-mlperf-$(DOCKER_TAG) .
 docker_build_cpu:  ## Build CPU Docker image
 	@docker build $(BUILD_ARGS) \
 		-f Dockerfile.$(ARCH)_cpu \
@@ -92,6 +96,11 @@ docker_push_gpu: ## Tag image as latest and Push to DockerHub
 	docker tag $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-gpu-latest
 	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-$(DOCKER_TAG)
 	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-latest
+
+docker_push_gpu_mlperf: ## Tag image as latest and Push to DockerHub
+	docker tag $(DOCKER_IMAGE):$(ARCH)-gpu-mlperf-$(DOCKER_TAG) $(DOCKER_IMAGE):$(ARCH)-gpu-mlperf-latest
+	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-mlperf-$(DOCKER_TAG)
+	docker push $(DOCKER_IMAGE):$(ARCH)-gpu-mlperf-latest
 
 docker_push: docker_push_cpu docker_push_gpu
 
