@@ -13,6 +13,11 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"github.com/ulule/deepcopier"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
@@ -27,10 +32,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"github.com/ulule/deepcopier"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
