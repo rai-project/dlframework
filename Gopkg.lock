@@ -377,7 +377,7 @@
     "pkg/term/windows",
   ]
   pruneopts = "UT"
-  revision = "baab736a364959f10a5ef86f0cd8a8e44bdcc576"
+  revision = "5480e74971a1d04377e9b6cc7ba0ea047bad93ad"
 
 [[projects]]
   branch = "master"
@@ -980,12 +980,12 @@
   revision = "ae77be60afb1dcacde03767a8c37337fad28ac14"
 
 [[projects]]
-  digest = "1:b625c7c1c1a799ee77fff5d9000c488f0688cd146a8fa61d9cb0bfa5e2e4785a"
+  digest = "0:"
   name = "github.com/klauspost/shutdown2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d72d32c5c226b5e1b8b46d8a3fe86b0b6e88bbb7"
-  version = "v1.0.4"
+  revision = "8cffc584385a89235a56e64a8f610ced202c1da0"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -1348,7 +1348,7 @@
     "mongodb",
   ]
   pruneopts = "UT"
-  revision = "460c9cf6ee9ff85b91220358648023379ccd7bf7"
+  revision = "a090a0038fa3615f1e7c806854320e55e3fd9bbd"
 
 [[projects]]
   branch = "master"
@@ -1391,7 +1391,7 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "27a8cfb730bc4cecd9f31961a159acf34f0281d3"
+  revision = "d2b6c10b4da05534bd065bba8c01b8f396888e6f"
 
 [[projects]]
   branch = "master"
@@ -2096,7 +2096,7 @@
     "websocket",
   ]
   pruneopts = "UT"
-  revision = "fae4c4e3ad76c295c3d6d259f898136b4bf833a8"
+  revision = "351d144fa1fc0bd934e2408202be0c29f25e35a0"
 
 [[projects]]
   branch = "master"
