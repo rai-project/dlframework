@@ -5,7 +5,7 @@ jobs:
           docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
           cd dockerfiles/base
           make docker_build_cpu
-          while $(make docker_push_gpu); do :; done
+          while $(make docker_push_cpu); do :; done
   - job: GPU
     steps:
       - bash: |
@@ -18,4 +18,4 @@ jobs:
       - CPU
       - GPU
     steps:
-      - script: 'curl -X POST https://hooks.microbadger.com/images/carml/go-caffe2/AeELmVfl5ucS37qg1Me7vJwauZY='
+      - script: "curl -X POST https://hooks.microbadger.com/images/carml/go-caffe2/AeELmVfl5ucS37qg1Me7vJwauZY="
