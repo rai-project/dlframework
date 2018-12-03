@@ -105,4 +105,11 @@ RUN go get -u github.com/golang/dep/cmd/dep && \
 ENV FRAMEWORKS_DIR=/opt
 ENV GODEBUG=cgocheck=0
 
+ENV OMP_NUM_THREADS=1
+ENV MKL_NUM_THREADS=1
+ENV OPENBLAS_MAIN_FREE=1
+ENV OPENBLAS_CORETYPE=Prescott # Pentium 4
+ENV C_FLAGS='-O2 -g -Wall -Werror=format-security -Werror=implicit-function-declaration -Wl,-z,defs -Wl,-z,now -fasynchronous-unwind-tables -fexceptions -grecord-gcc-switches -mno-avx -mno-aes -fno-tree-vectorize'
+ENV CXX_FLAGS=$C_FLAGS
+
 RUN mkdir -p $FRAMEWORKS_DIR
