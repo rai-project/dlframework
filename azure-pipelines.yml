@@ -13,6 +13,20 @@ jobs:
           cd dockerfiles/base
           make docker_build_gpu
           while $(make docker_push_gpu); do :; done
+  - job: CPU_MLPerf
+    steps:
+      - bash: |
+          docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+          cd dockerfiles/base
+          make docker_build_cpu_mlperf
+          while $(make docker_push_cpu_mlperf); do :; done
+  - job: GPU_MLPerf
+    steps:
+      - bash: |
+          docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD)
+          cd dockerfiles/base
+          make docker_build_gpu_mlperf
+          while $(make docker_push_gpu_mlperf); do :; done
   - job: Update_Microbadger
     dependsOn:
       - CPU

@@ -112,4 +112,11 @@ ENV OPENBLAS_CORETYPE=Prescott # Pentium 4
 ENV C_FLAGS='-O2 -g -Wall -Werror=format-security -Werror=implicit-function-declaration -Wl,-z,defs -Wl,-z,now -fasynchronous-unwind-tables -fexceptions -grecord-gcc-switches -mno-avx -mno-aes -fno-tree-vectorize'
 ENV CXX_FLAGS=$C_FLAGS
 
+
+LABEL org.mlmodelscope.base.variant="mlperf" \
+  org.mlmodelscope.base.num_threads="1" \
+  org.mlmodelscope.base.c_flags=$C_FLAGS \
+  org.mlmodelscope.base.cxx_flags=$CXX_FLAGS \
+  org.mlmodelscope.base.core_type=$OPENBLAS_CORETYPE
+
 RUN mkdir -p $FRAMEWORKS_DIR
