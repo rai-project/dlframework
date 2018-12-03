@@ -133,7 +133,7 @@
   name = "github.com/apache/thrift"
   packages = ["lib/go/thrift"]
   pruneopts = "UT"
-  revision = "2c69b5a01e589c19855a00b68596d0564bb2bb5b"
+  revision = "dd965c1eb437e0067009492b0d18b1d3f8e79d07"
 
 [[projects]]
   branch = "master"
@@ -274,7 +274,7 @@
   name = "github.com/containerd/continuity"
   packages = ["pathdriver"]
   pruneopts = "UT"
-  revision = "bea7585dbfac2847dbf49a6b8e7738a36c09bc75"
+  revision = "004b46473808b3e7a4a3049c20e4376c91eb966d"
 
 [[projects]]
   digest = "0:"
@@ -377,7 +377,7 @@
     "pkg/term/windows",
   ]
   pruneopts = "UT"
-  revision = "5480e74971a1d04377e9b6cc7ba0ea047bad93ad"
+  revision = "65d9a5dde589f96f4728782fd0fa7de7bb6b3146"
 
 [[projects]]
   branch = "master"
@@ -630,7 +630,7 @@
   name = "github.com/go-openapi/spec"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c3754ea506f554c8ec5572f3c776075eb69a23c6"
+  revision = "5b6cdde3200976e3ecceb2868706ee39b6aff3e4"
 
 [[projects]]
   branch = "master"
@@ -1195,7 +1195,7 @@
     "libcontainer/user",
   ]
   pruneopts = "UT"
-  revision = "4932620b6237ed2a91aa5b5ca8cca6a73c10311b"
+  revision = "ff38d6e7ccba18a10497eb67ebfcc6c386c7ac64"
 
 [[projects]]
   branch = "master"
@@ -1348,7 +1348,7 @@
     "mongodb",
   ]
   pruneopts = "UT"
-  revision = "a090a0038fa3615f1e7c806854320e55e3fd9bbd"
+  revision = "ef4eddec538ec52d1b0311739e14c010188bb2c0"
 
 [[projects]]
   branch = "master"
@@ -1597,7 +1597,7 @@
   name = "github.com/rai-project/synthetic_load"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c3f789b6c8a91616543f3dc668db0df4f87a6998"
+  revision = "58faa17e0d5086061017c24f18b74cf94c7fcf3e"
 
 [[projects]]
   branch = "master"
@@ -1732,8 +1732,8 @@
     "mem",
   ]
   pruneopts = "UT"
-  revision = "3ec50d2876a36047b2ca39f955ba88fb7a455e92"
-  version = "v2.18.10"
+  revision = "0f70a4a06f7a1039305ec9b3ba9c2800f8929fba"
+  version = "v2.18.11"
 
 [[projects]]
   digest = "1:d567a75ca7997f273776fc257f338d329c2e5877a8105ff8bd0234f75d45d4c0"
@@ -2064,7 +2064,7 @@
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
   branch = "master"
@@ -2110,7 +2110,7 @@
     "jwt",
   ]
   pruneopts = "UT"
-  revision = "28207608b83849a028d4f12e46533a6b6894ecaf"
+  revision = "d668ce993890a79bda886613ee587a69dd5da7a6"
 
 [[projects]]
   branch = "master"
@@ -2209,7 +2209,7 @@
     "googleapis/rpc/status",
   ]
   pruneopts = "UT"
-  revision = "31ac5d88444a9e7ad18077db9a165d793ad06a2e"
+  revision = "bd91e49a0898e27abb88c339b432fa53d7497ac0"
 
 [[projects]]
   digest = "0:"
