@@ -31,8 +31,8 @@ var (
 	// frameworks = dlcmd.DefaultEvaluationFrameworks
 
 	frameworks = []string{
-		"mxnet",
-		"caffe2",
+		// "mxnet",
+		// "caffe2",
 		//"tensorflow",
 		"caffe",
 		//"tensorrt",
@@ -40,45 +40,47 @@ var (
 	}
 
 	models = []string{
-		"SqueezeNet_1.0",
-		"SqueezeNet_1.1",
+		// "SqueezeNet_1.0",
+		// "SqueezeNet_1.1",
 		"BVLC-AlexNet_1.0",
-		"BVLC-Reference-CaffeNet_1.0",
-		"BVLC-GoogLeNet_1.0",
-		"ResNet101_1.0",
-		"ResNet101_2.0",
-		"WRN50_2.0",
-		"BVLC-Reference-RCNN-ILSVRC13_1.0",
-		"Inception_3.0",
-		"Inception_4.0",
-		"ResNeXt50-32x4d_1.0",
-		"VGG16_1.0",
-		"VGG19_1.0",
-		"ResNet50_1.0",
+		// "BVLC-Reference-CaffeNet_1.0",
+		// "BVLC-GoogLeNet_1.0",
+		// "ResNet101_1.0",
+		// "ResNet101_2.0",
+		// "WRN50_2.0",
+		// "BVLC-Reference-RCNN-ILSVRC13_1.0",
+		// "Inception_3.0",
+		// "Inception_4.0",
+		// "ResNeXt50-32x4d_1.0",
+		// "VGG16_1.0",
+		// "VGG19_1.0",
+		// "ResNet50_1.0",
+		// "SphereFace_1.0",
 	}
 
 	batchSizes = []int{
-		512,
-		448,
-		384,
-		320,
-		256,
-		196,
-		128,
-		96,
-		64,
+		// 768,
+		// 512,
+		// // 448,
+		// 384,
+		// // 320,
+		// 256,
+		// // 196,
+		// 128,
+		// // 96,
+		// 64,
 		48,
-		32,
-		16,
-		8,
-		4,
-		2,
-		1,
+		// 32,
+		// 16,
+		// 8,
+		// 4,
+		// 2,
+		// 1,
 	}
-	timeout                       = 30 * time.Minute
+	timeout                       = 300 * time.Minute
 	usingGPU                      = true
-	databaseAddress               = "52.91.29.125"
-	traceLevel                    = "MODEL_TRACE"
+	databaseAddress               = "52.91.209.88"
+	traceLevel                    = "NO_TRACE"
 	sourcePath                    = sourcepath.MustAbsoluteDir()
 	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
 )
@@ -113,7 +115,7 @@ func main() {
 				if !usingGPU {
 					compileArgs = append(compileArgs, "-tags=nogpu")
 				}
-				compileArgs = append(compileArgs, "-tags=debug")
+				// compileArgs = append(compileArgs, "-tags=debug")
 				cmd := exec.Command("go", compileArgs...)
 				var agentPath = "../../../../" + framework + "/" + framework + "-agent/"
 				cmd.Dir = filepath.Join(sourcePath, agentPath)
@@ -134,16 +136,16 @@ func main() {
 						shellCmd := "predict dataset" +
 							" --debug" +
 							" --verbose" +
-							" --publish=true" +
+							" --publish=false" +
 							" --publish_predictions=false" +
 							" --fail_on_error=true" +
 							" --warmup_num_file_parts=0" +
-							" --num_file_parts=10" +
+							" --num_file_parts=-1" +
 							fmt.Sprintf(" --gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							fmt.Sprintf(" --database_name=%v", cleanString(modelName+"_"+modelVersion)) +
+							fmt.Sprintf(" --database_name=%v", cleanString(modelName+"_"+modelVersion+"_predictions")) +
 							fmt.Sprintf(" --database_address=%v", databaseAddress) +
 							fmt.Sprintf(" --trace_level=%v", traceLevel)
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
