@@ -1195,7 +1195,7 @@
     "libcontainer/user",
   ]
   pruneopts = "UT"
-  revision = "96ec2177ae841256168fcf76954f7177af9446eb"
+  revision = "25f3f893c86d07426df93b7aa172f33fdf093fbd"
 
 [[projects]]
   branch = "master"
