@@ -193,8 +193,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "ceab7b7ac6f535d1397f124620720b5145f1ad59"
-  version = "v1.15.88"
+  revision = "6b08b085a17ae5a6040fdb67971812696569dced"
+  version = "v1.15.89"
 
 [[projects]]
   branch = "master"
@@ -334,7 +334,7 @@
     "reference",
   ]
   pruneopts = "UT"
-  revision = "d9e12182359e0893efd7546d4b764f6c24e3118c"
+  revision = "40b7b5830a2337bb07627617740c0e39eb92800c"
 
 [[projects]]
   branch = "master"
@@ -1195,7 +1195,7 @@
     "libcontainer/user",
   ]
   pruneopts = "UT"
-  revision = "ff38d6e7ccba18a10497eb67ebfcc6c386c7ac64"
+  revision = "96ec2177ae841256168fcf76954f7177af9446eb"
 
 [[projects]]
   branch = "master"
@@ -1391,7 +1391,7 @@
     "eventflow",
   ]
   pruneopts = "UT"
-  revision = "d2b6c10b4da05534bd065bba8c01b8f396888e6f"
+  revision = "e0b15a6a3390175c4b1cad1ba93c8e3a4155d9cf"
 
 [[projects]]
   branch = "master"
@@ -2179,7 +2179,7 @@
     "logging/v2",
   ]
   pruneopts = "UT"
-  revision = "af4fc4062c262223ddc2d92f5f35a93690db383a"
+  revision = "6142e720c068c6cd71f2258e007ff1991572e1d5"
 
 [[projects]]
   digest = "0:"
