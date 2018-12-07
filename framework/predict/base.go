@@ -104,6 +104,9 @@ func (p Base) GetWeightsUrl() string {
 	if model.GetModel().GetIsArchive() {
 		return model.GetModel().GetBaseUrl()
 	}
+	if model.GetModel().GetWeightsPath() == nil {
+		return ""
+	}
 	return p.baseURL(model) + model.GetModel().GetWeightsPath()
 }
 
@@ -112,6 +115,10 @@ func (p Base) GetGraphUrl() string {
 	if model.GetModel().GetIsArchive() {
 		return model.GetModel().GetBaseUrl()
 	}
+	if model.GetModel().GetGraphPath() == nil {
+		return ""
+	}
+
 	return p.baseURL(model) + model.GetModel().GetGraphPath()
 }
 
