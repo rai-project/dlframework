@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	yaml "gopkg.in/yaml.v2"
+
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/tracer"
-	yaml "gopkg.in/yaml.v2"
 )
 
 type Base struct {
@@ -104,10 +105,10 @@ func (p Base) GetWeightsUrl() string {
 	if model.GetModel().GetIsArchive() {
 		return model.GetModel().GetBaseUrl()
 	}
-	if model.GetModel().GetWeightsPath() == nil {
+	if model.GetModel().GetWeightsPath() == "" {
 		return ""
 	}
-	return p.baseURL(model) + model.GetModel().GetWeightsPath()
+	return strings.TrimRight(p.baseURL(model), "/") + "/" + model.GetModel().GetWeightsPath()
 }
 
 func (p Base) GetGraphUrl() string {
@@ -115,11 +116,10 @@ func (p Base) GetGraphUrl() string {
 	if model.GetModel().GetIsArchive() {
 		return model.GetModel().GetBaseUrl()
 	}
-	if model.GetModel().GetGraphPath() == nil {
+	if model.GetModel().GetGraphPath() == "" {
 		return ""
 	}
-
-	return p.baseURL(model) + model.GetModel().GetGraphPath()
+	return strings.TrimRight(p.baseURL(model), "/") + "/" + model.GetModel().GetGraphPath()
 }
 
 func (p Base) GetFeaturesUrl() string {
