@@ -80,6 +80,7 @@ ENV PATH ${GOROOT}/bin:${PATH}
 ENV GOPATH "/go"
 ENV PATH $GOPATH/bin:$PATH
 
+ENV LD_LIBRARY_PATH /usr/local/cuda/compat:$LD_LIBRARY_PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 
 # Install Go packages
