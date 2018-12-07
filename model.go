@@ -9,8 +9,9 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/Unknwon/com"
 	"github.com/pkg/errors"
-	"github.com/rai-project/config"
 	"golang.org/x/sync/syncmap"
+
+	"github.com/rai-project/config"
 )
 
 var modelRegistry = syncmap.Map{}

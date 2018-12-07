@@ -1,6 +1,8 @@
 package cmd
 
-import "strings"
+import (
+	"strings"
+)
 
 var (
 	DefaultEvaulationModels = []string{
@@ -40,8 +42,8 @@ var (
 	}
 )
 
-func ParseModelName(model string) (modelName, version string) {
+func ParseModelName(model string) (string, string) {
 	splt := strings.Split(model, "_")
-	modelName, modelVersion := splt[0], splt[1]
-	return modelName, modelVersion
+	modelName, modelVersion := splt[0:len(splt)-1], splt[len(splt)-1]
+	return strings.Join(modelName, "_"), modelVersion
 }
