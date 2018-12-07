@@ -154,12 +154,18 @@ func (p Base) GetFeaturesChecksum() string {
 
 func (p Base) GetWeightsPath() string {
 	model := p.Model
+	if model.GetModel().GetWeightsPath() == "" {
+		return ""
+	}
 	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
 	return cleanString(filepath.Join(p.WorkDir, graphPath))
 }
 
 func (p Base) GetGraphPath() string {
 	model := p.Model
+	if model.GetModel().GetGraphPath() == "" {
+		return ""
+	}
 	graphPath := filepath.Base(model.GetModel().GetGraphPath())
 	return cleanString(filepath.Join(p.WorkDir, graphPath))
 }
