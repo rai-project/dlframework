@@ -174,3 +174,9 @@ func (p Base) GetFeaturesPath() string {
 	model := p.Model
 	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".features"))
 }
+
+func (p Base) GetFeatureType() dlframework.FeatureType {
+	model := p.Model
+	ty := strings.ToUpper(model.GetOutput().GetType())
+	return dlframework.FeatureType(dlframework.FeatureType_value[ty])
+}
