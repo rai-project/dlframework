@@ -33,13 +33,13 @@ option go_package = "dlframework";
 enum FeatureType {
   UNKNOWN = 0;
   IMAGE = 1;
-  CLASSIFICATION = 2; 
-  GEOLOCATION = 3;      
-  REGION = 4;   
-  TEXT = 5;    
-  AUDIO = 6;  
-  BOUNDINGBOX = 7;  
-  RAW = 100;     
+  CLASSIFICATION = 2;
+  GEOLOCATION = 3;
+  REGION = 4;
+  TEXT = 5;
+  AUDIO = 6;
+  BOUNDINGBOX = 7;
+  RAW = 100;
 }
 
 message Image {
@@ -86,6 +86,8 @@ message BoundingBox {
   double xmax = 2 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
   double ymin = 3 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
   double ymax = 4 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
+  int32 index = 5 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string label = 6 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
 
 message Text {
@@ -104,7 +106,6 @@ message Raw {
   bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
 }
-
 
 message Feature {
   option (gogoproto.description) = true;
@@ -125,8 +126,10 @@ message Feature {
     Text text = 8 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
     Region region = 9 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
     Audio audio = 10 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
-    GeoLocation geolocation = 11[ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
-    BoundingBox bounding_box = 12 [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
+    GeoLocation geolocation = 11
+        [ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
+    BoundingBox bounding_box = 12
+        [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
     Raw raw = 1000 [ (gogoproto.moretags) = "yaml:\"raw,omitempty\"" ];
   }
 }

@@ -542,6 +542,13 @@ const (
         "ymax": {
           "type": "number",
           "format": "double"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
         }
       }
     },
