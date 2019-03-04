@@ -69,8 +69,8 @@ message Classification {
 message GeoLocation {
   option (gogoproto.description) = true;
   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  double latitude = 2 [ (gogoproto.moretags) = "yaml:\"latitude,omitempty\"" ];
-  double longitude = 3
+  float latitude = 2 [ (gogoproto.moretags) = "yaml:\"latitude,omitempty\"" ];
+  float longitude = 3
       [ (gogoproto.moretags) = "yaml:\"longitude,omitempty\"" ];
 }
 
@@ -82,10 +82,10 @@ message Region {
 
 message BoundingBox {
   option (gogoproto.description) = true;
-  double xmin = 1 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
-  double xmax = 2 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
-  double ymin = 3 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
-  double ymax = 4 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
+  float xmin = 1 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
+  float xmax = 2 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
+  float ymin = 3 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
+  float ymax = 4 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
   int32 index = 5 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   string label = 6 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
