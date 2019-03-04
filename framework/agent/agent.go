@@ -27,14 +27,14 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/rai-project/dlframework/framework/options"
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
 )
 
 type Agent struct {
 	base
 	loadedPredictors syncmap.Map
-	predictor        predict.Predictor
+	predictor        predictor.Predictor
 	options          *Options
 	channelBuffer    int
 }
@@ -43,7 +43,7 @@ var (
 	DefaultChannelBuffer = 1000
 )
 
-func New(predictor predict.Predictor, opts ...Option) (*Agent, error) {
+func New(predictor predictor.Predictor, opts ...Option) (*Agent, error) {
 	options, err := NewOptions(opts...)
 	if err != nil {
 		return nil, err
@@ -98,13 +98,13 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	return &dl.Predictor{ID: id}, nil
 }
 
-func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predict.Predictor, error) {
+func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.Predictor, error) {
 	val, ok := p.loadedPredictors.Load(id)
 	if !ok {
 		return nil, errors.Errorf("predictor %v was not found", id)
 	}
 
-	predictor, ok := val.(predict.Predictor)
+	predictor, ok := val.(predictor.Predictor)
 
 	if !ok {
 		return nil, errors.Errorf("predictor %v is not a valid image predictor", predictor)

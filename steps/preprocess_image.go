@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
@@ -13,10 +13,10 @@ import (
 
 type preprocessImage struct {
 	base
-	options predict.PreprocessOptions
+	options predictor.PreprocessOptions
 }
 
-func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
+func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 	res := preprocessImage{
 		base: base{
 			info: "PreprocessImage",
@@ -36,7 +36,7 @@ func NewPreprocessImage(options predict.PreprocessOptions) pipeline.Step {
 		mode = options.ColorMode
 	}
 
-	res.options = predict.PreprocessOptions{
+	res.options = predictor.PreprocessOptions{
 		Context:   options.Context,
 		MeanImage: mean,
 		Scale:     scale,

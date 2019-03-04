@@ -9,16 +9,16 @@ import (
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/options"
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/pipeline"
 )
 
 type predictImage struct {
 	base
-	predictor predict.Predictor
+	predictor predictor.Predictor
 }
 
-func NewPredictImage(predictor predict.Predictor) pipeline.Step {
+func NewPredictImage(predictor predictor.Predictor) pipeline.Step {
 	res := predictImage{
 		base: base{
 			info: "PredictImage",

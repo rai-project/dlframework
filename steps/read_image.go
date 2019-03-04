@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
@@ -17,10 +17,10 @@ type readImage struct {
 	base
 	width   int
 	height  int
-	options predict.PreprocessOptions
+	options predictor.PreprocessOptions
 }
 
-func NewReadImage(options predict.PreprocessOptions) pipeline.Step {
+func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
 
 	width, height := 0, 0
 	if len(options.Size) == 1 {

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	dl "github.com/rai-project/dlframework"
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"golang.org/x/sync/syncmap"
 )
 
@@ -12,7 +12,7 @@ var (
 	predictorServers syncmap.Map
 )
 
-func GetPredictor(framework dl.FrameworkManifest) (predict.Predictor, error) {
+func GetPredictor(framework dl.FrameworkManifest) (predictor.Predictor, error) {
 	name, err := framework.CanonicalName()
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func GetPredictor(framework dl.FrameworkManifest) (predict.Predictor, error) {
 			Warn("cannot find registered predictor server")
 		return nil, errors.New("cannot find registered predictor server")
 	}
-	predictor, ok := val.(predict.Predictor)
+	predictor, ok := val.(predictor.Predictor)
 	if !ok {
 		log.WithField("framework", framework.MustCanonicalName()).
 			Warn("invalid registered predictor server")
@@ -32,7 +32,7 @@ func GetPredictor(framework dl.FrameworkManifest) (predict.Predictor, error) {
 	return predictor, nil
 }
 
-func AddPredictor(framework dl.FrameworkManifest, predictor predict.Predictor) error {
+func AddPredictor(framework dl.FrameworkManifest, predictor predictor.Predictor) error {
 	name, err := framework.CanonicalName()
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func AddPredictor(framework dl.FrameworkManifest, predictor predict.Predictor) e
 func PredictorFrameworks() []dl.FrameworkManifest {
 	frameworks := []dl.FrameworkManifest{}
 	predictorServers.Range(func(_ interface{}, val interface{}) bool {
-		if predictor, ok := val.(predict.Predictor); ok {
+		if predictor, ok := val.(predictor.Predictor); ok {
 			framework, _, _ := predictor.Info()
 			frameworks = append(frameworks, framework)
 		}
