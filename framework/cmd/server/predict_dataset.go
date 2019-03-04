@@ -366,8 +366,8 @@ var predictDatasetCmd = &cobra.Command{
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
 			CreatedAt: time.Now(),
-			Top1:      float64(cntTop1) / float64(len(files)),
-			Top5:      float64(cntTop5) / float64(len(files)),
+			Top1:      float64(cntTop1) / float64(batchSize*numFileParts),
+			Top5:      float64(cntTop5) / float64(batchSize*numFileParts),
 		}
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")
