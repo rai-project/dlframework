@@ -33,28 +33,28 @@ func ensureBoundingBox(o *dlframework.Feature) *dlframework.BoundingBox {
 	return bbox.BoundingBox
 }
 
-func BoundingBoxXmin(xmin int32) Option {
+func BoundingBoxXmin(xmin float32) Option {
 	return func(o *dlframework.Feature) {
 		bbox := ensureBoundingBox(o)
 		bbox.Xmin = xmin
 	}
 }
 
-func BoundingBoxXmax(xmax int32) Option {
+func BoundingBoxXmax(xmax float32) Option {
 	return func(o *dlframework.Feature) {
 		bbox := ensureBoundingBox(o)
 		bbox.Xmax = xmax
 	}
 }
 
-func BoundingBoxYmin(ymin int32) Option {
+func BoundingBoxYmin(ymin float32) Option {
 	return func(o *dlframework.Feature) {
 		bbox := ensureBoundingBox(o)
 		bbox.Ymin = ymin
 	}
 }
 
-func BoundingBoxXmax(Ymax int32) Option {
+func BoundingBoxYmax(ymax float32) Option {
 	return func(o *dlframework.Feature) {
 		bbox := ensureBoundingBox(o)
 		bbox.Ymax = ymax

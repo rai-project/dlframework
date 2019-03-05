@@ -529,19 +529,19 @@ const (
       "properties": {
         "xmin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "xmax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "index": {
           "type": "integer",
@@ -748,11 +748,11 @@ const (
         },
         "latitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "longitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         }
       }
     },

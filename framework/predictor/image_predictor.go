@@ -216,8 +216,8 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 				feature.BoundingBoxXmax((boxes[ii*featureLen+jj][3])),
 				feature.BoundingBoxYmin((boxes[ii*featureLen+jj][0])),
 				feature.BoundingBoxYmax((boxes[ii*featureLen+jj][2])),
-        feature.BoundingBoxLabel(labels[jj]),
-        feature.BoundingBoxLabel(labels[jj),
+				feature.BoundingBoxLabel(labels[jj]),
+				feature.BoundingBoxIndex(int32(classes[jj])),
 				feature.Probability(probabilities[ii*featureLen+jj]),
 			)
 		}
