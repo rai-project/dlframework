@@ -3,7 +3,7 @@ package options
 import (
 	"strings"
 
-	"github.com/rai-project/nvidia-smi"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 
 	context "context"
 
@@ -19,8 +19,8 @@ type Options struct {
 	traceLevel   tracer.Level
 	symbol       []byte
 	weights      []byte
-	inputNodes   []inputNode
-	outputNode   string
+	inputNodes   []node
+	outputNodes  []string
 }
 
 type Option func(*Options)
@@ -134,7 +134,7 @@ func InputNode(key string, shape []int) Option {
 	return func(o *Options) {
 		o.inputNodes = append(
 			o.inputNodes,
-			inputNode{
+			node{
 				key:   key,
 				shape: shape,
 			},
@@ -142,18 +142,18 @@ func InputNode(key string, shape []int) Option {
 	}
 }
 
-func (o *Options) InputNodes() []inputNode {
+func (o *Options) InputNodes() []node {
 	return o.inputNodes
 }
 
-func OutputNode(output string) Option {
+func OutputNode(key string) Option {
 	return func(o *Options) {
-		o.outputNode = output
+		o.outputNodes = append(o.outputNodes, key)
 	}
 }
 
-func (o *Options) OutputNode() string {
-	return o.outputNode
+func (o *Options) OutputNodes() []string {
+	return o.outputNodes
 }
 
 func (o *Options) Append(opts ...Option) *Options {

@@ -40,72 +40,23 @@ func (b Base) TraceLevel() tracer.Level {
 	return b.Options.TraceLevel()
 }
 
-func (p Base) GetLayerName(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) (string, error) {
+func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter, name string) (string, error) {
 	if typeParameters == nil {
 		return "", errors.New("invalid type parameters")
 	}
-	pdims, ok := typeParameters["layer_name"]
+	pdims, ok := typeParameters[name]
 	if !ok {
-		return "", errors.New("expecting a layer name")
+		return "", errors.New("expecting a type parameter")
 	}
 	pdimsVal := pdims.Value
 	if pdimsVal == "" {
-		return "", errors.New("invalid layer name")
+		return "", errors.New("invalid type parameter")
 	}
-
-	var name string
-	if err := yaml.Unmarshal([]byte(pdimsVal), &name); err != nil {
-		return "", errors.Errorf("unable to get the layer name %v as a string", pdimsVal)
+	var ret string
+	if err := yaml.Unmarshal([]byte(pdimsVal), &ret); err != nil {
+		return "", errors.Errorf("unable to get the type parameter %v as a string", pdimsVal)
 	}
-	return name, nil
-}
-
-func (p Base) GetLayerNames(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter) ([]string, error) {
-	if typeParameters == nil {
-		return nil, errors.New("invalid type parameters")
-	}
-	pdims, ok := typeParameters["layer_names"]
-	if !ok {
-		return nil, errors.New("expecting layer names")
-	}
-	pdimsVal := pdims.Value
-	if pdimsVal == "" {
-		return nil, errors.New("invalid layer names")
-	}
-
-	var names []string
-	if err := yaml.Unmarshal([]byte(pdimsVal), &names); err != nil {
-		return nil, errors.Errorf("unable to get the layer name %v as a string", pdimsVal)
-	}
-	return names, nil
-}
-
-func (p Base) GetInputLayerName(defaultValue string) string {
-	model := p.Model
-	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	name, err := p.GetLayerName(typeParameters)
-	if err != nil {
-		if defaultValue == "" {
-			return DefaultInputLayerName
-		}
-		return defaultValue
-	}
-	return name
-}
-
-func (p Base) GetOutputLayerNames(defaultValue []string) []string {
-	model := p.Model
-	modelOutput := model.GetOutput()
-	typeParameters := modelOutput.GetParameters()
-	names, err := p.GetLayerNames(typeParameters)
-	if err != nil {
-		if defaultValue == nil {
-			return DefaultOutputLayerNames
-		}
-		return defaultValue
-	}
-	return names
+	return ret, nil
 }
 
 func (p Base) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
