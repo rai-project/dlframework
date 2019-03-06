@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/rai-project/dlframework/framework/predict"
+	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
 	"github.com/stretchr/testify/assert"

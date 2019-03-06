@@ -90,7 +90,11 @@ func (p Base) GetGraphUrl() string {
 	if model.GetModel().GetGraphPath() == "" {
 		return ""
 	}
-	return strings.TrimRight(p.baseURL(model), "/") + "/" + model.GetModel().GetGraphPath()
+	url := strings.TrimRight(p.baseURL(model), "/")
+	if url != "" {
+		url += "/"
+	}
+	return url + model.GetModel().GetGraphPath()
 }
 
 func (p Base) GetFeaturesUrl() string {

@@ -19,8 +19,8 @@ type Options struct {
 	traceLevel   tracer.Level
 	symbol       []byte
 	weights      []byte
-	inputNodes   []node
-	outputNodes  []string
+	// inputNodes   []node
+	// outputNodes  []string
 }
 
 type Option func(*Options)
@@ -130,31 +130,31 @@ func (o *Options) Weights() []byte {
 	return o.weights
 }
 
-func InputNode(key string, shape []int) Option {
-	return func(o *Options) {
-		o.inputNodes = append(
-			o.inputNodes,
-			node{
-				key:   key,
-				shape: shape,
-			},
-		)
-	}
-}
+// func InputNode(key string, shape []int) Option {
+// 	return func(o *Options) {
+// 		o.inputNodes = append(
+// 			o.inputNodes,
+// 			node{
+// 				key:   key,
+// 				shape: shape,
+// 			},
+// 		)
+// 	}
+// }
 
-func (o *Options) InputNodes() []node {
-	return o.inputNodes
-}
+// func (o *Options) InputNodes() []node {
+// 	return o.inputNodes
+// }
 
-func OutputNode(key string) Option {
-	return func(o *Options) {
-		o.outputNodes = append(o.outputNodes, key)
-	}
-}
+// func OutputNode(key string) Option {
+// 	return func(o *Options) {
+// 		o.outputNodes = append(o.outputNodes, key)
+// 	}
+// }
 
-func (o *Options) OutputNodes() []string {
-	return o.outputNodes
-}
+// func (o *Options) OutputNodes() []string {
+// 	return o.outputNodes
+// }
 
 func (o *Options) Append(opts ...Option) *Options {
 	for _, oi := range opts {
@@ -176,14 +176,14 @@ func New(opts ...Option) *Options {
 		o(options)
 	}
 
-	for ii, inputNode := range options.inputNodes {
-		batchSize := options.batchSize
-		if len(options.inputNodes[ii].shape) == 3 {
-			options.inputNodes[ii].shape = append([]int{batchSize}, inputNode.shape...)
-		} else {
-			options.inputNodes[ii].shape[0] = batchSize
-		}
-	}
+	// for ii, inputNode := range options.inputNodes {
+	// 	batchSize := options.batchSize
+	// 	if len(options.inputNodes[ii].shape) == 3 {
+	// 		options.inputNodes[ii].shape = append([]int{batchSize}, inputNode.shape...)
+	// 	} else {
+	// 		options.inputNodes[ii].shape[0] = batchSize
+	// 	}
+	// }
 
 	return options
 }

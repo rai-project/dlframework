@@ -613,21 +613,28 @@ func init() {
     "dlframeworkBoundingBox": {
       "type": "object",
       "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
         "xmax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "xmin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         }
       }
     },
@@ -866,11 +873,11 @@ func init() {
         },
         "latitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "longitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         }
       }
     },
@@ -1803,21 +1810,28 @@ func init() {
     "dlframeworkBoundingBox": {
       "type": "object",
       "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
         "xmax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "xmin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymax": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "ymin": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         }
       }
     },
@@ -2056,11 +2070,11 @@ func init() {
         },
         "latitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "longitude": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         }
       }
     },

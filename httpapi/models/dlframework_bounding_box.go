@@ -15,17 +15,23 @@ import (
 // swagger:model dlframeworkBoundingBox
 type DlframeworkBoundingBox struct {
 
+	// index
+	Index int32 `json:"index,omitempty"`
+
+	// label
+	Label string `json:"label,omitempty"`
+
 	// xmax
-	Xmax float64 `json:"xmax,omitempty"`
+	Xmax float32 `json:"xmax,omitempty"`
 
 	// xmin
-	Xmin float64 `json:"xmin,omitempty"`
+	Xmin float32 `json:"xmin,omitempty"`
 
 	// ymax
-	Ymax float64 `json:"ymax,omitempty"`
+	Ymax float32 `json:"ymax,omitempty"`
 
 	// ymin
-	Ymin float64 `json:"ymin,omitempty"`
+	Ymin float32 `json:"ymin,omitempty"`
 }
 
 // Validate validates this dlframework bounding box
