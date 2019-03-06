@@ -21,7 +21,7 @@ type Predictor interface {
 	// Returns the preprocess options
 	GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error)
 	// Returns the handle to features
-	Predict(ctx context.Context, data [][]float32, opts ...options.Option) error
+	Predict(ctx context.Context, data interface{}, opts ...options.Option) error
 	// Returns the features
 	ReadPredictedFeatures(ctx context.Context) ([]dlframework.Features, error)
 	// Clears the internal state of a predictor

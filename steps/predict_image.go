@@ -31,19 +31,19 @@ func NewPredictImage(predictor predictor.Predictor) pipeline.Step {
 }
 
 func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline.Options) interface{} {
-	in, ok := in0.([]interface{})
+	data, ok := in0.([]interface{})
 	if !ok {
 		return errors.Errorf("expecting []interface{} for predict image step, but got %v", in0)
 	}
 
-	var data [][]float32
-	for _, e := range in {
-		v, ok := e.([]float32)
-		if !ok {
-			return errors.Errorf("expecting []float32 for each image in predict image step, but got %v", e)
-		}
-		data = append(data, v)
-	}
+	// var data [][]float32
+	// for _, e := range in {
+	// 	v, ok := e.([]float32)
+	// 	if !ok {
+	// 		return errors.Errorf("expecting []float32 for each image in predict image step, but got %v", e)
+	// 	}
+	// 	data = append(data, v)
+	// }
 
 	if p.predictor == nil {
 		return errors.New("the predict image was created with a nil predictor")
@@ -94,7 +94,7 @@ func (p predictImage) do(ctx context.Context, in0 interface{}, pipelineOpts *pip
 
 	features, err := p.predictor.ReadPredictedFeatures(ctx)
 	lst := make([]interface{}, len(data))
-	for ii := 0; ii < len(in); ii++ {
+	for ii := 0; ii < len(data); ii++ {
 		lst[ii] = features[ii]
 	}
 
