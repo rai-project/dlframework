@@ -76,7 +76,7 @@ func (x ExecutionOptions_TraceLevel) String() string {
 	return proto.EnumName(ExecutionOptions_TraceLevel_name, int32(x))
 }
 func (ExecutionOptions_TraceLevel) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{3, 0}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{3, 0}
 }
 
 type CPUOptions struct {
@@ -85,7 +85,7 @@ type CPUOptions struct {
 func (m *CPUOptions) Reset()      { *m = CPUOptions{} }
 func (*CPUOptions) ProtoMessage() {}
 func (*CPUOptions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{0}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{0}
 }
 func (m *CPUOptions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -161,7 +161,7 @@ type GPUOptions struct {
 func (m *GPUOptions) Reset()      { *m = GPUOptions{} }
 func (*GPUOptions) ProtoMessage() {}
 func (*GPUOptions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{1}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{1}
 }
 func (m *GPUOptions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -225,7 +225,7 @@ type TraceID struct {
 func (m *TraceID) Reset()      { *m = TraceID{} }
 func (*TraceID) ProtoMessage() {}
 func (*TraceID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{2}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{2}
 }
 func (m *TraceID) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -280,7 +280,7 @@ type ExecutionOptions struct {
 func (m *ExecutionOptions) Reset()      { *m = ExecutionOptions{} }
 func (*ExecutionOptions) ProtoMessage() {}
 func (*ExecutionOptions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{3}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{3}
 }
 func (m *ExecutionOptions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -362,7 +362,7 @@ type PredictionOptions struct {
 func (m *PredictionOptions) Reset()      { *m = PredictionOptions{} }
 func (*PredictionOptions) ProtoMessage() {}
 func (*PredictionOptions) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{4}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{4}
 }
 func (m *PredictionOptions) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -438,7 +438,7 @@ type PredictorOpenRequest struct {
 func (m *PredictorOpenRequest) Reset()      { *m = PredictorOpenRequest{} }
 func (*PredictorOpenRequest) ProtoMessage() {}
 func (*PredictorOpenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{5}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{5}
 }
 func (m *PredictorOpenRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -517,7 +517,7 @@ type PredictorCloseRequest struct {
 func (m *PredictorCloseRequest) Reset()      { *m = PredictorCloseRequest{} }
 func (*PredictorCloseRequest) ProtoMessage() {}
 func (*PredictorCloseRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{6}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{6}
 }
 func (m *PredictorCloseRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -566,7 +566,7 @@ type PredictorCloseResponse struct {
 func (m *PredictorCloseResponse) Reset()      { *m = PredictorCloseResponse{} }
 func (*PredictorCloseResponse) ProtoMessage() {}
 func (*PredictorCloseResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{7}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{7}
 }
 func (m *PredictorCloseResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -602,7 +602,7 @@ type Predictor struct {
 func (m *Predictor) Reset()      { *m = Predictor{} }
 func (*Predictor) ProtoMessage() {}
 func (*Predictor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{8}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{8}
 }
 func (m *Predictor) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -647,7 +647,7 @@ type URLsRequest struct {
 func (m *URLsRequest) Reset()      { *m = URLsRequest{} }
 func (*URLsRequest) ProtoMessage() {}
 func (*URLsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{9}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{9}
 }
 func (m *URLsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -706,7 +706,7 @@ type URLsRequest_URL struct {
 func (m *URLsRequest_URL) Reset()      { *m = URLsRequest_URL{} }
 func (*URLsRequest_URL) ProtoMessage() {}
 func (*URLsRequest_URL) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{9, 0}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{9, 0}
 }
 func (m *URLsRequest_URL) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -759,7 +759,7 @@ type ImagesRequest struct {
 func (m *ImagesRequest) Reset()      { *m = ImagesRequest{} }
 func (*ImagesRequest) ProtoMessage() {}
 func (*ImagesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{10}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{10}
 }
 func (m *ImagesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -819,7 +819,7 @@ type TextRequest struct {
 func (m *TextRequest) Reset()      { *m = TextRequest{} }
 func (*TextRequest) ProtoMessage() {}
 func (*TextRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{11}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{11}
 }
 func (m *TextRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -878,7 +878,7 @@ type DatasetRequest struct {
 func (m *DatasetRequest) Reset()      { *m = DatasetRequest{} }
 func (*DatasetRequest) ProtoMessage() {}
 func (*DatasetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{12}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{12}
 }
 func (m *DatasetRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -936,7 +936,7 @@ type DatasetRequest_Dataset struct {
 func (m *DatasetRequest_Dataset) Reset()      { *m = DatasetRequest_Dataset{} }
 func (*DatasetRequest_Dataset) ProtoMessage() {}
 func (*DatasetRequest_Dataset) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{12, 0}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{12, 0}
 }
 func (m *DatasetRequest_Dataset) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -990,7 +990,7 @@ type FeatureResponse struct {
 func (m *FeatureResponse) Reset()      { *m = FeatureResponse{} }
 func (*FeatureResponse) ProtoMessage() {}
 func (*FeatureResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{13}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{13}
 }
 func (m *FeatureResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1063,7 +1063,7 @@ type FeaturesResponse struct {
 func (m *FeaturesResponse) Reset()      { *m = FeaturesResponse{} }
 func (*FeaturesResponse) ProtoMessage() {}
 func (*FeaturesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{14}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{14}
 }
 func (m *FeaturesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1121,7 +1121,7 @@ type ResetRequest struct {
 func (m *ResetRequest) Reset()      { *m = ResetRequest{} }
 func (*ResetRequest) ProtoMessage() {}
 func (*ResetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{15}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{15}
 }
 func (m *ResetRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1171,7 +1171,7 @@ type ResetResponse struct {
 func (m *ResetResponse) Reset()      { *m = ResetResponse{} }
 func (*ResetResponse) ProtoMessage() {}
 func (*ResetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_predictor_9198aa7975cc1e8b, []int{16}
+	return fileDescriptor_predictor_6b6486b71057845b, []int{16}
 }
 func (m *ResetResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -3401,37 +3401,31 @@ type PredictClient interface {
 	Open(ctx context.Context, in *PredictorOpenRequest, opts ...grpc.CallOption) (*Predictor, error)
 	// Close a predictor clear it's memory.
 	Close(ctx context.Context, in *PredictorCloseRequest, opts ...grpc.CallOption) (*PredictorCloseResponse, error)
-	// Image method receives a stream of urls and runs
-	// the predictor on all the urls. The
-	//
-	// The result is a prediction feature stream for each url.
+	// URLs method receives a list of urls and runs
+	// the predictor on all the urls.
+	// The result is a list of predicted features for all the urls.
 	URLs(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (*FeaturesResponse, error)
-	// Image method receives a stream of urls and runs
-	// the predictor on all the urls. The
-	//
+	// URLsStream method receives a stream of urls and runs
+	// the predictor on all the urls.
 	// The result is a prediction feature stream for each url.
 	URLsStream(ctx context.Context, in *URLsRequest, opts ...grpc.CallOption) (Predict_URLsStreamClient, error)
-	// Image method receives a list base64 encoded images and runs
+	// Images method receives a list of base64 encoded images and runs
 	// the predictor on all the images.
-	//
 	// The result is a prediction feature list for each image.
 	Images(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (*FeaturesResponse, error)
-	// Image method receives a list base64 encoded images and runs
+	// ImagesStream method receives a list base64 encoded images and runs
 	// the predictor on all the images.
-	//
 	// The result is a prediction feature stream for each image.
 	ImagesStream(ctx context.Context, in *ImagesRequest, opts ...grpc.CallOption) (Predict_ImagesStreamClient, error)
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
-	//
 	// The result is a prediction feature list.
 	Dataset(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (*FeaturesResponse, error)
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
-	//
 	// The result is a prediction feature stream.
 	DatasetStream(ctx context.Context, in *DatasetRequest, opts ...grpc.CallOption) (Predict_DatasetStreamClient, error)
-	// Clear method clears the internal cache of the predictors
+	// Reset method clears the internal cache of the predictors
 	Reset(ctx context.Context, in *ResetRequest, opts ...grpc.CallOption) (*ResetResponse, error)
 }
 
@@ -3601,37 +3595,31 @@ type PredictServer interface {
 	Open(context.Context, *PredictorOpenRequest) (*Predictor, error)
 	// Close a predictor clear it's memory.
 	Close(context.Context, *PredictorCloseRequest) (*PredictorCloseResponse, error)
-	// Image method receives a stream of urls and runs
-	// the predictor on all the urls. The
-	//
-	// The result is a prediction feature stream for each url.
+	// URLs method receives a list of urls and runs
+	// the predictor on all the urls.
+	// The result is a list of predicted features for all the urls.
 	URLs(context.Context, *URLsRequest) (*FeaturesResponse, error)
-	// Image method receives a stream of urls and runs
-	// the predictor on all the urls. The
-	//
+	// URLsStream method receives a stream of urls and runs
+	// the predictor on all the urls.
 	// The result is a prediction feature stream for each url.
 	URLsStream(*URLsRequest, Predict_URLsStreamServer) error
-	// Image method receives a list base64 encoded images and runs
+	// Images method receives a list of base64 encoded images and runs
 	// the predictor on all the images.
-	//
 	// The result is a prediction feature list for each image.
 	Images(context.Context, *ImagesRequest) (*FeaturesResponse, error)
-	// Image method receives a list base64 encoded images and runs
+	// ImagesStream method receives a list base64 encoded images and runs
 	// the predictor on all the images.
-	//
 	// The result is a prediction feature stream for each image.
 	ImagesStream(*ImagesRequest, Predict_ImagesStreamServer) error
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
-	//
 	// The result is a prediction feature list.
 	Dataset(context.Context, *DatasetRequest) (*FeaturesResponse, error)
 	// Dataset method receives a single dataset and runs
 	// the predictor on all elements of the dataset.
-	//
 	// The result is a prediction feature stream.
 	DatasetStream(*DatasetRequest, Predict_DatasetStreamServer) error
-	// Clear method clears the internal cache of the predictors
+	// Reset method clears the internal cache of the predictors
 	Reset(context.Context, *ResetRequest) (*ResetResponse, error)
 }
 
@@ -8381,10 +8369,10 @@ var (
 	ErrIntOverflowPredictor   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("predictor.proto", fileDescriptor_predictor_9198aa7975cc1e8b) }
-func init() { golang_proto.RegisterFile("predictor.proto", fileDescriptor_predictor_9198aa7975cc1e8b) }
+func init() { proto.RegisterFile("predictor.proto", fileDescriptor_predictor_6b6486b71057845b) }
+func init() { golang_proto.RegisterFile("predictor.proto", fileDescriptor_predictor_6b6486b71057845b) }
 
-var fileDescriptor_predictor_9198aa7975cc1e8b = []byte{
+var fileDescriptor_predictor_6b6486b71057845b = []byte{
 	// 1895 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x59, 0xcd, 0x6f, 0x23, 0x49,
 	0x15, 0x4f, 0xf9, 0x23, 0xb6, 0x9f, 0xe3, 0x7c, 0xd4, 0x64, 0x66, 0x3c, 0x4e, 0xb6, 0x3b, 0xdb,

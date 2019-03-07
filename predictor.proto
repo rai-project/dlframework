@@ -306,10 +306,9 @@ service Predict {
     };
   }
 
-  // Image method receives a stream of urls and runs
-  // the predictor on all the urls. The
-  //
-  // The result is a prediction feature stream for each url.
+  // URLs method receives a list of urls and runs
+  // the predictor on all the urls.
+  // The result is a list of predicted features for all the urls.
   rpc URLs(URLsRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
       post : "/predict/urls",
@@ -317,9 +316,8 @@ service Predict {
     };
   }
 
-  // Image method receives a stream of urls and runs
-  // the predictor on all the urls. The
-  //
+  // URLsStream method receives a stream of urls and runs
+  // the predictor on all the urls.
   // The result is a prediction feature stream for each url.
   rpc URLsStream(URLsRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
@@ -328,9 +326,8 @@ service Predict {
     };
   }
 
-  // Image method receives a list base64 encoded images and runs
+  // Images method receives a list of base64 encoded images and runs
   // the predictor on all the images.
-  //
   // The result is a prediction feature list for each image.
   rpc Images(ImagesRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
@@ -339,9 +336,8 @@ service Predict {
     };
   }
 
-  // Image method receives a list base64 encoded images and runs
+  // ImagesStream method receives a list base64 encoded images and runs
   // the predictor on all the images.
-  //
   // The result is a prediction feature stream for each image.
   rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
@@ -352,7 +348,6 @@ service Predict {
 
   // // Text method receives a list base64 encoded texts and runs
   // // the predictor on all the texts.
-  // //
   // // The result is a prediction feature list for each text.
   // rpc Texts(TextRequest) returns (FeaturesResponse) {
   //   option (google.api.http) = {
@@ -363,7 +358,6 @@ service Predict {
 
   // // Text method receives a list base64 encoded texts and runs
   // // the predictor on all the texts.
-  // //
   // // The result is a prediction feature stream for each text.
   // rpc TextsStream(TextRequest) returns (stream FeatureResponse) {
   //   option (google.api.http) = {
@@ -374,7 +368,6 @@ service Predict {
 
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.
-  //
   // The result is a prediction feature list.
   rpc Dataset(DatasetRequest) returns (FeaturesResponse) {
     option (google.api.http) = {
@@ -385,7 +378,6 @@ service Predict {
 
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.
-  //
   // The result is a prediction feature stream.
   rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
     option (google.api.http) = {
@@ -394,7 +386,7 @@ service Predict {
     };
   }
 
-  // Clear method clears the internal cache of the predictors
+  // Reset method clears the internal cache of the predictors
   rpc Reset(ResetRequest) returns (ResetResponse) {
     option (google.api.http) = {
       post : "/predict/reset",

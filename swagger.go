@@ -56,8 +56,7 @@ const (
     },
     "/predict/dataset": {
       "post": {
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
-        "description": "The result is a prediction feature list.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature list.",
         "operationId": "Dataset",
         "responses": {
           "200": {
@@ -84,8 +83,7 @@ const (
     },
     "/predict/images": {
       "post": {
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
-        "description": "The result is a prediction feature list for each image.",
+        "summary": "Images method receives a list of base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature list for each image.",
         "operationId": "Images",
         "responses": {
           "200": {
@@ -139,7 +137,7 @@ const (
     },
     "/predict/reset": {
       "post": {
-        "summary": "Clear method clears the internal cache of the predictors",
+        "summary": "Reset method clears the internal cache of the predictors",
         "operationId": "Reset",
         "responses": {
           "200": {
@@ -166,8 +164,7 @@ const (
     },
     "/predict/stream/dataset": {
       "post": {
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
-        "description": "The result is a prediction feature stream.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
         "operationId": "DatasetStream",
         "responses": {
           "200": {
@@ -194,8 +191,7 @@ const (
     },
     "/predict/stream/images": {
       "post": {
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
-        "description": "The result is a prediction feature stream for each image.",
+        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
         "operationId": "ImagesStream",
         "responses": {
           "200": {
@@ -222,8 +218,7 @@ const (
     },
     "/predict/stream/urls": {
       "post": {
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
-        "description": "The result is a prediction feature stream for each url.",
+        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
         "operationId": "URLsStream",
         "responses": {
           "200": {
@@ -250,8 +245,7 @@ const (
     },
     "/predict/urls": {
       "post": {
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
-        "description": "The result is a prediction feature stream for each url.",
+        "summary": "URLs method receives a list of urls and runs\nthe predictor on all the urls.\nThe result is a list of predicted features for all the urls.",
         "operationId": "URLs",
         "responses": {
           "200": {

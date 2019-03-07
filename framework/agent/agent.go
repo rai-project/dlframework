@@ -5,30 +5,28 @@ import (
 	"reflect"
 	"strconv"
 
+	context "context"
+
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/rai-project/tracer"
 	jaeger "github.com/uber/jaeger-client-go"
 
 	// _ "github.com/rai-project/dldataset/vision"
 
-	context "context"
-
 	"github.com/pkg/errors"
-	dl "github.com/rai-project/dlframework"
-	"github.com/rai-project/utils"
-	"github.com/rai-project/uuid"
-	"golang.org/x/sync/syncmap"
-
 	"github.com/rai-project/dldataset"
 	_ "github.com/rai-project/dldataset/vision"
-	rgrpc "github.com/rai-project/grpc"
-	"github.com/rai-project/pipeline"
-	"github.com/rai-project/registry"
-	"google.golang.org/grpc"
-
+	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
+	rgrpc "github.com/rai-project/grpc"
+	"github.com/rai-project/pipeline"
+	"github.com/rai-project/registry"
+	"github.com/rai-project/utils"
+	"github.com/rai-project/uuid"
+	"golang.org/x/sync/syncmap"
+	"google.golang.org/grpc"
 )
 
 type Agent struct {
