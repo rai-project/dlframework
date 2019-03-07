@@ -53,9 +53,7 @@ func (a *Client) Close(params *CloseParams) (*CloseOK, error) {
 }
 
 /*
-Dataset datasets method receives a single dataset and runs the predictor on all elements of the dataset
-
-The result is a prediction feature list.
+Dataset datasets method receives a single dataset and runs the predictor on all elements of the dataset the result is a prediction feature list
 */
 func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	// TODO: Validate the params before sending
@@ -83,9 +81,7 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 }
 
 /*
-DatasetStream datasets method receives a single dataset and runs the predictor on all elements of the dataset
-
-The result is a prediction feature stream.
+DatasetStream datasets method receives a single dataset and runs the predictor on all elements of the dataset the result is a prediction feature stream
 */
 func (a *Client) DatasetStream(params *DatasetStreamParams) (*DatasetStreamOK, error) {
 	// TODO: Validate the params before sending
@@ -113,9 +109,7 @@ func (a *Client) DatasetStream(params *DatasetStreamParams) (*DatasetStreamOK, e
 }
 
 /*
-Images images method receives a list base64 encoded images and runs the predictor on all the images
-
-The result is a prediction feature list for each image.
+Images images method receives a list of base64 encoded images and runs the predictor on all the images the result is a prediction feature list for each image
 */
 func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 	// TODO: Validate the params before sending
@@ -143,9 +137,7 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 }
 
 /*
-ImagesStream images method receives a list base64 encoded images and runs the predictor on all the images
-
-The result is a prediction feature stream for each image.
+ImagesStream images stream method receives a list base64 encoded images and runs the predictor on all the images the result is a prediction feature stream for each image
 */
 func (a *Client) ImagesStream(params *ImagesStreamParams) (*ImagesStreamOK, error) {
 	// TODO: Validate the params before sending
@@ -201,7 +193,7 @@ func (a *Client) Open(params *OpenParams) (*OpenOK, error) {
 }
 
 /*
-Reset clears method clears the internal cache of the predictors
+Reset resets method clears the internal cache of the predictors
 */
 func (a *Client) Reset(params *ResetParams) (*ResetOK, error) {
 	// TODO: Validate the params before sending
@@ -229,9 +221,7 @@ func (a *Client) Reset(params *ResetParams) (*ResetOK, error) {
 }
 
 /*
-Urls images method receives a stream of urls and runs the predictor on all the urls the
-
-The result is a prediction feature stream for each url.
+Urls urls method receives a list of urls and runs the predictor on all the urls the result is a list of predicted features for all the urls
 */
 func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 	// TODO: Validate the params before sending
@@ -259,9 +249,7 @@ func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 }
 
 /*
-UrlsStream images method receives a stream of urls and runs the predictor on all the urls the
-
-The result is a prediction feature stream for each url.
+UrlsStream urls stream method receives a stream of urls and runs the predictor on all the urls the result is a prediction feature stream for each url
 */
 func (a *Client) UrlsStream(params *UrlsStreamParams) (*UrlsStreamOK, error) {
 	// TODO: Validate the params before sending

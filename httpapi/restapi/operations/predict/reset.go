@@ -31,7 +31,7 @@ func NewReset(ctx *middleware.Context, handler ResetHandler) *Reset {
 
 /*Reset swagger:route POST /predict/reset Predict reset
 
-Clear method clears the internal cache of the predictors
+Reset method clears the internal cache of the predictors
 
 */
 type Reset struct {

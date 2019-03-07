@@ -33,7 +33,6 @@ func NewDataset(ctx *middleware.Context, handler DatasetHandler) *Dataset {
 
 Dataset method receives a single dataset and runs
 the predictor on all elements of the dataset.
-
 The result is a prediction feature list.
 
 */

@@ -140,7 +140,6 @@ func getTraceID(ctx context.Context) (string, error) {
 }
 
 func (p *Agent) toFeaturesResponse(ctx context.Context, output <-chan interface{}, options *dl.PredictionOptions) (*dl.FeaturesResponse, error) {
-
 	res := &dl.FeaturesResponse{}
 
 	if traceId, err := getTraceID(ctx); err == nil {
@@ -258,9 +257,9 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 	return output, nil
 }
 
-// Image method receives a stream of urls and runs
+// URLs method receives a list of urls and runs
 // the predictor on all the urls.
-// The result is a prediction feature list for each url.
+// The result is a list of predicted features for all the urls.
 func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResponse, error) {
 	output, err := p.urls(ctx, req)
 	if err != nil {
@@ -270,7 +269,7 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 	return p.toFeaturesResponse(ctx, output, req.GetOptions())
 }
 
-// Image method receives a stream of urls and runs
+// URLsStream method receives a stream of urls and runs
 // the predictor on all the urls.
 // The result is a prediction feature stream for each url.
 func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
@@ -287,7 +286,6 @@ func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer)
 }
 
 func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan interface{}, error) {
-
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
 	}

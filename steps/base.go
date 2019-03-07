@@ -2,6 +2,7 @@ package steps
 
 import (
 	"context"
+
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/uuid"
 )
@@ -95,7 +96,6 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 				default:
 					out <- NewIDWrapper(id.(string), res)
 				}
-
 			}
 		}
 	}()

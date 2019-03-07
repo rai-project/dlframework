@@ -21,7 +21,6 @@ type readImage struct {
 }
 
 func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
-
 	width, height := 0, 0
 	if len(options.Size) == 1 {
 		width = options.Size[0]
@@ -74,10 +73,10 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 				return err
 			}
 			return img
-		case io.Reader:
-			in = data
 		case types.Image:
 			return in0
+		case io.Reader:
+			in = data
 		default:
 			return errors.Errorf("expecting a io.Reader or image for read image step, but got %v", in0)
 

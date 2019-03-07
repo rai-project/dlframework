@@ -31,9 +31,8 @@ func NewImagesStream(ctx *middleware.Context, handler ImagesStreamHandler) *Imag
 
 /*ImagesStream swagger:route POST /predict/stream/images Predict imagesStream
 
-Image method receives a list base64 encoded images and runs
+ImagesStream method receives a list base64 encoded images and runs
 the predictor on all the images.
-
 The result is a prediction feature stream for each image.
 
 */

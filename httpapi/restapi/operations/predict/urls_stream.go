@@ -31,9 +31,8 @@ func NewUrlsStream(ctx *middleware.Context, handler UrlsStreamHandler) *UrlsStre
 
 /*UrlsStream swagger:route POST /predict/stream/urls Predict urlsStream
 
-Image method receives a stream of urls and runs
-the predictor on all the urls. The
-
+URLsStream method receives a stream of urls and runs
+the predictor on all the urls.
 The result is a prediction feature stream for each url.
 
 */

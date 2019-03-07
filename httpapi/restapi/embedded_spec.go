@@ -126,11 +126,10 @@ func init() {
     },
     "/predict/dataset": {
       "post": {
-        "description": "The result is a prediction feature list.",
         "tags": [
           "Predict"
         ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature list.",
         "operationId": "Dataset",
         "parameters": [
           {
@@ -154,11 +153,10 @@ func init() {
     },
     "/predict/images": {
       "post": {
-        "description": "The result is a prediction feature list for each image.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "summary": "Images method receives a list of base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature list for each image.",
         "operationId": "Images",
         "parameters": [
           {
@@ -212,7 +210,7 @@ func init() {
         "tags": [
           "Predict"
         ],
-        "summary": "Clear method clears the internal cache of the predictors",
+        "summary": "Reset method clears the internal cache of the predictors",
         "operationId": "Reset",
         "parameters": [
           {
@@ -236,11 +234,10 @@ func init() {
     },
     "/predict/stream/dataset": {
       "post": {
-        "description": "The result is a prediction feature stream.",
         "tags": [
           "Predict"
         ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
         "operationId": "DatasetStream",
         "parameters": [
           {
@@ -264,11 +261,10 @@ func init() {
     },
     "/predict/stream/images": {
       "post": {
-        "description": "The result is a prediction feature stream for each image.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
         "operationId": "ImagesStream",
         "parameters": [
           {
@@ -292,11 +288,10 @@ func init() {
     },
     "/predict/stream/urls": {
       "post": {
-        "description": "The result is a prediction feature stream for each url.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
         "operationId": "URLsStream",
         "parameters": [
           {
@@ -320,11 +315,10 @@ func init() {
     },
     "/predict/urls": {
       "post": {
-        "description": "The result is a prediction feature stream for each url.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "summary": "URLs method receives a list of urls and runs\nthe predictor on all the urls.\nThe result is a list of predicted features for all the urls.",
         "operationId": "URLs",
         "parameters": [
           {
@@ -1323,11 +1317,10 @@ func init() {
     },
     "/predict/dataset": {
       "post": {
-        "description": "The result is a prediction feature list.",
         "tags": [
           "Predict"
         ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature list.",
         "operationId": "Dataset",
         "parameters": [
           {
@@ -1351,11 +1344,10 @@ func init() {
     },
     "/predict/images": {
       "post": {
-        "description": "The result is a prediction feature list for each image.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "summary": "Images method receives a list of base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature list for each image.",
         "operationId": "Images",
         "parameters": [
           {
@@ -1409,7 +1401,7 @@ func init() {
         "tags": [
           "Predict"
         ],
-        "summary": "Clear method clears the internal cache of the predictors",
+        "summary": "Reset method clears the internal cache of the predictors",
         "operationId": "Reset",
         "parameters": [
           {
@@ -1433,11 +1425,10 @@ func init() {
     },
     "/predict/stream/dataset": {
       "post": {
-        "description": "The result is a prediction feature stream.",
         "tags": [
           "Predict"
         ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.",
+        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
         "operationId": "DatasetStream",
         "parameters": [
           {
@@ -1461,11 +1452,10 @@ func init() {
     },
     "/predict/stream/images": {
       "post": {
-        "description": "The result is a prediction feature stream for each image.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a list base64 encoded images and runs\nthe predictor on all the images.",
+        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
         "operationId": "ImagesStream",
         "parameters": [
           {
@@ -1489,11 +1479,10 @@ func init() {
     },
     "/predict/stream/urls": {
       "post": {
-        "description": "The result is a prediction feature stream for each url.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
         "operationId": "URLsStream",
         "parameters": [
           {
@@ -1517,11 +1506,10 @@ func init() {
     },
     "/predict/urls": {
       "post": {
-        "description": "The result is a prediction feature stream for each url.",
         "tags": [
           "Predict"
         ],
-        "summary": "Image method receives a stream of urls and runs\nthe predictor on all the urls. The",
+        "summary": "URLs method receives a list of urls and runs\nthe predictor on all the urls.\nThe result is a list of predicted features for all the urls.",
         "operationId": "URLs",
         "parameters": [
           {

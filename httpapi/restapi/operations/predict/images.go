@@ -31,9 +31,8 @@ func NewImages(ctx *middleware.Context, handler ImagesHandler) *Images {
 
 /*Images swagger:route POST /predict/images Predict images
 
-Image method receives a list base64 encoded images and runs
+Images method receives a list of base64 encoded images and runs
 the predictor on all the images.
-
 The result is a prediction feature list for each image.
 
 */
