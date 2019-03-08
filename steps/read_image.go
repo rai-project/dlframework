@@ -52,6 +52,14 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		ctx = nil
 	}
 
+	readOptions := []image.Option{
+		image.Context(ctx),
+	}
+
+	if p.width != -1 || p.height != -1 {
+		readOptions = append(readOptions, image.Resized(p.width, p.height))
+	}
+
 	switch in0 := in0.(type) {
 	case io.Reader:
 		in = in0
@@ -62,19 +70,17 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		}
 		switch data := data.(type) {
 		case *types.RGBImage:
-			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
+			img, err := image.Resize(data, readOptions...)
 			if err != nil {
 				return err
 			}
 			return img
 		case *types.BGRImage:
-			img, err := image.Resize(data, image.Context(ctx), image.Width(p.width), image.Height(p.height))
+			img, err := image.Resize(data, readOptions...)
 			if err != nil {
 				return err
 			}
 			return img
-		case types.Image:
-			return in0
 		case io.Reader:
 			in = data
 		default:
@@ -85,10 +91,10 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		return errors.Errorf("expecting a io.Reader or dataset element for read image step, but got %v", in0)
 	}
 
-	image, err := image.Read(in, image.Context(ctx), image.Resized(p.width, p.height))
+	image, err := image.Read(in, readOptions...)
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}
-
 	return image
+
 }
