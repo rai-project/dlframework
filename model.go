@@ -16,6 +16,30 @@ import (
 
 var modelRegistry = syncmap.Map{}
 
+func (m *ModelManifest) Modality() (Modality, error) {
+	inputs := m.GetInputs()
+	output := m.GetOutput()
+
+	if len(inputs) == 1 {
+		input := inputs[0]
+		switch strings.ToLower(input.Type) {
+		case "image":
+			switch strings.ToLower(output.Type) {
+			case "image":
+				return ImageEnhancementModality, nil
+			case "classification":
+				return ImageClassificationModality, nil
+			case "object_detection":
+				return ImageObjectDetectionModality, nil
+			case "region":
+				return ImageSegmentationModality, nil
+			}
+		}
+	}
+	panic("unhandled modality")
+	return UnknownModality, nil
+}
+
 func (m *ModelManifest) Validate() error {
 	name := m.GetName()
 	if name == "" {

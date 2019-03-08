@@ -32,7 +32,7 @@ import (
 type Agent struct {
 	base
 	loadedPredictors syncmap.Map
-	predictor        predictor.Predictor
+	predictors       []predictor.Predictor
 	options          *Options
 	channelBuffer    int
 }
@@ -41,12 +41,12 @@ var (
 	DefaultChannelBuffer = 1000
 )
 
-func New(predictor predictor.Predictor, opts ...Option) (*Agent, error) {
+func New(predictors []predictor.Predictor, opts ...Option) (*Agent, error) {
 	options, err := NewOptions(opts...)
 	if err != nil {
 		return nil, err
 	}
-	framework, _, err := predictor.Info()
+	framework, _, err := predictors[0].Info()
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func New(predictor predictor.Predictor, opts ...Option) (*Agent, error) {
 		base: base{
 			Framework: framework,
 		},
-		predictor:     predictor,
+		predictors:    predictors,
 		options:       options,
 		channelBuffer: DefaultChannelBuffer,
 	}, nil
@@ -82,7 +82,27 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 
 	tracer.SetLevel(getTraceLevelOption(opts))
 
-	predictor, err := p.predictor.Load(ctx, *model, options.PredictorOptions(opts))
+	var predictorHandle predictor.Predictor
+	for _, pred := range p.predictors {
+		predModality, err := pred.Modality()
+		if err != nil {
+			continue
+		}
+		modelModality, err := model.Modality()
+		if err != nil {
+			continue
+		}
+		if predModality == modelModality {
+			predictorHandle = pred
+			break
+		}
+	}
+
+	if predictorHandle == nil {
+		return nil, errors.New("unable to find predictor for requested modality")
+	}
+
+	predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(opts))
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +271,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 	}()
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
-		Then(steps.NewPredictImage(predictor)).
+		Then(steps.NewPredict(predictor)).
 		Run(input)
 
 	return output, nil
@@ -340,7 +360,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 	}()
 
 	output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(p.channelBuffer)).
-		Then(steps.NewPredictImage(predictor)).
+		Then(steps.NewPredict(predictor)).
 		Run(input)
 
 	return output, nil
@@ -434,7 +454,7 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 		Then(steps.NewGetDataset(dataset)).
 		Then(steps.NewReadImage(preprocessOptions)).
 		Then(steps.NewPreprocessImage(preprocessOptions)).
-		Then(steps.NewPredictImage(predictor)).
+		Then(steps.NewPredict(predictor)).
 		Run(input)
 
 	return output, nil

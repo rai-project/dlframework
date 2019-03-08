@@ -1,18 +1,22 @@
 package agent
 
 import (
-	"errors"
+	"sync"
 
+	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"golang.org/x/sync/syncmap"
 )
 
 var (
-	predictorServers syncmap.Map
+	predictorServers struct {
+		syncmap.Map
+		sync.Mutex
+	}
 )
 
-func GetPredictor(framework dl.FrameworkManifest) (predictor.Predictor, error) {
+func GetPredictors(framework dl.FrameworkManifest) ([]predictor.Predictor, error) {
 	name, err := framework.CanonicalName()
 	if err != nil {
 		return nil, err
@@ -23,21 +27,44 @@ func GetPredictor(framework dl.FrameworkManifest) (predictor.Predictor, error) {
 			Warn("cannot find registered predictor server")
 		return nil, errors.New("cannot find registered predictor server")
 	}
-	predictor, ok := val.(predictor.Predictor)
+	predictors, ok := val.([]predictor.Predictor)
 	if !ok {
 		log.WithField("framework", framework.MustCanonicalName()).
 			Warn("invalid registered predictor server")
 		return nil, errors.New("invalid predictor")
 	}
-	return predictor, nil
+	return predictors, nil
 }
 
-func AddPredictor(framework dl.FrameworkManifest, predictor predictor.Predictor) error {
+func GetPredictor(framework dl.FrameworkManifest) (predictor.Predictor, error) {
+	predictors, err := GetPredictors(framework)
+	if err != nil {
+		return nil, err
+	}
+	if len(predictors) != 1 {
+		return nil, errors.Errorf("expecting only one predictor but got %v", len(predictors))
+	}
+	return predictors[0], nil
+}
+
+func AddPredictor(framework dl.FrameworkManifest, pred predictor.Predictor) error {
 	name, err := framework.CanonicalName()
 	if err != nil {
 		return err
 	}
-	predictorServers.Store(name, predictor)
+
+	var predictors []predictor.Predictor
+
+	predictorServers.Lock()
+	defer predictorServers.Unlock()
+
+	val, ok := predictorServers.Load(name)
+	if !ok {
+		predictors = []predictor.Predictor{pred}
+	} else {
+		predictors = append(val.([]predictor.Predictor), pred)
+	}
+	predictorServers.Store(name, predictors)
 	return nil
 }
 

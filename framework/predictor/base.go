@@ -24,6 +24,10 @@ func (b Base) Info() (dlframework.FrameworkManifest, dlframework.ModelManifest, 
 	return b.Framework, b.Model, nil
 }
 
+func (b Base) Modality() (dlframework.Modality, error) {
+	return dlframework.UnknownModality, errors.New("undefined modality for predictor")
+}
+
 func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error) {
 	return b.Options, nil
 }

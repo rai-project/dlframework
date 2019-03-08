@@ -263,7 +263,7 @@ var predictUrlsCmd = &cobra.Command{
 			}()
 
 			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
-				Then(steps.NewPredictImage(predictor)).
+				Then(steps.NewPredict(predictor)).
 				Run(input)
 
 			inferenceProgress.Add(batchSize)

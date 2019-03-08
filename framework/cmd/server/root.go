@@ -92,10 +92,10 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		return done, errors.Wrapf(err, "⚠️ the port %s is not a valid integer", port)
 	}
 
-	predictor, err := agent.GetPredictor(framework)
+	predictors, err := agent.GetPredictors(framework)
 	if err != nil {
 		return done, errors.Wrapf(err,
-			"⚠️ failed to get predictor for %s. make sure you have "+
+			"⚠️ failed to get predictors for %s. make sure you have "+
 				"imported the framework's predictor package",
 			frameworkName,
 		)
@@ -111,7 +111,7 @@ func RunRootE(c *cobra.Command, framework dlframework.FrameworkManifest, args []
 		externalPort = p
 	}
 
-	agnt, err := agent.New(predictor, agent.WithHost(externalHost), agent.WithPortString(externalPort))
+	agnt, err := agent.New(predictors, agent.WithHost(externalHost), agent.WithPortString(externalPort))
 	if err != nil {
 		return done, err
 	}
