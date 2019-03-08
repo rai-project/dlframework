@@ -3,8 +3,6 @@ package steps
 import (
 	"context"
 
-	"github.com/k0kubun/pp"
-
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
@@ -75,44 +73,47 @@ func (p preprocessImageTensor) doRGBImageHWC(ctx context.Context, in *types.RGBI
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	channels := 3
-	scale := p.options.Scale
+	// scale := p.options.Scale
 	// mode := p.options.ColorMode
-	mean := p.options.MeanImage
+	// mean := p.options.MeanImage
 
-	toFloat32 := func(x uint8) float32 {
-		return float32(x)
-	}
-	tnsr, err := tensor.New(
+	tnsrBytes := tensor.New(
 		tensor.WithShape(height, width, channels),
 		tensor.WithBacking(in.Pix),
-		tensor.Of(tensor.Uint8),
-	).Apply(interface{}(toFloat32))
-	if err != nil {
-		pp.Println(err)
-		return errors.Wrapf(err, "unable to read the image")
-	}
+	)
 
-	pp.Println(tnsr.At(100, 100, 0))
-	_ = scale
-	_ = mean
-	// if true {
-	// 	tnsr.Sub(
-	// 		tensor.New(
-	// 			tensor.WithShape(3),
-	// 			tensor.WithBacking(mean),
-	// 			tensor.Of(tensor.Float32),
-	// 		),
-	// 		tensor.UseUnsafe(),
-	// 	)
+	// toFloat32 := func(x uint8) float32 {
+	// 	return float32(x)
 	// }
+	// tnsrFloats, err := tnsrBytes.Apply(interface{}(toFloat32))
+	// if err != nil {
+	// 	return errors.Wrapf(err, "unable to read the image")
+	// }
+
+	backing := tnsrBytes.Data().([]byte)
+	backing2 := make([]float32, len(backing))
+	for i := range backing {
+		backing2[i] = float32(backing[i])
+	}
+	tnsrFloats := tensor.New(tensor.WithShape(tnsrBytes.Shape()...), tensor.WithBacking(backing2))
+
+	// tnsrFloats.Sub(
+	// 	tensor.New(
+	// 		tensor.WithShape(3),
+	// 		tensor.WithBacking(mean),
+	// 		tensor.Of(tensor.Float32),
+	// 	),
+	// 	tensor.UseUnsafe(),
+	// )
+
 	// if false {
-	// 	tnsr.DivScalar(
+	// 	tnsrFloats.DivScalar(
 	// 		scale,
 	// 		false,
 	// 		tensor.UseUnsafe(),
 	// 	)
 	// }
-	return tnsr
+	return tnsrFloats
 }
 
 func (p preprocessImageTensor) Close() error {

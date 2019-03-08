@@ -10,6 +10,7 @@ import (
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/predictor"
+	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
 	_ "github.com/rai-project/tracer/jaeger"
@@ -95,10 +96,11 @@ func TestURLReadPreprocessImage(t *testing.T) {
 	}()
 
 	opts := predictor.PreprocessOptions{
-		MeanImage: []float32{0, 0, 0},
+		MeanImage: []float32{128, 100, 104},
 		Size:      []int{224, 224},
 		Scale:     1.0,
 		ColorMode: types.RGBMode,
+		Layout:    image.HWCLayout,
 	}
 
 	output := pipeline.New().
@@ -114,11 +116,11 @@ func TestURLReadPreprocessImage(t *testing.T) {
 		assert.IsType(t, []float32{}, v.GetData())
 
 		data := v.GetData().([]float32)
-		pp.Println(data[100*100])
+		pp.Println(data[10000])
 	}
 }
 
-func TestURLReadPreprocessTensorImage(t *testing.T) {
+func TestURLReadPreprocessImageTensor(t *testing.T) {
 	imgURLs := []string{
 		"https://jpeg.org/images/jpeg-home.jpg",
 		"https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
@@ -136,10 +138,11 @@ func TestURLReadPreprocessTensorImage(t *testing.T) {
 	}()
 
 	opts := predictor.PreprocessOptions{
-		MeanImage: []float32{0, 0, 0},
+		MeanImage: []float32{128, 100, 104},
 		Size:      []int{224, 224},
 		Scale:     1.0,
 		ColorMode: types.RGBMode,
+		Layout:    image.HWCLayout,
 	}
 
 	output := pipeline.New().
@@ -153,9 +156,8 @@ func TestURLReadPreprocessTensorImage(t *testing.T) {
 		v, ok := out.(IDer)
 		assert.True(t, ok)
 		assert.IsType(t, &tensor.Dense{}, v.GetData())
-
-		data := v.GetData().(*tensor.Dense)
-		pp.Println(data.At(100, 100, 0))
+		data := v.GetData().(*tensor.Dense).Data().([]float32)
+		pp.Println(data[10000])
 	}
 }
 
