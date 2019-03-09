@@ -114,7 +114,6 @@ func TestURLReadPreprocessImage(t *testing.T) {
 		v, ok := out.(IDer)
 		assert.True(t, ok)
 		assert.IsType(t, []float32{}, v.GetData())
-
 		data := v.GetData().([]float32)
 		pp.Println(data[10000])
 	}

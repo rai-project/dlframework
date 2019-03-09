@@ -55,16 +55,3 @@ func (d devices) String() string {
 	r[len(r)-1] = ']'
 	return string(r)
 }
-
-type node struct {
-	key   string // name
-	shape []int  // shape of ndarray
-}
-
-func (n node) Key() string {
-	return n.key
-}
-
-func (n node) Shape() []int {
-	return n.shape
-}

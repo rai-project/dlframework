@@ -1,13 +1,11 @@
 package options
 
 import (
+	"context"
 	"strings"
 
-	nvidiasmi "github.com/rai-project/nvidia-smi"
-
-	context "context"
-
 	dl "github.com/rai-project/dlframework"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/tracer"
 )
 
@@ -17,10 +15,8 @@ type Options struct {
 	batchSize    int
 	featureLimit int
 	traceLevel   tracer.Level
-	symbol       []byte
+	graph        []byte
 	weights      []byte
-	// inputNodes   []node
-	// outputNodes  []string
 }
 
 type Option func(*Options)
@@ -100,24 +96,14 @@ func (o *Options) TraceLevel() tracer.Level {
 	return o.traceLevel
 }
 
-func Graph(sym []byte) Option {
+func Graph(g []byte) Option {
 	return func(o *Options) {
-		o.symbol = sym
+		o.graph = g
 	}
 }
 
 func (o *Options) Graph() []byte {
-	return o.symbol
-}
-
-func Symbol(sym []byte) Option {
-	return func(o *Options) {
-		o.symbol = sym
-	}
-}
-
-func (o *Options) Symbol() []byte {
-	return o.symbol
+	return o.graph
 }
 
 func Weights(w []byte) Option {
@@ -130,62 +116,11 @@ func (o *Options) Weights() []byte {
 	return o.weights
 }
 
-// func InputNode(key string, shape []int) Option {
-// 	return func(o *Options) {
-// 		o.inputNodes = append(
-// 			o.inputNodes,
-// 			node{
-// 				key:   key,
-// 				shape: shape,
-// 			},
-// 		)
-// 	}
-// }
-
-// func (o *Options) InputNodes() []node {
-// 	return o.inputNodes
-// }
-
-// func OutputNode(key string) Option {
-// 	return func(o *Options) {
-// 		o.outputNodes = append(o.outputNodes, key)
-// 	}
-// }
-
-// func (o *Options) OutputNodes() []string {
-// 	return o.outputNodes
-// }
-
 func (o *Options) Append(opts ...Option) *Options {
 	for _, oi := range opts {
 		oi(o)
 	}
 	return o
-}
-
-func New(opts ...Option) *Options {
-	options := &Options{
-		ctx:          context.Background(),
-		devices:      []device{},
-		batchSize:    Config.BatchSize,
-		featureLimit: Config.FeatureLimit,
-		traceLevel:   tracer.NO_TRACE,
-	}
-
-	for _, o := range opts {
-		o(options)
-	}
-
-	// for ii, inputNode := range options.inputNodes {
-	// 	batchSize := options.batchSize
-	// 	if len(options.inputNodes[ii].shape) == 3 {
-	// 		options.inputNodes[ii].shape = append([]int{batchSize}, inputNode.shape...)
-	// 	} else {
-	// 		options.inputNodes[ii].shape[0] = batchSize
-	// 	}
-	// }
-
-	return options
 }
 
 func PredictorOptions(p *dl.PredictionOptions) Option {
@@ -202,4 +137,18 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 		o.featureLimit = int(p.FeatureLimit)
 		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
 	}
+}
+
+func New(opts ...Option) *Options {
+	options := &Options{
+		ctx:          context.Background(),
+		devices:      []device{},
+		batchSize:    Config.BatchSize,
+		featureLimit: Config.FeatureLimit,
+		traceLevel:   tracer.NO_TRACE,
+	}
+	for _, o := range opts {
+		o(options)
+	}
+	return options
 }

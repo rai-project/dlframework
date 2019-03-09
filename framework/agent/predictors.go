@@ -54,7 +54,6 @@ func AddPredictor(framework dl.FrameworkManifest, pred predictor.Predictor) erro
 	}
 
 	var predictors []predictor.Predictor
-
 	predictorServers.Lock()
 	defer predictorServers.Unlock()
 

@@ -1,21 +1,14 @@
 package agent
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strconv"
 
-	context "context"
-
 	opentracing "github.com/opentracing/opentracing-go"
-	"github.com/rai-project/tracer"
-	jaeger "github.com/uber/jaeger-client-go"
-
-	// _ "github.com/rai-project/dldataset/vision"
-
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
-	_ "github.com/rai-project/dldataset/vision"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predictor"
@@ -23,10 +16,14 @@ import (
 	rgrpc "github.com/rai-project/grpc"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/registry"
+	"github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 	"github.com/rai-project/uuid"
+	jaeger "github.com/uber/jaeger-client-go"
 	"golang.org/x/sync/syncmap"
 	"google.golang.org/grpc"
+
+	_ "github.com/rai-project/dldataset/vision"
 )
 
 type Agent struct {
@@ -61,11 +58,6 @@ func New(predictors []predictor.Predictor, opts ...Option) (*Agent, error) {
 	}, nil
 }
 
-func getTraceLevelOption(opts *dl.PredictionOptions) tracer.Level {
-	level := tracer.LevelFromName(opts.GetExecutionOptions().GetTraceLevel().String())
-	return level
-}
-
 // Opens a predictor and returns an id where the predictor
 // is accessible. The id can be used to perform inference
 // requests.
@@ -80,7 +72,8 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		opts = &dl.PredictionOptions{}
 	}
 
-	tracer.SetLevel(getTraceLevelOption(opts))
+	level := tracer.LevelFromName(opts.GetExecutionOptions().GetTraceLevel().String())
+	tracer.SetLevel(level)
 
 	var predictorHandle predictor.Predictor
 	for _, pred := range p.predictors {
@@ -97,7 +90,6 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 			break
 		}
 	}
-
 	if predictorHandle == nil {
 		return nil, errors.New("unable to find predictor for requested modality")
 	}
@@ -131,16 +123,14 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.Pr
 	return predictor, nil
 }
 
-// Close a predictor clear it's memory.
+// Close a predictor and clear it's memory.
 func (p *Agent) Close(ctx context.Context, req *dl.PredictorCloseRequest) (*dl.PredictorCloseResponse, error) {
 	id := req.GetPredictor().GetID()
 	predictor, err := p.getLoadedPredictor(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-
 	predictor.Close()
-
 	p.loadedPredictors.Delete(id)
 
 	return &dl.PredictorCloseResponse{}, nil
@@ -302,6 +292,7 @@ func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer)
 	for o := range output {
 		svr.Send(o.(*dl.FeatureResponse))
 	}
+
 	return nil
 }
 
@@ -391,6 +382,7 @@ func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamS
 	for o := range output {
 		svr.Send(o.(*dl.FeatureResponse))
 	}
+
 	return nil
 }
 
@@ -398,7 +390,6 @@ func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamS
 // the predictor on all elements of the dataset.
 // The result is a prediction feature list.
 func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan interface{}, error) {
-
 	if req.GetPredictor() == nil {
 		return nil, errors.New("request does not have a valid predictor set")
 	}
@@ -484,6 +475,7 @@ func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStre
 	for o := range output {
 		svr.Send(o.(*dl.FeatureResponse))
 	}
+
 	return nil
 }
 
@@ -507,7 +499,6 @@ func (p *Agent) FindFrameworkModel(ctx context.Context, req *dl.PredictorOpenReq
 
 func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 	log.Info("populating registry")
-
 	var grpcServer *grpc.Server
 	grpcServer = rgrpc.NewServer(dl.RegistryServiceDescription)
 	svr := &Registry{
@@ -524,11 +515,11 @@ func (p *Agent) RegisterManifests() (*grpc.Server, error) {
 		)
 	}()
 	dl.RegisterRegistryServer(grpcServer, svr)
+
 	return grpcServer, nil
 }
 
 func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
-
 	grpcServer := rgrpc.NewServer(dl.PredictServiceDescription)
 
 	host := fmt.Sprintf("%s:%d", p.options.host, p.options.port)
@@ -543,5 +534,6 @@ func (p *Agent) RegisterPredictor() (*grpc.Server, error) {
 		)
 	}()
 	dl.RegisterPredictServer(grpcServer, p)
+
 	return grpcServer, nil
 }
