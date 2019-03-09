@@ -15,28 +15,14 @@ import (
 
 type readImage struct {
 	base
-	width   int
-	height  int
 	options predictor.PreprocessOptions
 }
 
 func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
-	width, height := 0, 0
-	if len(options.Size) == 1 {
-		width = options.Size[0]
-		height = options.Size[0]
-	}
-	if len(options.Size) > 1 {
-		width = options.Size[0]
-		height = options.Size[1]
-	}
-
 	res := readImage{
 		base: base{
 			info: "ReadImage",
 		},
-		width:   width,
-		height:  height,
 		options: options,
 	}
 	res.doer = res.do
@@ -46,20 +32,19 @@ func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
 func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
 	// no need to trace here, since resize and read already perform tracing
 
-	var in io.Reader
-
 	if p.options.Context == nil {
 		ctx = nil
 	}
-
 	readOptions := []image.Option{
 		image.Context(ctx),
 	}
-
-	if p.width != -1 || p.height != -1 {
-		readOptions = append(readOptions, image.Resized(p.width, p.height))
+	dims := p.options.Dims
+	if dims != nil {
+		height, width := dims[1], dims[2]
+		readOptions = append(readOptions, image.Resized(height, width))
 	}
 
+	var in io.Reader
 	switch in0 := in0.(type) {
 	case io.Reader:
 		in = in0

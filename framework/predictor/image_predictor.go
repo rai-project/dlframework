@@ -76,9 +76,13 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
 		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
 	}
-	if len(dims) != 3 {
-		return nil, errors.Errorf("expecting a dimensions size of 3, but got %v. do not put the batch size in the input dimensions.", len(dims))
+	if len(dims) == 1 {
+		dims = []int{dims[0], dims[0], dims[0]}
 	}
+	if len(dims) > 3 {
+		return nil, errors.Errorf("expecting a dimensions size of 1 or 3, but got %v. do not put the batch size in the input dimensions.", len(dims))
+	}
+
 	return dims, nil
 }
 

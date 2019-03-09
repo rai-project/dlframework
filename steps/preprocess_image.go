@@ -60,7 +60,7 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOption
 		}
 		return out0
 	default:
-		return errors.Errorf("unknow element type %v", t)
+		return errors.Errorf("unsupported element type %v", t)
 	}
 }
 

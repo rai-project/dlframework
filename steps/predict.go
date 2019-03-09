@@ -68,7 +68,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		cu, err = cupti.New(cupti.Context(ctx))
 	}
 
-	err = p.predictor.Predict(ctx, data, options.WithOptions(opts))
+	err = p.predictor.Predict(ctx, in0, options.WithOptions(opts))
 	if err != nil {
 		if cu != nil {
 			cu.Wait()
