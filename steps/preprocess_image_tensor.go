@@ -22,31 +22,9 @@ func NewPreprocessImageTensor(options predictor.PreprocessOptions) pipeline.Step
 		base: base{
 			info: "preprocessImageTensor",
 		},
+		options: options,
 	}
-
-	mean := []float32{0, 0, 0}
-	if len(options.MeanImage) != 0 {
-		mean = options.MeanImage
-	}
-	scale := float32(1.0)
-	if options.Scale != 0 {
-		scale = options.Scale
-	}
-	mode := types.RGBMode
-	if options.ColorMode != 0 {
-		mode = options.ColorMode
-	}
-
-	res.options = predictor.PreprocessOptions{
-		Context:   options.Context,
-		MeanImage: mean,
-		Scale:     scale,
-		ColorMode: mode,
-		Layout:    options.Layout,
-	}
-
 	res.doer = res.do
-
 	return res
 }
 

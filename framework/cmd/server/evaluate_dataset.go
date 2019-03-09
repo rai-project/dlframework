@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,18 +12,14 @@ import (
 	"strings"
 	"time"
 
-	"context"
-
+	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/fatih/color"
 	shellwords "github.com/junegunn/go-shellwords"
-
-	dlcmd "github.com/rai-project/dlframework/framework/cmd"
-
-	sourcepath "github.com/GeertJohan/go-sourcepath"
-	"github.com/sirupsen/logrus"
-
 	"github.com/rai-project/config"
 	"github.com/rai-project/cpu/cpuid"
+	dlcmd "github.com/rai-project/dlframework/framework/cmd"
+	"github.com/sirupsen/logrus"
+
 	_ "github.com/rai-project/logger/hooks"
 )
 

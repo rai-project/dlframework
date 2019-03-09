@@ -16,7 +16,6 @@ import (
 	"github.com/rai-project/parallel/tunny"
 	"github.com/spf13/cobra"
 	"gopkg.in/mgo.v2/bson"
-
 	udb "upper.io/db.v3"
 )
 
@@ -80,7 +79,7 @@ func doComputeDivergence(
 
 	progress := newProgress("checking prediction divergence step", numEvals)
 	//defer progress.FinishPrint("finished prediction divergence step")
-        defer progress.Finish()
+	defer progress.Finish()
 
 	var wg sync.WaitGroup
 	wg.Add(numEvals)

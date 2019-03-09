@@ -11,16 +11,18 @@ import (
 	"github.com/rai-project/dlframework/framework/feature"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
+	imageTypes "github.com/rai-project/image/types"
 	yaml "gopkg.in/yaml.v2"
 )
 
 type PreprocessOptions struct {
-	Context   context.Context
-	MeanImage []float32
-	Size      []int
-	Scale     float32
-	ColorMode types.Mode
-	Layout    image.Layout
+	Context     context.Context
+	ElementType string
+	MeanImage   []float32
+	Size        []int
+	Scale       float32
+	ColorMode   types.Mode
+	Layout      image.Layout
 }
 
 type ImagePredictor struct {
@@ -28,9 +30,29 @@ type ImagePredictor struct {
 	Metadata map[string]interface{}
 }
 
-func (p ImagePredictor) GetMeanPath() string {
+func (p ImagePredictor) GetElementType(defaultElementType string) string {
 	model := p.Model
-	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".mean"))
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return defaultElementType
+	}
+	pet, ok := typeParameters["element_type"]
+	if !ok {
+		return defaultElementType
+	}
+	petVal := pet.Value
+	if petVal == "" {
+		return defaultElementType
+	}
+
+	var val string
+	if err := yaml.Unmarshal([]byte(petVal), &val); err != nil {
+		log.Errorf("unable to get element type %v as a string", petVal)
+		return defaultElementType
+	}
+
+	return val
 }
 
 func (p ImagePredictor) GetImageDimensions() ([]int, error) {
@@ -57,6 +79,11 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 		return nil, errors.Errorf("expecting a dimensions size of 3, but got %v. do not put the batch size in the input dimensions.", len(dims))
 	}
 	return dims, nil
+}
+
+func (p ImagePredictor) GetMeanPath() string {
+	model := p.Model
+	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
 func (p ImagePredictor) GetMeanImage() ([]float32, error) {
@@ -180,7 +207,31 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	}
 }
 
-// ReadPredictedFeatures ...
+func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
+	mean, err := p.GetMeanImage()
+	if err != nil {
+		return PreprocessOptions{}, err
+	}
+	scale, err := p.GetScale()
+	if err != nil {
+		return PreprocessOptions{}, err
+	}
+	imageDims, err := p.GetImageDimensions()
+	if err != nil {
+		return PreprocessOptions{}, err
+	}
+
+	return PreprocessOptions{
+		Context:     ctx,
+		ElementType: p.GetElementType("float32"),
+		MeanImage:   mean,
+		Scale:       scale,
+		Size:        []int{int(imageDims[1]), int(imageDims[2])},
+		ColorMode:   p.GetColorMode(imageTypes.RGBMode),
+		Layout:      p.GetLayout(image.HWCLayout),
+	}, nil
+}
+
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	featureLen := len(probabilities) / batchSize

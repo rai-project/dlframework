@@ -17,11 +17,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"github.com/ulule/deepcopier"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -30,11 +25,16 @@ import (
 	common "github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
-	_ "github.com/rai-project/monitoring/monitors"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"github.com/ulule/deepcopier"
+	"gopkg.in/mgo.v2/bson"
+
+	_ "github.com/rai-project/monitoring/monitors"
 )
 
 var (
@@ -68,7 +68,7 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		defer db.Close()
 
-		predictorFramework, err := agent.GetPredictor(framework)
+		predictorFramework, err := agent.GetPredictors(framework)
 		if err != nil {
 			return errors.Wrapf(err,
 				"⚠️ failed to get predictor for %s. make sure you have "+

@@ -21,31 +21,9 @@ func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 		base: base{
 			info: "PreprocessImage",
 		},
+		options: options,
 	}
-
-	mean := []float32{0, 0, 0}
-	if len(options.MeanImage) != 0 {
-		mean = options.MeanImage
-	}
-	scale := float32(1.0)
-	if options.Scale != 0 {
-		scale = options.Scale
-	}
-	mode := types.RGBMode
-	if options.ColorMode != 0 {
-		mode = options.ColorMode
-	}
-
-	res.options = predictor.PreprocessOptions{
-		Context:   options.Context,
-		MeanImage: mean,
-		Scale:     scale,
-		ColorMode: mode,
-		Layout:    options.Layout,
-	}
-
 	res.doer = res.do
-
 	return res
 }
 
@@ -56,27 +34,43 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOption
 		defer span.Finish()
 	}
 
+	var out []float32
 	switch in := in0.(type) {
 	case *types.RGBImage:
 		if p.options.Layout == image.CHWLayout {
-			return p.doRGBImageCHW(ctx, in)
+			out = p.doRGBImageCHW(ctx, in)
 		}
-		return p.doRGBImageHWC(ctx, in)
+		out = p.doRGBImageHWC(ctx, in)
 	case *types.BGRImage:
 		if p.options.Layout == image.CHWLayout {
-			return p.doBGRImageCHW(ctx, in)
+			out = p.doBGRImageCHW(ctx, in)
 		}
-		return p.doBGRImageHWC(ctx, in)
+		out = p.doBGRImageHWC(ctx, in)
+	default:
+		return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 	}
-	return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
+
+	switch t := p.options.ElementType; t {
+	case "float32":
+		return out
+	case "uint8":
+		out0 := make([]uint8, len(out))
+		for ii, _ := range out {
+			out0[ii] = uint8(out[ii])
+		}
+		return out0
+	default:
+		return errors.Errorf("unknow element type %v", t)
+	}
 }
 
-func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) interface{} {
-	height := in.Bounds().Dy()
-	width := in.Bounds().Dx()
+func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
+
+	height := in.Bounds().Dy()
+	width := in.Bounds().Dx()
 
 	out := make([]float32, 3*height*width)
 
@@ -109,7 +103,7 @@ func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) 
 	return out
 }
 
-func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) interface{} {
+func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) []float32 {
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	scale := p.options.Scale
@@ -147,7 +141,7 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 	return out
 }
 
-func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) interface{} {
+func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) []float32 {
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	scale := p.options.Scale
@@ -184,7 +178,7 @@ func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) 
 	return out
 }
 
-func (p preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) interface{} {
+func (p preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) []float32 {
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	scale := p.options.Scale

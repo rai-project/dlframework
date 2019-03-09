@@ -32,12 +32,12 @@ func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
 	}
 
 	res := readImage{
-		width:   width,
-		height:  height,
-		options: options,
 		base: base{
 			info: "ReadImage",
 		},
+		width:   width,
+		height:  height,
+		options: options,
 	}
 	res.doer = res.do
 	return res
