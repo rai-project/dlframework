@@ -31,7 +31,6 @@ import (
 	"github.com/rai-project/uuid"
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
-	"github.com/ulule/deepcopier"
 	"gopkg.in/mgo.v2/bson"
 
 	_ "github.com/rai-project/monitoring/monitors"
@@ -68,7 +67,12 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		defer db.Close()
 
-		predictorFramework, err := agent.GetPredictors(framework)
+		model, err := framework.FindModel(modelName + ":" + modelVersion)
+		if err != nil {
+			return err
+		}
+
+		predictors, err := agent.GetPredictors(framework)
 		if err != nil {
 			return errors.Wrapf(err,
 				"⚠️ failed to get predictor for %s. make sure you have "+
@@ -77,9 +81,23 @@ var predictUrlsCmd = &cobra.Command{
 			)
 		}
 
-		model, err := framework.FindModel(modelName + ":" + modelVersion)
-		if err != nil {
-			return err
+		var predictorHandle common.Predictor
+		for _, pred := range predictors {
+			predModality, err := pred.Modality()
+			if err != nil {
+				continue
+			}
+			modelModality, err := model.Modality()
+			if err != nil {
+				continue
+			}
+			if predModality == modelModality {
+				predictorHandle = pred
+				break
+			}
+		}
+		if predictorHandle == nil {
+			return errors.New("unable to find predictor for requested modality")
 		}
 
 		var dc map[string]int32
@@ -104,16 +122,9 @@ var predictUrlsCmd = &cobra.Command{
 			ExecutionOptions: execOpts,
 		}
 
-		predictor, err := predictorFramework.Load(ctx, *model, options.PredictorOptions(predOpts))
+		predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(predOpts))
 		if err != nil {
 			return err
-		}
-
-		var imagePredictor common.ImagePredictor
-
-		err = deepcopier.Copy(predictor).To(&imagePredictor)
-		if err != nil {
-			return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 		}
 
 		var urls []string
