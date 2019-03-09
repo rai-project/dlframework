@@ -19,7 +19,7 @@ type PreprocessOptions struct {
 	Context     context.Context
 	ElementType string
 	MeanImage   []float32
-	Size        []int
+	Dims        []int
 	Scale       float32
 	ColorMode   types.Mode
 	Layout      image.Layout
@@ -64,7 +64,8 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	}
 	pdims, ok := typeParameters["dimensions"]
 	if !ok {
-		return nil, errors.New("expecting image type dimensions")
+		log.Debug("arbitrary image dimensions")
+		return nil, nil
 	}
 	pdimsVal := pdims.Value
 	if pdimsVal == "" {
@@ -226,7 +227,7 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 		ElementType: p.GetElementType("float32"),
 		MeanImage:   mean,
 		Scale:       scale,
-		Size:        []int{int(imageDims[1]), int(imageDims[2])},
+		Dims:        imageDims,
 		ColorMode:   p.GetColorMode(imageTypes.RGBMode),
 		Layout:      p.GetLayout(image.HWCLayout),
 	}, nil

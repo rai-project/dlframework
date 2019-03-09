@@ -33,13 +33,15 @@ func (p readURL) do(ctx context.Context, in0 interface{}, opts *pipeline.Options
 
 	url := ""
 	switch in := in0.(type) {
+	case string:
+		url = in
 	case *dl.URLsRequest_URL:
 		if in == nil {
 			return errors.New("cannot read nil url")
 		}
 		url = in.GetData()
 	default:
-		return errors.Errorf("expecting a string for read url Step, but got %v", in0)
+		return errors.Errorf("expecting a string or *dl.URLsRequest_URL for read url Step, but got %v", in0)
 	}
 
 	if span != nil {
