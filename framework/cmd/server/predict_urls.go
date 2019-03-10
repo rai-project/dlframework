@@ -15,7 +15,6 @@ import (
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
 	"github.com/rai-project/database"
@@ -323,9 +322,6 @@ var predictUrlsCmd = &cobra.Command{
 			if !ok {
 				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 			}
-
-			pp.Println(features[:3])
-			return nil
 
 			if publishPredictions == true {
 				inputPrediction := evaluation.InputPrediction{
