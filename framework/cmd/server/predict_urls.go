@@ -324,7 +324,8 @@ var predictUrlsCmd = &cobra.Command{
 				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 			}
 
-			pp.Println(features)
+			pp.Println(features[0])
+			return nil
 
 			if publishPredictions == true {
 				inputPrediction := evaluation.InputPrediction{

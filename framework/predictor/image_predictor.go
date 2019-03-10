@@ -30,31 +30,6 @@ type ImagePredictor struct {
 	Metadata map[string]interface{}
 }
 
-func (p ImagePredictor) GetElementType(defaultElementType string) string {
-	model := p.Model
-	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	if typeParameters == nil {
-		return defaultElementType
-	}
-	pet, ok := typeParameters["element_type"]
-	if !ok {
-		return defaultElementType
-	}
-	petVal := pet.Value
-	if petVal == "" {
-		return defaultElementType
-	}
-
-	var val string
-	if err := yaml.Unmarshal([]byte(petVal), &val); err != nil {
-		log.Errorf("unable to get element type %v as a string", petVal)
-		return defaultElementType
-	}
-
-	return val
-}
-
 func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
@@ -228,7 +203,7 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 
 	return PreprocessOptions{
 		Context:     ctx,
-		ElementType: p.GetElementType("float32"),
+		ElementType: p.Model.GetElementType("float32"),
 		MeanImage:   mean,
 		Scale:       scale,
 		Dims:        imageDims,

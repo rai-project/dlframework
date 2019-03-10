@@ -12,9 +12,34 @@ import (
 	"golang.org/x/sync/syncmap"
 
 	"github.com/rai-project/config"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var modelRegistry = syncmap.Map{}
+
+func (model ModelManifest) GetElementType(defaultElementType string) string {
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return defaultElementType
+	}
+	pet, ok := typeParameters["element_type"]
+	if !ok {
+		return defaultElementType
+	}
+	petVal := pet.Value
+	if petVal == "" {
+		return defaultElementType
+	}
+
+	var val string
+	if err := yaml.Unmarshal([]byte(petVal), &val); err != nil {
+		log.Errorf("unable to get element type %v as a string", petVal)
+		return defaultElementType
+	}
+
+	return val
+}
 
 func (m *ModelManifest) Modality() (Modality, error) {
 	inputs := m.GetInputs()

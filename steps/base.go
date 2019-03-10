@@ -67,6 +67,9 @@ func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface
 					// pp.Println("no id for %v @ step = %v", input, p.info)
 				}
 
+				// pp.Println(p.info)
+				// pp.Println(data)
+
 				res := p.doer(ctx, data, options)
 
 				if err, ok := res.(error); ok {
