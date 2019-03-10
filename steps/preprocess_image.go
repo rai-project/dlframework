@@ -2,6 +2,7 @@ package steps
 
 import (
 	"context"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predictor"
@@ -34,6 +35,12 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOption
 		defer span.Finish()
 	}
 
+	elementType := strings.ToLower(p.options.ElementType)
+
+	if elementType == "raw_image" {
+		return in0
+	}
+
 	var out []float32
 	switch in := in0.(type) {
 	case *types.RGBImage:
@@ -50,18 +57,11 @@ func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOption
 		return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 	}
 
-	switch t := p.options.ElementType; t {
-	case "float32":
+	if elementType == "float32" {
 		return out
-	case "uint8":
-		out0 := make([]uint8, len(out))
-		for ii, _ := range out {
-			out0[ii] = uint8(out[ii])
-		}
-		return out0
-	default:
-		return errors.Errorf("unsupported element type %v", t)
 	}
+
+	return errors.Errorf("unsupported element type %v", elementType)
 }
 
 func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) []float32 {

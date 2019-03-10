@@ -33,7 +33,36 @@ func toSlice(i interface{}) ([]interface{}, error) {
 	}
 }
 
-// toFloat32Slice casts an interface to a []float32 type.
+// toByteSlice casts an interface to a []uint8 type.
+func toByteSlice(i interface{}) ([]byte, error) {
+	if i == nil {
+		return []byte{}, fmt.Errorf("unable to cast %#v of type %T to []byte", i, i)
+	}
+
+	switch v := i.(type) {
+	case []byte:
+		return v, nil
+	}
+
+	kind := reflect.TypeOf(i).Kind()
+	switch kind {
+	case reflect.Slice, reflect.Array:
+		s := reflect.ValueOf(i)
+		a := make([]byte, s.Len())
+		for j := 0; j < s.Len(); j++ {
+			val, ok := s.Index(j).Interface().(byte)
+			if !ok {
+				return []byte{}, errors.Errorf("unable to cast %#v of type %T to []byte", i, i)
+			}
+			a[j] = val
+		}
+		return a, nil
+	default:
+		return []byte{}, errors.Errorf("unable to cast %#v of type %T to []byte", i, i)
+	}
+}
+
+// toUInt8Slice casts an interface to a []uint8 type.
 func toUInt8Slice(i interface{}) ([]uint8, error) {
 	if i == nil {
 		return []uint8{}, fmt.Errorf("unable to cast %#v of type %T to []uint8", i, i)

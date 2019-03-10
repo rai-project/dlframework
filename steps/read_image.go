@@ -2,9 +2,13 @@ package steps
 
 import (
 	"io"
+	"io/ioutil"
+	"strings"
 
 	"context"
 
+	"github.com/h2non/filetype"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	"github.com/rai-project/dlframework/framework/predictor"
@@ -74,6 +78,23 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		}
 	default:
 		return errors.Errorf("expecting a io.Reader or dataset element for read image step, but got %v", in0)
+	}
+
+	elementType := strings.ToLower(p.options.ElementType)
+
+	if elementType == "raw_image" {
+		reader, ok := in.(io.Reader)
+		if !ok {
+			return errors.Errorf("expecting an io.Reader data type for %v step, but got %v", p.Info(), pp.Sprint(in0))
+		}
+		buf, err := ioutil.ReadAll(reader)
+		if err != nil {
+			return errors.Wrapf(err, "failed to read data for %v step", p.Info())
+		}
+		if !filetype.IsImage(buf[:261]) {
+			return errors.Errorf("expecting a raw image for %v step, but got %v", p.Info(), pp.Sprint(in0))
+		}
+		return buf
 	}
 
 	image, err := image.Read(in, readOptions...)

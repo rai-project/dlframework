@@ -2,7 +2,6 @@ package steps
 
 import (
 	"context"
-	"strings"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
@@ -12,8 +11,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 )
-
-var DefaultModelElementType string = "float32"
 
 type predict struct {
 	base
@@ -101,8 +98,17 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 
 func (p predict) castToElementType(inputs []interface{}) (interface{}, error) {
 	_, model, _ := p.predictor.Info()
-
-	switch t := strings.ToLower(model.GetElementType(DefaultModelElementType)); t {
+	switch t := model.GetElementType(); t {
+	case "raw_image":
+		data := make([][]byte, len(inputs))
+		for ii, input := range inputs {
+			r, err := toByteSlice(input)
+			if err != nil {
+				return nil, errors.Wrapf(err, "unable to cast to uint8 slice in %v step", p.info)
+			}
+			data[ii] = r
+		}
+		return data, nil
 	case "uint8":
 		data := make([][]uint8, len(inputs))
 		for ii, input := range inputs {

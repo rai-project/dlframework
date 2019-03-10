@@ -16,29 +16,30 @@ import (
 )
 
 var modelRegistry = syncmap.Map{}
+var DefaultModelElementType string = "float32"
 
-func (model ModelManifest) GetElementType(defaultElementType string) string {
+func (model ModelManifest) GetElementType() string {
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
-		return defaultElementType
+		return DefaultModelElementType
 	}
 	pet, ok := typeParameters["element_type"]
 	if !ok {
-		return defaultElementType
+		return DefaultModelElementType
 	}
 	petVal := pet.Value
 	if petVal == "" {
-		return defaultElementType
+		return DefaultModelElementType
 	}
 
 	var val string
 	if err := yaml.Unmarshal([]byte(petVal), &val); err != nil {
 		log.Errorf("unable to get element type %v as a string", petVal)
-		return defaultElementType
+		return DefaultModelElementType
 	}
 
-	return val
+	return strings.ToLower(val)
 }
 
 func (m *ModelManifest) Modality() (Modality, error) {
@@ -54,7 +55,7 @@ func (m *ModelManifest) Modality() (Modality, error) {
 				return ImageEnhancementModality, nil
 			case "classification":
 				return ImageClassificationModality, nil
-			case "object_detection":
+			case "boundingbox":
 				return ImageObjectDetectionModality, nil
 			case "region":
 				return ImageSegmentationModality, nil

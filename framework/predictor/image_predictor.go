@@ -203,7 +203,7 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 
 	return PreprocessOptions{
 		Context:     ctx,
-		ElementType: p.Model.GetElementType("float32"),
+		ElementType: p.Model.GetElementType(),
 		MeanImage:   mean,
 		Scale:       scale,
 		Dims:        imageDims,
