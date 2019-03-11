@@ -5,10 +5,11 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"context"
-
 	"github.com/h2non/filetype"
 	"github.com/k0kubun/pp"
+
+	"context"
+
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	"github.com/rai-project/dlframework/framework/predictor"

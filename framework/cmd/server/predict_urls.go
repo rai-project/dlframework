@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/k0kubun/pp"
+
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
@@ -322,6 +324,11 @@ var predictUrlsCmd = &cobra.Command{
 			if !ok {
 				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 			}
+
+			for ii := 0; ii < 3; ii++ {
+				pp.Println(features[ii].GetProbability())
+			}
+			return nil
 
 			if publishPredictions == true {
 				inputPrediction := evaluation.InputPrediction{
