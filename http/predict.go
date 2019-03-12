@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 
+	"github.com/k0kubun/pp"
+
+	"github.com/cenkalti/backoff"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
@@ -73,6 +77,38 @@ func fromPredictionOptions(opts *webmodels.DlframeworkPredictionOptions) *dl.Pre
 	return predOpts
 }
 
+var findMaxTries uint64 = 10
+
+func (p *PredictHandler) findAgent(params predict.OpenParams) (agents []*webmodels.DlframeworkAgent, err error) {
+
+	frameworkName := strings.ToLower(getBody(params.Body.FrameworkName, "*"))
+	frameworkVersion := strings.ToLower(getBody(params.Body.FrameworkVersion, "*"))
+	modelName := strings.ToLower(getBody(params.Body.ModelName, "*"))
+	modelVersion := strings.ToLower(getBody(params.Body.ModelVersion, "*"))
+
+	find := func() error {
+		agents, err = registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+		if err != nil {
+			return NewError("Predict/FindAgent", err)
+		}
+
+		if len(agents) == 0 {
+			return NewError("Predict/FindAgent",
+				errors.Errorf("unable to find agents for framework=%s:%s model=%s:%s",
+					frameworkName, frameworkVersion, modelName, modelVersion,
+				))
+		}
+		return nil
+	}
+	b := backoff.NewExponentialBackOff()
+	b.MaxElapsedTime = time.Minute
+	err = backoff.Retry(find, backoff.WithMaxRetries(b, findMaxTries))
+
+	pp.Println(agents)
+
+	return
+}
+
 func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 
 	frameworkName := strings.ToLower(getBody(params.Body.FrameworkName, "*"))
@@ -80,12 +116,8 @@ func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
 	modelName := strings.ToLower(getBody(params.Body.ModelName, "*"))
 	modelVersion := strings.ToLower(getBody(params.Body.ModelVersion, "*"))
 
-	agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	agents, err := p.findAgent(params)
 	if err != nil {
-		return NewError("Predict/Open", err)
-	}
-
-	if len(agents) == 0 {
 		return NewError("Predict/Open",
 			errors.Errorf("unable to find agents for framework=%s:%s model=%s:%s",
 				frameworkName, frameworkVersion, modelName, modelVersion,
@@ -256,6 +288,15 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 				features[jj].Classification = &webmodels.DlframeworkClassification{
 					Index: feature.Classification.Index,
 					Label: feature.Classification.Label,
+				}
+			case *dl.Feature_BoundingBox:
+				features[jj].BoundingBox = &webmodels.DlframeworkBoundingBox{
+					Index: feature.BoundingBox.Index,
+					Label: feature.BoundingBox.Label,
+					Xmax:  feature.BoundingBox.Xmax,
+					Xmin:  feature.BoundingBox.Xmin,
+					Ymax:  feature.BoundingBox.Ymax,
+					Ymin:  feature.BoundingBox.Ymin,
 				}
 			case *dl.Feature_Image:
 				features[jj].Image = &webmodels.DlframeworkImage{
