@@ -3,8 +3,6 @@ package steps
 import (
 	"context"
 
-	"github.com/k0kubun/pp"
-
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/options"
@@ -109,7 +107,6 @@ func (p predict) castToTensorType(inputs []interface{}) (interface{}, error) {
 	for ii, input := range inputs {
 		v, ok := input.(*tensor.Dense)
 		if !ok {
-			pp.Println(input)
 			return nil, errors.Errorf("unable to cast to dense tensor in %v step", p.info)
 		}
 		data[ii] = v
