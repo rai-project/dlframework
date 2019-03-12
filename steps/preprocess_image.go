@@ -4,7 +4,6 @@ import (
 	"context"
 	"strings"
 
-	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
@@ -63,7 +62,6 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 			tensor.WithShape(p.height, p.width, 3),
 			tensor.WithBacking(floats),
 		)
-		pp.Println(outTensor)
 		return outTensor
 	case "uint8":
 		uint8s := make([]uint8, len(floats))
