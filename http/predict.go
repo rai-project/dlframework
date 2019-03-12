@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/k0kubun/pp"
-
 	"github.com/cenkalti/backoff"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
@@ -103,8 +101,6 @@ func (p *PredictHandler) findAgent(params predict.OpenParams) (agents []*webmode
 	b := backoff.NewExponentialBackOff()
 	b.MaxElapsedTime = time.Minute
 	err = backoff.Retry(find, backoff.WithMaxRetries(b, findMaxTries))
-
-	pp.Println(agents)
 
 	return
 }
