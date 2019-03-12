@@ -250,8 +250,24 @@
   name = "github.com/cenkalti/backoff"
   packages = ["."]
   pruneopts = "UT"
-  revision = "62661b46c4093e2c1f38d943e663db1a29873e80"
-  version = "v2.1.0"
+  revision = "1e4cf3da559842a91afcb6ea6141451e6c30c618"
+  version = "v2.1.1"
+
+[[projects]]
+  digest = "0:"
+  name = "github.com/chewxy/hm"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "61efb3290a086d1335e8954b3734c102126818ba"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "0:"
+  name = "github.com/chewxy/math32"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d1e7b22839c693f54edf7811dd9487623abf2cd2"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -367,7 +383,6 @@
     "pkg/jsonmessage",
     "pkg/longpath",
     "pkg/mount",
-    "pkg/parsers",
     "pkg/pools",
     "pkg/progress",
     "pkg/signal",
@@ -798,6 +813,19 @@
   pruneopts = "UT"
   revision = "92583770e3f01b09a0d3e9bdf64321d8bebd48f2"
   version = "v1.4.1"
+
+[[projects]]
+  digest = "0:"
+  name = "github.com/h2non/filetype"
+  packages = [
+    ".",
+    "matchers",
+    "matchers/isobmff",
+    "types",
+  ]
+  pruneopts = "UT"
+  revision = "2248f2e2f77cd8cf9694216e3f9589d71005de37"
+  version = "v1.0.8"
 
 [[projects]]
   digest = "0:"
@@ -2045,6 +2073,14 @@
 [[projects]]
   branch = "master"
   digest = "0:"
+  name = "github.com/xtgo/set"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "708d80f4a27458f99f8ca12bd0e638c6ee65627f"
+
+[[projects]]
+  branch = "master"
+  digest = "0:"
   name = "golang.org/x/crypto"
   packages = [
     "acme",
@@ -2167,6 +2203,28 @@
   packages = ["rate"]
   pruneopts = "UT"
   revision = "85acf8d2951cb2a3bde7632f9ff273ef0379bcbd"
+
+[[projects]]
+  branch = "master"
+  digest = "0:"
+  name = "gonum.org/v1/gonum"
+  packages = [
+    "blas",
+    "blas/blas64",
+    "blas/cblas128",
+    "blas/gonum",
+    "floats",
+    "internal/asm/c128",
+    "internal/asm/f32",
+    "internal/asm/f64",
+    "internal/math32",
+    "lapack",
+    "lapack/gonum",
+    "lapack/lapack64",
+    "mat",
+  ]
+  pruneopts = "UT"
+  revision = "60a68a3a7f2ce6c255bbcbdda13ad32fe74adc12"
 
 [[projects]]
   branch = "master"
@@ -2366,6 +2424,34 @@
 
 [[projects]]
   digest = "0:"
+  name = "gorgonia.org/tensor"
+  packages = [
+    ".",
+    "internal/execution",
+    "internal/storage",
+  ]
+  pruneopts = "UT"
+  revision = "2ab2564f998fe504b94a1679c1c95277cdedea47"
+  version = "v0.8.1"
+
+[[projects]]
+  branch = "master"
+  digest = "0:"
+  name = "gorgonia.org/vecf32"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a06d791a4e66be4d2fcae4530bb67afa232a0dae"
+
+[[projects]]
+  branch = "master"
+  digest = "0:"
+  name = "gorgonia.org/vecf64"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d21373a26cc12a37eaab0182a21d0225c3b7ef34"
+
+[[projects]]
+  digest = "0:"
   name = "upper.io/db.v3"
   packages = [
     ".",
@@ -2384,6 +2470,7 @@
     "github.com/Masterminds/semver",
     "github.com/Unknwon/com",
     "github.com/VividCortex/robustly",
+    "github.com/cenkalti/backoff",
     "github.com/cockroachdb/cmux",
     "github.com/davecgh/go-spew/spew",
     "github.com/docker/docker/api/types",
@@ -2410,6 +2497,7 @@
     "github.com/golang/protobuf/proto",
     "github.com/grpc-ecosystem/grpc-gateway/runtime",
     "github.com/grpc-ecosystem/grpc-gateway/utilities",
+    "github.com/h2non/filetype",
     "github.com/jessevdk/go-flags",
     "github.com/jinzhu/copier",
     "github.com/junegunn/go-shellwords",
@@ -2476,6 +2564,7 @@
     "gopkg.in/cheggaaa/pb.v2",
     "gopkg.in/mgo.v2/bson",
     "gopkg.in/yaml.v2",
+    "gorgonia.org/tensor",
     "upper.io/db.v3",
   ]
   solver-name = "gps-cdcl"
