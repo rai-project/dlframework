@@ -4,17 +4,21 @@ import (
 	"context"
 	"strings"
 
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
+	"gorgonia.org/tensor"
 )
 
 type preprocessImage struct {
 	base
 	options predictor.PreprocessOptions
+	height  int
+	width   int
 }
 
 func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
@@ -28,52 +32,62 @@ func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 	return res
 }
 
-func (p preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
+func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
 	if p.options.Context != nil {
 		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
 		ctx = ctx0
 		defer span.Finish()
 	}
 
-	var out []float32
+	var floats []float32
 	switch in := in0.(type) {
 	case *types.RGBImage:
-		return in.Pix
 		if p.options.Layout == image.CHWLayout {
-			out = p.doRGBImageCHW(ctx, in)
+			floats = p.doRGBImageCHW(ctx, in)
 		}
-		out = p.doRGBImageHWC(ctx, in)
+		floats = p.doRGBImageHWC(ctx, in)
 	case *types.BGRImage:
-		return in.Pix
 		if p.options.Layout == image.CHWLayout {
-			out = p.doBGRImageCHW(ctx, in)
+			floats = p.doBGRImageCHW(ctx, in)
 		}
-		out = p.doBGRImageHWC(ctx, in)
+		floats = p.doBGRImageHWC(ctx, in)
 	default:
 		return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 	}
 
 	elementType := strings.ToLower(p.options.ElementType)
+
 	switch elementType {
 	case "float32":
-		return out
+		outTensor := tensor.New(
+			tensor.WithShape(p.height, p.width, 3),
+			tensor.WithBacking(floats),
+		)
+		pp.Println(outTensor)
+		return outTensor
 	case "uint8":
-		out0 := make([]uint8, len(out))
-		for ii, _ := range out {
-			out0[ii] = uint8(out[ii])
+		uint8s := make([]uint8, len(floats))
+		for ii, f := range floats {
+			uint8s[ii] = uint8(f)
 		}
-		return out0
+		outTensor := tensor.New(
+			tensor.WithShape(p.height, p.width, 3),
+			tensor.WithBacking(uint8s),
+		)
+		return outTensor
 	}
 
 	return errors.Errorf("unsupported element type %v", elementType)
 }
 
-func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) []float32 {
+func (p *preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
+	p.height = height
+	p.width = width
 
 	out := make([]float32, 3*height*width)
 
@@ -106,12 +120,14 @@ func (p preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) 
 	return out
 }
 
-func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) []float32 {
-	height := in.Bounds().Dy()
-	width := in.Bounds().Dx()
+func (p *preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
+	height := in.Bounds().Dy()
+	width := in.Bounds().Dx()
+	p.height = height
+	p.width = width
 
 	out := make([]float32, 3*height*width)
 
@@ -144,14 +160,17 @@ func (p preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) 
 	return out
 }
 
-func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) []float32 {
-	height := in.Bounds().Dy()
-	width := in.Bounds().Dx()
+func (p *preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
+	height := in.Bounds().Dy()
+	width := in.Bounds().Dx()
+	p.height = height
+	p.width = width
 
 	out := make([]float32, 3*height*width)
+
 	if mode == types.RGBMode {
 		for y := 0; y < height; y++ {
 			for x := 0; x < width; x++ {
@@ -181,12 +200,14 @@ func (p preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) 
 	return out
 }
 
-func (p preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) []float32 {
-	height := in.Bounds().Dy()
-	width := in.Bounds().Dx()
+func (p *preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
+	height := in.Bounds().Dy()
+	width := in.Bounds().Dx()
+	p.height = height
+	p.width = width
 
 	out := make([]float32, 3*height*width)
 

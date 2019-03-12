@@ -3,6 +3,8 @@ package steps
 import (
 	"context"
 
+	"github.com/k0kubun/pp"
+
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/options"
@@ -10,6 +12,7 @@ import (
 	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
+	"gorgonia.org/tensor"
 )
 
 type predict struct {
@@ -35,7 +38,12 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		return errors.Errorf("expecting []interface{} for predict image step, but got %v", in0)
 	}
 
-	data, err := p.castToElementType(iData)
+	// data, err := p.castToElementType(iData)
+	// if err != nil {
+	// 	return err
+	// }
+
+	data, err := p.castToTensorType(iData)
 	if err != nil {
 		return err
 	}
@@ -94,6 +102,19 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	}
 
 	return lst
+}
+
+func (p predict) castToTensorType(inputs []interface{}) (interface{}, error) {
+	data := make([]*tensor.Dense, len(inputs))
+	for ii, input := range inputs {
+		v, ok := input.(*tensor.Dense)
+		if !ok {
+			pp.Println(input)
+			return nil, errors.Errorf("unable to cast to dense tensor in %v step", p.info)
+		}
+		data[ii] = v
+	}
+	return data, nil
 }
 
 func (p predict) castToElementType(inputs []interface{}) (interface{}, error) {
