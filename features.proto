@@ -34,11 +34,14 @@ enum FeatureType {
   UNKNOWN = 0;
   IMAGE = 1;
   CLASSIFICATION = 2;
-  GEOLOCATION = 3;
-  REGION = 4;
-  TEXT = 5;
-  AUDIO = 6;
-  BOUNDINGBOX = 7;
+  BOUNDINGBOX = 3;
+  SEGMENT = 4;
+  INSTANCESEGMENT = 5;
+  GEOLOCATION = 6;
+  REGION = 7;
+  TEXT = 8;
+  AUDIO = 9;
+
   RAW = 100;
 }
 
@@ -54,7 +57,6 @@ message Image {
   // Preprocessed is set to true to disable preprocessing.
   // If enabled then the image is assumed to be rescaled and
   // encoded as an array of float32 values
-
   // comment out for now
   // bool preprocessed = 3
   //     [ (gogoproto.moretags) = "yaml:\"preprocessed,omitempty\"" ];
@@ -66,28 +68,49 @@ message Classification {
   string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
 
+message BoundingBox {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
+  float xmin = 3 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
+  float xmax = 4 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
+  float ymin = 5 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
+  float ymax = 6 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
+}
+
+message Segment {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
+  bytes data = 3 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  int32 height = 4 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
+  int32 width = 5 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+}
+
+message InstanceSegment {
+  option (gogoproto.description) = true;
+  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
+  float xmin = 3 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
+  float xmax = 4 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
+  float ymin = 5 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
+  float ymax = 6 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
+  bytes data = 7 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  int32 height = 8 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
+  int32 width = 9 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+}
+
 message GeoLocation {
   option (gogoproto.description) = true;
   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
   float latitude = 2 [ (gogoproto.moretags) = "yaml:\"latitude,omitempty\"" ];
-  float longitude = 3
-      [ (gogoproto.moretags) = "yaml:\"longitude,omitempty\"" ];
+  float longitude = 3 [ (gogoproto.moretags) = "yaml:\"longitude,omitempty\"" ];
 }
 
 message Region {
   option (gogoproto.description) = true;
   bytes data = 1 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
   string format = 2 [ (gogoproto.moretags) = "yaml:\"format,omitempty\"" ];
-}
-
-message BoundingBox {
-  option (gogoproto.description) = true;
-  float xmin = 1 [ (gogoproto.moretags) = "yaml:\"xmin,omitempty\"" ];
-  float xmax = 2 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
-  float ymin = 3 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
-  float ymax = 4 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
-  int32 index = 5 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  string label = 6 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
 }
 
 message Text {
@@ -120,16 +143,19 @@ message Feature {
   map<string, string> metadata = 5
       [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
   oneof feature {
-    Classification classification = 6
+    Image image = 6 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+    Classification classification = 7
         [ (gogoproto.moretags) = "yaml:\"classification,omitempty\"" ];
-    Image image = 7 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
-    Text text = 8 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
-    Region region = 9 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
-    Audio audio = 10 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
-    GeoLocation geolocation = 11
-        [ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
-    BoundingBox bounding_box = 12
+    BoundingBox bounding_box = 8
         [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
+    Segment segment = 9 [ (gogoproto.moretags) = "yaml:\"segment,omitempty\"" ];
+    InstanceSegment instance_segment = 10
+        [ (gogoproto.moretags) = "yaml:\"instancesegment,omitempty\"" ];
+    Text text = 11 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
+    Region region = 12 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
+    Audio audio = 13 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
+    GeoLocation geolocation = 14
+        [ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
     Raw raw = 1000 [ (gogoproto.moretags) = "yaml:\"raw,omitempty\"" ];
   }
 }

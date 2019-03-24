@@ -725,6 +725,9 @@ func init() {
         "image": {
           "$ref": "#/definitions/dlframeworkImage"
         },
+        "instance_segment": {
+          "$ref": "#/definitions/dlframeworkInstanceSegment"
+        },
         "metadata": {
           "type": "object",
           "additionalProperties": {
@@ -740,6 +743,9 @@ func init() {
         },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
+        },
+        "segment": {
+          "$ref": "#/definitions/dlframeworkSegment"
         },
         "text": {
           "$ref": "#/definitions/dlframeworkText"
@@ -782,11 +788,13 @@ func init() {
         "UNKNOWN",
         "IMAGE",
         "CLASSIFICATION",
+        "BOUNDINGBOX",
+        "SEGMENT",
+        "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
         "TEXT",
         "AUDIO",
-        "BOUNDINGBOX",
         "RAW"
       ]
     },
@@ -904,6 +912,46 @@ func init() {
         },
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkInstanceSegment": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "xmax": {
+          "type": "number",
+          "format": "float"
+        },
+        "xmin": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
@@ -1135,6 +1183,30 @@ func init() {
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkSegment": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1916,6 +1988,9 @@ func init() {
         "image": {
           "$ref": "#/definitions/dlframeworkImage"
         },
+        "instance_segment": {
+          "$ref": "#/definitions/dlframeworkInstanceSegment"
+        },
         "metadata": {
           "type": "object",
           "additionalProperties": {
@@ -1931,6 +2006,9 @@ func init() {
         },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
+        },
+        "segment": {
+          "$ref": "#/definitions/dlframeworkSegment"
         },
         "text": {
           "$ref": "#/definitions/dlframeworkText"
@@ -1973,11 +2051,13 @@ func init() {
         "UNKNOWN",
         "IMAGE",
         "CLASSIFICATION",
+        "BOUNDINGBOX",
+        "SEGMENT",
+        "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
         "TEXT",
         "AUDIO",
-        "BOUNDINGBOX",
         "RAW"
       ]
     },
@@ -2095,6 +2175,46 @@ func init() {
         },
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkInstanceSegment": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "xmax": {
+          "type": "number",
+          "format": "float"
+        },
+        "xmin": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "float"
         }
       }
     },
@@ -2326,6 +2446,30 @@ func init() {
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkSegment": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

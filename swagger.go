@@ -521,6 +521,13 @@ const (
     "dlframeworkBoundingBox": {
       "type": "object",
       "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
         "xmin": {
           "type": "number",
           "format": "float"
@@ -536,13 +543,6 @@ const (
         "ymax": {
           "type": "number",
           "format": "float"
-        },
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "label": {
-          "type": "string"
         }
       }
     },
@@ -626,11 +626,20 @@ const (
             "type": "string"
           }
         },
+        "image": {
+          "$ref": "#/definitions/dlframeworkImage"
+        },
         "classification": {
           "$ref": "#/definitions/dlframeworkClassification"
         },
-        "image": {
-          "$ref": "#/definitions/dlframeworkImage"
+        "bounding_box": {
+          "$ref": "#/definitions/dlframeworkBoundingBox"
+        },
+        "segment": {
+          "$ref": "#/definitions/dlframeworkSegment"
+        },
+        "instance_segment": {
+          "$ref": "#/definitions/dlframeworkInstanceSegment"
         },
         "text": {
           "$ref": "#/definitions/dlframeworkText"
@@ -643,9 +652,6 @@ const (
         },
         "geolocation": {
           "$ref": "#/definitions/dlframeworkGeoLocation"
-        },
-        "bounding_box": {
-          "$ref": "#/definitions/dlframeworkBoundingBox"
         },
         "raw": {
           "$ref": "#/definitions/dlframeworkRaw"
@@ -684,11 +690,13 @@ const (
         "UNKNOWN",
         "IMAGE",
         "CLASSIFICATION",
+        "BOUNDINGBOX",
+        "SEGMENT",
+        "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
         "TEXT",
         "AUDIO",
-        "BOUNDINGBOX",
         "RAW"
       ],
       "default": "UNKNOWN"
@@ -779,6 +787,46 @@ const (
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
+        }
+      }
+    },
+    "dlframeworkInstanceSegment": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "xmin": {
+          "type": "number",
+          "format": "float"
+        },
+        "xmax": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymin": {
+          "type": "number",
+          "format": "float"
+        },
+        "ymax": {
+          "type": "number",
+          "format": "float"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -891,6 +939,30 @@ const (
       "properties": {
         "predictor": {
           "$ref": "#/definitions/dlframeworkPredictor"
+        }
+      }
+    },
+    "dlframeworkSegment": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "label": {
+          "type": "string"
+        },
+        "data": {
+          "type": "string",
+          "format": "byte"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

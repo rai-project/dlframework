@@ -102,6 +102,6 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 	if err != nil {
 		return errors.Errorf("unable to read image")
 	}
-	return image
 
+	return image
 }

@@ -34,6 +34,9 @@ type DlframeworkFeature struct {
 	// image
 	Image *DlframeworkImage `json:"image,omitempty"`
 
+	// instance segment
+	InstanceSegment *DlframeworkInstanceSegment `json:"instance_segment,omitempty"`
+
 	// metadata
 	Metadata map[string]string `json:"metadata,omitempty"`
 
@@ -45,6 +48,9 @@ type DlframeworkFeature struct {
 
 	// region
 	Region *DlframeworkRegion `json:"region,omitempty"`
+
+	// segment
+	Segment *DlframeworkSegment `json:"segment,omitempty"`
 
 	// text
 	Text *DlframeworkText `json:"text,omitempty"`
@@ -77,11 +83,19 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateInstanceSegment(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateRaw(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateRegion(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSegment(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -189,6 +203,24 @@ func (m *DlframeworkFeature) validateImage(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *DlframeworkFeature) validateInstanceSegment(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InstanceSegment) { // not required
+		return nil
+	}
+
+	if m.InstanceSegment != nil {
+		if err := m.InstanceSegment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("instance_segment")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *DlframeworkFeature) validateRaw(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Raw) { // not required
@@ -217,6 +249,24 @@ func (m *DlframeworkFeature) validateRegion(formats strfmt.Registry) error {
 		if err := m.Region.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("region")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *DlframeworkFeature) validateSegment(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Segment) { // not required
+		return nil
+	}
+
+	if m.Segment != nil {
+		if err := m.Segment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("segment")
 			}
 			return err
 		}

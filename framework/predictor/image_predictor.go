@@ -212,9 +212,12 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 	}, nil
 }
 
-func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
-	featureLen := len(probabilities) / batchSize
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+	featureLen := len(probabilities[0])
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
@@ -223,7 +226,7 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 			rprobs[jj] = feature.New(
 				feature.ClassificationIndex(int32(jj)),
 				feature.ClassificationLabel(labels[jj]),
-				feature.Probability(probabilities[ii*featureLen+jj]),
+				feature.Probability(probabilities[ii][jj]),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))
@@ -233,9 +236,12 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 	return features, nil
 }
 
-func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
-	featureLen := len(probabilities) / batchSize
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+	featureLen := len(probabilities[0])
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
@@ -243,16 +249,45 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 		for jj := 0; jj < featureLen; jj++ {
 			rprobs[jj] = feature.New(
 				feature.BoundingBoxType(),
-				feature.BoundingBoxXmin((boxes[ii*featureLen+jj][1])),
-				feature.BoundingBoxXmax((boxes[ii*featureLen+jj][3])),
-				feature.BoundingBoxYmin((boxes[ii*featureLen+jj][0])),
-				feature.BoundingBoxYmax((boxes[ii*featureLen+jj][2])),
-				feature.BoundingBoxIndex(int32(classes[jj])),
-				feature.BoundingBoxLabel(labels[int32(classes[jj])]),
-				feature.Probability(probabilities[ii*featureLen+jj]),
+				feature.BoundingBoxXmin((boxes[ii][jj][1])),
+				feature.BoundingBoxXmax((boxes[ii][jj][3])),
+				feature.BoundingBoxYmin((boxes[ii][jj][0])),
+				feature.BoundingBoxYmax((boxes[ii][jj][2])),
+				feature.BoundingBoxIndex(int32(classes[ii][jj])),
+				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
+				feature.Probability(probabilities[ii][jj]),
 			)
 		}
-		// sort.Sort(dlframework.Features(rprobs))
+		sort.Sort(dlframework.Features(rprobs))
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateMasksFeatures(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, masks [][][][]float32, labels []string) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+	featureLen := len(probabilities[0])
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		for jj := 0; jj < featureLen; jj++ {
+			rprobs[jj] = feature.New(
+				feature.BoundingBoxType(),
+				feature.BoundingBoxXmin((boxes[ii][jj][1])),
+				feature.BoundingBoxXmax((boxes[ii][jj][3])),
+				feature.BoundingBoxYmin((boxes[ii][jj][0])),
+				feature.BoundingBoxYmax((boxes[ii][jj][2])),
+				feature.BoundingBoxIndex(int32(classes[ii][jj])),
+				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
+				feature.Probability(probabilities[ii][jj]),
+			)
+		}
+		sort.Sort(dlframework.Features(rprobs))
 		features[ii] = rprobs
 	}
 
