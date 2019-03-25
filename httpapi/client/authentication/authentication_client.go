@@ -27,7 +27,7 @@ type Client struct {
 /*
 Login logins to m l model scope platform
 */
-func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
+func (a *Client) Login(params *LoginParams, authInfo runtime.ClientAuthInfoWriter) (*LoginOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewLoginParams()
@@ -42,6 +42,7 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 		Schemes:            []string{"http", "https"},
 		Params:             params,
 		Reader:             &LoginReader{formats: a.formats},
+		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
@@ -49,6 +50,34 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 		return nil, err
 	}
 	return result.(*LoginOK), nil
+
+}
+
+/*
+Logout logouts from m l model scope platform
+*/
+func (a *Client) Logout(params *LogoutParams) (*LogoutOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewLogoutParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "Logout",
+		Method:             "POST",
+		PathPattern:        "/auth/logout",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &LogoutReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*LogoutOK), nil
 
 }
 
@@ -77,6 +106,63 @@ func (a *Client) Signup(params *SignupParams) (*SignupOK, error) {
 		return nil, err
 	}
 	return result.(*SignupOK), nil
+
+}
+
+/*
+Update updates user info on m l model scope platform
+*/
+func (a *Client) Update(params *UpdateParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpdateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "Update",
+		Method:             "POST",
+		PathPattern:        "/auth/update",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &UpdateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UpdateOK), nil
+
+}
+
+/*
+UserInfo gets user s information
+*/
+func (a *Client) UserInfo(params *UserInfoParams) (*UserInfoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUserInfoParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "UserInfo",
+		Method:             "GET",
+		PathPattern:        "/auth/userinfo",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http", "https"},
+		Params:             params,
+		Reader:             &UserInfoReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*UserInfoOK), nil
 
 }
 

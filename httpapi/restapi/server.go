@@ -88,7 +88,7 @@ type Server struct {
 	TLSHost           string         `long:"tls-host" description:"the IP to listen on for tls, when not specified it's the same as --host" env:"TLS_HOST"`
 	TLSPort           int            `long:"tls-port" description:"the port to listen on for secure connections, defaults to a random value" env:"TLS_PORT"`
 	TLSCertificate    flags.Filename `long:"tls-certificate" description:"the certificate to use for secure connections" env:"TLS_CERTIFICATE"`
-	TLSCertificateKey flags.Filename `long:"tls-key" description:"the private key to use for secure conections" env:"TLS_PRIVATE_KEY"`
+	TLSCertificateKey flags.Filename `long:"tls-key" description:"the private key to use for secure connections" env:"TLS_PRIVATE_KEY"`
 	TLSCACertificate  flags.Filename `long:"tls-ca" description:"the certificate authority file to be used with mutual tls auth" env:"TLS_CA_CERTIFICATE"`
 	TLSListenLimit    int            `long:"tls-listen-limit" description:"limit the number of outstanding requests"`
 	TLSKeepAlive      time.Duration  `long:"tls-keep-alive" description:"sets the TCP keep-alive timeouts on accepted connections. It prunes dead TCP connections ( e.g. closing laptop mid-download)"`
@@ -188,6 +188,7 @@ func (s *Server) Serve() (err error) {
 
 		configureServer(domainSocket, "unix", string(s.SocketPath))
 
+		servers = append(servers, domainSocket)
 		wg.Add(1)
 		s.Logf("Serving dlframework at unix://%s", s.SocketPath)
 		go func(l net.Listener) {
@@ -197,7 +198,6 @@ func (s *Server) Serve() (err error) {
 			}
 			s.Logf("Stopped serving dlframework at unix://%s", s.SocketPath)
 		}(s.domainSocketL)
-		servers = append(servers, domainSocket)
 	}
 
 	if s.hasScheme(schemeHTTP) {
@@ -218,6 +218,7 @@ func (s *Server) Serve() (err error) {
 
 		configureServer(httpServer, "http", s.httpServerL.Addr().String())
 
+		servers = append(servers, httpServer)
 		wg.Add(1)
 		s.Logf("Serving dlframework at http://%s", s.httpServerL.Addr())
 		go func(l net.Listener) {
@@ -227,7 +228,6 @@ func (s *Server) Serve() (err error) {
 			}
 			s.Logf("Stopped serving dlframework at http://%s", l.Addr())
 		}(s.httpServerL)
-		servers = append(servers, httpServer)
 	}
 
 	if s.hasScheme(schemeHTTPS) {
@@ -314,6 +314,7 @@ func (s *Server) Serve() (err error) {
 
 		configureServer(httpsServer, "https", s.httpsServerL.Addr().String())
 
+		servers = append(servers, httpsServer)
 		wg.Add(1)
 		s.Logf("Serving dlframework at https://%s", s.httpsServerL.Addr())
 		go func(l net.Listener) {
@@ -323,7 +324,6 @@ func (s *Server) Serve() (err error) {
 			}
 			s.Logf("Stopped serving dlframework at https://%s", l.Addr())
 		}(tls.NewListener(s.httpsServerL, httpsServer.TLSConfig))
-		servers = append(servers, httpsServer)
 	}
 
 	wg.Wait()

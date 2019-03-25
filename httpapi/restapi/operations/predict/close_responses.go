@@ -53,5 +53,4 @@ func (o *CloseOK) WriteResponse(rw http.ResponseWriter, producer runtime.Produce
 	if err := producer.Produce(rw, payload); err != nil {
 		panic(err) // let the recovery middleware deal with this
 	}
-
 }

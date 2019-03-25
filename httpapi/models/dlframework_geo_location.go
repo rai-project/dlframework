@@ -19,10 +19,10 @@ type DlframeworkGeoLocation struct {
 	Index int32 `json:"index,omitempty"`
 
 	// latitude
-	Latitude float64 `json:"latitude,omitempty"`
+	Latitude float32 `json:"latitude,omitempty"`
 
 	// longitude
-	Longitude float64 `json:"longitude,omitempty"`
+	Longitude float32 `json:"longitude,omitempty"`
 }
 
 // Validate validates this dlframework geo location

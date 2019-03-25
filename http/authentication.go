@@ -1,10 +1,13 @@
 package http
 
 import (
+        // "fmt"
+        // "net/http"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
 	"github.com/rai-project/passlib"
+        // "github.com/volatiletech/authboss"
 )
 
 // dummy for MongoDB User Database
@@ -43,16 +46,24 @@ func CheckPassword(username string, password string) bool {
 
 func LoginHandler(params authentication.LoginParams) middleware.Responder {
 
-	username := params.Body.Username
-	password := params.Body.Password
-
-	if val, ok := userTable[username]; ok {
-		if CheckPassword(val.username, password) == false {
-			return NewError("Login", errors.New("Incorrect credentials"))
-		}
-	} else {
-		return NewError("Login", errors.New("Not signed up!"))
-	}
+	/* username := params.Body.Username */
+	// password := params.Body.Password
+        //
+	// if val, ok := userTable[username]; ok {
+	//         if CheckPassword(val.username, password) == false {
+	//                 return NewError("Login", errors.New("Incorrect credentials"))
+	//         }
+	// } else {
+	//         return NewError("Login", errors.New("Not signed up!"))
+	/* } */
+        /* ctx := params.HTTPRequest.Context() */
+        // ab_instance := ctx.Value("authboss_instance").(*authboss.Authboss)
+        // abuser := ab_instance.CurrentUserP(params.HTTPRequest)
+        /* fmt.Printf(abuser.GetPID()) */
+        /* params.HTTPRequest */
+        // fmt.Printf("LoginHandler")
+        // a := &Auth{ab}
+        /* a.LoginGet() */
 
 	return authentication.NewLoginOK()
 

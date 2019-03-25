@@ -83,36 +83,6 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 }
 
 /*
-DatasetStream datasets method receives a single dataset and runs the predictor on all elements of the dataset
-
-The result is a prediction feature stream.
-*/
-func (a *Client) DatasetStream(params *DatasetStreamParams) (*DatasetStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDatasetStreamParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DatasetStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/dataset",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &DatasetStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*DatasetStreamOK), nil
-
-}
-
-/*
 Images images method receives a list base64 encoded images and runs the predictor on all the images
 
 The result is a prediction feature list for each image.
@@ -139,36 +109,6 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 		return nil, err
 	}
 	return result.(*ImagesOK), nil
-
-}
-
-/*
-ImagesStream images method receives a list base64 encoded images and runs the predictor on all the images
-
-The result is a prediction feature stream for each image.
-*/
-func (a *Client) ImagesStream(params *ImagesStreamParams) (*ImagesStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewImagesStreamParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "ImagesStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/images",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &ImagesStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ImagesStreamOK), nil
 
 }
 
@@ -255,36 +195,6 @@ func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 		return nil, err
 	}
 	return result.(*UrlsOK), nil
-
-}
-
-/*
-UrlsStream images method receives a stream of urls and runs the predictor on all the urls the
-
-The result is a prediction feature stream for each url.
-*/
-func (a *Client) UrlsStream(params *UrlsStreamParams) (*UrlsStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewUrlsStreamParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "URLsStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/urls",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &UrlsStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*UrlsStreamOK), nil
 
 }
 
