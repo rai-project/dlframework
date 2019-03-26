@@ -635,8 +635,8 @@ const (
         "bounding_box": {
           "$ref": "#/definitions/dlframeworkBoundingBox"
         },
-        "segment": {
-          "$ref": "#/definitions/dlframeworkSegment"
+        "semantic_segment": {
+          "$ref": "#/definitions/dlframeworkSemanticSegment"
         },
         "instance_segment": {
           "$ref": "#/definitions/dlframeworkInstanceSegment"
@@ -691,7 +691,7 @@ const (
         "IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
-        "SEGMENT",
+        "SEMANTICSEGMENT",
         "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
@@ -816,9 +816,8 @@ const (
           "type": "number",
           "format": "float"
         },
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "mask_type": {
+          "type": "string"
         },
         "height": {
           "type": "integer",
@@ -827,6 +826,20 @@ const (
         "width": {
           "type": "integer",
           "format": "int32"
+        },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "float_mask": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
         }
       }
     },
@@ -942,20 +955,9 @@ const (
         }
       }
     },
-    "dlframeworkSegment": {
+    "dlframeworkSemanticSegment": {
       "type": "object",
       "properties": {
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "label": {
-          "type": "string"
-        },
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
         "height": {
           "type": "integer",
           "format": "int32"
@@ -963,6 +965,13 @@ const (
         "width": {
           "type": "integer",
           "format": "int32"
+        },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
         }
       }
     },

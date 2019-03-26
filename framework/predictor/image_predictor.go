@@ -1,6 +1,10 @@
 package predictor
 
 import (
+	"bytes"
+	goimage "image"
+	"image/color"
+	"image/jpeg"
 	"path/filepath"
 	"sort"
 
@@ -265,30 +269,106 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 	return features, nil
 }
 
-func (p ImagePredictor) CreateMasksFeatures(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, masks [][][][]float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	if len(masks) < 1 {
+		return nil, errors.New("len(masks) < 1")
+	}
+	targetHeight := len(masks[0])
+	targetWidth := len(masks[0][0])
+	features := make([]dlframework.Features, batchSize)
+	featureLen := 1
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		mask := masks[ii]
+		for jj := 0; jj < featureLen; jj++ {
+			rprobs[jj] = feature.New(
+				feature.SemanticSegmentType(),
+				feature.SemanticSegmentHeight(int32(targetHeight)),
+				feature.SemanticSegmentWidth(int32(targetWidth)),
+				feature.SemanticSegmentIntMask(flattenInt32Slice(mask)),
+				feature.Probability(1.0),
+			)
+		}
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateInstanceSegmentFeatures(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, masks [][][][]float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
 	featureLen := len(probabilities[0])
 	features := make([]dlframework.Features, batchSize)
-
 	for ii := 0; ii < batchSize; ii++ {
 		rprobs := make([]*dlframework.Feature, featureLen)
 		for jj := 0; jj < featureLen; jj++ {
+			mask := masks[ii][jj]
+			masktype := "float"
+			height := len(mask)
+			width := len(mask[0])
 			rprobs[jj] = feature.New(
-				feature.BoundingBoxType(),
-				feature.BoundingBoxXmin((boxes[ii][jj][1])),
-				feature.BoundingBoxXmax((boxes[ii][jj][3])),
-				feature.BoundingBoxYmin((boxes[ii][jj][0])),
-				feature.BoundingBoxYmax((boxes[ii][jj][2])),
-				feature.BoundingBoxIndex(int32(classes[ii][jj])),
-				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
+				feature.InstanceSegmentType(),
+				feature.InstanceSegmentXmin((boxes[ii][jj][1])),
+				feature.InstanceSegmentXmax((boxes[ii][jj][3])),
+				feature.InstanceSegmentYmin((boxes[ii][jj][0])),
+				feature.InstanceSegmentYmax((boxes[ii][jj][2])),
+				feature.InstanceSegmentIndex(int32(classes[ii][jj])),
+				feature.InstanceSegmentLabel(labels[int32(classes[ii][jj])]),
+				feature.InstanceSegmentMaskType(masktype),
+				feature.InstanceSegmentFloatMask(flattenFloat32Slice(mask)),
+				feature.InstanceSegmentHeight(int32(height)),
+				feature.InstanceSegmentWidth(int32(width)),
 				feature.Probability(probabilities[ii][jj]),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))
 		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]float32) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	if len(images) < 1 {
+		return nil, errors.New("len(outImages) < 1")
+	}
+	height := len(images[0])
+	width := len(images[0][0])
+	mean, err := p.GetMeanImage()
+	if err != nil {
+		return nil, err
+	}
+	scale, err := p.GetScale()
+	if err != nil {
+		return nil, err
+	}
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		curr := images[ii]
+		img := goimage.NewRGBA(goimage.Rect(0, 0, width, height))
+		var R, G, B uint8
+		for w := 0; w < width; w++ {
+			for h := 0; h < height; h++ {
+				R, G, B = uint8(curr[h][w][0]*scale+mean[0]), uint8(curr[h][w][1]*scale+mean[1]), uint8(curr[h][w][2]*scale+mean[2])
+				img.Set(w, h, color.RGBA{R, G, B, 255})
+			}
+		}
+		buf := new(bytes.Buffer)
+		err = jpeg.Encode(buf, img, nil)
+		if err != nil {
+			return nil, err
+		}
+		imgBytes := buf.Bytes()
+		features[ii] = dlframework.Features{feature.New(
+			feature.ImageType(),
+			feature.ImageData(imgBytes),
+		)}
 	}
 
 	return features, nil

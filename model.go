@@ -57,8 +57,10 @@ func (m *ModelManifest) Modality() (Modality, error) {
 				return ImageClassificationModality, nil
 			case "boundingbox":
 				return ImageObjectDetectionModality, nil
-			case "region":
-				return ImageSegmentationModality, nil
+			case "semanticsegment":
+				return ImageSemanticSegmentationModality, nil
+			case "instancesegment":
+				return ImageInstanceSegmentationModality, nil
 			}
 		}
 	}

@@ -35,7 +35,7 @@ enum FeatureType {
   IMAGE = 1;
   CLASSIFICATION = 2;
   BOUNDINGBOX = 3;
-  SEGMENT = 4;
+  SEMANTICSEGMENT = 4;
   INSTANCESEGMENT = 5;
   GEOLOCATION = 6;
   REGION = 7;
@@ -44,6 +44,13 @@ enum FeatureType {
 
   RAW = 100;
 }
+
+// message Pixel {
+//   option (gogoproto.description) = true;
+//   int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
+//   string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
+//   int32 value = 3 [ (gogoproto.moretags) = "yaml:\"value,omitempty\"" ];
+// }
 
 message Image {
   // An id used to identify the output feature: maps to input_id for output
@@ -78,13 +85,12 @@ message BoundingBox {
   float ymax = 6 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
 }
 
-message Segment {
+message SemanticSegment {
   option (gogoproto.description) = true;
-  int32 index = 1 [ (gogoproto.moretags) = "yaml:\"index,omitempty\"" ];
-  string label = 2 [ (gogoproto.moretags) = "yaml:\"label,omitempty\"" ];
-  bytes data = 3 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
-  int32 height = 4 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
-  int32 width = 5 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+  int32 height = 1 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
+  int32 width = 2 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+  repeated int32 int_mask = 3
+      [ packed = true, (gogoproto.moretags) = "yaml:\"int_mask,omitempty\"" ];
 }
 
 message InstanceSegment {
@@ -95,9 +101,14 @@ message InstanceSegment {
   float xmax = 4 [ (gogoproto.moretags) = "yaml:\"xmax,omitempty\"" ];
   float ymin = 5 [ (gogoproto.moretags) = "yaml:\"ymin,omitempty\"" ];
   float ymax = 6 [ (gogoproto.moretags) = "yaml:\"ymax,omitempty\"" ];
-  bytes data = 7 [ (gogoproto.moretags) = "yaml:\"data,omitempty\"" ];
+  string mask_type = 7
+      [ (gogoproto.moretags) = "yaml:\"mask_type,omitempty\"" ];
   int32 height = 8 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
   int32 width = 9 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+  repeated int32 int_mask = 10
+      [ packed = true, (gogoproto.moretags) = "yaml:\"int_mask,omitempty\"" ];
+  repeated float float_mask = 11
+      [ packed = true, (gogoproto.moretags) = "yaml:\"float_mask,omitempty\"" ];
 }
 
 message GeoLocation {
@@ -148,7 +159,8 @@ message Feature {
         [ (gogoproto.moretags) = "yaml:\"classification,omitempty\"" ];
     BoundingBox bounding_box = 8
         [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
-    Segment segment = 9 [ (gogoproto.moretags) = "yaml:\"segment,omitempty\"" ];
+    SemanticSegment semantic_segment = 9
+        [ (gogoproto.moretags) = "yaml:\"semantic_segment,omitempty\"" ];
     InstanceSegment instance_segment = 10
         [ (gogoproto.moretags) = "yaml:\"instancesegment,omitempty\"" ];
     Text text = 11 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];

@@ -33,7 +33,7 @@ func toSlice(i interface{}) ([]interface{}, error) {
 	}
 }
 
-// toByteSlice casts an interface to a []uint8 type.
+// toByteSlice casts an interface to a []byte type.
 func toByteSlice(i interface{}) ([]byte, error) {
 	if i == nil {
 		return []byte{}, fmt.Errorf("unable to cast %#v of type %T to []byte", i, i)

@@ -632,8 +632,8 @@
         "bounding_box": {
           "$ref": "#/definitions/dlframeworkBoundingBox"
         },
-        "segment": {
-          "$ref": "#/definitions/dlframeworkSegment"
+        "semantic_segment": {
+          "$ref": "#/definitions/dlframeworkSemanticSegment"
         },
         "instance_segment": {
           "$ref": "#/definitions/dlframeworkInstanceSegment"
@@ -688,7 +688,7 @@
         "IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
-        "SEGMENT",
+        "SEMANTICSEGMENT",
         "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
@@ -813,9 +813,8 @@
           "type": "number",
           "format": "float"
         },
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "mask_type": {
+          "type": "string"
         },
         "height": {
           "type": "integer",
@@ -824,6 +823,20 @@
         "width": {
           "type": "integer",
           "format": "int32"
+        },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "float_mask": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
         }
       }
     },
@@ -939,20 +952,9 @@
         }
       }
     },
-    "dlframeworkSegment": {
+    "dlframeworkSemanticSegment": {
       "type": "object",
       "properties": {
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "label": {
-          "type": "string"
-        },
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
         "height": {
           "type": "integer",
           "format": "int32"
@@ -960,6 +962,13 @@
         "width": {
           "type": "integer",
           "format": "int32"
+        },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
         }
       }
     },

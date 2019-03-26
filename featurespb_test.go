@@ -328,15 +328,15 @@ func BenchmarkBoundingBoxProtoUnmarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestSegmentProto(t *testing.T) {
+func TestSemanticSegmentProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, false)
+	p := NewPopulatedSemanticSegment(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -362,10 +362,10 @@ func TestSegmentProto(t *testing.T) {
 	}
 }
 
-func TestSegmentMarshalTo(t *testing.T) {
+func TestSemanticSegmentMarshalTo(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, false)
+	p := NewPopulatedSemanticSegment(popr, false)
 	size := p.Size()
 	dAtA := make([]byte, size)
 	for i := range dAtA {
@@ -375,7 +375,7 @@ func TestSegmentMarshalTo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -390,12 +390,12 @@ func TestSegmentMarshalTo(t *testing.T) {
 	}
 }
 
-func BenchmarkSegmentProtoMarshal(b *testing.B) {
+func BenchmarkSemanticSegmentProtoMarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*Segment, 10000)
+	pops := make([]*SemanticSegment, 10000)
 	for i := 0; i < 10000; i++ {
-		pops[i] = NewPopulatedSegment(popr, false)
+		pops[i] = NewPopulatedSemanticSegment(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -408,18 +408,18 @@ func BenchmarkSegmentProtoMarshal(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func BenchmarkSegmentProtoUnmarshal(b *testing.B) {
+func BenchmarkSemanticSegmentProtoUnmarshal(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
 	datas := make([][]byte, 10000)
 	for i := 0; i < 10000; i++ {
-		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedSegment(popr, false))
+		dAtA, err := github_com_gogo_protobuf_proto.Marshal(NewPopulatedSemanticSegment(popr, false))
 		if err != nil {
 			panic(err)
 		}
 		datas[i] = dAtA
 	}
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		total += len(datas[i%10000])
@@ -1207,16 +1207,16 @@ func TestBoundingBoxJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestSegmentJSON(t *testing.T) {
+func TestSemanticSegmentJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, true)
+	p := NewPopulatedSemanticSegment(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1477,12 +1477,12 @@ func TestBoundingBoxProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestSegmentProtoText(t *testing.T) {
+func TestSemanticSegmentProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, true)
+	p := NewPopulatedSemanticSegment(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1494,12 +1494,12 @@ func TestSegmentProtoText(t *testing.T) {
 	}
 }
 
-func TestSegmentProtoCompactText(t *testing.T) {
+func TestSemanticSegmentProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, true)
+	p := NewPopulatedSemanticSegment(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1797,14 +1797,14 @@ func TestBoundingBoxVerboseEqual(t *testing.T) {
 		t.Fatalf("%#v !VerboseEqual %#v, since %v", msg, p, err)
 	}
 }
-func TestSegmentVerboseEqual(t *testing.T) {
+func TestSemanticSegmentVerboseEqual(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedSegment(popr, false)
+	p := NewPopulatedSemanticSegment(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		panic(err)
 	}
-	msg := &Segment{}
+	msg := &SemanticSegment{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		panic(err)
 	}
@@ -1956,9 +1956,9 @@ func TestBoundingBoxGoString(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-func TestSegmentGoString(t *testing.T) {
+func TestSemanticSegmentGoString(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedSegment(popr, false)
+	p := NewPopulatedSemanticSegment(popr, false)
 	s1 := p.GoString()
 	s2 := fmt.Sprintf("%#v", p)
 	if s1 != s2 {
@@ -2168,10 +2168,10 @@ func BenchmarkBoundingBoxSize(b *testing.B) {
 	b.SetBytes(int64(total / b.N))
 }
 
-func TestSegmentSize(t *testing.T) {
+func TestSemanticSegmentSize(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSegment(popr, true)
+	p := NewPopulatedSemanticSegment(popr, true)
 	size2 := github_com_gogo_protobuf_proto.Size(p)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
@@ -2190,12 +2190,12 @@ func TestSegmentSize(t *testing.T) {
 	}
 }
 
-func BenchmarkSegmentSize(b *testing.B) {
+func BenchmarkSemanticSegmentSize(b *testing.B) {
 	popr := math_rand.New(math_rand.NewSource(616))
 	total := 0
-	pops := make([]*Segment, 1000)
+	pops := make([]*SemanticSegment, 1000)
 	for i := 0; i < 1000; i++ {
-		pops[i] = NewPopulatedSegment(popr, false)
+		pops[i] = NewPopulatedSemanticSegment(popr, false)
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -2483,9 +2483,9 @@ func TestBoundingBoxStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestSegmentStringer(t *testing.T) {
+func TestSemanticSegmentStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedSegment(popr, false)
+	p := NewPopulatedSemanticSegment(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
