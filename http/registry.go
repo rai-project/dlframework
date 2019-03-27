@@ -4,6 +4,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/k0kubun/pp"
+
 	"github.com/Masterminds/semver"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/pkg/errors"
@@ -156,6 +158,7 @@ func RegistryModelAgentsHandler(params registry.ModelAgentsParams) middleware.Re
 	modelVersion := strings.ToLower(getParam(params.ModelVersion, "*"))
 
 	agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
+	pp.Println(agents)
 	if err != nil {
 		return NewError("ModelAgents", err)
 	}

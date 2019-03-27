@@ -7,11 +7,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/rai-project/parallel/tunny"
+	"github.com/Masterminds/semver"
+
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	store "github.com/rai-project/libkv/store"
+	"github.com/rai-project/parallel/tunny"
 	kv "github.com/rai-project/registry"
 )
 
@@ -96,7 +98,34 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 		modelName = strings.ToLower(model.Name)
 		modelVersion = strings.ToLower(model.Version)
 
-		// TODO:: the use of frameworkVersion here is not correct, since it won't support frameworkVersion=1.x.x for example
+		frameworkSemanticVersion, err := semver.NewVersion(frameworkVersion)
+		if err != nil {
+			log.WithError(err).Errorf("unable to get semantic version of %v", frameworkVersion)
+			continue
+		}
+
+		frameworkKey := path.Join(prefixKey, frameworkName)
+		frameworkEntries, err := rgs.List(frameworkKey)
+		if err != nil {
+			continue
+		}
+		for _, key := range frameworkEntries {
+			fullPath := strings.Trim(key.Key, frameworkKey+"/")
+			idx := strings.Index(fullPath, "/")
+			registeredFrameworkVersion := strings.TrimSuffix(fullPath[:idx+1], "/")
+
+			registeredFrameworkSemanticVersion, err := semver.NewVersion(registeredFrameworkVersion)
+			if err != nil {
+				continue
+			}
+			if frameworkSemanticVersion.Equal(registeredFrameworkSemanticVersion) {
+				frameworkVersion = registeredFrameworkVersion
+				break
+			}
+		}
+
+		// TODO:: the use of modelVersion here is not correct, since it won't support modelVersion=1.x.x for example
+		// same logic as being performed for framework version would suffice here
 		key := path.Join(prefixKey, frameworkName, frameworkVersion, modelName, modelVersion)
 
 		kvs, err := rgs.List(key)
