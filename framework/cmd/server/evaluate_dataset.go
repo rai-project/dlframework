@@ -29,9 +29,9 @@ var (
 
 	frameworks = []string{
 		// "mxnet",
-		// "caffe2",
-		//"tensorflow",
-		"caffe",
+		"caffe2",
+		// "tensorflow",
+		// "caffe",
 		//"tensorrt",
 		// "cntk",
 	}
@@ -52,7 +52,8 @@ var (
 		// "VGG16_1.0",
 		// "VGG19_1.0",
 		// "ResNet50_1.0",
-		"SphereFace_1.0",
+		// "SphereFace_1.0",
+		"ShuffleNet_Caffe2_1.0",
 	}
 
 	batchSizes = []int{
