@@ -2,6 +2,7 @@ package feature
 
 import (
 	"github.com/rai-project/dlframework"
+	"github.com/spf13/cast"
 )
 
 type Option func(o *dlframework.Feature)
@@ -30,11 +31,11 @@ func Metadata(e map[string]string) Option {
 	}
 }
 
-func AppendMetadata(k, v string) Option {
+func AppendMetadata(k string, v interface{}) Option {
 	return func(o *dlframework.Feature) {
 		if o.Metadata == nil {
 			o.Metadata = map[string]string{}
 		}
-		o.Metadata[k] = v
+		o.Metadata[k] = cast.ToString(v)
 	}
 }
