@@ -1,105 +1,78 @@
 package http
 
 import (
-        // "fmt"
-        // "net/http"
+        "fmt"
+        "io/ioutil"
+        "bytes"
+        "encoding/json"
+        "net/http"
+        "github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/pkg/errors"
+	// "github.com/pkg/errors"
+	"github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
-	"github.com/rai-project/passlib"
-        // "github.com/volatiletech/authboss"
+        "github.com/volatiletech/authboss"
+        auth "github.com/volatiletech/authboss/auth"
+        register "github.com/volatiletech/authboss/register"
+        logout "github.com/volatiletech/authboss/logout"
+        "github.com/k0kubun/pp"
 )
 
-// dummy for MongoDB User Database
-type userRecord struct {
-	firstname   string
-	lastname    string
-	username    string
-	password    string
-	affiliation string
-}
+func LoginHandler(params authentication.LoginParams, principal *models.User) middleware.Responder {
+        return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+                a := &auth.Auth{ab}
+                req := params.HTTPRequest
+                pp.Println(authboss.GetSession(req, authboss.SessionKey))
+                pp.Println(principal)
+                // b, err := ioutil.ReadAll(req.Body)
+                requestByte, _ := json.Marshal(principal)
+                fmt.Println(string(requestByte))
+                req.Body = ioutil.NopCloser(bytes.NewReader(requestByte))
 
-var userTable = map[string]*userRecord{}
-
-func CheckPassword(username string, password string) bool {
-
-	hash := userTable[username].password
-
-	newHash, err := passlib.Verify(password, hash)
-	if err != nil {
-		// incorrect password, malformed hash, etc.
-		// either way, reject
-		return false
-	}
-
-	// The context has decided, as per its policy, that
-	// the hash which was used to validate the password
-	// should be changed. It has upgraded the hash using
-	// the verified password.
-	if newHash != "" {
-		userTable[username].password = newHash
-	}
-
-	return true
-
-}
-
-func LoginHandler(params authentication.LoginParams) middleware.Responder {
-
-	/* username := params.Body.Username */
-	// password := params.Body.Password
-        //
-	// if val, ok := userTable[username]; ok {
-	//         if CheckPassword(val.username, password) == false {
-	//                 return NewError("Login", errors.New("Incorrect credentials"))
-	//         }
-	// } else {
-	//         return NewError("Login", errors.New("Not signed up!"))
-	/* } */
-        /* ctx := params.HTTPRequest.Context() */
-        // ab_instance := ctx.Value("authboss_instance").(*authboss.Authboss)
-        // abuser := ab_instance.CurrentUserP(params.HTTPRequest)
-        /* fmt.Printf(abuser.GetPID()) */
-        /* params.HTTPRequest */
-        // fmt.Printf("LoginHandler")
-        // a := &Auth{ab}
-        /* a.LoginGet() */
-
-	return authentication.NewLoginOK()
-
-}
-
-func GenerateHash(password string) string {
-
-	hash, err := passlib.Hash(password)
-	if err != nil {
-		// couldn't hash password for some reason
-		return "xxx"
-	}
-
-	return hash
+                pp.Println("Login")
+                a.LoginPost(rw, req)
+                // pp.Println(req.Context().Value(authboss.CTXKeyUser))
+                // u = ab.CurrentUser(req)
+                // fmt.Println(u.GetPID())
+        })
+	// return authentication.NewLoginOK()
 
 }
 
 func SignupHandler(params authentication.SignupParams) middleware.Responder {
+        return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+                r := &register.Register{ab}
+                req := params.HTTPRequest
+                requestByte, _ := json.Marshal(params.Body)
+                fmt.Println(string(requestByte))
+                req.Body = ioutil.NopCloser(bytes.NewReader(requestByte))
+                r.Post(rw, req)
+        })
+	// return authentication.NewSignupOK()
+}
 
-	firstName := params.Body.FirstName
-	lastName := params.Body.LastName
-	username := params.Body.Username
-	password := params.Body.Password
-	affiliation := params.Body.Affiliation
+func UserInfoHandler(params authentication.UserInfoParams) middleware.Responder {
+        u, err := ab.CurrentUser(params.HTTPRequest)
+        if err != nil {
+            return authentication.NewUserInfoOK().
+            WithPayload(&models.DlframeworkUserInfoResponse{
+                    // Email: u.GetEmail(),
+                    Outcome: "fail",
+            })
+        } else {
+            return authentication.NewUserInfoOK().
+            WithPayload(&models.DlframeworkUserInfoResponse{
+                    // Email: u.GetEmail(),
+                    Outcome: "success",
+                    Username: u.GetPID(),
+            })
+        }
+}
 
-	if len(firstName) == 0 || len(lastName) == 0 || len(username) == 0 || len(password) == 0 || len(affiliation) == 0 {
-		return NewError("Signup", errors.New("Incomplete Information"))
-	}
-
-	encryption := GenerateHash(password)
-	if encryption == "xxx" {
-		return NewError("Signup", errors.New("Could not generate password"))
-	}
-
-	userTable[username] = &userRecord{firstname: firstName, lastname: lastName, username: username, password: encryption, affiliation: affiliation}
-
-	return authentication.NewSignupOK()
-
+func LogoutHandler(params authentication.LogoutParams) middleware.Responder {
+        return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+                l := &logout.Logout{ab}
+                req := params.HTTPRequest
+                l.Logout(rw, req)
+        })
 }
