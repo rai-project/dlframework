@@ -1,6 +1,9 @@
 package feature
 
-import "github.com/rai-project/dlframework"
+import (
+	"github.com/k0kubun/pp"
+	"github.com/rai-project/dlframework"
+)
 
 func RawImageType() Option {
 	return Type(dlframework.FeatureType_RAW_IMAGE)
@@ -20,7 +23,7 @@ func ensureRawImage(o *dlframework.Feature) *dlframework.RawImage {
 		panic("unexpected feature type")
 	}
 	if o.Feature == nil {
-		o.Feature = &dlframework.Feature_Image{}
+		o.Feature = &dlframework.Feature_RawImage{}
 	}
 	img, ok := o.Feature.(*dlframework.Feature_RawImage)
 	if !ok {
@@ -64,29 +67,32 @@ func RawImageChannels(channels int) Option {
 func RawImageFloatData(data []float32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
+		pp.Println(data[:10])
 		img.FloatList = data
 	}
 }
 
 func RawImageInt8Data(data []int8) Option {
-	return func(o *dlframework.Feature) {
-		img := ensureRawImage(o)
-		buf := make([]int32, len(data))
-		for ii, val := range data {
-			buf[ii] = int32(val)
-		}
-		img.CharList = buf
+	buf := make([]int32, len(data))
+	for ii, val := range data {
+		buf[ii] = int32(val)
 	}
+	return RawImageInt32Data(buf)
 }
 
 func RawImageUInt8Data(data []uint8) Option {
+	buf := make([]int32, len(data))
+	for ii, val := range data {
+		buf[ii] = int32(val)
+	}
+	return RawImageInt32Data(buf)
+}
+
+func RawImageInt32Data(data []int32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
-		buf := make([]int32, len(data))
-		for ii, val := range data {
-			buf[ii] = int32(val)
-		}
-		img.CharList = buf
+		pp.Println(data[:10])
+		img.CharList = data
 	}
 }
 
@@ -96,6 +102,8 @@ func RawImageData(data interface{}) Option {
 		return RawImageInt8Data(v)
 	case []uint8:
 		return RawImageUInt8Data(v)
+	case []int32:
+		return RawImageInt32Data(v)
 	case []float32:
 		return RawImageFloatData(v)
 	}
