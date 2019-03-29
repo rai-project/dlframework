@@ -454,8 +454,6 @@ func (p ImagePredictor) CreateRawImageFeatures(ctx context.Context, images [][][
 		}
 	}
 
-	pp.Println("---")
-
 	return features, nil
 }
 

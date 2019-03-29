@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -280,7 +279,8 @@ func compress(data interface{}) (strfmt.Base64, error) {
 		return nil, err
 	}
 	out := snappy.Encode(nil, bts)
-	return strfmt.Base64(base64.StdEncoding.EncodeToString(out)), nil
+	// return strfmt.Base64(base64.StdEncoding.EncodeToString(out)), nil
+	return strfmt.Base64(out), nil
 }
 
 func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels.DlframeworkFeatureResponse {
