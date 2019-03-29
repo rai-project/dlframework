@@ -22,13 +22,15 @@ import (
 )
 
 type PreprocessOptions struct {
-	Context     context.Context
-	ElementType string
-	MeanImage   []float32
-	Dims        []int
-	Scale       float32
-	ColorMode   types.Mode
-	Layout      image.Layout
+	Context         context.Context
+	ElementType     string
+	MeanImage       []float32
+	Dims            []int
+	MaxDimension    *int
+	KeepAspectRatio *bool
+	Scale           float32
+	ColorMode       types.Mode
+	Layout          image.Layout
 }
 
 type ImagePredictor struct {
@@ -114,7 +116,7 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	}
 	pscale, ok := typeParameters["scale"]
 	if !ok {
-		log.Debug("no scaling")
+		// log.Debug("no scaling")
 		return 1.0, nil
 	}
 	pscaleVal := pscale.GetValue()
@@ -125,6 +127,60 @@ func (p ImagePredictor) GetScale() (float32, error) {
 	var val float32
 	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
 		return 1.0, errors.Errorf("unable to get scale %v as a float", pscaleVal)
+	}
+
+	return val, nil
+}
+
+func (p ImagePredictor) GetMaxDimension() (int, error) {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	if len(modelInputs) == 0 {
+		return 0, errors.New("no inputs")
+	}
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return 0, errors.New("invalid type parameters")
+	}
+	pscale, ok := typeParameters["max_dimension"]
+	if !ok {
+		return 0, errors.New("no max dimension")
+	}
+	pscaleVal := pscale.GetValue()
+	if pscaleVal == "" {
+		return 0, errors.New("no max dimension value")
+	}
+
+	var val int
+	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
+		return 0, errors.Errorf("unable to get max dimension %v as a int", pscaleVal)
+	}
+
+	return val, nil
+}
+
+func (p ImagePredictor) GetKeepAspectRatio() (bool, error) {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	if len(modelInputs) == 0 {
+		return false, errors.New("no inputs")
+	}
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return false, errors.New("invalid type parameters")
+	}
+	pscale, ok := typeParameters["keep_aspect_ratio"]
+	if !ok {
+		return false, errors.New("no keep aspect ratio")
+	}
+	pscaleVal := pscale.GetValue()
+	if pscaleVal == "" {
+		return false, errors.New("no keep aspect ratio value")
+	}
+
+	var val bool
+	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
+		return false, errors.Errorf("unable to get keep aspect ratio %v as a bool", pscaleVal)
 	}
 
 	return val, nil
@@ -205,20 +261,36 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 	if err != nil {
 		return PreprocessOptions{}, err
 	}
+
 	imageDims, err := p.GetImageDimensions()
 	if err != nil {
-		return PreprocessOptions{}, err
+		imageDims = nil
 	}
 
-	return PreprocessOptions{
-		Context:     ctx,
-		ElementType: p.Model.GetElementType(),
-		MeanImage:   mean,
-		Scale:       scale,
-		Dims:        imageDims,
-		ColorMode:   p.GetColorMode(imageTypes.RGBMode),
-		Layout:      p.GetLayout(image.HWCLayout),
-	}, nil
+	maxDim0, err := p.GetMaxDimension()
+	maxDim := &maxDim0
+	if err != nil {
+		maxDim = nil
+	}
+	keepAspectRatio0, err := p.GetKeepAspectRatio()
+	keepAspectRatio := &keepAspectRatio0
+	if err != nil {
+		keepAspectRatio = nil
+	}
+
+	preprocOpts := PreprocessOptions{
+		Context:         ctx,
+		ElementType:     p.Model.GetElementType(),
+		MeanImage:       mean,
+		Scale:           scale,
+		Dims:            imageDims,
+		MaxDimension:    maxDim,
+		KeepAspectRatio: keepAspectRatio,
+		ColorMode:       p.GetColorMode(imageTypes.RGBMode),
+		Layout:          p.GetLayout(image.HWCLayout),
+	}
+
+	return preprocOpts, nil
 }
 
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {

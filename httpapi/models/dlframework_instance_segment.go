@@ -8,7 +8,6 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
@@ -16,9 +15,8 @@ import (
 // swagger:model dlframeworkInstanceSegment
 type DlframeworkInstanceSegment struct {
 
-	// data
-	// Format: byte
-	Data strfmt.Base64 `json:"data,omitempty"`
+	// float mask
+	FloatMask []float32 `json:"float_mask"`
 
 	// height
 	Height int32 `json:"height,omitempty"`
@@ -26,8 +24,14 @@ type DlframeworkInstanceSegment struct {
 	// index
 	Index int32 `json:"index,omitempty"`
 
+	// int mask
+	IntMask []int32 `json:"int_mask"`
+
 	// label
 	Label string `json:"label,omitempty"`
+
+	// mask type
+	MaskType string `json:"mask_type,omitempty"`
 
 	// width
 	Width int32 `json:"width,omitempty"`
@@ -47,26 +51,6 @@ type DlframeworkInstanceSegment struct {
 
 // Validate validates this dlframework instance segment
 func (m *DlframeworkInstanceSegment) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateData(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *DlframeworkInstanceSegment) validateData(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Data) { // not required
-		return nil
-	}
-
-	// Format "byte" (base64 string) is already validated when unmarshalled
-
 	return nil
 }
 

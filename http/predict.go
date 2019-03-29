@@ -294,6 +294,26 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 					Ymax:  feature.BoundingBox.Ymax,
 					Ymin:  feature.BoundingBox.Ymin,
 				}
+			case *dl.Feature_SemanticSegment:
+				features[jj].SemanticSegment = &webmodels.DlframeworkSemanticSegment{
+					Height:  feature.SemanticSegment.Height,
+					Width:   feature.SemanticSegment.Width,
+					IntMask: feature.SemanticSegment.IntMask,
+				}
+			case *dl.Feature_InstanceSegment:
+				features[jj].InstanceSegment = &webmodels.DlframeworkInstanceSegment{
+					Index:     feature.InstanceSegment.Index,
+					Label:     feature.InstanceSegment.Label,
+					Xmax:      feature.InstanceSegment.Xmax,
+					Xmin:      feature.InstanceSegment.Xmin,
+					Ymax:      feature.InstanceSegment.Ymax,
+					Ymin:      feature.InstanceSegment.Ymin,
+					MaskType:  feature.InstanceSegment.MaskType,
+					Height:    feature.InstanceSegment.Height,
+					Width:     feature.InstanceSegment.Width,
+					IntMask:   feature.InstanceSegment.IntMask,
+					FloatMask: feature.InstanceSegment.FloatMask,
+				}
 			case *dl.Feature_Image:
 				features[jj].Image = &webmodels.DlframeworkImage{
 					Data: feature.Image.Data,

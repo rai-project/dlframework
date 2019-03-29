@@ -32,8 +32,8 @@ const (
 	// DlframeworkFeatureTypeBOUNDINGBOX captures enum value "BOUNDINGBOX"
 	DlframeworkFeatureTypeBOUNDINGBOX DlframeworkFeatureType = "BOUNDINGBOX"
 
-	// DlframeworkFeatureTypeSEGMENT captures enum value "SEGMENT"
-	DlframeworkFeatureTypeSEGMENT DlframeworkFeatureType = "SEGMENT"
+	// DlframeworkFeatureTypeSEMANTICSEGMENT captures enum value "SEMANTICSEGMENT"
+	DlframeworkFeatureTypeSEMANTICSEGMENT DlframeworkFeatureType = "SEMANTICSEGMENT"
 
 	// DlframeworkFeatureTypeINSTANCESEGMENT captures enum value "INSTANCESEGMENT"
 	DlframeworkFeatureTypeINSTANCESEGMENT DlframeworkFeatureType = "INSTANCESEGMENT"
@@ -59,7 +59,7 @@ var dlframeworkFeatureTypeEnum []interface{}
 
 func init() {
 	var res []DlframeworkFeatureType
-	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","BOUNDINGBOX","SEGMENT","INSTANCESEGMENT","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","BOUNDINGBOX","SEMANTICSEGMENT","INSTANCESEGMENT","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

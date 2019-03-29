@@ -744,8 +744,8 @@ func init() {
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
-        "segment": {
-          "$ref": "#/definitions/dlframeworkSegment"
+        "semantic_segment": {
+          "$ref": "#/definitions/dlframeworkSemanticSegment"
         },
         "text": {
           "$ref": "#/definitions/dlframeworkText"
@@ -789,7 +789,7 @@ func init() {
         "IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
-        "SEGMENT",
+        "SEMANTICSEGMENT",
         "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
@@ -918,9 +918,12 @@ func init() {
     "dlframeworkInstanceSegment": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "float_mask": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
         },
         "height": {
           "type": "integer",
@@ -930,7 +933,17 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
         "label": {
+          "type": "string"
+        },
+        "mask_type": {
           "type": "string"
         },
         "width": {
@@ -1186,23 +1199,19 @@ func init() {
         }
       }
     },
-    "dlframeworkSegment": {
+    "dlframeworkSemanticSegment": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
         "height": {
           "type": "integer",
           "format": "int32"
         },
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "label": {
-          "type": "string"
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
         },
         "width": {
           "type": "integer",
@@ -2007,8 +2016,8 @@ func init() {
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
-        "segment": {
-          "$ref": "#/definitions/dlframeworkSegment"
+        "semantic_segment": {
+          "$ref": "#/definitions/dlframeworkSemanticSegment"
         },
         "text": {
           "$ref": "#/definitions/dlframeworkText"
@@ -2052,7 +2061,7 @@ func init() {
         "IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
-        "SEGMENT",
+        "SEMANTICSEGMENT",
         "INSTANCESEGMENT",
         "GEOLOCATION",
         "REGION",
@@ -2181,9 +2190,12 @@ func init() {
     "dlframeworkInstanceSegment": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
+        "float_mask": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
         },
         "height": {
           "type": "integer",
@@ -2193,7 +2205,17 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
         "label": {
+          "type": "string"
+        },
+        "mask_type": {
           "type": "string"
         },
         "width": {
@@ -2449,23 +2471,19 @@ func init() {
         }
       }
     },
-    "dlframeworkSegment": {
+    "dlframeworkSemanticSegment": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "string",
-          "format": "byte"
-        },
         "height": {
           "type": "integer",
           "format": "int32"
         },
-        "index": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "label": {
-          "type": "string"
+        "int_mask": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
         },
         "width": {
           "type": "integer",

@@ -44,9 +44,15 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		image.Context(ctx),
 	}
 	dims := p.options.Dims
-	if dims != nil {
+	if dims != nil && len(dims) > 2 {
 		height, width := dims[1], dims[2]
 		readOptions = append(readOptions, image.Resized(height, width))
+	}
+	if p.options.MaxDimension != nil {
+		readOptions = append(readOptions, image.MaxDimension(*p.options.MaxDimension))
+	}
+	if p.options.KeepAspectRatio != nil {
+		readOptions = append(readOptions, image.KeepAspectRatio(*p.options.KeepAspectRatio))
 	}
 
 	var in io.Reader

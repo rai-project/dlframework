@@ -49,8 +49,8 @@ type DlframeworkFeature struct {
 	// region
 	Region *DlframeworkRegion `json:"region,omitempty"`
 
-	// segment
-	Segment *DlframeworkSegment `json:"segment,omitempty"`
+	// semantic segment
+	SemanticSegment *DlframeworkSemanticSegment `json:"semantic_segment,omitempty"`
 
 	// text
 	Text *DlframeworkText `json:"text,omitempty"`
@@ -95,7 +95,7 @@ func (m *DlframeworkFeature) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateSegment(formats); err != nil {
+	if err := m.validateSemanticSegment(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -257,16 +257,16 @@ func (m *DlframeworkFeature) validateRegion(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *DlframeworkFeature) validateSegment(formats strfmt.Registry) error {
+func (m *DlframeworkFeature) validateSemanticSegment(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Segment) { // not required
+	if swag.IsZero(m.SemanticSegment) { // not required
 		return nil
 	}
 
-	if m.Segment != nil {
-		if err := m.Segment.Validate(formats); err != nil {
+	if m.SemanticSegment != nil {
+		if err := m.SemanticSegment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("segment")
+				return ve.ValidateName("semantic_segment")
 			}
 			return err
 		}
