@@ -26,6 +26,9 @@ const (
 	// DlframeworkFeatureTypeIMAGE captures enum value "IMAGE"
 	DlframeworkFeatureTypeIMAGE DlframeworkFeatureType = "IMAGE"
 
+	// DlframeworkFeatureTypeRAWIMAGE captures enum value "RAW_IMAGE"
+	DlframeworkFeatureTypeRAWIMAGE DlframeworkFeatureType = "RAW_IMAGE"
+
 	// DlframeworkFeatureTypeCLASSIFICATION captures enum value "CLASSIFICATION"
 	DlframeworkFeatureTypeCLASSIFICATION DlframeworkFeatureType = "CLASSIFICATION"
 
@@ -59,7 +62,7 @@ var dlframeworkFeatureTypeEnum []interface{}
 
 func init() {
 	var res []DlframeworkFeatureType
-	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","CLASSIFICATION","BOUNDINGBOX","SEMANTICSEGMENT","INSTANCESEGMENT","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["UNKNOWN","IMAGE","RAW_IMAGE","CLASSIFICATION","BOUNDINGBOX","SEMANTICSEGMENT","INSTANCESEGMENT","GEOLOCATION","REGION","TEXT","AUDIO","RAW"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

@@ -318,6 +318,14 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 				features[jj].Image = &webmodels.DlframeworkImage{
 					Data: feature.Image.Data,
 				}
+			case *dl.Feature_RawImage:
+				features[jj].RawImage = &webmodels.DlframeworkRawImage{
+					Channels:  feature.RawImage.Channels,
+					Height:    feature.RawImage.Height,
+					Width:     feature.RawImage.Width,
+					CharList:  feature.RawImage.CharList,
+					FloatList: feature.RawImage.FloatList,
+				}
 			case *dl.Feature_Text:
 				features[jj].Text = &webmodels.DlframeworkText{
 					Data: feature.Text.Data,

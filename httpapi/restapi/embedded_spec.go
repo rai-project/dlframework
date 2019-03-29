@@ -741,6 +741,9 @@ func init() {
         "raw": {
           "$ref": "#/definitions/dlframeworkRaw"
         },
+        "raw_image": {
+          "$ref": "#/definitions/dlframeworkRawImage"
+        },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
@@ -787,6 +790,7 @@ func init() {
       "enum": [
         "UNKNOWN",
         "IMAGE",
+        "RAW_IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
         "SEMANTICSEGMENT",
@@ -1165,6 +1169,41 @@ func init() {
         },
         "format": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkRawImage": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "char_list": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "float_list": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -2013,6 +2052,9 @@ func init() {
         "raw": {
           "$ref": "#/definitions/dlframeworkRaw"
         },
+        "raw_image": {
+          "$ref": "#/definitions/dlframeworkRawImage"
+        },
         "region": {
           "$ref": "#/definitions/dlframeworkRegion"
         },
@@ -2059,6 +2101,7 @@ func init() {
       "enum": [
         "UNKNOWN",
         "IMAGE",
+        "RAW_IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
         "SEMANTICSEGMENT",
@@ -2437,6 +2480,41 @@ func init() {
         },
         "format": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkRawImage": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "char_list": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "float_list": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

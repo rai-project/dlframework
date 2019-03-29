@@ -629,6 +629,9 @@ const (
         "image": {
           "$ref": "#/definitions/dlframeworkImage"
         },
+        "raw_image": {
+          "$ref": "#/definitions/dlframeworkRawImage"
+        },
         "classification": {
           "$ref": "#/definitions/dlframeworkClassification"
         },
@@ -689,6 +692,7 @@ const (
       "enum": [
         "UNKNOWN",
         "IMAGE",
+        "RAW_IMAGE",
         "CLASSIFICATION",
         "BOUNDINGBOX",
         "SEMANTICSEGMENT",
@@ -921,6 +925,41 @@ const (
         },
         "format": {
           "type": "string"
+        }
+      }
+    },
+    "dlframeworkRawImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "char_list": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "float_list": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "width": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "height": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "channels": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },

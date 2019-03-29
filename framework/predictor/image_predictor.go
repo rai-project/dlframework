@@ -409,6 +409,54 @@ func (p ImagePredictor) CreateInstanceSegmentFeatures(ctx context.Context, proba
 	return features, nil
 }
 
+func (p ImagePredictor) CreateRawImageFeatures(ctx context.Context, images [][][][]float32) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	if len(images) == 0 {
+		return nil, errors.New("len(outImages) = 0")
+	}
+	height := len(images[0])
+	width := len(images[0][0])
+	channels := 3
+
+	mean, err := p.GetMeanImage()
+	if err != nil {
+		return nil, err
+	}
+	scale, err := p.GetScale()
+	if err != nil {
+		return nil, err
+	}
+
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		curr := images[ii]
+		pixels := make([]uint8, width*height*channels)
+		for h := 0; h < height; h++ {
+			for w := 0; w < width; w++ {
+				R := uint8(curr[h][w][0]*scale + mean[0])
+				G := uint8(curr[h][w][1]*scale + mean[1])
+				B := uint8(curr[h][w][2]*scale + mean[2])
+				pixels[(h*width+w)*channels+0] = R
+				pixels[(h*width+w)*channels+1] = G
+				pixels[(h*width+w)*channels+2] = B
+			}
+		}
+
+		features[ii] = dlframework.Features{
+			feature.New(
+				feature.RawImageType(),
+				feature.RawImageWidth(width),
+				feature.RawImageHeight(height),
+				feature.RawImageChannels(channels),
+				feature.RawImageData(pixels),
+			),
+		}
+	}
+
+	return features, nil
+}
+
 func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]float32) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(images) < 1 {

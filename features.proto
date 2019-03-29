@@ -33,14 +33,15 @@ option go_package = "dlframework";
 enum FeatureType {
   UNKNOWN = 0;
   IMAGE = 1;
-  CLASSIFICATION = 2;
-  BOUNDINGBOX = 3;
-  SEMANTICSEGMENT = 4;
-  INSTANCESEGMENT = 5;
-  GEOLOCATION = 6;
-  REGION = 7;
-  TEXT = 8;
-  AUDIO = 9;
+  RAW_IMAGE = 2;
+  CLASSIFICATION = 3;
+  BOUNDINGBOX = 4;
+  SEMANTICSEGMENT = 5;
+  INSTANCESEGMENT = 6;
+  GEOLOCATION = 7;
+  REGION = 8;
+  TEXT = 9;
+  AUDIO = 10;
 
   RAW = 100;
 }
@@ -67,6 +68,22 @@ message Image {
   // comment out for now
   // bool preprocessed = 3
   //     [ (gogoproto.moretags) = "yaml:\"preprocessed,omitempty\"" ];
+}
+
+message RawImage {
+  // An id used to identify the output feature: maps to input_id for output
+  string id = 1 [
+    (gogoproto.customname) = "ID",
+    (gogoproto.jsontag) = "id,omitempty",
+    (gogoproto.moretags) = "yaml:\"id,omitempty\""
+  ];
+  repeated int32 char_list = 2
+      [ (gogoproto.moretags) = "yaml:\"char_list,omitempty\"" ];
+  repeated float float_list = 3
+      [ (gogoproto.moretags) = "yaml:\"float_list,omitempty\"" ];
+  int32 width = 4 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+  int32 height = 5 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
+  int32 channels = 6 [ (gogoproto.moretags) = "yaml:\"channels,omitempty\"" ];
 }
 
 message Classification {
@@ -155,18 +172,19 @@ message Feature {
       [ (gogoproto.moretags) = "yaml:\"metadata,omitempty\"" ];
   oneof feature {
     Image image = 6 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
-    Classification classification = 7
+    RawImage raw_image = 7 [ (gogoproto.moretags) = "yaml:\"image,omitempty\"" ];
+    Classification classification = 8
         [ (gogoproto.moretags) = "yaml:\"classification,omitempty\"" ];
-    BoundingBox bounding_box = 8
+    BoundingBox bounding_box = 9
         [ (gogoproto.moretags) = "yaml:\"boundingbox,omitempty\"" ];
-    SemanticSegment semantic_segment = 9
+    SemanticSegment semantic_segment = 10
         [ (gogoproto.moretags) = "yaml:\"semantic_segment,omitempty\"" ];
-    InstanceSegment instance_segment = 10
+    InstanceSegment instance_segment = 11
         [ (gogoproto.moretags) = "yaml:\"instancesegment,omitempty\"" ];
-    Text text = 11 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
-    Region region = 12 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
-    Audio audio = 13 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
-    GeoLocation geolocation = 14
+    Text text = 12 [ (gogoproto.moretags) = "yaml:\"text,omitempty\"" ];
+    Region region = 13 [ (gogoproto.moretags) = "yaml:\"region,omitempty\"" ];
+    Audio audio = 14 [ (gogoproto.moretags) = "yaml:\"audio,omitempty\"" ];
+    GeoLocation geolocation = 15
         [ (gogoproto.moretags) = "yaml:\"geolocation,omitempty\"" ];
     Raw raw = 1000 [ (gogoproto.moretags) = "yaml:\"raw,omitempty\"" ];
   }
