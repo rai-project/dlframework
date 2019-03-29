@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/k0kubun/pp"
+
 	"context"
 
 	"github.com/pkg/errors"
@@ -46,7 +48,7 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 		log.Debug("arbitrary image dimensions")
 		return nil, nil
 	}
-	pdimsVal := pdims.Value
+	pdimsVal := pdims.GetValue()
 	if pdimsVal == "" {
 		return nil, errors.New("invalid image dimensions")
 	}
@@ -83,7 +85,7 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 		return []float32{0, 0, 0}, nil
 	}
 
-	pmeanVal := pmean.Value
+	pmeanVal := pmean.GetValue()
 	if pmeanVal == "" {
 		return nil, errors.New("invalid mean image")
 	}
@@ -103,6 +105,9 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 func (p ImagePredictor) GetScale() (float32, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
+	if len(modelInputs) == 0 {
+		return 1.0, nil
+	}
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
 		return 1.0, errors.New("invalid type parameters")
@@ -112,9 +117,9 @@ func (p ImagePredictor) GetScale() (float32, error) {
 		log.Debug("no scaling")
 		return 1.0, nil
 	}
-	pscaleVal := pscale.Value
+	pscaleVal := pscale.GetValue()
 	if pscaleVal == "" {
-		return 1.0, errors.New("invalid scale value")
+		return 1.0, nil
 	}
 
 	var val float32
@@ -136,7 +141,7 @@ func (p ImagePredictor) GetLayout(defaultLayout image.Layout) image.Layout {
 	if !ok {
 		return defaultLayout
 	}
-	pscaleVal := pscale.Value
+	pscaleVal := pscale.GetValue()
 	if pscaleVal == "" {
 		return defaultLayout
 	}
@@ -169,7 +174,7 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	if !ok {
 		return defaultMode
 	}
-	pscaleVal := pscale.Value
+	pscaleVal := pscale.GetValue()
 	if pscaleVal == "" {
 		return defaultMode
 	}
@@ -253,10 +258,10 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 		for jj := 0; jj < featureLen; jj++ {
 			rprobs[jj] = feature.New(
 				feature.BoundingBoxType(),
-				feature.BoundingBoxXmin((boxes[ii][jj][1])),
-				feature.BoundingBoxXmax((boxes[ii][jj][3])),
-				feature.BoundingBoxYmin((boxes[ii][jj][0])),
-				feature.BoundingBoxYmax((boxes[ii][jj][2])),
+				feature.BoundingBoxXmin(boxes[ii][jj][1]),
+				feature.BoundingBoxXmax(boxes[ii][jj][3]),
+				feature.BoundingBoxYmin(boxes[ii][jj][0]),
+				feature.BoundingBoxYmax(boxes[ii][jj][2]),
 				feature.BoundingBoxIndex(int32(classes[ii][jj])),
 				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
 				feature.Probability(probabilities[ii][jj]),
@@ -312,10 +317,10 @@ func (p ImagePredictor) CreateInstanceSegmentFeatures(ctx context.Context, proba
 			width := len(mask[0])
 			rprobs[jj] = feature.New(
 				feature.InstanceSegmentType(),
-				feature.InstanceSegmentXmin((boxes[ii][jj][1])),
-				feature.InstanceSegmentXmax((boxes[ii][jj][3])),
-				feature.InstanceSegmentYmin((boxes[ii][jj][0])),
-				feature.InstanceSegmentYmax((boxes[ii][jj][2])),
+				feature.InstanceSegmentXmin(boxes[ii][jj][1]),
+				feature.InstanceSegmentXmax(boxes[ii][jj][3]),
+				feature.InstanceSegmentYmin(boxes[ii][jj][0]),
+				feature.InstanceSegmentYmax(boxes[ii][jj][2]),
 				feature.InstanceSegmentIndex(int32(classes[ii][jj])),
 				feature.InstanceSegmentLabel(labels[int32(classes[ii][jj])]),
 				feature.InstanceSegmentMaskType(masktype),
@@ -359,6 +364,8 @@ func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]
 				img.Set(w, h, color.RGBA{R, G, B, 255})
 			}
 		}
+		pp.Println(img.At(0, 0))
+
 		buf := new(bytes.Buffer)
 		err = jpeg.Encode(buf, img, nil)
 		if err != nil {
