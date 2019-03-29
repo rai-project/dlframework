@@ -77,13 +77,18 @@ message RawImage {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
-  repeated int32 char_list = 2
-      [ (gogoproto.moretags) = "yaml:\"char_list,omitempty\"" ];
-  repeated float float_list = 3
-      [ (gogoproto.moretags) = "yaml:\"float_list,omitempty\"" ];
-  int32 width = 4 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
-  int32 height = 5 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
-  int32 channels = 6 [ (gogoproto.moretags) = "yaml:\"channels,omitempty\"" ];
+  string data_type = 2 
+  [ (gogoproto.moretags) = "yaml:\"data_type,omitempty\"" ];
+  repeated int32 char_list = 3
+      [ packed = true, (gogoproto.moretags) = "yaml:\"char_list,omitempty\"" ];
+  repeated float float_list = 4
+      [ packed = true, (gogoproto.moretags) = "yaml:\"float_list,omitempty\"" ];
+  int32 width = 5 [ (gogoproto.moretags) = "yaml:\"width,omitempty\"" ];
+  int32 height = 6 [ (gogoproto.moretags) = "yaml:\"height,omitempty\"" ];
+  int32 channels = 7 [ (gogoproto.moretags) = "yaml:\"channels,omitempty\"" ];
+  // compressed data is only used by the webserver and javascript codes
+  bytes compressed_data = 8
+      [ (gogoproto.moretags) = "yaml:\"compressed_data,omitempty\"" ];
 }
 
 message Classification {

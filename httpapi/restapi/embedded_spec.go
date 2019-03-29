@@ -1186,6 +1186,14 @@ func init() {
             "format": "int32"
           }
         },
+        "compressed_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "compressed data is only used by the webserver and javascript codes"
+        },
+        "data_type": {
+          "type": "string"
+        },
         "float_list": {
           "type": "array",
           "items": {
@@ -2496,6 +2504,14 @@ func init() {
             "type": "integer",
             "format": "int32"
           }
+        },
+        "compressed_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "compressed data is only used by the webserver and javascript codes"
+        },
+        "data_type": {
+          "type": "string"
         },
         "float_list": {
           "type": "array",

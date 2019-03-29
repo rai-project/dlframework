@@ -2,13 +2,19 @@ package http
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"strings"
 	"time"
 
+	"github.com/go-openapi/strfmt"
+	"github.com/golang/snappy"
+
 	"github.com/cenkalti/backoff"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
@@ -268,6 +274,15 @@ func toDlframeworkTraceID(traceId *dl.TraceID) *webmodels.DlframeworkTraceID {
 	}
 }
 
+func compress(data interface{}) (strfmt.Base64, error) {
+	bts, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	out := snappy.Encode(nil, bts)
+	return strfmt.Base64(base64.StdEncoding.EncodeToString(out)), nil
+}
+
 func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels.DlframeworkFeatureResponse {
 	resps := make([]*webmodels.DlframeworkFeatureResponse, len(responses))
 	for ii, fr := range responses {
@@ -315,17 +330,43 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 					FloatMask: feature.InstanceSegment.FloatMask,
 				}
 			case *dl.Feature_Image:
+				pp.Println("Feature_Image")
 				features[jj].Image = &webmodels.DlframeworkImage{
 					Data: feature.Image.Data,
 				}
 			case *dl.Feature_RawImage:
+				pp.Println("Feature_RawImage")
+				pp.Println(feature.RawImage.CharList)
 				features[jj].RawImage = &webmodels.DlframeworkRawImage{
-					Channels:  feature.RawImage.Channels,
-					Height:    feature.RawImage.Height,
-					Width:     feature.RawImage.Width,
-					CharList:  feature.RawImage.CharList,
-					FloatList: feature.RawImage.FloatList,
+					Channels: feature.RawImage.Channels,
+					Height:   feature.RawImage.Height,
+					Width:    feature.RawImage.Width,
+					// CharList:  feature.RawImage.CharList,
+					// FloatList: feature.RawImage.FloatList,
 				}
+
+				if feature.RawImage.FloatList != nil && feature.RawImage.CharList != nil {
+					panic("cannot have both float and char list values")
+				}
+
+				if feature.RawImage.FloatList != nil {
+					features[jj].RawImage.DataType = "float32"
+					compressed, err := compress(feature.RawImage.FloatList)
+					if err != nil {
+						panic("failed to compress float list data")
+					}
+					features[jj].RawImage.CompressedData = compressed
+				}
+
+				if feature.RawImage.CharList != nil {
+					features[jj].RawImage.DataType = "uint8"
+					compressed, err := compress(feature.RawImage.CharList)
+					if err != nil {
+						panic("failed to compress char list data")
+					}
+					features[jj].RawImage.CompressedData = compressed
+				}
+
 			case *dl.Feature_Text:
 				features[jj].Text = &webmodels.DlframeworkText{
 					Data: feature.Text.Data,
@@ -351,6 +392,9 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 					Data:   feature.Raw.Data,
 					Format: feature.Raw.Format,
 				}
+			default:
+				pp.Println("unhandeled feature type")
+				pp.Println(feature)
 			}
 
 			// Index:       cast.ToInt32(f.Index),

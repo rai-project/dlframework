@@ -8,6 +8,7 @@ package models
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
 )
 
@@ -20,6 +21,13 @@ type DlframeworkRawImage struct {
 
 	// char list
 	CharList []int32 `json:"char_list"`
+
+	// compressed data is only used by the webserver and javascript codes
+	// Format: byte
+	CompressedData strfmt.Base64 `json:"compressed_data,omitempty"`
+
+	// data type
+	DataType string `json:"data_type,omitempty"`
 
 	// float list
 	FloatList []float32 `json:"float_list"`
@@ -36,6 +44,26 @@ type DlframeworkRawImage struct {
 
 // Validate validates this dlframework raw image
 func (m *DlframeworkRawImage) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateCompressedData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *DlframeworkRawImage) validateCompressedData(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CompressedData) { // not required
+		return nil
+	}
+
+	// Format "byte" (base64 string) is already validated when unmarshalled
+
 	return nil
 }
 

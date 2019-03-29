@@ -1,7 +1,6 @@
 package feature
 
 import (
-	"github.com/k0kubun/pp"
 	"github.com/rai-project/dlframework"
 )
 
@@ -67,7 +66,6 @@ func RawImageChannels(channels int) Option {
 func RawImageFloatData(data []float32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
-		pp.Println(data[:10])
 		img.FloatList = data
 	}
 }
@@ -91,7 +89,6 @@ func RawImageUInt8Data(data []uint8) Option {
 func RawImageInt32Data(data []int32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
-		pp.Println(data[:10])
 		img.CharList = data
 	}
 }

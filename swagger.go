@@ -935,6 +935,9 @@ const (
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
         },
+        "data_type": {
+          "type": "string"
+        },
         "char_list": {
           "type": "array",
           "items": {
@@ -960,6 +963,11 @@ const (
         "channels": {
           "type": "integer",
           "format": "int32"
+        },
+        "compressed_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "compressed data is only used by the webserver and javascript codes"
         }
       }
     },
