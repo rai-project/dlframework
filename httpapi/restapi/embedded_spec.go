@@ -1209,6 +1209,11 @@ func init() {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
         },
+        "jpeg_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "jpeg data is only used by the webserver and javascript codes"
+        },
         "width": {
           "type": "integer",
           "format": "int32"
@@ -2527,6 +2532,11 @@ func init() {
         "id": {
           "type": "string",
           "title": "An id used to identify the output feature: maps to input_id for output"
+        },
+        "jpeg_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "jpeg data is only used by the webserver and javascript codes"
         },
         "width": {
           "type": "integer",

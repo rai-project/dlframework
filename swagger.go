@@ -968,6 +968,11 @@ const (
           "type": "string",
           "format": "byte",
           "title": "compressed data is only used by the webserver and javascript codes"
+        },
+        "jpeg_data": {
+          "type": "string",
+          "format": "byte",
+          "title": "jpeg data is only used by the webserver and javascript codes"
         }
       }
     },

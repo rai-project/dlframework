@@ -1,6 +1,7 @@
 package http
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,6 +11,10 @@ import (
 
 	"github.com/go-openapi/strfmt"
 	"github.com/golang/snappy"
+
+	goimage "image"
+	"image/color"
+	"image/jpeg"
 
 	"github.com/cenkalti/backoff"
 	"github.com/go-openapi/runtime/middleware"
@@ -31,6 +36,8 @@ type PredictHandler struct {
 	clients     syncmap.Map
 	connections syncmap.Map
 }
+
+const compressRawImage = false
 
 func getBody(s, defaultValue string) string {
 	if s == "" {
@@ -283,6 +290,48 @@ func compress(data interface{}) (strfmt.Base64, error) {
 	return strfmt.Base64(out), nil
 }
 
+func toJPEGFromFloat32Slice(fs []float32, width, height, channels int32) (strfmt.Base64, error) {
+	offset := 0
+	img := goimage.NewRGBA(goimage.Rect(0, 0, int(width), int(height)))
+	for h := 0; h < int(height); h++ {
+		for w := 0; w < int(width); w++ {
+			R := uint8(fs[offset+0])
+			G := uint8(fs[offset+1])
+			B := uint8(fs[offset+2])
+			img.Set(w, h, color.RGBA{R, G, B, 255})
+			offset += 3
+		}
+	}
+
+	buf := new(bytes.Buffer)
+	err := jpeg.Encode(buf, img, nil)
+	if err != nil {
+		return nil, err
+	}
+	return strfmt.Base64(buf.Bytes()), nil
+}
+
+func toJPEGFromInt32Slice(fs []int32, width, height, channels int32) (strfmt.Base64, error) {
+	offset := 0
+	img := goimage.NewRGBA(goimage.Rect(0, 0, int(width), int(height)))
+	for h := 0; h < int(height); h++ {
+		for w := 0; w < int(width); w++ {
+			R := uint8(fs[offset+0])
+			G := uint8(fs[offset+1])
+			B := uint8(fs[offset+2])
+			img.Set(w, h, color.RGBA{R, G, B, 255})
+			offset += 3
+		}
+	}
+
+	buf := new(bytes.Buffer)
+	err := jpeg.Encode(buf, img, nil)
+	if err != nil {
+		return nil, err
+	}
+	return strfmt.Base64(buf.Bytes()), nil
+}
+
 func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels.DlframeworkFeatureResponse {
 	resps := make([]*webmodels.DlframeworkFeatureResponse, len(responses))
 	for ii, fr := range responses {
@@ -336,20 +385,17 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 				}
 			case *dl.Feature_RawImage:
 				pp.Println("Feature_RawImage")
-				pp.Println(feature.RawImage.CharList)
 				features[jj].RawImage = &webmodels.DlframeworkRawImage{
 					Channels: feature.RawImage.Channels,
 					Height:   feature.RawImage.Height,
 					Width:    feature.RawImage.Width,
-					// CharList:  feature.RawImage.CharList,
-					// FloatList: feature.RawImage.FloatList,
 				}
 
 				if feature.RawImage.FloatList != nil && feature.RawImage.CharList != nil {
 					panic("cannot have both float and char list values")
 				}
 
-				if feature.RawImage.FloatList != nil {
+				if feature.RawImage.FloatList != nil && compressRawImage {
 					features[jj].RawImage.DataType = "float32"
 					compressed, err := compress(feature.RawImage.FloatList)
 					if err != nil {
@@ -358,13 +404,22 @@ func toDlframeworkFeaturesResponse(responses []*dl.FeatureResponse) []*webmodels
 					features[jj].RawImage.CompressedData = compressed
 				}
 
-				if feature.RawImage.CharList != nil {
+				if feature.RawImage.FloatList != nil && !compressRawImage {
+					features[jj].RawImage.DataType = "float32"
+					jpg, err := toJPEGFromFloat32Slice(feature.RawImage.FloatList, feature.RawImage.Width, feature.RawImage.Height, feature.RawImage.Channels)
+					if err != nil {
+						panic("failed to compress float list data")
+					}
+					features[jj].RawImage.JpegData = jpg
+				}
+
+				if feature.RawImage.CharList != nil && !compressRawImage {
 					features[jj].RawImage.DataType = "uint8"
-					compressed, err := compress(feature.RawImage.CharList)
+					jpg, err := toJPEGFromInt32Slice(feature.RawImage.CharList, feature.RawImage.Width, feature.RawImage.Height, feature.RawImage.Channels)
 					if err != nil {
 						panic("failed to compress char list data")
 					}
-					features[jj].RawImage.CompressedData = compressed
+					features[jj].RawImage.JpegData = jpg
 				}
 
 			case *dl.Feature_Text:

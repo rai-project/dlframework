@@ -416,7 +416,7 @@ func (p ImagePredictor) CreateRawImageFeatures(ctx context.Context, images [][][
 	}
 	height := len(images[0])
 	width := len(images[0][0])
-	channels := 3
+	channels := len(images[0][0][0])
 
 	mean, err := p.GetMeanImage()
 	if err != nil {
@@ -428,21 +428,16 @@ func (p ImagePredictor) CreateRawImageFeatures(ctx context.Context, images [][][
 	}
 
 	features := make([]dlframework.Features, batchSize)
-
 	for ii := 0; ii < batchSize; ii++ {
 		curr := images[ii]
-		pixels := make([]uint8, width*height*channels)
+		pixels := make([]float32, width*height*channels)
 		for h := 0; h < height; h++ {
 			for w := 0; w < width; w++ {
-				R := uint8(curr[h][w][0]*scale + mean[0])
-				G := uint8(curr[h][w][1]*scale + mean[1])
-				B := uint8(curr[h][w][2]*scale + mean[2])
-				pixels[(h*width+w)*channels+0] = R
-				pixels[(h*width+w)*channels+1] = G
-				pixels[(h*width+w)*channels+2] = B
+				pixels[(h*width+w)*channels+0] = curr[h][w][0]*scale + mean[0]
+				pixels[(h*width+w)*channels+1] = curr[h][w][1]*scale + mean[1]
+				pixels[(h*width+w)*channels+2] = curr[h][w][2]*scale + mean[2]
 			}
 		}
-
 		features[ii] = dlframework.Features{
 			feature.New(
 				feature.RawImageType(),
@@ -477,10 +472,11 @@ func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]
 	for ii := 0; ii < batchSize; ii++ {
 		curr := images[ii]
 		img := goimage.NewRGBA(goimage.Rect(0, 0, width, height))
-		var R, G, B uint8
 		for w := 0; w < width; w++ {
 			for h := 0; h < height; h++ {
-				R, G, B = uint8(curr[h][w][0]*scale+mean[0]), uint8(curr[h][w][1]*scale+mean[1]), uint8(curr[h][w][2]*scale+mean[2])
+				R := uint8(curr[h][w][0]*scale + mean[0])
+				G := uint8(curr[h][w][1]*scale + mean[1])
+				B := uint8(curr[h][w][2]*scale + mean[2])
 				img.Set(w, h, color.RGBA{R, G, B, 255})
 			}
 		}

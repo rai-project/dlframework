@@ -38,6 +38,10 @@ type DlframeworkRawImage struct {
 	// An id used to identify the output feature: maps to input_id for output
 	ID string `json:"id,omitempty"`
 
+	// jpeg data is only used by the webserver and javascript codes
+	// Format: byte
+	JpegData strfmt.Base64 `json:"jpeg_data,omitempty"`
+
 	// width
 	Width int32 `json:"width,omitempty"`
 }
@@ -50,6 +54,10 @@ func (m *DlframeworkRawImage) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateJpegData(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -59,6 +67,17 @@ func (m *DlframeworkRawImage) Validate(formats strfmt.Registry) error {
 func (m *DlframeworkRawImage) validateCompressedData(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.CompressedData) { // not required
+		return nil
+	}
+
+	// Format "byte" (base64 string) is already validated when unmarshalled
+
+	return nil
+}
+
+func (m *DlframeworkRawImage) validateJpegData(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.JpegData) { // not required
 		return nil
 	}
 

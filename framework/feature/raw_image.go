@@ -63,32 +63,43 @@ func RawImageChannels(channels int) Option {
 	}
 }
 
-func RawImageFloatData(data []float32) Option {
+func RawImageFloat32Data(data []float32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
 		img.FloatList = data
+		img.DataType = "float32"
 	}
 }
 
 func RawImageInt8Data(data []int8) Option {
-	buf := make([]int32, len(data))
-	for ii, val := range data {
-		buf[ii] = int32(val)
+	return func(o *dlframework.Feature) {
+		buf := make([]int32, len(data))
+		for ii, val := range data {
+			buf[ii] = int32(val)
+		}
+		RawImageInt32Data(buf)(o)
+		img := ensureRawImage(o)
+		img.DataType = "int8"
 	}
-	return RawImageInt32Data(buf)
 }
 
 func RawImageUInt8Data(data []uint8) Option {
-	buf := make([]int32, len(data))
-	for ii, val := range data {
-		buf[ii] = int32(val)
+	return func(o *dlframework.Feature) {
+		buf := make([]int32, len(data))
+		for ii, val := range data {
+			buf[ii] = int32(val)
+		}
+		RawImageInt32Data(buf)(o)
+
+		img := ensureRawImage(o)
+		img.DataType = "uint8"
 	}
-	return RawImageInt32Data(buf)
 }
 
 func RawImageInt32Data(data []int32) Option {
 	return func(o *dlframework.Feature) {
 		img := ensureRawImage(o)
+		img.DataType = "int32"
 		img.CharList = data
 	}
 }
@@ -102,7 +113,7 @@ func RawImageData(data interface{}) Option {
 	case []int32:
 		return RawImageInt32Data(v)
 	case []float32:
-		return RawImageFloatData(v)
+		return RawImageFloat32Data(v)
 	}
 	panic("invalid RawImageData type")
 }

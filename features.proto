@@ -89,6 +89,9 @@ message RawImage {
   // compressed data is only used by the webserver and javascript codes
   bytes compressed_data = 8
       [ (gogoproto.moretags) = "yaml:\"compressed_data,omitempty\"" ];
+  // jpeg data is only used by the webserver and javascript codes
+  bytes jpeg_data = 9
+      [ (gogoproto.moretags) = "yaml:\"jpeg_data,omitempty\"" ];
 }
 
 message Classification {
