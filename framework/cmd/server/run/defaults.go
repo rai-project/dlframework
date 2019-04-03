@@ -1,23 +1,21 @@
-package cmd
+// +build ignore
 
-import (
-	"strings"
-)
+package main
 
 var (
 	DefaultEvaulationModels = []string{
 		"SqueezeNet_1.0",
 		"SqueezeNet_1.1",
-		"BVLC-AlexNet_1.0",
-		"BVLC-Reference-CaffeNet_1.0",
-		"BVLC-GoogLeNet_1.0",
+		"BVLC_AlexNet_1.0",
+		"BVLC_Reference_CaffeNet_1.0",
+		"BVLC_GoogLeNet_1.0",
 		"ResNet101_1.0",
 		"ResNet101_2.0",
 		"WRN50_2.0",
-		"BVLC-Reference-RCNN-ILSVRC13_1.0",
+		"BVLC_Reference_RCNN_ILSVRC13_1.0",
 		"Inception_3.0",
 		"Inception_4.0",
-		"ResNeXt50-32x4d_1.0",
+		"ResNeXt50_32x4d_1.0",
 		"VGG16_1.0",
 		"VGG19_1.0",
 	}
@@ -32,7 +30,7 @@ var (
 	}
 
 	FrameworkNames = map[string]string{
-		"tensorflow": "Tensorflow",
+		"tensorflow": "TensorFlow",
 		"tensorrt":   "TensorRT",
 		"mxnet":      "MXNet",
 		"caffe":      "Caffe",
@@ -41,9 +39,3 @@ var (
 		"pytorch":    "PyTorch",
 	}
 )
-
-func ParseModelName(model string) (string, string) {
-	splt := strings.Split(model, "_")
-	modelName, modelVersion := splt[0:len(splt)-1], splt[len(splt)-1]
-	return strings.Join(modelName, "_"), modelVersion
-}

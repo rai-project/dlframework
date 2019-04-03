@@ -61,7 +61,7 @@ func partitionList(in []string, partitionSize int) (out [][]string) {
 
 var predictCmd = &cobra.Command{
 	Use:   "predict",
-	Short: "Predicts using the MLModelScope agent",
+	Short: "Predict using the MLModelScope agent",
 	PersistentPreRunE: func(c *cobra.Command, args []string) error {
 		rootCmd := c.Parent()
 		for rootCmd.HasParent() {

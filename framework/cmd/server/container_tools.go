@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/docker/docker/api/types"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/docker"
 	"github.com/spf13/cobra"
@@ -111,6 +112,8 @@ var containerPullCmd = &cobra.Command{
 			}
 		}
 		if containerName != "" {
+			pp.Println(containerName)
+
 			containers = append(containers, containerName)
 		}
 		if len(containers) == 0 {

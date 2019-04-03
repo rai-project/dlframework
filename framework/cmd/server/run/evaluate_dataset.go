@@ -24,9 +24,6 @@ import (
 )
 
 var (
-	// models = dlcmd.DefaultEvaulationModels
-	// frameworks = dlcmd.DefaultEvaluationFrameworks
-
 	frameworks = []string{
 		// "mxnet",
 		"caffe2",

@@ -36,9 +36,9 @@ var RootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig)
 	setup(RootCmd)
-	RootCmd.PersistentFlags().StringVar(&frameworkName, "frameworkName", "MxNet", "frameworkName")
-	RootCmd.PersistentFlags().StringVar(&frameworkVersion, "frameworkVersion", "0.11.0", "frameworkVersion")
-	RootCmd.PersistentFlags().StringVar(&modelName, "modelName", "BVLC-AlexNet", "modelName")
+	RootCmd.PersistentFlags().StringVar(&frameworkName, "frameworkName", "TensorFlow", "frameworkName")
+	RootCmd.PersistentFlags().StringVar(&frameworkVersion, "frameworkVersion", "1.12", "frameworkVersion")
+	RootCmd.PersistentFlags().StringVar(&modelName, "modelName", "SSD_MobileNet_v2_COCO", "modelName")
 	RootCmd.PersistentFlags().StringVar(&modelVersion, "modelVersion", "1.0", "modelVersion")
 	RootCmd.PersistentFlags().IntVarP(&batchSize, "batchSize", "b", 1, "batch size")
 	RootCmd.PersistentFlags().IntVarP(&featureLimit, "featureLimit", "f", 10, "feature limit")
@@ -53,6 +53,7 @@ func setup(c *cobra.Command) {
 	c.AddCommand(raicmd.CompletionCmd)
 	c.AddCommand(raicmd.BuildTimeCmd)
 	c.AddCommand(evaluations.EvaluationCmd)
+	c.AddCommand(databaseCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")

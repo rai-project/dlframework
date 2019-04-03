@@ -247,7 +247,6 @@ func SetupFlags(c *cobra.Command) {
 	c.AddCommand(downloadCmd)
 	c.AddCommand(containerCmd)
 	c.AddCommand(infoCmd)
-	c.AddCommand(databaseCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")

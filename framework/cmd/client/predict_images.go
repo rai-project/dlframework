@@ -62,8 +62,8 @@ var imagesCmd = &cobra.Command{
 		}
 
 		defer client.Close(ctx, &dlframework.PredictorCloseRequest{
-      Predictor: predictor,
-    })
+			Predictor: predictor,
+		})
 
 		var data [][]byte
 		err = filepath.Walk(imgDir, func(path string, info os.FileInfo, err error) error {

@@ -9,7 +9,7 @@ import (
 
 const exampleModel = `name: Inception
 framework:
-  name: Tensorflow
+  name: TensorFlow
   version: ~1.1.x
 version: 3.0
 container:

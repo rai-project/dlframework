@@ -22,7 +22,7 @@ func TestGetFrameworkManifestsFilterManifests(t *testing.T) {
 	fs, err = Frameworks.FilterManifests(manifests, "tensorflow", "*")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, fs)
-	fs, err = Frameworks.FilterManifests(manifests, "Tensorflow", "1.2")
+	fs, err = Frameworks.FilterManifests(manifests, "TensorFlow", "1.2")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, fs)
 	fs, err = Frameworks.FilterManifests(manifests, "tensorflow", "1.2")

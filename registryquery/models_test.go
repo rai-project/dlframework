@@ -12,7 +12,7 @@ func TestGetModelManifests(t *testing.T) {
 	assert.NotEmpty(t, manifests)
 }
 
-func TestGetTensorflowModelManifests(t *testing.T) {
+func TestGetTensorFlowModelManifests(t *testing.T) {
 	manifests, err := Models.Manifests("tensorflow", "1.2")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, manifests)
