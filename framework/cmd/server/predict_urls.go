@@ -23,6 +23,7 @@ import (
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
+	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 	"github.com/rai-project/dlframework/framework/options"
 	common "github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
@@ -240,7 +241,7 @@ var predictUrlsCmd = &cobra.Command{
 			numUrlParts = len(urlParts)
 		}
 
-		inferenceProgress := newProgress("infering", len(urls))
+		inferenceProgress := dlcmd.NewProgress("infering", len(urls))
 
 		for _, part := range urlParts[0:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
@@ -309,7 +310,7 @@ var predictUrlsCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", batchSize)
+		databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)

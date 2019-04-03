@@ -2,14 +2,12 @@ package server
 
 import (
 	"strings"
-	"time"
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/tracer"
 	"github.com/spf13/cobra"
-	pb "gopkg.in/cheggaaa/pb.v2"
 )
 
 var (
@@ -29,20 +27,6 @@ var (
 	databaseEndpoints    []string
 	DefaultChannelBuffer = 100000
 )
-
-func newProgress(prefix string, count int) *pb.ProgressBar {
-	// get the new original progress bar.
-	//bar := pb.New(count).Prefix(prefix)
-	// TODO: set prefix of bar
-	bar := pb.New(count)
-	//bar.Set("prefix", prefix)
-
-	// Refresh rate for progress bar is set to 100 milliseconds.
-	bar.SetRefreshRate(time.Millisecond * 100)
-
-	bar.Start()
-	return bar
-}
 
 func partitionList(in []string, partitionSize int) (out [][]string) {
 	cnt := (len(in)-1)/partitionSize + 1

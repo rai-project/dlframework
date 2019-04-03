@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/agent"
+	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
@@ -20,7 +21,7 @@ func downloadModels(ctx context.Context) error {
 
 	}
 	models := framework.Models()
-	pb := newProgress("download models", len(models))
+	pb := dlcmd.NewProgress("download models", len(models))
 	var g errgroup.Group
 	for _, model := range models {
 		model := model // https://golang.org/doc/faq#closures_and_goroutines

@@ -5,13 +5,7 @@ import (
 	"os"
 
 	"github.com/olekukonko/tablewriter"
-	"github.com/rai-project/config"
-	"github.com/rai-project/dlframework"
 	"github.com/spf13/cobra"
-)
-
-var (
-	models []dlframework.ModelManifest
 )
 
 var infoModelsCmd = &cobra.Command{
@@ -19,6 +13,8 @@ var infoModelsCmd = &cobra.Command{
 	Aliases: []string{},
 	Short:   "Get the model names and version registered by the agent",
 	Run: func(cmd *cobra.Command, args []string) {
+		models := framework.Models()
+
 		if len(models) == 0 {
 			fmt.Println("No Models")
 			return
@@ -35,10 +31,4 @@ var infoModelsCmd = &cobra.Command{
 		}
 		tbl.Render()
 	},
-}
-
-func init() {
-	config.AfterInit(func() {
-		models = framework.Models()
-	})
 }

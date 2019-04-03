@@ -53,7 +53,6 @@ func setup(c *cobra.Command) {
 	c.AddCommand(raicmd.CompletionCmd)
 	c.AddCommand(raicmd.BuildTimeCmd)
 	c.AddCommand(evaluations.EvaluationCmd)
-	c.AddCommand(databaseCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")

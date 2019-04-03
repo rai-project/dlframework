@@ -23,6 +23,7 @@ import (
 	"github.com/rai-project/dldataset"
 	dl "github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
+	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 	"github.com/rai-project/dlframework/framework/options"
 	common "github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
@@ -238,7 +239,7 @@ var predictDatasetCmd = &cobra.Command{
 			numFileParts = len(fileParts)
 		}
 
-		inferenceProgress := newProgress("infering", numFileParts)
+		inferenceProgress := dlcmd.NewProgress("infering", numFileParts)
 		for _, part := range fileParts[0:numFileParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -309,7 +310,7 @@ var predictDatasetCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := newProgress("inserting prediction", numFileParts*partitionListSize)
+		databaseInsertProgress := dlcmd.NewProgress("inserting prediction", numFileParts*partitionListSize)
 
 		for out0 := range outputs {
 			out, ok := out0.(steps.IDer)

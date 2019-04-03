@@ -1,11 +1,30 @@
 package cmd
 
-import "strings"
+import (
+	"strings"
+	"time"
+
+	"github.com/cheggaaa/pb"
+)
 
 func ParseModelName(model string) (string, string) {
 	splt := strings.Split(model, "_")
 	modelName, modelVersion := splt[0:len(splt)-1], splt[len(splt)-1]
 	return strings.Join(modelName, "_"), modelVersion
+}
+
+func NewProgress(prefix string, count int) *pb.ProgressBar {
+	// get the new original progress bar.
+	//bar := pb.New(count).Prefix(prefix)
+	// TODO: set prefix of bar
+	bar := pb.New(count)
+	//bar.Set("prefix", prefix)
+
+	// Refresh rate for progress bar is set to 100 milliseconds.
+	bar.SetRefreshRate(time.Millisecond * 100)
+
+	bar.Start()
+	return bar
 }
 
 var (
