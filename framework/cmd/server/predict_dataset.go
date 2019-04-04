@@ -13,11 +13,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"github.com/ulule/deepcopier"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	"github.com/rai-project/dldataset"
@@ -33,13 +28,17 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"github.com/ulule/deepcopier"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
 	datasetCategory    string
 	datasetName        string
 	numFileParts       int
-	numWarmupFileParts int
+	numWarmUpFileParts int
 )
 
 var predictDatasetCmd = &cobra.Command{
@@ -217,7 +216,7 @@ var predictDatasetCmd = &cobra.Command{
 			return err
 		}
 
-		fileParts := partitionList(files, partitionListSize)
+		fileParts := dl.PartitionStringList(files, partitionListSize)
 
 		cntTop1 := 0
 		cntTop5 := 0
@@ -229,18 +228,67 @@ var predictDatasetCmd = &cobra.Command{
 			WithField("file_parts_element_length", len(fileParts[0])).
 			WithField("files_length", len(files)).
 			WithField("using_gpu", useGPU).
+			WithField("numWarmUpFileParts", numWarmUpFileParts).
+			WithField("numFileParts", numFileParts).
 			Info("starting inference on dataset")
 
-		if numWarmupFileParts != 0 && numFileParts != -1 {
-			panic("todo")
+		if numWarmUpFileParts != 0 && numFileParts != -1 {
+			for _, part := range fileParts[0:numWarmUpFileParts] {
+				input := make(chan interface{}, DefaultChannelBuffer)
+				go func() {
+					defer close(input)
+					for range part {
+						lda, err := dataset.Next(ctx)
+						if err != nil {
+							continue
+						}
+						id := uuid.NewV4()
+						lbl := steps.NewIDWrapper(id, lda)
+						partlabels[lbl.GetID()] = lda.Label()
+						input <- lbl
+					}
+				}()
+
+				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+					Then(steps.NewReadImage(preprocessOptions)).
+					Then(steps.NewPreprocessImage(preprocessOptions)).
+					Run(input)
+
+				var images []interface{}
+				for out := range output {
+					images = append(images, out)
+				}
+
+				parts := dl.Partition(images, batchSize)
+
+				input = make(chan interface{}, DefaultChannelBuffer)
+				go func() {
+					defer close(input)
+					for _, part := range parts {
+						input <- part
+					}
+				}()
+
+				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+					Then(steps.NewPredict(predictor)).
+					Run(input)
+
+				for o := range output {
+					if err, ok := o.(error); ok && failOnFirstError {
+						log.WithError(err).Error("encountered an error while performing inference")
+						os.Exit(-1)
+					}
+					outputs <- o
+				}
+			}
 		}
 
 		if numFileParts == -1 {
 			numFileParts = len(fileParts)
 		}
 
-		inferenceProgress := dlcmd.NewProgress("infering", numFileParts)
-		for _, part := range fileParts[0:numFileParts] {
+		inferenceProgress := dlcmd.NewProgress("inferring", numFileParts)
+		for _, part := range fileParts[numWarmUpFileParts:numFileParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -266,13 +314,13 @@ var predictDatasetCmd = &cobra.Command{
 				images = append(images, out)
 			}
 
-			parts := agent.Partition(images, batchSize)
+			imageParts := agent.Partition(images, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for _, part := range parts {
-					input <- part
+				for _, p := range imageParts {
+					input <- p
 				}
 			}()
 
@@ -286,14 +334,13 @@ var predictDatasetCmd = &cobra.Command{
 				if err, ok := o.(error); ok && failOnFirstError {
 					//inferenceProgress.FinishPrint("inference halted")
 					inferenceProgress.Finish()
-
 					log.WithError(err).Error("encountered an error while performing inference")
 					os.Exit(-1)
 				}
 				outputs <- o
 			}
-
 		}
+
 		span.Finish()
 		defer func() {
 			span = nil
@@ -429,5 +476,5 @@ func init() {
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
 	predictDatasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictDatasetCmd.PersistentFlags().IntVar(&numWarmupFileParts, "warmup_num_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	predictDatasetCmd.PersistentFlags().IntVar(&numWarmUpFileParts, "num_warmup_file_parts", 0, "the number of file parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }

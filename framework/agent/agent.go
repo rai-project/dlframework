@@ -250,7 +250,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 
 	batchSize := int(predictionOptions.BatchSize())
 
-	parts := Partition(outputs, batchSize)
+	parts := dl.Partition(outputs, batchSize)
 
 	input = make(chan interface{}, p.channelBuffer)
 	go func() {
@@ -340,7 +340,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 
 	batchSize := int(opts.BatchSize())
 
-	parts := Partition(outputs, batchSize)
+	parts := dl.Partition(outputs, batchSize)
 
 	input = make(chan interface{}, p.channelBuffer)
 	go func() {

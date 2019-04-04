@@ -12,8 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/k0kubun/pp"
-
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
@@ -35,14 +33,13 @@ import (
 	"github.com/spf13/cobra"
 	jaeger "github.com/uber/jaeger-client-go"
 	"gopkg.in/mgo.v2/bson"
-
-	_ "github.com/rai-project/monitoring/monitors"
 )
 
 var (
-	urlsFilePath   string
-	duplicateInput int
-	numUrlParts    int
+	urlsFilePath      string
+	duplicateInput    int
+	numUrlParts       int
+	numWarmUpUrlParts int
 )
 
 var predictUrlsCmd = &cobra.Command{
@@ -146,13 +143,18 @@ var predictUrlsCmd = &cobra.Command{
 			urls = append(urls, line)
 		}
 
+		log.WithField("urls_file_path", urlsFilePath).
+			Debug("using the specified urls file path")
+
+		if len(urls) == 0 {
+			log.WithError(err).Error("the urls file has no url")
+			os.Exit(-1)
+		}
+
 		tmp := urls
 		for ii := 1; ii < duplicateInput; ii++ {
 			urls = append(urls, tmp...)
 		}
-
-		log.WithField("urls_file_path", urlsFilePath).
-			Debug("using the specified urls file path")
 
 		if len(urls) == 0 {
 			log.WithError(err).Error("the urls file has no url")
@@ -223,7 +225,7 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		_ = preprocessOptions
 
-		urlParts := partitionList(urls, partitionListSize)
+		urlParts := dl.PartitionStringList(urls, partitionListSize)
 
 		cntTop1 := 0
 		cntTop5 := 0
@@ -234,14 +236,64 @@ var predictUrlsCmd = &cobra.Command{
 		log.WithField("url_parts_length", len(urlParts)).
 			WithField("url_parts_element_length", len(urlParts[0])).
 			WithField("urls_length", len(urls)).
+			WithField("num_warmup_url_parts", numWarmUpUrlParts).
+			WithField("num_url_part", numFileParts).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on urls")
+
+		if numWarmUpFileParts != 0 && numFileParts != -1 {
+			for _, part := range urlParts[0:numUrlParts] {
+				input := make(chan interface{}, DefaultChannelBuffer)
+				go func() {
+					defer close(input)
+					for _, url := range part {
+						id := uuid.NewV4()
+						lbl := steps.NewIDWrapper(id, url)
+						partlabels[lbl.GetID()] = "" // no label for the input url
+						input <- lbl
+					}
+				}()
+
+				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+					Then(steps.NewReadURL()).
+					Then(steps.NewReadImage(preprocessOptions)).
+					Then(steps.NewPreprocessImage(preprocessOptions)).
+					Run(input)
+
+				var images []interface{}
+				for out := range output {
+					images = append(images, out)
+				}
+
+				imageParts := dl.Partition(images, batchSize)
+
+				input = make(chan interface{}, DefaultChannelBuffer)
+				go func() {
+					defer close(input)
+					for _, p := range imageParts {
+						input <- p
+					}
+				}()
+
+				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+					Then(steps.NewPredict(predictor)).
+					Run(input)
+
+				for o := range output {
+					if err, ok := o.(error); ok && failOnFirstError {
+						log.WithError(err).Error("encountered an error while performing warmup inference")
+						os.Exit(-1)
+					}
+					outputs <- o
+				}
+			}
+		}
 
 		if numUrlParts == -1 {
 			numUrlParts = len(urlParts)
 		}
 
-		inferenceProgress := dlcmd.NewProgress("infering", len(urls))
+		inferenceProgress := dlcmd.NewProgress("inferring", len(urls))
 
 		for _, part := range urlParts[0:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
@@ -266,13 +318,13 @@ var predictUrlsCmd = &cobra.Command{
 				images = append(images, out)
 			}
 
-			parts := agent.Partition(images, batchSize)
+			imageParts := agent.Partition(images, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
-				for _, part := range parts {
-					input <- part
+				for _, p := range imageParts {
+					input <- p
 				}
 			}()
 
@@ -292,8 +344,8 @@ var predictUrlsCmd = &cobra.Command{
 				}
 				outputs <- o
 			}
-
 		}
+
 		span.Finish()
 		defer func() {
 			span = nil
@@ -326,11 +378,9 @@ var predictUrlsCmd = &cobra.Command{
 				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
 			}
 
-			for ii := 0; ii < 3; ii++ {
-				pp.Println(features[ii].GetProbability())
-			}
-
 			if publishPredictions == true {
+				log.Info("inserting predictions into inputPredictionsTable")
+
 				inputPrediction := evaluation.InputPrediction{
 					ID:            bson.NewObjectId(),
 					CreatedAt:     time.Now(),
@@ -339,35 +389,34 @@ var predictUrlsCmd = &cobra.Command{
 					Features:      features,
 				}
 
-				err = inputPredictionsTable.Insert(inputPrediction)
-				if err != nil {
+				if err := inputPredictionsTable.Insert(inputPrediction); err != nil {
 					log.WithError(err).Errorf("failed to insert input prediction into database")
 				}
-
 				inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 			}
+
 			databaseInsertProgress.Increment()
 
 			features.Sort()
 
-			if features[0].Type != dl.FeatureType_CLASSIFICATION {
+			if features[0].Type == dl.FeatureType_CLASSIFICATION {
+				label = strings.TrimSpace(strings.ToLower(label))
+				if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+					cntTop1++
+				}
+				for _, f := range features[:5] {
+					if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+						cntTop5++
+					}
+				}
+			} else {
 				panic("expecting a Classification type")
 			}
-
-			label = strings.TrimSpace(strings.ToLower(label))
-			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-				cntTop1++
-			}
-			for _, f := range features[:5] {
-				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-					cntTop5++
-				}
-			}
-
 		}
 
 		//databaseInsertProgress.FinishPrint("inserting prediction complete")
 		databaseInsertProgress.Finish()
+		log.Info("finised inserting prediction")
 
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
@@ -379,52 +428,46 @@ var predictUrlsCmd = &cobra.Command{
 			log.WithError(err).Error("failed to publish model accuracy entry")
 		}
 
-		log.WithField("model", model.MustCanonicalName()).
-			WithField("accuracy", spew.Sprint(modelAccuracy)).
-			Info("finished publishing prediction result")
+		log.Info("downloading trace information")
 
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
 		query := fmt.Sprintf("http://%s/api/traces/%v", traceServerAddress, traceIDVal)
 		resp, err := grequests.Get(query, nil)
-
 		if err != nil {
 			log.WithError(err).
 				WithField("trace_id", traceIDVal).
 				Error("failed to download span information")
-		} else {
-			log.WithField("trace_id", traceIDVal).
-				Info("downloaded span information")
 		}
+		log.WithField("trace_id", traceIDVal).Info("downloaded span information")
 
-		if err == nil {
-			var trace evaluation.TraceInformation
-			dec := json.NewDecoder(resp)
-			if err := dec.Decode(&trace); err != nil {
-				log.WithError(err).Error("failed to decode trace information")
-			}
-			performance := evaluation.Performance{
-				ID:         bson.NewObjectId(),
-				CreatedAt:  time.Now(),
-				Trace:      trace,
-				TraceLevel: traceLevel,
-			}
-			evaluationEntry.PerformanceID = performance.ID
-			performanceTable.Insert(performance)
-			log.Info("inserted span information")
+		var trace evaluation.TraceInformation
+		dec := json.NewDecoder(resp)
+		if err := dec.Decode(&trace); err != nil {
+			log.WithError(err).Error("failed to decode trace information")
 		}
+		performance := evaluation.Performance{
+			ID:         bson.NewObjectId(),
+			CreatedAt:  time.Now(),
+			Trace:      trace,
+			TraceLevel: traceLevel,
+		}
+		performanceTable.Insert(performance)
+
+		log.Info("inserted performance information")
+
+		evaluationEntry.PerformanceID = performance.ID
 		evaluationEntry.ModelAccuracyID = modelAccuracy.ID
 		evaluationEntry.InputPredictionIDs = inputPredictionIds
 
-		log.Info("inserting evaluation information")
 		if err := evaluationTable.Insert(evaluationEntry); err != nil {
 			log.WithError(err).Error("failed to publish evaluation entry")
 		}
 
-		log.WithField("top1_accuracy", modelAccuracy.Top1).
-			WithField("top5_accuracy", modelAccuracy.Top5).
-			Info("done")
+		log.WithField("model", model.MustCanonicalName()).
+			WithField("accuracy", spew.Sprint(modelAccuracy)).
+			Info("inserted evaluation information")
 
 		return nil
 	},
@@ -440,4 +483,5 @@ func init() {
 	predictUrlsCmd.PersistentFlags().IntVar(&duplicateInput, "duplicate_input", defaultDuplicateInput, "duplicate the input urls ine urls_file")
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
 	predictDatasetCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
+	predictDatasetCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 0, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }

@@ -24,3 +24,33 @@ func CleanString(str string) string {
 	res := r.Replace(str)
 	return strings.ToLower(res)
 }
+
+func Partition(in []interface{}, partitionSize int) (out [][]interface{}) {
+	cnt := (len(in)-1)/partitionSize + 1
+	for i := 0; i < cnt; i++ {
+		start := i * partitionSize
+		end := (i + 1) * partitionSize
+		if end > len(in) {
+			end = len(in)
+		}
+		part := in[start:end]
+		out = append(out, part)
+	}
+
+	return out
+}
+
+func PartitionStringList(in []string, partitionSize int) (out [][]string) {
+	cnt := (len(in)-1)/partitionSize + 1
+	for ii := 0; ii < cnt; ii++ {
+		start := ii * partitionSize
+		end := (ii + 1) * partitionSize
+		if end > len(in) {
+			end = len(in)
+		}
+		part := in[start:end]
+		out = append(out, part)
+	}
+
+	return out
+}

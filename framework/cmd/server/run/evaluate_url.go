@@ -57,30 +57,31 @@ var (
 	}
 
 	batchSizes = []int{
-		// 768,
-		// 512,
-		// // 448,
+		512,
+		// 448,
 		// 384,
-		// // 320,
-		// 256,
-		// // 196,
-		// 128,
-		// // 96,
-		// 64,
-		// // 48,
-		// 32,
-		// 16,
-		// 8,
-		// 4,
-		// 2,
+		// 320,
+		256,
+		// 196,
+		128,
+		// 96,
+		64,
+		// 48,
+		32,
+		16,
+		8,
+		4,
+		2,
 		1,
 	}
+
 	timeout                       = 300 * time.Minute
 	usingGPU                      = true
-	databaseAddress               = "52.91.209.88"
+	databaseAddress               = "localhost"
 	traceLevel                    = "MODEL_TRACE"
 	sourcePath                    = sourcepath.MustAbsoluteDir()
 	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
+	debug                         = false
 )
 
 func main() {
@@ -107,7 +108,9 @@ func main() {
 				if !usingGPU {
 					compileArgs = append(compileArgs, "-tags=nogpu")
 				}
-				// compileArgs = append(compileArgs, "-tags=debug")
+				if debug {
+					compileArgs = append(compileArgs, "-tags=debug")
+				}
 				cmd := exec.Command("go", compileArgs...)
 				var agentPath = "../../../../" + framework + "/" + framework + "-agent/"
 				cmd.Dir = filepath.Join(sourcePath, agentPath)

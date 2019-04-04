@@ -28,21 +28,6 @@ var (
 	DefaultChannelBuffer = 100000
 )
 
-func partitionList(in []string, partitionSize int) (out [][]string) {
-	cnt := (len(in)-1)/partitionSize + 1
-	for ii := 0; ii < cnt; ii++ {
-		start := ii * partitionSize
-		end := (ii + 1) * partitionSize
-		if end > len(in) {
-			end = len(in)
-		}
-		part := in[start:end]
-		out = append(out, part)
-	}
-
-	return out
-}
-
 var predictCmd = &cobra.Command{
 	Use:   "predict",
 	Short: "Predict using the MLModelScope agent",
