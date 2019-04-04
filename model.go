@@ -195,7 +195,7 @@ func (m ModelManifest) RegisterNamed(s string) error {
 }
 
 func RegisteredModelNames() []string {
-	return syncMapKeys(modelRegistry)
+	return syncMapKeys(&modelRegistry)
 }
 
 func Models() ([]ModelManifest, error) {

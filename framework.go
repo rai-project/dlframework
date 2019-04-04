@@ -54,7 +54,7 @@ func (f FrameworkManifest) RegisterNamed(s string) error {
 }
 
 func RegisteredFrameworkNames() []string {
-	return syncMapKeys(frameworkRegistry)
+	return syncMapKeys(&frameworkRegistry)
 }
 
 func Frameworks() ([]FrameworkManifest, error) {
