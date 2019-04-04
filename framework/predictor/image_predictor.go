@@ -71,7 +71,7 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 
 func (p ImagePredictor) GetMeanPath() string {
 	model := p.Model
-	return cleanString(filepath.Join(p.WorkDir, model.GetName()+".mean"))
+	return dlframework.CleanString(filepath.Join(p.WorkDir, model.GetName()+".mean"))
 }
 
 func (p ImagePredictor) GetMeanImage() ([]float32, error) {
@@ -308,6 +308,30 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 				feature.ClassificationIndex(int32(jj)),
 				feature.ClassificationLabel(labels[jj]),
 				feature.Probability(probabilities[ii][jj]),
+			)
+		}
+		sort.Sort(dlframework.Features(rprobs))
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
+	batchSize := p.BatchSize()
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+	featureLen := len(probabilities) / batchSize
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		for jj := 0; jj < featureLen; jj++ {
+			rprobs[jj] = feature.New(
+				feature.ClassificationIndex(int32(jj)),
+				feature.ClassificationLabel(labels[jj]),
+				feature.Probability(probabilities[ii*featureLen+jj]),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))

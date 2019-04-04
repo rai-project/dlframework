@@ -329,7 +329,6 @@ var predictUrlsCmd = &cobra.Command{
 			for ii := 0; ii < 3; ii++ {
 				pp.Println(features[ii].GetProbability())
 			}
-			return nil
 
 			if publishPredictions == true {
 				inputPrediction := evaluation.InputPrediction{
@@ -433,7 +432,7 @@ var predictUrlsCmd = &cobra.Command{
 
 func init() {
 	sourcePath := sourcepath.MustAbsoluteDir()
-	defaultURLsPath := filepath.Join(sourcePath, "..", "client", "run", "urlsfile")
+	defaultURLsPath := filepath.Join(sourcePath, "..", "_fixtures", "urlsfile")
 	if !com.IsFile(defaultURLsPath) {
 		defaultURLsPath = ""
 	}

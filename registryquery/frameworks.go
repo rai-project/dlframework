@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
+	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/parallel/tunny"
 	kv "github.com/rai-project/registry"
@@ -99,12 +100,12 @@ func (frameworksTy) FilterManifests(
 	frameworkName,
 	frameworkVersionString string,
 ) ([]*webmodels.DlframeworkFrameworkManifest, error) {
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersionString = strings.ToLower(frameworkVersionString)
+	frameworkName = dl.CleanString(frameworkName)
+	frameworkVersionString = dl.CleanString(frameworkVersionString)
 
 	candidates := []*webmodels.DlframeworkFrameworkManifest{}
 	for _, manifest := range manifests {
-		if frameworkName == "*" || strings.ToLower(manifest.Name) == frameworkName {
+		if frameworkName == "*" || dl.CleanString(manifest.Name) == frameworkName {
 			candidates = append(candidates, manifest)
 		}
 	}

@@ -17,6 +17,7 @@ import (
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/rai-project/config"
 	"github.com/rai-project/cpu/cpuid"
+	dl "github.com/rai-project/dlframework"
 	dlcmd "github.com/rai-project/dlframework/framework/cmd"
 	"github.com/sirupsen/logrus"
 
@@ -26,8 +27,8 @@ import (
 var (
 	frameworks = []string{
 		// "mxnet",
-		"caffe2",
-		// "tensorflow",
+		// "caffe2",
+		"tensorflow",
 		// "caffe",
 		//"tensorrt",
 		// "cntk",
@@ -50,7 +51,7 @@ var (
 		// "VGG19_1.0",
 		// "ResNet50_1.0",
 		// "SphereFace_1.0",
-		"ShuffleNet_Caffe2_1.0",
+		// "ShuffleNet_Caffe2_1.0",
 	}
 
 	batchSizes = []int{
@@ -72,28 +73,27 @@ var (
 		2,
 		1,
 	}
+
+	useGPU = []bool{
+		true,
+		false,
+	}
+
 	timeout                       = 300 * time.Minute
-	usingGPU                      = true
 	databaseAddress               = "52.91.209.88"
 	traceLevel                    = "NO_TRACE"
 	sourcePath                    = sourcepath.MustAbsoluteDir()
-	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
+	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
 )
-
-func cleanString(str string) string {
-	r := strings.NewReplacer(":", "_", " ", "_", "-", "_")
-	res := r.Replace(str)
-	return strings.ToLower(res)
-}
 
 func main() {
 	config.AfterInit(func() {
-		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
+		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
 	})
 
 	dlcmd.Init()
 	for i := 0; i < 1; i++ {
-		for _, usingGPU := range []bool{true, false} {
+		for _, usingGPU := range useGPU {
 			var device string
 			if usingGPU {
 				device = "gpu"
@@ -140,7 +140,7 @@ func main() {
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							fmt.Sprintf(" --database_name=%v", cleanString(modelName+"_"+modelVersion+"_predictions")) +
+							fmt.Sprintf(" --database_name=%v", dl.CleanString(modelName+"_"+modelVersion+"_predictions")) +
 							fmt.Sprintf(" --database_address=%v", databaseAddress) +
 							fmt.Sprintf(" --trace_level=%v", traceLevel)
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")

@@ -2,18 +2,10 @@ package predictor
 
 import (
 	"reflect"
-	"strings"
 
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 )
-
-func cleanString(path string) string {
-	path = strings.Replace(path, ":", "_", -1)
-	path = strings.Replace(path, " ", "_", -1)
-	path = strings.Replace(path, "-", "_", -1)
-	return strings.ToLower(path)
-}
 
 func indirect(a interface{}) interface{} {
 	if a == nil {

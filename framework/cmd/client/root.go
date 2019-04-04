@@ -3,7 +3,6 @@ package client
 import (
 	"fmt"
 	"os"
-	"strings"
 	"syscall"
 	"time"
 
@@ -66,13 +65,6 @@ func setup(c *cobra.Command) {
 	viper.BindPFlag("app.secret", c.PersistentFlags().Lookup("secret"))
 	viper.BindPFlag("app.debug", c.PersistentFlags().Lookup("debug"))
 	viper.BindPFlag("app.verbose", c.PersistentFlags().Lookup("verbose"))
-}
-
-func cleanNames() {
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersion = strings.ToLower(frameworkVersion)
-	modelName = strings.ToLower(modelName)
-	modelVersion = strings.ToLower(modelVersion)
 }
 
 // initConfig reads in config file and ENV variables if set.

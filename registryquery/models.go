@@ -4,7 +4,6 @@ import (
 	"path"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 
 	"github.com/Masterminds/semver"
@@ -12,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
+	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/parallel/tunny"
 	kv "github.com/rai-project/registry"
@@ -25,9 +25,8 @@ type modelsTy struct {
 var Models modelsTy
 
 func (m modelsTy) Manifests(frameworkName, frameworkVersion string) ([]*webmodels.DlframeworkModelManifest, error) {
-
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersion = strings.ToLower(frameworkVersion)
+	frameworkName = dl.CleanString(frameworkName)
+	frameworkVersion = dl.CleanString(frameworkVersion)
 
 	fs, err := Frameworks.Manifests()
 	if err != nil {
@@ -87,7 +86,7 @@ func (m modelsTy) Manifests(frameworkName, frameworkVersion string) ([]*webmodel
 
 	prefixKey := path.Join(config.App.Name, "registry")
 	for _, framework := range fs {
-		frameworkName, frameworkVersion := strings.ToLower(framework.Name), strings.ToLower(framework.Version)
+		frameworkName, frameworkVersion := dl.CleanString(framework.Name), dl.CleanString(framework.Version)
 		key := path.Join(prefixKey, frameworkName, frameworkVersion)
 		kvs, err := rgs.List(key)
 		if err != nil {
@@ -118,12 +117,12 @@ func (modelsTy) FilterManifests(
 	modelName,
 	modelVersionString string,
 ) ([]*webmodels.DlframeworkModelManifest, error) {
-	modelName = strings.ToLower(modelName)
-	modelVersionString = strings.ToLower(modelVersionString)
+	modelName = dl.CleanString(modelName)
+	modelVersionString = dl.CleanString(modelVersionString)
 
 	candidates := []*webmodels.DlframeworkModelManifest{}
 	for _, manifest := range manifests {
-		if modelName == "*" || strings.ToLower(manifest.Name) == modelName {
+		if modelName == "*" || dl.CleanString(manifest.Name) == modelName {
 			candidates = append(candidates, manifest)
 		}
 	}

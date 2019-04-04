@@ -12,6 +12,7 @@ import (
 	"time"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
+	"github.com/Unknwon/com"
 	"github.com/pkg/errors"
 	"github.com/rai-project/batching"
 	dl "github.com/rai-project/dlframework"
@@ -35,6 +36,7 @@ var (
 	minDuration            int64
 	minQueries             int
 	maxQpsSearchIterations int
+	imagePath              string
 )
 
 func computeLatency(qps float64) (trace synthetic_load.Trace, latency time.Duration, err error) {
@@ -111,7 +113,6 @@ func computeLatency(qps float64) (trace synthetic_load.Trace, latency time.Durat
 	go func() {
 		defer close(batchQueue)
 
-		imagePath := filepath.Join(sourcepath.MustAbsoluteDir(), "_fixtures", "chicken.jpg")
 		input, err := ioutil.ReadFile(imagePath)
 		if err != nil {
 			panic(err)
@@ -263,8 +264,15 @@ func (s batchingRunner) Run(tr synthetic_load.TraceEntry, bts []byte, onFinish f
 }
 
 func init() {
+	sourcePath := sourcepath.MustAbsoluteDir()
+	defaultImagePath := filepath.Join(sourcePath, "..", "_fixtures", "chicken.jpg")
+	if !com.IsFile(defaultImagePath) {
+		defaultImagePath = ""
+	}
+
 	predictWorkloadCmd.PersistentFlags().Float64Var(&qps, "initial_qps", 16, "the initial QPS")
 	predictWorkloadCmd.PersistentFlags().Float64Var(&latencyBoundPercentile, "percentile", 95, "the minimum percent of queries meeting the latency bound")
 	predictWorkloadCmd.PersistentFlags().Int64Var(&minDuration, "min_duration", 100, "the minimum duration of the trace in ms")
 	predictWorkloadCmd.PersistentFlags().IntVar(&minQueries, "min_queries", 512, "the minimum number of queries")
+	predictUrlsCmd.PersistentFlags().StringVar(&imagePath, "image_path", defaultImagePath, "the path to the image to perform the evaluations on.")
 }

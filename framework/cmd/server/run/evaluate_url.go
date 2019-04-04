@@ -17,7 +17,9 @@ import (
 	shellwords "github.com/junegunn/go-shellwords"
 	"github.com/rai-project/config"
 	"github.com/rai-project/cpu/cpuid"
+	dl "github.com/rai-project/dlframework"
 	dlcmd "github.com/rai-project/dlframework/framework/cmd"
+
 	"github.com/sirupsen/logrus"
 
 	_ "github.com/rai-project/logger/hooks"
@@ -78,18 +80,12 @@ var (
 	databaseAddress               = "52.91.209.88"
 	traceLevel                    = "MODEL_TRACE"
 	sourcePath                    = sourcepath.MustAbsoluteDir()
-	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
+	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
 )
-
-func cleanString(str string) string {
-	r := strings.NewReplacer(":", "_", " ", "_", "-", "_")
-	res := r.Replace(str)
-	return strings.ToLower(res)
-}
 
 func main() {
 	config.AfterInit(func() {
-		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/evaluate")
+		log = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
 	})
 
 	dlcmd.Init()
@@ -140,7 +136,7 @@ func main() {
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							fmt.Sprintf(" --database_name=%v", cleanString(modelName+"_"+modelVersion)) +
+							fmt.Sprintf(" --database_name=%v", dl.CleanString(modelName+"_"+modelVersion)) +
 							fmt.Sprintf(" --database_address=%v", databaseAddress) +
 							fmt.Sprintf(" --trace_level=%v", traceLevel)
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")

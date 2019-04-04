@@ -33,7 +33,7 @@ func (f FrameworkManifest) CanonicalName() (string, error) {
 	if frameworkVersion == "" {
 		frameworkVersion = "latest"
 	}
-	return strings.ToLower(frameworkName + ":" + frameworkVersion), nil
+	return CleanString(frameworkName) + ":" + CleanString(frameworkVersion), nil
 }
 
 func (f FrameworkManifest) Register() error {
@@ -45,7 +45,7 @@ func (f FrameworkManifest) Register() error {
 }
 
 func (f FrameworkManifest) RegisterNamed(s string) error {
-	name := strings.ToLower(s)
+	name := CleanString(s)
 	if _, ok := frameworkRegistry.Load(name); ok {
 		return errors.Errorf("the %s framework has already been registered", s)
 	}
@@ -106,16 +106,19 @@ func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 	if err != nil {
 		return nil, err
 	}
-	name = strings.ToLower(name)
+	name = CleanString(name)
+
 	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
 		key, ok := key0.(string)
 		if !ok {
 			return true
 		}
 		key = strings.TrimPrefix(key, frameworkCanonicalName+"/")
+
 		if key != name {
 			return true
 		}
+
 		m, ok := value.(ModelManifest)
 		if !ok {
 			return true

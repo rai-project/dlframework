@@ -112,16 +112,16 @@ func (m ModelManifest) CanonicalName() (string, error) {
 	}
 	fm, ok := frameworkRegistry.Load(frameworkName)
 	if !ok {
-		return "", errors.Wrapf(err, "cannot get frame %s for model %s in the registry", frameworkName, m.GetName())
+		return "", errors.Wrapf(err, "cannot get framework %s for model %s in the registry", frameworkName, m.GetName())
 	}
 	if _, ok := fm.(FrameworkManifest); !ok {
 		return "", errors.Errorf("invalid framework %s registered for model %s in the registry", frameworkName, m.GetName())
 	}
-	modelName := strings.ToLower(m.GetName())
+	modelName := CleanString(m.GetName())
 	if modelName == "" {
 		return "", errors.New("model name must not be empty")
 	}
-	modelVersion := m.GetVersion()
+	modelVersion := CleanString(m.GetVersion())
 	if modelVersion == "" {
 		modelVersion = "latest"
 	}

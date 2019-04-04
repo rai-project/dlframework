@@ -1,6 +1,10 @@
 package dlframework
 
-import "golang.org/x/sync/syncmap"
+import (
+	strings "strings"
+
+	"golang.org/x/sync/syncmap"
+)
 
 func syncMapKeys(m syncmap.Map) []string {
 	keys := []string{}
@@ -13,4 +17,10 @@ func syncMapKeys(m syncmap.Map) []string {
 		return true
 	})
 	return keys
+}
+
+func CleanString(str string) string {
+	r := strings.NewReplacer(":", "_", " ", "_", "-", "_")
+	res := r.Replace(str)
+	return strings.ToLower(res)
 }

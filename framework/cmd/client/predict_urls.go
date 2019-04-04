@@ -66,7 +66,6 @@ var urlsCmd = &cobra.Command{
 			}
 		}
 
-		cleanNames()
 		agents, err := registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
 		if err != nil {
 			return err
@@ -119,8 +118,8 @@ var urlsCmd = &cobra.Command{
 		}
 
 		defer client.Close(ctx, &dlframework.PredictorCloseRequest{
-      Predictor: predictor,
-    })
+			Predictor: predictor,
+		})
 
 		var urls []*dlframework.URLsRequest_URL
 		for i, url := range data {

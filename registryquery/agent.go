@@ -11,6 +11,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
+	dl "github.com/rai-project/dlframework"
 	webmodels "github.com/rai-project/dlframework/httpapi/models"
 	store "github.com/rai-project/libkv/store"
 	"github.com/rai-project/parallel/tunny"
@@ -18,11 +19,10 @@ import (
 )
 
 func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersion string) ([]*webmodels.DlframeworkAgent, error) {
-
-	frameworkName = strings.ToLower(frameworkName)
-	frameworkVersion = strings.ToLower(frameworkVersion)
-	modelName = strings.ToLower(modelName)
-	modelVersion = strings.ToLower(modelVersion)
+	frameworkName = dl.CleanString(frameworkName)
+	frameworkVersion = dl.CleanString(frameworkVersion)
+	modelName = dl.CleanString(modelName)
+	modelVersion = dl.CleanString(modelVersion)
 
 	manifests, err := Models.Manifests(frameworkName, frameworkVersion)
 	if err != nil {
@@ -93,10 +93,10 @@ func (m modelsTy) Agents(frameworkName, frameworkVersion, modelName, modelVersio
 
 	prefixKey := path.Join(config.App.Name, "predictor")
 	for _, model := range manifests {
-		frameworkName = strings.ToLower(model.Framework.Name)
-		frameworkVersion = strings.ToLower(model.Framework.Version)
-		modelName = strings.ToLower(model.Name)
-		modelVersion = strings.ToLower(model.Version)
+		frameworkName = dl.CleanString(model.Framework.Name)
+		frameworkVersion = dl.CleanString(model.Framework.Version)
+		modelName = dl.CleanString(model.Name)
+		modelVersion = dl.CleanString(model.Version)
 
 		frameworkSemanticVersion, err := semver.NewVersion(frameworkVersion)
 		if err != nil {

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/go-openapi/strfmt"
@@ -91,10 +90,10 @@ var findMaxTries uint64 = 10
 
 func (p *PredictHandler) findAgent(params predict.OpenParams) (agents []*webmodels.DlframeworkAgent, err error) {
 
-	frameworkName := strings.ToLower(getBody(params.Body.FrameworkName, "*"))
-	frameworkVersion := strings.ToLower(getBody(params.Body.FrameworkVersion, "*"))
-	modelName := strings.ToLower(getBody(params.Body.ModelName, "*"))
-	modelVersion := strings.ToLower(getBody(params.Body.ModelVersion, "*"))
+	frameworkName := dl.CleanString(getBody(params.Body.FrameworkName, "*"))
+	frameworkVersion := dl.CleanString(getBody(params.Body.FrameworkVersion, "*"))
+	modelName := dl.CleanString(getBody(params.Body.ModelName, "*"))
+	modelVersion := dl.CleanString(getBody(params.Body.ModelVersion, "*"))
 
 	find := func() error {
 		agents, err = registryquery.Models.Agents(frameworkName, frameworkVersion, modelName, modelVersion)
@@ -118,11 +117,10 @@ func (p *PredictHandler) findAgent(params predict.OpenParams) (agents []*webmode
 }
 
 func (p *PredictHandler) Open(params predict.OpenParams) middleware.Responder {
-
-	frameworkName := strings.ToLower(getBody(params.Body.FrameworkName, "*"))
-	frameworkVersion := strings.ToLower(getBody(params.Body.FrameworkVersion, "*"))
-	modelName := strings.ToLower(getBody(params.Body.ModelName, "*"))
-	modelVersion := strings.ToLower(getBody(params.Body.ModelVersion, "*"))
+	frameworkName := dl.CleanString(getBody(params.Body.FrameworkName, "*"))
+	frameworkVersion := dl.CleanString(getBody(params.Body.FrameworkVersion, "*"))
+	modelName := dl.CleanString(getBody(params.Body.ModelName, "*"))
+	modelVersion := dl.CleanString(getBody(params.Body.ModelVersion, "*"))
 
 	agents, err := p.findAgent(params)
 	if err != nil {
