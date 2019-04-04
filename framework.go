@@ -95,6 +95,7 @@ func (f FrameworkManifest) Models() []ModelManifest { // todo: this is not optim
 
 func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 	var model *ModelManifest
+	name = CleanString(name)
 	frameworkVersionString := f.GetVersion()
 	if frameworkVersionString == "" {
 		return nil, errors.Errorf("expecting a framework version for framework = %v", f.GetName())
@@ -113,8 +114,8 @@ func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 		if !ok {
 			return true
 		}
-		key = strings.TrimPrefix(key, frameworkCanonicalName+"/")
 
+		key = CleanString(strings.TrimPrefix(key, frameworkCanonicalName+"/"))
 		if key != name {
 			return true
 		}
@@ -144,6 +145,7 @@ func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 
 func FindFramework(name string) (*FrameworkManifest, error) {
 	var framework *FrameworkManifest
+	name = CleanString(name)
 	frameworkRegistry.Range(func(key0 interface{}, value interface{}) bool {
 		key, ok := key0.(string)
 		if !ok {

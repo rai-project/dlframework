@@ -20,7 +20,7 @@ func syncMapKeys(m *syncmap.Map) []string {
 }
 
 func CleanString(str string) string {
-	r := strings.NewReplacer(":", "_", " ", "_", "-", "_")
+	r := strings.NewReplacer(" ", "_", "-", "_")
 	res := r.Replace(str)
 	return strings.ToLower(res)
 }

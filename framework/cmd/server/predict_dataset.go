@@ -428,7 +428,7 @@ var predictDatasetCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
-		query := fmt.Sprintf("http://%s/api/traces/%v", traceServerAddress, traceIDVal)
+		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
 		if err != nil {

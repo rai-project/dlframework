@@ -61,35 +61,33 @@ var (
 	}
 
 	batchSizes = []int{
-		512,
-		// 448,
-		// 384,
-		// 320,
-		256,
-		// 196,
-		128,
-		// 96,
-		64,
-		// 48,
-		32,
-		16,
-		8,
-		4,
-		2,
+		// 512,
+		// // 448,
+		// // 384,
+		// // 320,
+		// 256,
+		// // 196,
+		// 128,
+		// // 96,
+		// 64,
+		// // 48,
+		// 32,
+		// 16,
+		// 8,
+		// 4,
+		// 2,
 		1,
 	}
 
 	useGPU = []bool{
-		true,
-    false
-  }
+		// true,
+		false,
+	}
 
-	timeout = 300 * time.Minute
-	databaseAddress               = "localhost"
-	traceLevel                    = "MODEL_TRACE"
-	sourcePath                    = sourcepath.MustAbsoluteDir()
-	log             *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/run")
-	debug                         = false
+	timeout                  = 300 * time.Minute
+	sourcePath               = sourcepath.MustAbsoluteDir()
+	log        *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server/run")
+	debug                    = false
 )
 
 func main() {
@@ -98,6 +96,7 @@ func main() {
 	})
 
 	dlcmd.Init()
+
 	for i := 0; i < 1; i++ {
 		for _, usingGPU := range useGPU {
 			var device string
@@ -120,9 +119,9 @@ func main() {
 					compileArgs = append(compileArgs, "-tags=debug")
 				}
 				cmd := exec.Command("go", compileArgs...)
-				var agentPath = "../../../../" + framework + "/" + framework + "-agent/"
-				cmd.Dir = filepath.Join(sourcePath, agentPath)
-				fmt.Printf("Compiling using :: go %#v in %v\n", compileArgs, agentPath)
+				agentPath := filepath.Join(os.Getenv("GOPATH"), "/src/github.com/rai-project/", framework, framework+"-agent")
+				cmd.Dir = agentPath
+				fmt.Printf("Compiling using :: go %#v in %v\n", compileArgs, cmd.Dir)
 				err := cmd.Run()
 				if err != nil {
 					log.WithError(err).
@@ -147,9 +146,10 @@ func main() {
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
-							fmt.Sprintf(" --database_name=%v", dl.CleanString(modelName+"_"+modelVersion)) +
-							fmt.Sprintf(" --database_address=%v", databaseAddress) +
-							fmt.Sprintf(" --trace_level=%v", traceLevel)
+							fmt.Sprintf(" --database_name=%v", dl.CleanString(modelName+"_"+modelVersion))
+						if len(os.Args) < 3 {
+							panic("Need to set database_adress, tracer_address and trace_level")
+						}
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
@@ -157,9 +157,9 @@ func main() {
 							continue
 						}
 						fmt.Println("Running " + shellCmd)
-						var agentCmd = "../../../../" + framework + "/" + framework + "-agent/" + framework + "-agent"
-						cmd := exec.Command(filepath.Join(sourcePath, agentCmd), args...)
-						cmd.Dir = filepath.Join(sourcePath, agentPath)
+						var agentCmd = agentPath + "/" + framework + "-agent"
+						cmd := exec.Command(agentCmd, args...)
+						cmd.Dir = agentPath
 						cmd.Stdout = os.Stdout
 						cmd.Stderr = os.Stderr
 
@@ -182,6 +182,7 @@ func main() {
 							log.WithError(ctx.Err()).WithField("cmd", shellCmd).Error("command timeout")
 						}
 					}
+
 					color.Red("⇛ Finished running %v :: %v on %v", framework, model, device)
 				}
 			}

@@ -58,6 +58,7 @@ var predictUrlsCmd = &cobra.Command{
 		if len(databaseEndpoints) != 0 {
 			opts = append(opts, database.Endpoints(databaseEndpoints))
 		}
+
 		db, err := mongodb.NewDatabase(databaseName, opts...)
 		if err != nil {
 			return errors.Wrapf(err,
@@ -434,7 +435,8 @@ var predictUrlsCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
-		query := fmt.Sprintf("http://%s/api/traces/%v", traceServerAddress, traceIDVal)
+		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
+
 		resp, err := grequests.Get(query, nil)
 		if err != nil {
 			log.WithError(err).
