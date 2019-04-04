@@ -156,11 +156,6 @@ var predictUrlsCmd = &cobra.Command{
 			urls = append(urls, tmp...)
 		}
 
-		if len(urls) == 0 {
-			log.WithError(err).Error("the urls file has no url")
-			os.Exit(-1)
-		}
-
 		inputPredictionIds := []bson.ObjectId{}
 
 		hostName, _ := os.Hostname()
@@ -227,22 +222,19 @@ var predictUrlsCmd = &cobra.Command{
 
 		urlParts := dl.PartitionStringList(urls, partitionListSize)
 
-		cntTop1 := 0
-		cntTop5 := 0
-
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("url_parts_length", len(urlParts)).
-			WithField("url_parts_element_length", len(urlParts[0])).
-			WithField("urls_length", len(urls)).
+		log.WithField("urls0_length", len(urls)).
+			WithField("url_parts_length", len(urlParts)).
+			WithField("partition_list_size", partitionListSize).
+			WithField("num_url_part", numUrlParts).
 			WithField("num_warmup_url_parts", numWarmUpUrlParts).
-			WithField("num_url_part", numFileParts).
 			WithField("using_gpu", useGPU).
 			Info("starting inference on urls")
 
-		if numWarmUpFileParts != 0 && numFileParts != -1 {
-			for _, part := range urlParts[0:numUrlParts] {
+		if numWarmUpUrlParts != 0 && numUrlParts != -1 {
+			for _, part := range urlParts[0:numWarmUpUrlParts] {
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
 					defer close(input)
@@ -293,9 +285,11 @@ var predictUrlsCmd = &cobra.Command{
 			numUrlParts = len(urlParts)
 		}
 
-		inferenceProgress := dlcmd.NewProgress("inferring", len(urls))
+		urlCnt := len(urls) - numWarmUpFileParts*partitionListSize
 
-		for _, part := range urlParts[0:numUrlParts] {
+		inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
+
+		for _, part := range urlParts[numWarmUpUrlParts:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -318,7 +312,7 @@ var predictUrlsCmd = &cobra.Command{
 				images = append(images, out)
 			}
 
-			imageParts := agent.Partition(images, batchSize)
+			imageParts := dl.Partition(images, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -364,7 +358,13 @@ var predictUrlsCmd = &cobra.Command{
 
 		databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
 
+		cnt := 0
+		cntTop1 := 0
+		cntTop5 := 0
 		for out0 := range outputs {
+			if cnt > urlCnt {
+				break
+			}
 			out, ok := out0.(steps.IDer)
 			if !ok {
 				return errors.Errorf("expecting steps.IDer, but got %v", out0)
@@ -412,6 +412,7 @@ var predictUrlsCmd = &cobra.Command{
 			} else {
 				panic("expecting a Classification type")
 			}
+			cnt++
 		}
 
 		//databaseInsertProgress.FinishPrint("inserting prediction complete")
@@ -421,8 +422,8 @@ var predictUrlsCmd = &cobra.Command{
 		modelAccuracy := evaluation.ModelAccuracy{
 			ID:        bson.NewObjectId(),
 			CreatedAt: time.Now(),
-			Top1:      float64(cntTop1) / float64(len(urls)),
-			Top5:      float64(cntTop5) / float64(len(urls)),
+			Top1:      float64(cntTop1) / float64(urlCnt),
+			Top5:      float64(cntTop5) / float64(urlCnt),
 		}
 		if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 			log.WithError(err).Error("failed to publish model accuracy entry")

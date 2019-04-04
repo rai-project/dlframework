@@ -80,6 +80,7 @@ func (f FrameworkManifest) Models() []ModelManifest { // todo: this is not optim
 	if err != nil {
 		return []ModelManifest{}
 	}
+
 	names := RegisteredModelNames()
 	for _, name := range names {
 		name = strings.TrimPrefix(name, cn+"/")
@@ -106,7 +107,6 @@ func (f FrameworkManifest) FindModel(name string) (*ModelManifest, error) {
 	if err != nil {
 		return nil, err
 	}
-	name = CleanString(name)
 
 	modelRegistry.Range(func(key0 interface{}, value interface{}) bool {
 		key, ok := key0.(string)

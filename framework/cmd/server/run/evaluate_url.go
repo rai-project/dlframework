@@ -28,14 +28,14 @@ import (
 var (
 	frameworks = []string{
 		// "mxnet",
-		"caffe2",
-		//"tensorflow",
+		// "caffe2",
+		"tensorflow",
 		// "caffe",
 		//"tensorrt",
 		// "cntk",
 	}
 
-	models = []string{
+	models_old = []string{
 		// "SqueezeNet_1.0",
 		// "SqueezeNet_1.1",
 		// "BVLC-AlexNet_1.0",
@@ -53,7 +53,11 @@ var (
 		// "ResNet50_1.0",
 		// "SphereFace_1.0",
 		// "ShuffleNet_v1.3_ONNX_1.0",
-		"ShuffleNet_Caffe2_1.0",
+		// "ShuffleNet_Caffe2_1.0",
+	}
+
+	models = []string{
+		"MobileNet_v1_1.0_224_1.0",
 	}
 
 	batchSizes = []int{
@@ -75,8 +79,12 @@ var (
 		1,
 	}
 
-	timeout                       = 300 * time.Minute
-	usingGPU                      = true
+	useGPU = []bool{
+		true,
+    false
+  }
+
+	timeout = 300 * time.Minute
 	databaseAddress               = "localhost"
 	traceLevel                    = "MODEL_TRACE"
 	sourcePath                    = sourcepath.MustAbsoluteDir()
@@ -91,7 +99,7 @@ func main() {
 
 	dlcmd.Init()
 	for i := 0; i < 1; i++ {
-		for _, usingGPU := range []bool{true, false} {
+		for _, usingGPU := range useGPU {
 			var device string
 			if usingGPU {
 				device = "gpu"

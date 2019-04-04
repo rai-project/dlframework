@@ -314,7 +314,7 @@ var predictDatasetCmd = &cobra.Command{
 				images = append(images, out)
 			}
 
-			imageParts := agent.Partition(images, batchSize)
+			imageParts := dl.Partition(images, batchSize)
 
 			input = make(chan interface{}, DefaultChannelBuffer)
 			go func() {

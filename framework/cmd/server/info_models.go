@@ -14,7 +14,6 @@ var infoModelsCmd = &cobra.Command{
 	Short:   "Get the model names and version registered by the agent",
 	Run: func(cmd *cobra.Command, args []string) {
 		models := framework.Models()
-
 		if len(models) == 0 {
 			fmt.Println("No Models")
 			return
