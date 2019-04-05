@@ -82,7 +82,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		}
 	}
 
-	err = p.predictor.Predict(ctx, data, options.WithOptions(opts), optsion.Context(ctx))
+	err = p.predictor.Predict(ctx, data, options.WithOptions(opts), options.Context(ctx))
 	if err != nil {
 		if cu != nil {
 			cu.Wait()
