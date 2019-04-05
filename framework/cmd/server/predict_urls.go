@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +16,10 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -29,10 +32,8 @@ import (
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
+	_ "github.com/rai-project/tracer/jaeger"
 	"github.com/rai-project/uuid"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -47,13 +48,17 @@ var predictUrlsCmd = &cobra.Command{
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
-		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "urls")
-		if span == nil {
+		cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "predict")
+		if cmdSpan == nil {
 			panic("invalid span")
 		}
+		rootSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "urls")
 		defer func() {
-			if span != nil {
-				span.Finish()
+			if rootSpan != nil {
+				rootSpan.Finish()
+			}
+			if cmdSpan != nil {
+				cmdSpan.Finish()
 			}
 		}()
 
@@ -126,7 +131,7 @@ var predictUrlsCmd = &cobra.Command{
 			ExecutionOptions: execOpts,
 		}
 
-		predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(predOpts))
+		predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(predOpts), options.Context(ctx))
 		if err != nil {
 			return err
 		}
@@ -344,15 +349,14 @@ var predictUrlsCmd = &cobra.Command{
 			}
 		}
 
-		span.Finish()
-		defer func() {
-			span = nil
-		}()
-
 		//inferenceProgress.FinishPrint("inference complete")
 		inferenceProgress.Finish()
 
 		close(outputs)
+
+		rootSpan.Finish()
+		cmdSpan.Finish()
+		cmdSpan = nil
 
 		if publishEvaluation == false {
 			for range outputs {
@@ -435,10 +439,12 @@ var predictUrlsCmd = &cobra.Command{
 
 		log.Info("downloading trace information")
 
-		traceID := span.Context().(jaeger.SpanContext).TraceID()
-		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
+
+		traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
+		traceIDVal := traceID.String()
 		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
+		rootSpan = nil
 
 		resp, err := grequests.Get(query, nil)
 		if err != nil {
@@ -446,7 +452,7 @@ var predictUrlsCmd = &cobra.Command{
 				WithField("trace_id", traceIDVal).
 				Error("failed to download span information")
 		}
-		log.WithField("trace_id", traceIDVal).Info("downloaded span information")
+		log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded span information")
 
 		var trace evaluation.TraceInformation
 		dec := json.NewDecoder(resp)
