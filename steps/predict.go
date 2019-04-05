@@ -77,6 +77,9 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 
 	if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
 		cu, err = cupti.New(cupti.Context(ctx))
+		if err != nil {
+			return err
+		}
 	}
 
 	err = p.predictor.Predict(ctx, data, options.WithOptions(opts))
