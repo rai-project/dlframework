@@ -24,6 +24,7 @@
 #   go-tests = true
 #   unused-packages = true
 
+ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   branch = "master"
@@ -173,7 +174,6 @@
   branch = "master"
   name = "github.com/rai-project/dldataset"
 
-
 [[constraint]]
   branch = "master"
   name = "github.com/rai-project/docker"
@@ -230,7 +230,7 @@
   branch = "master"
   name = "github.com/rai-project/serializer"
 
-[[constraint]]
+[[override]]
   branch = "master"
   name = "github.com/rai-project/tracer"
 
@@ -250,9 +250,13 @@
   branch = "master"
   name = "github.com/rai-project/web"
 
+[[override]]
+  branch = "master"
+  name = "github.com/rai-project/dllayer"
+
 [[constraint]]
   name = "github.com/sirupsen/logrus"
-  version = "1.0.5"
+  version = "1.4.1"
 
 [[constraint]]
   name = "github.com/spf13/cast"
@@ -302,9 +306,9 @@
   name = "gopkg.in/yaml.v2"
   version = "2.2.1"
 
-[[constraint]]
+[[override]]
   name = "upper.io/db.v3"
-  version = "3.5.3"
+  version = "3.5.7"
 
 [[override]]
   branch = "master"
@@ -314,10 +318,11 @@
   branch = "master"
   name = "github.com/VividCortex/robustly"
 
+[[override]]
+  version = "2.0.6"
+  name = "gopkg.in/cheggaaa/pb.v2"
+
 [prune]
   go-tests = true
   unused-packages = true
 
-[[constraint]]
-  version = "2.0.6"
-  name = "gopkg.in/cheggaaa/pb.v2"
