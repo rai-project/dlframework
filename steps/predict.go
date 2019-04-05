@@ -5,12 +5,13 @@ import (
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"gorgonia.org/tensor"
+
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predictor"
 	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
-	"gorgonia.org/tensor"
 )
 
 type predict struct {
