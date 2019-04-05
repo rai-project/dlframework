@@ -101,7 +101,12 @@ var predictDatasetCmd = &cobra.Command{
 			ExecutionOptions: execOpts,
 		}
 
-		predictor, err := predictorFramework.Load(ctx, *model, options.PredictorOptions(predOpts))
+		predictor, err := predictorFramework.Load(
+			ctx,
+			*model,
+			options.PredictorOptions(predOpts),
+			options.DisableFrameworkAutoTuning(true),
+		)
 		if err != nil {
 			return err
 		}
@@ -166,8 +171,8 @@ var predictDatasetCmd = &cobra.Command{
 		// Dummy userID and runID hardcoded
 		// TODO read userID from manifest file
 		// calculate runID from table
-		userID := "admin"
-		runID := 1
+		userID := "evaluator"
+		runID := uuid.NewV4()
 
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),

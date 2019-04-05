@@ -48,11 +48,11 @@ var predictUrlsCmd = &cobra.Command{
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
-		cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "predict")
+		cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
 		if cmdSpan == nil {
 			panic("invalid span")
 		}
-		rootSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "urls")
+		rootSpan, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "predict_urls")
 		defer func() {
 			if rootSpan != nil {
 				rootSpan.Finish()
@@ -131,7 +131,13 @@ var predictUrlsCmd = &cobra.Command{
 			ExecutionOptions: execOpts,
 		}
 
-		predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(predOpts), options.Context(ctx))
+		predictor, err := predictorHandle.Load(
+			ctx,
+			*model,
+			options.Context(ctx),
+			options.PredictorOptions(predOpts),
+			options.DisableFrameworkAutoTuning(true),
+		)
 		if err != nil {
 			return err
 		}
@@ -178,8 +184,8 @@ var predictUrlsCmd = &cobra.Command{
 		// Dummy userID and runID hardcoded
 		// TODO read userID from manifest file
 		// calculate runID from table
-		userID := "admin"
-		runID := 1
+		userID := "evaluator"
+		runID := uuid.NewV4()
 
 		evaluationEntry := evaluation.Evaluation{
 			ID:                  bson.NewObjectId(),
@@ -231,6 +237,8 @@ var predictUrlsCmd = &cobra.Command{
 
 		urlParts := dl.PartitionStringList(urls, partitionListSize)
 
+		oldTrace := tracer.GetLevel()
+		tracer.SetLevel(tracer.NO_TRACE)
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
@@ -290,14 +298,24 @@ var predictUrlsCmd = &cobra.Command{
 			}
 		}
 
+		close(outputs)
+		for range outputs {
+		}
+		tracer.SetLevel(oldTrace)
+
+		outputs = make(chan interface{}, DefaultChannelBuffer)
+
+		// pp.Println(oldTrace.String())
+
 		if numUrlParts == -1 {
 			numUrlParts = len(urlParts)
 		}
 
-		urlCnt := len(urls) - numWarmUpFileParts*partitionListSize
+		urlCnt := len(urls) - numWarmUpUrlParts*partitionListSize
 
 		inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
 
+		predictionsSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluate_predictions")
 		for _, part := range urlParts[numWarmUpUrlParts:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -348,6 +366,7 @@ var predictUrlsCmd = &cobra.Command{
 				outputs <- o
 			}
 		}
+		predictionsSpan.Finish()
 
 		//inferenceProgress.FinishPrint("inference complete")
 		inferenceProgress.Finish()
@@ -492,8 +511,8 @@ func init() {
 		defaultURLsPath = ""
 	}
 	defaultDuplicateInput := 1
-	predictUrlsCmd.PersistentFlags().IntVar(&duplicateInput, "duplicate_input", defaultDuplicateInput, "duplicate the input urls ine urls_file")
+	predictUrlsCmd.PersistentFlags().IntVar(&duplicateInput, "duplicate_input", defaultDuplicateInput, "duplicate the input urls in urls_file")
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
-	predictDatasetCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictDatasetCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 0, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	predictUrlsCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
+	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 0, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }

@@ -3,6 +3,7 @@ package steps
 import (
 	"context"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	_ "github.com/rai-project/dldataset/vision"
@@ -19,7 +20,7 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 	res := getDataset{
 		dataset: dataset,
 		base: base{
-			info: "GetDataset",
+			info: "GetDatasetStep",
 		},
 	}
 	res.doer = res.do
@@ -27,7 +28,10 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 }
 
 func (p getDataset) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	if span, newCtx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info()); span != nil {
+	if span, newCtx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+		"trace_source": "steps",
+		"step_name":    "predict",
+	}); span != nil {
 		ctx = newCtx
 		defer span.Finish()
 	}

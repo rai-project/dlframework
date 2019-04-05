@@ -121,6 +121,8 @@ func main() {
 				cmd := exec.Command("go", compileArgs...)
 				agentPath := filepath.Join(os.Getenv("GOPATH"), "/src/github.com/rai-project/", framework, framework+"-agent")
 				cmd.Dir = agentPath
+				cmd.Stderr = os.Stdout
+				cmd.Stdout = os.Stdout
 				fmt.Printf("Compiling using :: go %#v in %v\n", compileArgs, cmd.Dir)
 				err := cmd.Run()
 				if err != nil {
@@ -142,7 +144,7 @@ func main() {
 							" --publish_predictions=false" +
 							" --fail_on_error=true" +
 							fmt.Sprintf(" --duplicate_input=%v", 10*batchSize) +
-							fmt.Sprintf(" --gpu=%v", usingGPU) +
+							fmt.Sprintf(" --use_gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +

@@ -21,6 +21,8 @@ type Options struct {
 
 type Option func(*Options)
 
+type disableFrameworkAutoTuning struct{}
+
 func WithOptions(opts *Options) Option {
 	return func(o *Options) {
 		*o = *opts
@@ -30,6 +32,15 @@ func WithOptions(opts *Options) Option {
 func Context(c context.Context) Option {
 	return func(o *Options) {
 		o.ctx = c
+	}
+}
+
+func DisableFrameworkAutoTuning(disabled bool) Option {
+	return func(o *Options) {
+		if o.ctx == nil {
+			o.ctx = context.Background()
+		}
+		o.ctx = context.WithValue(o.ctx, disableFrameworkAutoTuning{}, disabled)
 	}
 }
 
@@ -110,6 +121,18 @@ func Weights(w []byte) Option {
 	return func(o *Options) {
 		o.weights = w
 	}
+}
+
+func (o *Options) DisableFrameworkAutoTuning() bool {
+	ctx := o.ctx
+	if ctx == nil {
+		return false
+	}
+	val, ok := ctx.Value(disableFrameworkAutoTuning{}).(bool)
+	if !ok {
+		return false
+	}
+	return val
 }
 
 func (o *Options) Weights() []byte {

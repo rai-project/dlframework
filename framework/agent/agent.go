@@ -94,7 +94,13 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		return nil, errors.New("unable to find predictor for requested modality")
 	}
 
-	predictor, err := predictorHandle.Load(ctx, *model, options.PredictorOptions(opts))
+	predictor, err := predictorHandle.Load(
+		ctx,
+		*model,
+		options.Context(ctx),
+		options.PredictorOptions(opts),
+		options.DisableFrameworkAutoTuning(true),
+	)
 	if err != nil {
 		return nil, err
 	}

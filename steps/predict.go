@@ -21,7 +21,7 @@ type predict struct {
 func NewPredict(predictor predictor.Predictor) pipeline.Step {
 	res := predict{
 		base: base{
-			info: "Predict",
+			info: "PredictStep",
 		},
 	}
 	res.predictor = predictor
@@ -56,6 +56,8 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	}
 
 	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+		"trace_source":      "steps",
+		"step_name":         "predict",
 		"model_name":        model.GetName(),
 		"model_version":     model.GetVersion(),
 		"framework_name":    framework.GetName(),
@@ -68,7 +70,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	})
 	defer span.Finish()
 
-	err = p.predictor.Predict(ctx, data, options.WithOptions(opts), options.Context(ctx))
+	err = p.predictor.Predict(ctx, data, options.Context(ctx), options.WithOptions(opts))
 	if err != nil {
 		return err
 	}

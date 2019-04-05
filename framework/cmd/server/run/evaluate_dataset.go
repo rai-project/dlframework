@@ -138,7 +138,7 @@ func main() {
 							" --fail_on_error=true" +
 							" --warmup_num_file_parts=0" +
 							" --num_file_parts=-1" +
-							fmt.Sprintf(" --gpu=%v", usingGPU) +
+							fmt.Sprintf(" --use_gpu%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
