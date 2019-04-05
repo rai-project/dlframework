@@ -1,10 +1,12 @@
 package predictor
 
 import (
+	"bufio"
 	"bytes"
 	goimage "image"
 	"image/color"
 	"image/jpeg"
+	"os"
 	"path/filepath"
 	"sort"
 
@@ -291,6 +293,21 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 	}
 
 	return preprocOpts, nil
+}
+
+func (p ImagePredictor) GetLabels() ([]string, error) {
+	var labels []string
+	f, err := os.Open(p.GetFeaturesPath())
+	if err != nil {
+		return nil, errors.Wrapf(err, "cannot read %s", p.GetFeaturesPath())
+	}
+	defer f.Close()
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		labels = append(labels, line)
+	}
+	return labels, nil
 }
 
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {

@@ -137,7 +137,7 @@ func (p Base) GetWeightsPath() string {
 		return ""
 	}
 	graphPath := filepath.Base(model.GetModel().GetWeightsPath())
-	return dlframework.CleanString(filepath.Join(p.WorkDir, graphPath))
+	return filepath.Join(p.WorkDir, graphPath)
 }
 
 func (p Base) GetGraphPath() string {
@@ -146,12 +146,15 @@ func (p Base) GetGraphPath() string {
 		return ""
 	}
 	graphPath := filepath.Base(model.GetModel().GetGraphPath())
-	return dlframework.CleanString(filepath.Join(p.WorkDir, graphPath))
+	if graphPath == "" {
+		return ""
+	}
+	return filepath.Join(p.WorkDir, graphPath)
 }
 
 func (p Base) GetFeaturesPath() string {
 	model := p.Model
-	return dlframework.CleanString(filepath.Join(p.WorkDir, model.GetName()+".features"))
+	return filepath.Join(p.WorkDir, model.GetName()+".features")
 }
 
 func (p Base) GetFeatureType() dlframework.FeatureType {
