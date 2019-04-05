@@ -44,6 +44,10 @@ func (b Base) TraceLevel() tracer.Level {
 	return b.Options.TraceLevel()
 }
 
+func (b Base) UseGPU() bool {
+	return b.Options.UsesGPU()
+}
+
 func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManifest_Type_Parameter, name string) (string, error) {
 	if typeParameters == nil {
 		return "", errors.New("invalid type parameters")

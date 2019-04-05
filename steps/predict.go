@@ -9,7 +9,6 @@ import (
 
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/dlframework/framework/predictor"
-	cupti "github.com/rai-project/go-cupti"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 )
@@ -37,18 +36,13 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		return errors.Errorf("expecting []interface{} for predict image step, but got %v", in0)
 	}
 
-	// data, err := p.castToElementType(iData)
-	// if err != nil {
-	// 	return err
-	// }
-
 	data, err := p.castToTensorType(iData)
 	if err != nil {
 		return err
 	}
 
 	if p.predictor == nil {
-		return errors.New("the predict image was created with a nil predictor")
+		return errors.New("the predict image step was created with a nil predictor")
 	}
 
 	opts, err := p.predictor.GetPredictionOptions(ctx)
@@ -74,30 +68,16 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	})
 	defer span.Finish()
 
-	var cu *cupti.CUPTI
-
-	if opts.UsesGPU() && opts.TraceLevel() >= tracer.HARDWARE_TRACE {
-		cu, err = cupti.New(cupti.Context(ctx), cupti.SamplingPeriod(0))
-		if err != nil {
-			return err
-		}
-	}
-
 	err = p.predictor.Predict(ctx, data, options.WithOptions(opts), options.Context(ctx))
 	if err != nil {
-		if cu != nil {
-			cu.Wait()
-			cu.Close()
-		}
 		return err
 	}
 
-	if cu != nil {
-		cu.Wait()
-		cu.Close()
+	features, err := p.predictor.ReadPredictedFeatures(ctx)
+	if err != nil {
+		return err
 	}
 
-	features, err := p.predictor.ReadPredictedFeatures(ctx)
 	lst := make([]interface{}, len(iData))
 	for ii := 0; ii < len(iData); ii++ {
 		lst[ii] = features[ii]
