@@ -48,6 +48,9 @@ var predictUrlsCmd = &cobra.Command{
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
 		span, ctx := tracer.StartSpanFromContext(context.Background(), traceLevel, "urls")
+		if span == nil {
+			panic("invalid span")
+		}
 		defer func() {
 			if span != nil {
 				span.Finish()
