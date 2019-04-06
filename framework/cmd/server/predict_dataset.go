@@ -106,7 +106,7 @@ var predictDatasetCmd = &cobra.Command{
 			ctx,
 			*model,
 			options.PredictorOptions(predOpts),
-			options.DisableFrameworkAutoTuning(true),
+			// options.DisableFrameworkAutoTuning(true),
 		)
 		if err != nil {
 			return err
@@ -217,7 +217,7 @@ var predictDatasetCmd = &cobra.Command{
 		}
 		defer inputPredictionsTable.Close()
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
+		preprocessOptions, err := predictor.GetPreprocessOptions()
 		if err != nil {
 			return err
 		}

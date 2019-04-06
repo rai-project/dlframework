@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
@@ -23,7 +24,7 @@ type preprocessImage struct {
 func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 	res := preprocessImage{
 		base: base{
-			info: "PreprocessImage",
+			info: "PreprocessImageStep",
 		},
 		options: options,
 	}
@@ -32,9 +33,11 @@ func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 }
 
 func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
-	if p.options.Context != nil {
-		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
-		ctx = ctx0
+	if opentracing.SpanFromContext(ctx) != nil {
+		span, _ := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+			"trace_source": "steps",
+			"step_name":    "preprocess_image",
+		})
 		defer span.Finish()
 	}
 
@@ -42,14 +45,14 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 	switch in := in0.(type) {
 	case *types.RGBImage:
 		if p.options.Layout == image.CHWLayout {
-			floats = p.doRGBImageCHW(ctx, in)
+			floats = p.doRGBImageCHW(in)
 		}
-		floats = p.doRGBImageHWC(ctx, in)
+		floats = p.doRGBImageHWC(in)
 	case *types.BGRImage:
 		if p.options.Layout == image.CHWLayout {
-			floats = p.doBGRImageCHW(ctx, in)
+			floats = p.doBGRImageCHW(in)
 		}
-		floats = p.doBGRImageHWC(ctx, in)
+		floats = p.doBGRImageHWC(in)
 	default:
 		return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 	}
@@ -78,7 +81,7 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 	return errors.Errorf("unsupported element type %v", elementType)
 }
 
-func (p *preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage) []float32 {
+func (p *preprocessImage) doRGBImageCHW(in *types.RGBImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
@@ -118,7 +121,7 @@ func (p *preprocessImage) doRGBImageCHW(ctx context.Context, in *types.RGBImage)
 	return out
 }
 
-func (p *preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage) []float32 {
+func (p *preprocessImage) doRGBImageHWC(in *types.RGBImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
@@ -158,7 +161,7 @@ func (p *preprocessImage) doRGBImageHWC(ctx context.Context, in *types.RGBImage)
 	return out
 }
 
-func (p *preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage) []float32 {
+func (p *preprocessImage) doBGRImageCHW(in *types.BGRImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage
@@ -198,7 +201,7 @@ func (p *preprocessImage) doBGRImageCHW(ctx context.Context, in *types.BGRImage)
 	return out
 }
 
-func (p *preprocessImage) doBGRImageHWC(ctx context.Context, in *types.BGRImage) []float32 {
+func (p *preprocessImage) doBGRImageHWC(in *types.BGRImage) []float32 {
 	scale := p.options.Scale
 	mode := p.options.ColorMode
 	mean := p.options.MeanImage

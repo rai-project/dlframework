@@ -3,7 +3,8 @@ package predictor
 import (
 	"bufio"
 	"bytes"
-	goimage "image"
+	"context"
+	"image"
 	"image/color"
 	"image/jpeg"
 	"os"
@@ -11,20 +12,16 @@ import (
 	"sort"
 
 	"github.com/k0kubun/pp"
-
-	"context"
-
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/feature"
-	"github.com/rai-project/image"
+	raiimage "github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	imageTypes "github.com/rai-project/image/types"
 	yaml "gopkg.in/yaml.v2"
 )
 
 type PreprocessOptions struct {
-	Context         context.Context
 	ElementType     string
 	MeanImage       []float32
 	Dims            []int
@@ -32,7 +29,7 @@ type PreprocessOptions struct {
 	KeepAspectRatio *bool
 	Scale           float32
 	ColorMode       types.Mode
-	Layout          image.Layout
+	Layout          raiimage.Layout
 }
 
 type ImagePredictor struct {
@@ -188,7 +185,7 @@ func (p ImagePredictor) GetKeepAspectRatio() (bool, error) {
 	return val, nil
 }
 
-func (p ImagePredictor) GetLayout(defaultLayout image.Layout) image.Layout {
+func (p ImagePredictor) GetLayout(defaultLayout raiimage.Layout) raiimage.Layout {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -212,12 +209,12 @@ func (p ImagePredictor) GetLayout(defaultLayout image.Layout) image.Layout {
 
 	switch val {
 	case "CHW":
-		return image.CHWLayout
+		return raiimage.CHWLayout
 	case "HWC":
-		return image.HWCLayout
+		return raiimage.HWCLayout
 	default:
 		log.Error("invalid image mode specified " + val)
-		return image.InvalidLayout
+		return raiimage.InvalidLayout
 	}
 }
 
@@ -254,7 +251,7 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	}
 }
 
-func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
+func (p ImagePredictor) GetPreprocessOptions() (PreprocessOptions, error) {
 	mean, err := p.GetMeanImage()
 	if err != nil {
 		return PreprocessOptions{}, err
@@ -281,7 +278,6 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 	}
 
 	preprocOpts := PreprocessOptions{
-		Context:         ctx,
 		ElementType:     p.Model.GetElementType(),
 		MeanImage:       mean,
 		Scale:           scale,
@@ -289,7 +285,7 @@ func (p ImagePredictor) GetPreprocessOptions(ctx context.Context) (PreprocessOpt
 		MaxDimension:    maxDim,
 		KeepAspectRatio: keepAspectRatio,
 		ColorMode:       p.GetColorMode(imageTypes.RGBMode),
-		Layout:          p.GetLayout(image.HWCLayout),
+		Layout:          p.GetLayout(raiimage.HWCLayout),
 	}
 
 	return preprocOpts, nil
@@ -512,7 +508,7 @@ func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]
 
 	for ii := 0; ii < batchSize; ii++ {
 		curr := images[ii]
-		img := goimage.NewRGBA(goimage.Rect(0, 0, width, height))
+		img := image.NewRGBA(image.Rect(0, 0, width, height))
 		for w := 0; w < width; w++ {
 			for h := 0; h < height; h++ {
 				R := uint8(curr[h][w][0]*scale + mean[0])

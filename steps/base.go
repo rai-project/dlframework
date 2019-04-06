@@ -19,6 +19,7 @@ func (p base) Info() string {
 
 func (p base) Run(ctx context.Context, in <-chan interface{}, out chan interface{}, opts ...pipeline.Option) {
 	options := pipeline.NewOptions(opts...)
+
 	go func() {
 		defer close(out)
 		defer onPanic(p.Info())

@@ -29,16 +29,13 @@ func NewPreprocessImageTensor(options predictor.PreprocessOptions) pipeline.Step
 }
 
 func (p preprocessImageTensor) do(ctx context.Context, in0 interface{}, pipelineOptions *pipeline.Options) interface{} {
-	if p.options.Context != nil {
-		span, ctx0 := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
-		ctx = ctx0
-		defer span.Finish()
-	}
+	span, _ := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info())
+	defer span.Finish()
 
 	switch in := in0.(type) {
 	case *types.RGBImage:
 		if p.options.Layout == image.HWCLayout {
-			return p.doRGBImageHWC(ctx, in)
+			return p.doRGBImageHWC(in)
 		}
 		panic("not implemented")
 	case *types.BGRImage:
@@ -47,7 +44,7 @@ func (p preprocessImageTensor) do(ctx context.Context, in0 interface{}, pipeline
 	return errors.Errorf("expecting an RGB or BGR image for preprocess image step, but got %v", in0)
 }
 
-func (p preprocessImageTensor) doRGBImageHWC(ctx context.Context, in *types.RGBImage) interface{} {
+func (p preprocessImageTensor) doRGBImageHWC(in *types.RGBImage) interface{} {
 	height := in.Bounds().Dy()
 	width := in.Bounds().Dx()
 	channels := 3

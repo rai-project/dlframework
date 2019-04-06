@@ -97,9 +97,8 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	predictor, err := predictorHandle.Load(
 		ctx,
 		*model,
-		options.Context(ctx),
 		options.PredictorOptions(opts),
-		options.DisableFrameworkAutoTuning(true),
+		// options.DisableFrameworkAutoTuning(true),
 	)
 	if err != nil {
 		return nil, err
@@ -114,7 +113,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 	return &dl.Predictor{ID: id}, nil
 }
 
-func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.Predictor, error) {
+func (p *Agent) getLoadedPredictor(id string) (predictor.Predictor, error) {
 	val, ok := p.loadedPredictors.Load(id)
 	if !ok {
 		return nil, errors.Errorf("predictor %v was not found", id)
@@ -132,7 +131,7 @@ func (p *Agent) getLoadedPredictor(ctx context.Context, id string) (predictor.Pr
 // Close a predictor and clear it's memory.
 func (p *Agent) Close(ctx context.Context, req *dl.PredictorCloseRequest) (*dl.PredictorCloseResponse, error) {
 	id := req.GetPredictor().GetID()
-	predictor, err := p.getLoadedPredictor(ctx, id)
+	predictor, err := p.getLoadedPredictor(id)
 	if err != nil {
 		return nil, err
 	}
@@ -220,12 +219,12 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, errors.New("predictor id cannot be an empty string")
 	}
 
-	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	predictor, err := p.getLoadedPredictor(predictorId)
 	if err != nil {
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +248,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		outputs = append(outputs, out)
 	}
 
-	predictionOptions, err := predictor.GetPredictionOptions(ctx)
+	predictionOptions, err := predictor.GetPredictionOptions()
 	if err != nil {
 		return nil, err
 	}
@@ -311,12 +310,12 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 		return nil, errors.New("predictor id cannot be an empty string")
 	}
 
-	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	predictor, err := p.getLoadedPredictor(predictorId)
 	if err != nil {
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
 		return nil, err
 	}
@@ -339,7 +338,7 @@ func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan inter
 		outputs = append(outputs, out)
 	}
 
-	opts, err := predictor.GetPredictionOptions(ctx)
+	opts, err := predictor.GetPredictionOptions()
 	if err != nil {
 		return nil, err
 	}
@@ -404,12 +403,12 @@ func (p *Agent) dataset(ctx context.Context, req *dl.DatasetRequest) (<-chan int
 		return nil, errors.New("predictor id cannot be an empty string")
 	}
 
-	predictor, err := p.getLoadedPredictor(ctx, predictorId)
+	predictor, err := p.getLoadedPredictor(predictorId)
 	if err != nil {
 		return nil, err
 	}
 
-	preprocessOptions, err := predictor.GetPreprocessOptions(ctx)
+	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
 		return nil, err
 	}

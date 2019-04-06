@@ -28,11 +28,14 @@ func NewReadURL() pipeline.Step {
 }
 
 func (p readURL) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
-		"trace_source": "steps",
-		"step_name":    "real_url",
-	})
-	defer span.Finish()
+	var span opentracing.Span
+	if opentracing.SpanFromContext(ctx) != nil {
+		span, ctx = tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+			"trace_source": "steps",
+			"step_name":    "read_url",
+		})
+		defer span.Finish()
+	}
 
 	url := ""
 	switch in := in0.(type) {

@@ -1,21 +1,21 @@
 package steps
 
 import (
+	"context"
 	"io"
 	"io/ioutil"
 	"strings"
 
 	"github.com/h2non/filetype"
 	"github.com/k0kubun/pp"
-
-	"context"
-
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dldataset"
 	"github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
+	"github.com/rai-project/tracer"
 )
 
 type readImage struct {
@@ -35,14 +35,18 @@ func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
 }
 
 func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {
-	// no need to trace here, since resize and read already perform tracing
+	readOptions := []image.Option{}
+	if opentracing.SpanFromContext(ctx) != nil {
+		span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+			"trace_source": "steps",
+			"step_name":    "read_image",
+		})
+		defer span.Finish()
+		readOptions = []image.Option{
+			image.Context(ctx),
+		}
+	}
 
-	if p.options.Context == nil {
-		ctx = nil
-	}
-	readOptions := []image.Option{
-		image.Context(ctx),
-	}
 	dims := p.options.Dims
 	if dims != nil && len(dims) > 2 {
 		height, width := dims[1], dims[2]

@@ -57,8 +57,8 @@ var (
 	}
 
 	models = []string{
-		// "MobileNet_v1_1.0_224_1.0",
-		"BVLC_AlexNet_Caffe_1.0",
+		"MobileNet_v1_1.0_224_1.0",
+		// "BVLC_AlexNet_Caffe_1.0",
 	}
 
 	batchSizes = []int{
@@ -139,12 +139,11 @@ func main() {
 						color.Red("⇛ Running %v :: %v on %v with batch size %v", framework, model, device, batchSize)
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "predict url" +
-							" --debug" +
 							" --verbose" +
 							" --publish=true" +
 							" --publish_predictions=false" +
 							" --fail_on_error=true" +
-							fmt.Sprintf(" --duplicate_input=%v", 3*batchSize) +
+							fmt.Sprintf(" --duplicate_input=%v", 10*batchSize) +
 							fmt.Sprintf(" --use_gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +

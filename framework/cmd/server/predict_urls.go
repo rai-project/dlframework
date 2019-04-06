@@ -16,6 +16,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
+	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
@@ -47,22 +48,21 @@ var predictUrlsCmd = &cobra.Command{
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
-		// cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
-		// if cmdSpan == nil {
-		// 	panic("invalid span")
-		// }
-		// rootSpan, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "predict_urls")
-		// defer func() {
-		// 	if rootSpan != nil {
-		// 		rootSpan.Finish()
-		// 	}
-		// 	if cmdSpan != nil {
-		// 		cmdSpan.Finish()
-		// 	}
-		// }()
-
-		predictionsSpan, ctx0 := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
-		if predictionsSpan == nil {
+		rootSpan, ctx := tracer.StartSpanFromContext(
+			context.Background(),
+			tracer.APPLICATION_TRACE,
+			"evaluation_predict",
+			opentracing.Tags{
+				"framework_name":     framework.Name,
+				"framework_version":  framework.Version,
+				"model_name":         modelName,
+				"model_version":      modelVersion,
+				"use_gpu":            useGPU,
+				"batch_size":         batchSize,
+				"num_warmup_batches": numWarmUpUrlParts,
+			},
+		)
+		if rootSpan == nil {
 			panic("invalid span")
 		}
 
@@ -136,11 +136,11 @@ var predictUrlsCmd = &cobra.Command{
 		}
 
 		predictor, err := predictorHandle.Load(
-			ctx0,
+			ctx,
 			*model,
-			options.Context(ctx0),
+			// options.Context(ctx),
 			options.PredictorOptions(predOpts),
-			options.DisableFrameworkAutoTuning(true),
+			// options.DisableFrameworkAutoTuning(true),
 		)
 		if err != nil {
 			return err
@@ -182,6 +182,7 @@ var predictUrlsCmd = &cobra.Command{
 		if useGPU {
 			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
 				metadata["nvidia_smi"] = string(bts)
+				rootSpan.SetTag("nvidia_smi", string(bts))
 			}
 		}
 
@@ -233,15 +234,16 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		defer inputPredictionsTable.Close()
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(ctx0) // disable tracing for preprocessing
+		preprocessOptions, err := predictor.GetPreprocessOptions()
 		if err != nil {
 			return err
 		}
 
 		urlParts := dl.PartitionStringList(urls, partitionListSize)
 
-		// oldTrace := tracer.GetLevel()
-		// tracer.SetLevel(tracer.NO_TRACE)
+		oldTraceLevel := tracer.GetLevel()
+		tracer.SetLevel(tracer.NO_TRACE)
+
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
@@ -254,7 +256,6 @@ var predictUrlsCmd = &cobra.Command{
 			Info("starting inference on urls")
 
 		if numWarmUpUrlParts != 0 {
-			ctx := ctx0
 			for _, part := range urlParts[0:numWarmUpUrlParts] {
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
@@ -267,7 +268,7 @@ var predictUrlsCmd = &cobra.Command{
 					}
 				}()
 
-				output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+				output := pipeline.New(pipeline.ChannelBuffer(DefaultChannelBuffer)).
 					Then(steps.NewReadURL()).
 					Then(steps.NewReadImage(preprocessOptions)).
 					Then(steps.NewPreprocessImage(preprocessOptions)).
@@ -288,8 +289,6 @@ var predictUrlsCmd = &cobra.Command{
 					}
 				}()
 
-				ctx = ctx0
-
 				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 					Then(steps.NewPredict(predictor)).
 					Run(input)
@@ -307,7 +306,8 @@ var predictUrlsCmd = &cobra.Command{
 		close(outputs)
 		for range outputs {
 		}
-		// tracer.SetLevel(oldTrace)
+
+		tracer.SetLevel(oldTraceLevel)
 
 		outputs = make(chan interface{}, DefaultChannelBuffer)
 
@@ -315,13 +315,13 @@ var predictUrlsCmd = &cobra.Command{
 			numUrlParts = len(urlParts)
 		}
 
+		rootSpan.SetTag("num_batches", numUrlParts)
+
 		urlCnt := len(urls)
 
 		inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
 
-		for _, part := range urlParts[:numUrlParts] {
-			ctx := ctx0
-
+		for ii, part := range urlParts[:numUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -333,7 +333,21 @@ var predictUrlsCmd = &cobra.Command{
 				}
 			}()
 
-			output := pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			evaluateBatchSpan, evaluateBatchCtx := tracer.StartSpanFromContext(
+				ctx,
+				tracer.APPLICATION_TRACE,
+				"evaluate_batch",
+				opentracing.Tags{
+					"batch_index": ii,
+					"batch_size":  batchSize,
+				},
+			)
+
+			opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
+			if tracePreprocess == true {
+				opts = append(opts, pipeline.Context(evaluateBatchCtx))
+			}
+			output := pipeline.New(opts...).
 				Then(steps.NewReadURL()).
 				Then(steps.NewReadImage(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
@@ -354,9 +368,7 @@ var predictUrlsCmd = &cobra.Command{
 				}
 			}()
 
-			ctx = ctx0
-
-			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			output = pipeline.New(pipeline.Context(evaluateBatchCtx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 				Then(steps.NewPredict(predictor)).
 				Run(input)
 
@@ -372,22 +384,21 @@ var predictUrlsCmd = &cobra.Command{
 				}
 				outputs <- o
 			}
+			evaluateBatchSpan.Finish()
 		}
-
-		// time.Sleep(3 * time.Second)
-		defer predictionsSpan.Finish()
 
 		//inferenceProgress.FinishPrint("inference complete")
 		inferenceProgress.Finish()
 
+		rootSpan.Finish()
+		tracer.Close()
+
+		traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
+		traceIDVal := traceID.String()
+
+		pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(), traceIDVal))
+
 		close(outputs)
-
-		// rootSpan.Finish()
-		// cmdSpan.Finish()
-		// cmdSpan = nil
-
-		traceIDVal0 := predictionsSpan.Context().(jaeger.SpanContext).TraceID().String()
-		pp.Println(fmt.Sprintf("http://%v:16686/api/traces/%v", getTracerHostAddress(), traceIDVal0))
 
 		if publishEvaluation == false {
 			for range outputs {
@@ -408,7 +419,6 @@ var predictUrlsCmd = &cobra.Command{
 			if !ok {
 				return errors.Errorf("expecting steps.IDer, but got %v", out0)
 			}
-			_ = out
 			id := out.GetID()
 			label := partlabels[id]
 
@@ -470,14 +480,7 @@ var predictUrlsCmd = &cobra.Command{
 
 		log.Info("downloading trace information")
 
-		traceID := predictionsSpan.Context().(jaeger.SpanContext).TraceID()
-		// traceIDVal := strconv.FormatUint(traceID.Low, 16)
-		traceIDVal := traceID.String()
 		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
-		pp.Println(query)
-		predictionsSpan = nil
-		// cmdSpan = nil
-
 		resp, err := grequests.Get(query, nil)
 		if err != nil {
 			log.WithError(err).

@@ -1,7 +1,6 @@
 package predictor
 
 import (
-	"context"
 	"path/filepath"
 	"strings"
 
@@ -27,7 +26,7 @@ func (b Base) Modality() (dlframework.Modality, error) {
 	return dlframework.UnknownModality, errors.New("undefined modality for predictor")
 }
 
-func (b Base) GetPredictionOptions(ctx context.Context) (*options.Options, error) {
+func (b Base) GetPredictionOptions() (*options.Options, error) {
 	return b.Options, nil
 }
 
@@ -66,7 +65,7 @@ func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManif
 	return ret, nil
 }
 
-func (p Base) GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error) {
+func (p Base) GetPreprocessOptions() (PreprocessOptions, error) {
 	return PreprocessOptions{}, errors.New("invalid preprocessor options")
 }
 

@@ -20,7 +20,6 @@ type Options struct {
 }
 
 type Option func(*Options)
-
 type disableFrameworkAutoTuning struct{}
 
 func WithOptions(opts *Options) Option {
@@ -29,9 +28,9 @@ func WithOptions(opts *Options) Option {
 	}
 }
 
-func Context(c context.Context) Option {
+func Context(ctx context.Context) Option {
 	return func(o *Options) {
-		o.ctx = c
+		o.ctx = ctx
 	}
 }
 
@@ -164,7 +163,6 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 
 func New(opts ...Option) *Options {
 	options := &Options{
-		ctx:          context.Background(),
 		devices:      []device{},
 		batchSize:    Config.BatchSize,
 		featureLimit: Config.FeatureLimit,

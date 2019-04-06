@@ -88,15 +88,15 @@ func computeLatency(qps float64) (trace synthetic_load.Trace, latency time.Durat
 	predictor, err := predictorFramework.Load(
 		ctx,
 		*model,
-		options.Context(ctx),
+		// options.Context(ctx),
 		options.PredictorOptions(predOpts),
-		options.DisableFrameworkAutoTuning(true),
+		// options.DisableFrameworkAutoTuning(true),
 	)
 	if err != nil {
 		return
 	}
 
-	preprocessOptions, err := predictor.GetPreprocessOptions(nil)
+	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
 		return
 	}

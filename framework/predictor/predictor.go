@@ -19,9 +19,9 @@ type Predictor interface {
 	// Load model from manifest
 	Load(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (Predictor, error)
 	// Returns the prediction options
-	GetPredictionOptions(ctx context.Context) (*options.Options, error)
+	GetPredictionOptions() (*options.Options, error)
 	// Returns the preprocess options
-	GetPreprocessOptions(ctx context.Context) (PreprocessOptions, error)
+	GetPreprocessOptions() (PreprocessOptions, error)
 	// Returns the handle to features
 	Predict(ctx context.Context, data interface{}, opts ...options.Option) error
 	// Returns the features

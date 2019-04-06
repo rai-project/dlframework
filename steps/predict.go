@@ -44,7 +44,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		return errors.New("the predict image step was created with a nil predictor")
 	}
 
-	opts, err := p.predictor.GetPredictionOptions(ctx)
+	opts, err := p.predictor.GetPredictionOptions()
 	if err != nil {
 		return err
 	}
@@ -52,6 +52,10 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	framework, model, err := p.predictor.Info()
 	if err != nil {
 		return err
+	}
+
+	if opentracing.SpanFromContext(ctx) == nil {
+		errors.New("there is no parent span in the context for the predict step")
 	}
 
 	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
@@ -69,7 +73,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	})
 	defer span.Finish()
 
-	err = p.predictor.Predict(ctx, data, options.Context(ctx), options.WithOptions(opts))
+	err = p.predictor.Predict(ctx, data, options.WithOptions(opts))
 	if err != nil {
 		return err
 	}
