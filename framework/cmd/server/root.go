@@ -21,23 +21,22 @@ import (
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/agent"
 	"github.com/rai-project/dlframework/framework/cmd"
-
-	//dllayer "github.com/rai-project/dllayer/cmd"
-	_ "github.com/rai-project/logger/hooks"
 	monitors "github.com/rai-project/monitoring/monitors"
-	"github.com/rai-project/tracer"
 	"github.com/rai-project/utils"
 	echologger "github.com/rai-project/web/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	//dllayer "github.com/rai-project/dllayer/cmd"
+
+	_ "github.com/rai-project/logger/hooks"
 )
 
 var (
 	local             bool
 	profile           bool
-	log               *logrus.Entry = logrus.New().WithField("pkg", "dlframework/framework/cmd/server")
-	DefaultRunOptions               = &robustly.RunOptions{
+	DefaultRunOptions = &robustly.RunOptions{
 		RateLimit:  1,                   // the rate limit in crashes per second
 		Timeout:    time.Second,         // the timeout (after which Run will stop trying)
 		PrintStack: true,                // whether to print the panic stacktrace or not
@@ -276,6 +275,6 @@ func initConfig() {
 	shutdown.FirstFn(func() {})
 	shutdown.SecondFn(func() {
 		fmt.Println("🛑  shutting down!!")
-		tracer.Close()
+		// tracer.Close()
 	})
 }

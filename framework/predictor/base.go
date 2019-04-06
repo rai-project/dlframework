@@ -6,11 +6,10 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	yaml "gopkg.in/yaml.v2"
-
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/options"
 	"github.com/rai-project/tracer"
+	yaml "gopkg.in/yaml.v2"
 )
 
 type Base struct {

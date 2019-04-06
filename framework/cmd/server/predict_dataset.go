@@ -23,7 +23,6 @@ import (
 	common "github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
-	_ "github.com/rai-project/monitoring/monitors"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
@@ -32,6 +31,8 @@ import (
 	jaeger "github.com/uber/jaeger-client-go"
 	"github.com/ulule/deepcopier"
 	"gopkg.in/mgo.v2/bson"
+
+	_ "github.com/rai-project/monitoring/monitors"
 )
 
 var (

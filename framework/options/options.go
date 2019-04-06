@@ -35,6 +35,10 @@ func Context(c context.Context) Option {
 	}
 }
 
+func (o *Options) Context() context.Context {
+	return o.ctx
+}
+
 func DisableFrameworkAutoTuning(disabled bool) Option {
 	return func(o *Options) {
 		if o.ctx == nil {
@@ -44,8 +48,16 @@ func DisableFrameworkAutoTuning(disabled bool) Option {
 	}
 }
 
-func (o *Options) Context() context.Context {
-	return o.ctx
+func (o *Options) DisableFrameworkAutoTuning() bool {
+	ctx := o.ctx
+	if ctx == nil {
+		return false
+	}
+	val, ok := ctx.Value(disableFrameworkAutoTuning{}).(bool)
+	if !ok {
+		return false
+	}
+	return val
 }
 
 func BatchSize(n int) Option {
@@ -121,18 +133,6 @@ func Weights(w []byte) Option {
 	return func(o *Options) {
 		o.weights = w
 	}
-}
-
-func (o *Options) DisableFrameworkAutoTuning() bool {
-	ctx := o.ctx
-	if ctx == nil {
-		return false
-	}
-	val, ok := ctx.Value(disableFrameworkAutoTuning{}).(bool)
-	if !ok {
-		return false
-	}
-	return val
 }
 
 func (o *Options) Weights() []byte {

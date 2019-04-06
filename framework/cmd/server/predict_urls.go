@@ -14,12 +14,9 @@ import (
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -32,8 +29,10 @@ import (
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
-	_ "github.com/rai-project/tracer/jaeger"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -48,19 +47,24 @@ var predictUrlsCmd = &cobra.Command{
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
-		cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
-		if cmdSpan == nil {
+		// cmdSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
+		// if cmdSpan == nil {
+		// 	panic("invalid span")
+		// }
+		// rootSpan, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "predict_urls")
+		// defer func() {
+		// 	if rootSpan != nil {
+		// 		rootSpan.Finish()
+		// 	}
+		// 	if cmdSpan != nil {
+		// 		cmdSpan.Finish()
+		// 	}
+		// }()
+
+		predictionsSpan, ctx0 := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluation_predict")
+		if predictionsSpan == nil {
 			panic("invalid span")
 		}
-		rootSpan, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "predict_urls")
-		defer func() {
-			if rootSpan != nil {
-				rootSpan.Finish()
-			}
-			if cmdSpan != nil {
-				cmdSpan.Finish()
-			}
-		}()
 
 		opts := []database.Option{}
 		if len(databaseEndpoints) != 0 {
@@ -132,9 +136,9 @@ var predictUrlsCmd = &cobra.Command{
 		}
 
 		predictor, err := predictorHandle.Load(
-			ctx,
+			ctx0,
 			*model,
-			options.Context(ctx),
+			options.Context(ctx0),
 			options.PredictorOptions(predOpts),
 			options.DisableFrameworkAutoTuning(true),
 		)
@@ -229,20 +233,19 @@ var predictUrlsCmd = &cobra.Command{
 		}
 		defer inputPredictionsTable.Close()
 
-		preprocessOptions, err := predictor.GetPreprocessOptions(nil) // disable tracing
+		preprocessOptions, err := predictor.GetPreprocessOptions(ctx0) // disable tracing for preprocessing
 		if err != nil {
 			return err
 		}
-		_ = preprocessOptions
 
 		urlParts := dl.PartitionStringList(urls, partitionListSize)
 
-		oldTrace := tracer.GetLevel()
-		tracer.SetLevel(tracer.NO_TRACE)
+		// oldTrace := tracer.GetLevel()
+		// tracer.SetLevel(tracer.NO_TRACE)
 		outputs := make(chan interface{}, DefaultChannelBuffer)
 		partlabels := map[string]string{}
 
-		log.WithField("urls0_length", len(urls)).
+		log.WithField("urls_length", len(urls)).
 			WithField("url_parts_length", len(urlParts)).
 			WithField("partition_list_size", partitionListSize).
 			WithField("num_url_part", numUrlParts).
@@ -250,7 +253,8 @@ var predictUrlsCmd = &cobra.Command{
 			WithField("using_gpu", useGPU).
 			Info("starting inference on urls")
 
-		if numWarmUpUrlParts != 0 && numUrlParts != -1 {
+		if numWarmUpUrlParts != 0 {
+			ctx := ctx0
 			for _, part := range urlParts[0:numWarmUpUrlParts] {
 				input := make(chan interface{}, DefaultChannelBuffer)
 				go func() {
@@ -284,6 +288,8 @@ var predictUrlsCmd = &cobra.Command{
 					}
 				}()
 
+				ctx = ctx0
+
 				output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 					Then(steps.NewPredict(predictor)).
 					Run(input)
@@ -301,22 +307,21 @@ var predictUrlsCmd = &cobra.Command{
 		close(outputs)
 		for range outputs {
 		}
-		tracer.SetLevel(oldTrace)
+		// tracer.SetLevel(oldTrace)
 
 		outputs = make(chan interface{}, DefaultChannelBuffer)
-
-		// pp.Println(oldTrace.String())
 
 		if numUrlParts == -1 {
 			numUrlParts = len(urlParts)
 		}
 
-		urlCnt := len(urls) - numWarmUpUrlParts*partitionListSize
+		urlCnt := len(urls)
 
 		inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
 
-		predictionsSpan, ctx := tracer.StartSpanFromContext(context.Background(), tracer.APPLICATION_TRACE, "evaluate_predictions")
-		for _, part := range urlParts[numWarmUpUrlParts:numUrlParts] {
+		for _, part := range urlParts[:numUrlParts] {
+			ctx := ctx0
+
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
 				defer close(input)
@@ -349,6 +354,8 @@ var predictUrlsCmd = &cobra.Command{
 				}
 			}()
 
+			ctx = ctx0
+
 			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 				Then(steps.NewPredict(predictor)).
 				Run(input)
@@ -366,16 +373,21 @@ var predictUrlsCmd = &cobra.Command{
 				outputs <- o
 			}
 		}
-		predictionsSpan.Finish()
+
+		// time.Sleep(3 * time.Second)
+		defer predictionsSpan.Finish()
 
 		//inferenceProgress.FinishPrint("inference complete")
 		inferenceProgress.Finish()
 
 		close(outputs)
 
-		rootSpan.Finish()
-		cmdSpan.Finish()
-		cmdSpan = nil
+		// rootSpan.Finish()
+		// cmdSpan.Finish()
+		// cmdSpan = nil
+
+		traceIDVal0 := predictionsSpan.Context().(jaeger.SpanContext).TraceID().String()
+		pp.Println(fmt.Sprintf("http://%v:16686/api/traces/%v", getTracerHostAddress(), traceIDVal0))
 
 		if publishEvaluation == false {
 			for range outputs {
@@ -458,12 +470,13 @@ var predictUrlsCmd = &cobra.Command{
 
 		log.Info("downloading trace information")
 
-		tracer.Close()
-
-		traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
+		traceID := predictionsSpan.Context().(jaeger.SpanContext).TraceID()
+		// traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		traceIDVal := traceID.String()
 		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
-		rootSpan = nil
+		pp.Println(query)
+		predictionsSpan = nil
+		// cmdSpan = nil
 
 		resp, err := grequests.Get(query, nil)
 		if err != nil {

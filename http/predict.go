@@ -5,18 +5,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"image"
+	"image/color"
+	"image/jpeg"
 	"math/rand"
 	"time"
 
-	"github.com/go-openapi/strfmt"
-	"github.com/golang/snappy"
-
-	goimage "image"
-	"image/color"
-	"image/jpeg"
-
 	"github.com/cenkalti/backoff"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
+	"github.com/golang/snappy"
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	dl "github.com/rai-project/dlframework"
@@ -290,7 +288,7 @@ func compress(data interface{}) (strfmt.Base64, error) {
 
 func toJPEGFromFloat32Slice(fs []float32, width, height, channels int32) (strfmt.Base64, error) {
 	offset := 0
-	img := goimage.NewRGBA(goimage.Rect(0, 0, int(width), int(height)))
+	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 	for h := 0; h < int(height); h++ {
 		for w := 0; w < int(width); w++ {
 			R := uint8(fs[offset+0])
@@ -311,7 +309,7 @@ func toJPEGFromFloat32Slice(fs []float32, width, height, channels int32) (strfmt
 
 func toJPEGFromInt32Slice(fs []int32, width, height, channels int32) (strfmt.Base64, error) {
 	offset := 0
-	img := goimage.NewRGBA(goimage.Rect(0, 0, int(width), int(height)))
+	img := image.NewRGBA(image.Rect(0, 0, int(width), int(height)))
 	for h := 0; h < int(height); h++ {
 		for w := 0; w < int(width); w++ {
 			R := uint8(fs[offset+0])

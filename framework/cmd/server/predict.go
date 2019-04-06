@@ -3,16 +3,14 @@ package server
 import (
 	"strings"
 
-	"github.com/rai-project/tracer/jaeger"
-	"github.com/rai-project/tracer/zipkin"
-
-	"github.com/rai-project/database/mongodb"
-
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
+	"github.com/rai-project/database/mongodb"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/tracer"
+	"github.com/rai-project/tracer/jaeger"
 	tracerutils "github.com/rai-project/tracer/utils"
+	"github.com/rai-project/tracer/zipkin"
 	"github.com/spf13/cobra"
 )
 
@@ -37,7 +35,7 @@ var (
 
 var predictCmd = &cobra.Command{
 	Use:   "predict",
-	Short: "Predict using the MLModelScope agent",
+	Short: "Predicts using the MLModelScope agent",
 	PersistentPreRunE: func(c *cobra.Command, args []string) error {
 		rootCmd := c.Parent()
 		for rootCmd.HasParent() {
@@ -68,7 +66,7 @@ var predictCmd = &cobra.Command{
 			tracerHost := getTracerHostAddress()
 			jaeger.Config.Endpoints = fixTracerEndpoints([]string{tracerHost})
 			zipkin.Config.Endpoints = fixTracerEndpoints([]string{tracerHost})
-			tracer.ResetStd()
+			// tracer.ResetStd()
 		}
 		if useGPU && !nvidiasmi.HasGPU {
 			return errors.New("unable to find gpu on the system")

@@ -2,10 +2,9 @@ package steps
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"net/http"
-
-	"context"
 
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"

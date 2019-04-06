@@ -13,10 +13,11 @@ import (
 	"github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	"github.com/rai-project/pipeline"
-	_ "github.com/rai-project/tracer/jaeger"
 	"github.com/rai-project/uuid"
 	"github.com/stretchr/testify/assert"
 	"gorgonia.org/tensor"
+
+	_ "github.com/rai-project/tracer/jaeger"
 )
 
 func TestURLRead(t *testing.T) {
