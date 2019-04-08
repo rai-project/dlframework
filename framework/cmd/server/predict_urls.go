@@ -14,6 +14,7 @@ import (
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/francoispqt/gojay"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -409,11 +410,12 @@ var predictUrlsCmd = &cobra.Command{
 			return nil
 		}
 
-		databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
-
 		cnt := 0
 		cntTop1 := 0
 		cntTop5 := 0
+
+		databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
+
 		for out0 := range outputs {
 			if cnt > urlCnt {
 				break
@@ -448,6 +450,7 @@ var predictUrlsCmd = &cobra.Command{
 			}
 
 			databaseInsertProgress.Increment()
+			continue
 
 			features.Sort()
 
@@ -461,8 +464,9 @@ var predictUrlsCmd = &cobra.Command{
 						cntTop5++
 					}
 				}
+			} else {
+				panic("expecting a Classification type")
 			}
-
 			cnt++
 		}
 
@@ -492,8 +496,9 @@ var predictUrlsCmd = &cobra.Command{
 		log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded span information")
 
 		var trace evaluation.TraceInformation
-		dec := json.NewDecoder(resp)
-		if err := dec.Decode(&trace); err != nil {
+		dec := gojay.NewDecoder(resp)
+		err = dec.Decode(&trace)
+		if err != nil {
 			log.WithError(err).Error("failed to decode trace information")
 		}
 		performance := evaluation.Performance{
