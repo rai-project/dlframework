@@ -40,6 +40,10 @@ func (o *Options) Context() context.Context {
 	return o.ctx
 }
 
+func (o *Options) SetContext(ctx context.Context) {
+	o.ctx = ctx
+}
+
 func DisableFrameworkAutoTuning(disabled bool) Option {
 	return func(o *Options) {
 		if o.ctx == nil {
@@ -61,6 +65,10 @@ func (o *Options) DisableFrameworkAutoTuning() bool {
 	return val
 }
 
+func (o *Options) SetDisableFrameworkAutoTuning(disabled bool) {
+	o.ctx = context.WithValue(o.ctx, disableFrameworkAutoTuning{}, disabled)
+}
+
 func BatchSize(n int) Option {
 	return func(o *Options) {
 		o.batchSize = n
@@ -74,6 +82,10 @@ func (o *Options) BatchSize() int {
 	return o.batchSize
 }
 
+func (o *Options) SetBatchSize(n int) {
+	o.batchSize = n
+}
+
 func FeatureLimit(num int) Option {
 	return func(o *Options) {
 		o.featureLimit = num
@@ -84,12 +96,22 @@ func (o *Options) FeatureLimit() int {
 	return o.featureLimit
 }
 
+func (o *Options) SetFeatureLimit(n int) {
+	o.featureLimit = n
+}
+
 func Device(deviceType DeviceType, id int) Option {
 	return func(o *Options) {
 		if deviceType == CUDA_DEVICE && !nvidiasmi.HasGPU {
 			panic("cannot set CUDA device on systems with no GPU")
 		}
 		o.devices = append(o.devices, device{deviceType: deviceType, id: id})
+	}
+}
+
+func (o *Options) SetDevice(deviceType DeviceType, id int) {
+	o.devices = []device{
+		device{deviceType: deviceType, id: id},
 	}
 }
 
@@ -120,6 +142,10 @@ func (o *Options) TraceLevel() tracer.Level {
 	return o.traceLevel
 }
 
+func (o *Options) SetTraceLevel(g tracer.Level) {
+	o.traceLevel = g
+}
+
 func Graph(g []byte) Option {
 	return func(o *Options) {
 		o.graph = g
@@ -130,6 +156,10 @@ func (o *Options) Graph() []byte {
 	return o.graph
 }
 
+func (o *Options) SetGraph(g []byte) {
+	o.graph = g
+}
+
 func Weights(w []byte) Option {
 	return func(o *Options) {
 		o.weights = w
@@ -138,6 +168,10 @@ func Weights(w []byte) Option {
 
 func (o *Options) Weights() []byte {
 	return o.weights
+}
+
+func (o *Options) SetWeights(w []byte) {
+	o.weights = w
 }
 
 func (o *Options) Append(opts ...Option) *Options {
@@ -157,6 +191,10 @@ func (o *Options) InputNodes() []Node {
 	return o.intputNodes
 }
 
+func (o *Options) SetInputNodes(ins []Node) {
+	o.intputNodes = ins
+}
+
 func OutputNodes(outs []Node) Option {
 	return func(o *Options) {
 		o.outputNodes = outs
@@ -165,6 +203,10 @@ func OutputNodes(outs []Node) Option {
 
 func (o *Options) OutputNodes() []Node {
 	return o.outputNodes
+}
+
+func (o *Options) SetOutputNodes(ins []Node) {
+	o.outputNodes = ins
 }
 
 func PredictorOptions(p *dl.PredictionOptions) Option {
@@ -185,6 +227,7 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 
 func New(opts ...Option) *Options {
 	options := &Options{
+		ctx:          context.Background(),
 		devices:      []device{},
 		batchSize:    Config.BatchSize,
 		featureLimit: Config.FeatureLimit,

@@ -20,6 +20,7 @@ import (
 	"github.com/rai-project/image/types"
 	imageTypes "github.com/rai-project/image/types"
 	yaml "gopkg.in/yaml.v2"
+	"gorgonia.org/tensor"
 )
 
 type PreprocessOptions struct {
@@ -41,12 +42,15 @@ type ImagePredictor struct {
 func (p ImagePredictor) GetInputLayerName(layer string) (string, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
-	typeParameters := modelInputs[0].GetParameters()
-	name, err := p.GetTypeParameter(typeParameters, layer)
-	if err != nil {
-		return "", err
+	for _, input := range modelInputs {
+		typeParameters := input.GetParameters()
+		name, err := p.GetTypeParameter(typeParameters, layer)
+		if err != nil {
+			return "", err
+		}
+		return name, nil
 	}
-	return name, nil
+	return "", errors.New("cannot find input layer name")
 }
 
 func (p ImagePredictor) GetOutputLayerIndex(layer string) (int, error) {
@@ -64,7 +68,7 @@ func (p ImagePredictor) GetOutputLayerIndex(layer string) (int, error) {
 	return index, nil
 }
 
-func (p ImagePredictor) GetImageDimensions() ([]int, error) {
+func (p ImagePredictor) GetInputDimensions() ([]int, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -73,20 +77,20 @@ func (p ImagePredictor) GetImageDimensions() ([]int, error) {
 	}
 	pdims, ok := typeParameters["dimensions"]
 	if !ok {
-		log.Debug("arbitrary image dimensions")
+		log.Debug("arbitrary input dimensions")
 		return nil, nil
 	}
 	pdimsVal := pdims.GetValue()
 	if pdimsVal == "" {
-		return nil, errors.New("invalid image dimensions")
+		return nil, errors.New("invalid input dimensions")
 	}
 
 	var dims []int
 	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
-		return nil, errors.Errorf("unable to get image dimensions %v as an integer slice", pdimsVal)
+		return nil, errors.Errorf("unable to get input dimensions %v as an integer slice", pdimsVal)
 	}
 	if len(dims) == 1 {
-		dims = []int{dims[0], dims[0], dims[0]}
+		dims = []int{3, dims[0], dims[0]}
 	}
 	if len(dims) > 3 {
 		return nil, errors.Errorf("expecting a dimensions size of 1 or 3, but got %v. do not put the batch size in the input dimensions.", len(dims))
@@ -288,7 +292,7 @@ func (p ImagePredictor) GetPreprocessOptions() (PreprocessOptions, error) {
 		return PreprocessOptions{}, err
 	}
 
-	imageDims, err := p.GetImageDimensions()
+	imageDims, err := p.GetInputDimensions()
 	if err != nil {
 		imageDims = nil
 	}
@@ -333,7 +337,7 @@ func (p ImagePredictor) GetLabels() ([]string, error) {
 	return labels, nil
 }
 
-func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) iCreateClassificationFeatures2DSlice(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
@@ -348,6 +352,47 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 				feature.ClassificationIndex(int32(jj)),
 				feature.ClassificationLabel(labels[jj]),
 				feature.Probability(probabilities[ii][jj]),
+			)
+		}
+		sort.Sort(dlframework.Features(rprobs))
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities0 interface{}, labels []string) ([]dlframework.Features, error) {
+	if slc, ok := probabilities0.([][]float32); ok {
+		p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
+	}
+
+	probabilities, ok := probabilities0.(tensor.Tensor)
+	if !ok {
+		return nil, errors.New("expecting an input tensor")
+	}
+
+	batchSize := p.BatchSize()
+	if probabilities.Size() == 0 {
+		return nil, errors.New("len(probabilities) == 0")
+	}
+	if probabilities.Dtype() == tensor.Float32 {
+		return nil, errors.New("invalid data type")
+	}
+
+	featureLen := probabilities.Shape()[0]
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		for jj := 0; jj < featureLen; jj++ {
+			prob, err := probabilities.At(ii, jj)
+			if err != nil {
+				return nil, err
+			}
+			rprobs[jj] = feature.New(
+				feature.ClassificationIndex(int32(jj)),
+				feature.ClassificationLabel(labels[jj]),
+				feature.Probability(prob.(float32)),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))

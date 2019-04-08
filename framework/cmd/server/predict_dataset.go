@@ -119,7 +119,7 @@ var predictDatasetCmd = &cobra.Command{
 			if err != nil {
 				return errors.Errorf("failed to copy to an image predictor for %v", model.MustCanonicalName())
 			}
-			dims, err := imagePredictor.GetImageDimensions()
+			dims, err := imagePredictor.GetInputDimensions()
 			if err != nil {
 				return err
 			}

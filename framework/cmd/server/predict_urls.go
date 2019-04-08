@@ -461,9 +461,8 @@ var predictUrlsCmd = &cobra.Command{
 						cntTop5++
 					}
 				}
-			} else {
-				panic("expecting a Classification type")
 			}
+
 			cnt++
 		}
 
