@@ -17,6 +17,8 @@ type Options struct {
 	traceLevel   tracer.Level
 	graph        []byte
 	weights      []byte
+	intputNodes  []Node
+	outputNodes  []Node
 }
 
 type Option func(*Options)
@@ -143,6 +145,26 @@ func (o *Options) Append(opts ...Option) *Options {
 		oi(o)
 	}
 	return o
+}
+
+func InputNodes(ins []Node) Option {
+	return func(o *Options) {
+		o.intputNodes = ins
+	}
+}
+
+func (o *Options) InputNodes() []Node {
+	return o.intputNodes
+}
+
+func OutputNodes(outs []Node) Option {
+	return func(o *Options) {
+		o.outputNodes = outs
+	}
+}
+
+func (o *Options) OutputNodes() []Node {
+	return o.outputNodes
 }
 
 func PredictorOptions(p *dl.PredictionOptions) Option {

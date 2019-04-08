@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
@@ -35,6 +36,32 @@ type PreprocessOptions struct {
 type ImagePredictor struct {
 	Base
 	Metadata map[string]interface{}
+}
+
+func (p ImagePredictor) GetInputLayerName(layer string) (string, error) {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	name, err := p.GetTypeParameter(typeParameters, layer)
+	if err != nil {
+		return "", err
+	}
+	return name, nil
+}
+
+func (p ImagePredictor) GetOutputLayerIndex(layer string) (int, error) {
+	model := p.Model
+	modelOutput := model.GetOutput()
+	typeParameters := modelOutput.GetParameters()
+	str, err := p.GetTypeParameter(typeParameters, layer)
+	if err != nil {
+		return 0, err
+	}
+	index, err := strconv.Atoi(str)
+	if err != nil {
+		return 0, err
+	}
+	return index, nil
 }
 
 func (p ImagePredictor) GetImageDimensions() ([]int, error) {

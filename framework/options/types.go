@@ -3,6 +3,8 @@ package options
 import (
 	"bytes"
 	"fmt"
+
+	"gorgonia.org/tensor"
 )
 
 type DeviceType int
@@ -54,4 +56,10 @@ func (d devices) String() string {
 	r := buf.Bytes()
 	r[len(r)-1] = ']'
 	return string(r)
+}
+
+type Node struct {
+	Key   string // name
+	Shape []int  // Shape of ndarray
+	Dtype tensor.Dtype
 }
