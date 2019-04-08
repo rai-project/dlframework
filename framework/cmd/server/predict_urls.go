@@ -3,7 +3,6 @@ package server
 import (
 	"bufio"
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,11 +13,15 @@ import (
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/francoispqt/gojay"
+	gojson "github.com/json-iterator/go"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -32,9 +35,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -184,7 +184,7 @@ var predictUrlsCmd = &cobra.Command{
 		hostName, _ := os.Hostname()
 		metadata := map[string]string{}
 		if useGPU {
-			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+			if bts, err := gojson.Marshal(nvidiasmi.Info); err == nil {
 				metadata["nvidia_smi"] = string(bts)
 				rootSpan.SetTag("nvidia_smi", string(bts))
 			}
@@ -496,7 +496,7 @@ var predictUrlsCmd = &cobra.Command{
 		log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded span information")
 
 		var trace evaluation.TraceInformation
-		dec := gojay.NewDecoder(resp)
+		dec := gojson.NewDecoder(resp)
 		err = dec.Decode(&trace)
 		if err != nil {
 			log.WithError(err).Error("failed to decode trace information")
