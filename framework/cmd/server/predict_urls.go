@@ -3,25 +3,23 @@ package server
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
-	gojson "github.com/json-iterator/go"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
+	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -35,6 +33,9 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -184,7 +185,7 @@ var predictUrlsCmd = &cobra.Command{
 		hostName, _ := os.Hostname()
 		metadata := map[string]string{}
 		if useGPU {
-			if bts, err := gojson.Marshal(nvidiasmi.Info); err == nil {
+			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
 				metadata["nvidia_smi"] = string(bts)
 				rootSpan.SetTag("nvidia_smi", string(bts))
 			}
@@ -397,16 +398,48 @@ var predictUrlsCmd = &cobra.Command{
 		rootSpan.Finish()
 		tracer.Close()
 
+		close(outputs)
+
 		traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := traceID.String()
 
 		pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(), traceIDVal))
 
-		close(outputs)
+		query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(), traceIDVal)
+		resp, err := grequests.Get(query, nil)
+		if err != nil {
+			log.WithError(err).
+				WithField("trace_id", traceIDVal).
+				Error("failed to download span information")
+		}
+		log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
 
 		if publishEvaluation == false {
 			for range outputs {
 			}
+
+			dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize))
+			os.MkdirAll(dir, os.ModePerm)
+			ts := strings.ToLower(tracer.LevelToName(traceLevel))
+			name := "trace_" + ts + ".json"
+			path := filepath.Join(dir, name)
+			if com.IsFile(path) {
+				log.WithField("path", path).Info("trace file already exists")
+				return err
+			}
+			f, err := os.Create(path)
+			defer f.Close()
+			if err != nil {
+				return err
+			}
+			n2, err := f.WriteString(resp.String())
+			if err != nil {
+				return err
+			}
+			fmt.Printf("wrote %d bytes\n", n2)
+
+			log.WithField("path", path).Info("publishEvaluation is false, wrote the trace to a local file")
+
 			return nil
 		}
 
@@ -450,7 +483,6 @@ var predictUrlsCmd = &cobra.Command{
 			}
 
 			databaseInsertProgress.Increment()
-			continue
 
 			features.Sort()
 
@@ -486,18 +518,8 @@ var predictUrlsCmd = &cobra.Command{
 
 		log.Info("downloading trace information")
 
-		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
-		resp, err := grequests.Get(query, nil)
-		if err != nil {
-			log.WithError(err).
-				WithField("trace_id", traceIDVal).
-				Error("failed to download span information")
-		}
-		log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded span information")
-
 		var trace evaluation.TraceInformation
-		dec := gojson.NewDecoder(resp)
-		err = dec.Decode(&trace)
+		err = easyjson.UnmarshalFromReader(resp, &trace)
 		if err != nil {
 			log.WithError(err).Error("failed to decode trace information")
 		}

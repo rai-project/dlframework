@@ -19,7 +19,6 @@ import (
 	"github.com/rai-project/cpu/cpuid"
 	dl "github.com/rai-project/dlframework"
 	dlcmd "github.com/rai-project/dlframework/framework/cmd"
-
 	"github.com/sirupsen/logrus"
 
 	_ "github.com/rai-project/logger/hooks"
@@ -58,7 +57,16 @@ var (
 
 	models = []string{
 		"MobileNet_v1_1.0_224_1.0",
-		// "BVLC_AlexNet_Caffe_1.0",
+		"MobileNet_v1_1.0_224_Quant",
+    "SSD_MobileNet_v1_COCO_1.0",
+    "SSD_ResNet50_FPN_COCO_1.0"
+    "Mask_RCNN_Inception_v2_COCO",
+    "Mask_RCNN_ResNet50_v2_Atrous_COCO",
+    "Faster_RCNN_ResNet50_COCO",
+    "Faster_RCNN_ResNet101_COCO",
+    "DeepLabv3_PASCAL_VOC_Train_Val",
+    "DeepLabv3_PASCAL_VOC_Train_Aug",
+		"SRGAN_1.0",
 	}
 
 	batchSizes = []int{
@@ -133,6 +141,8 @@ func main() {
 					continue
 				}
 
+				// modelManifests := framework.Models()
+				// pb := dlcmd.NewProgress("download models", len(modelManifests))
 				for _, model := range models {
 					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {

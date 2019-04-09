@@ -47,6 +47,8 @@ func (p readImage) do(ctx context.Context, in0 interface{}, opts *pipeline.Optio
 		}
 	}
 
+	readOptions = append(readOptions, image.Mode(p.options.ColorMode))
+
 	dims := p.options.Dims
 	if dims != nil && len(dims) > 2 {
 		height, width := dims[1], dims[2]
