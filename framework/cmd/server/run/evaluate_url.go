@@ -89,7 +89,7 @@ var (
 	}
 
 	useGPU = []bool{
-		// true,
+		true,
 		false,
 	}
 

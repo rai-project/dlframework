@@ -417,8 +417,13 @@ var predictUrlsCmd = &cobra.Command{
 		if publishEvaluation == false {
 			for range outputs {
 			}
-
-			dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize))
+			var device string
+			if useGPU {
+				device = "gpu"
+			} else {
+				device = "cpu"
+			}
+			dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
 			os.MkdirAll(dir, os.ModePerm)
 			ts := strings.ToLower(tracer.LevelToName(traceLevel))
 			name := "trace_" + ts + ".json"
