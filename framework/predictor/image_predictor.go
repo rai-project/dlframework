@@ -363,7 +363,7 @@ func (p ImagePredictor) iCreateClassificationFeatures2DSlice(ctx context.Context
 
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities0 interface{}, labels []string) ([]dlframework.Features, error) {
 	if slc, ok := probabilities0.([][]float32); ok {
-		p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
+		return p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
 	}
 
 	probabilities, ok := probabilities0.(tensor.Tensor)
