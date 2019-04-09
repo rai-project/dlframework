@@ -15,11 +15,12 @@ import (
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/fatih/color"
 	shellwords "github.com/junegunn/go-shellwords"
+	"github.com/sirupsen/logrus"
+
 	"github.com/rai-project/config"
 	"github.com/rai-project/cpu/cpuid"
 	dl "github.com/rai-project/dlframework"
 	dlcmd "github.com/rai-project/dlframework/framework/cmd"
-	"github.com/sirupsen/logrus"
 
 	_ "github.com/rai-project/logger/hooks"
 )
@@ -57,15 +58,15 @@ var (
 
 	models = []string{
 		"MobileNet_v1_1.0_224_1.0",
-		"MobileNet_v1_1.0_224_Quant",
-    "SSD_MobileNet_v1_COCO_1.0",
-    "SSD_ResNet50_FPN_COCO_1.0"
-    "Mask_RCNN_Inception_v2_COCO",
-    "Mask_RCNN_ResNet50_v2_Atrous_COCO",
-    "Faster_RCNN_ResNet50_COCO",
-    "Faster_RCNN_ResNet101_COCO",
-    "DeepLabv3_PASCAL_VOC_Train_Val",
-    "DeepLabv3_PASCAL_VOC_Train_Aug",
+		"MobileNet_v1_1.0_224_Quant_1.0",
+		"SSD_MobileNet_v1_COCO_1.0",
+		"SSD_ResNet50_FPN_COCO_1.0",
+		"Mask_RCNN_Inception_v2_COCO_1.0",
+		"Mask_RCNN_ResNet50_v2_Atrous_COCO_1.0",
+		"Faster_RCNN_ResNet50_COCO_1.0",
+		"Faster_RCNN_ResNet101_COCO_1.0",
+		"DeepLabv3_PASCAL_VOC_Train_Val_1.0",
+		"DeepLabv3_PASCAL_VOC_Train_Aug_1.0",
 		"SRGAN_1.0",
 	}
 
@@ -150,10 +151,10 @@ func main() {
 						ctx, _ := context.WithTimeout(context.Background(), timeout)
 						shellCmd := "predict url" +
 							" --verbose" +
-							" --publish=true" +
+							" --publish=false" +
 							" --publish_predictions=false" +
 							" --fail_on_error=true" +
-							fmt.Sprintf(" --duplicate_input=%v", 10*batchSize) +
+							fmt.Sprintf(" --duplicate_input=%v", 3*batchSize) +
 							fmt.Sprintf(" --use_gpu=%v", usingGPU) +
 							fmt.Sprintf(" --batch_size=%v", batchSize) +
 							fmt.Sprintf(" --model_name=%v", modelName) +

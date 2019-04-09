@@ -20,6 +20,10 @@ import (
 	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -33,9 +37,6 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -50,6 +51,27 @@ var predictUrlsCmd = &cobra.Command{
 	Short:   "Evaluates the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
+		model, err := framework.FindModel(modelName + ":" + modelVersion)
+		if err != nil {
+			return err
+		}
+
+		var device string
+		if useGPU {
+			device = "gpu"
+		} else {
+			device = "cpu"
+		}
+		dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
+		os.MkdirAll(dir, os.ModePerm)
+		ts := strings.ToLower(tracer.LevelToName(traceLevel))
+		name := "trace_" + ts + ".json"
+		path := filepath.Join(dir, name)
+		if (publishEvaluation == false) && com.IsFile(path) {
+			log.WithField("path", path).Info("trace file already exists")
+			return nil
+		}
+
 		rootSpan, ctx := tracer.StartSpanFromContext(
 			context.Background(),
 			tracer.APPLICATION_TRACE,
@@ -81,12 +103,6 @@ var predictUrlsCmd = &cobra.Command{
 			)
 		}
 		defer db.Close()
-
-		model, err := framework.FindModel(modelName + ":" + modelVersion)
-		if err != nil {
-			return err
-		}
-
 		predictors, err := agent.GetPredictors(framework)
 		if err != nil {
 			return errors.Wrapf(err,
@@ -416,21 +432,6 @@ var predictUrlsCmd = &cobra.Command{
 
 		if publishEvaluation == false {
 			for range outputs {
-			}
-			var device string
-			if useGPU {
-				device = "gpu"
-			} else {
-				device = "cpu"
-			}
-			dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
-			os.MkdirAll(dir, os.ModePerm)
-			ts := strings.ToLower(tracer.LevelToName(traceLevel))
-			name := "trace_" + ts + ".json"
-			path := filepath.Join(dir, name)
-			if com.IsFile(path) {
-				log.WithField("path", path).Info("trace file already exists")
-				return err
 			}
 			f, err := os.Create(path)
 			defer f.Close()
