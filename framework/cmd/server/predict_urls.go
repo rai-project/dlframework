@@ -283,7 +283,8 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	outputs := make(chan interface{}, DefaultChannelBuffer)
 	partlabels := map[string]string{}
 
-	log.WithField("urls_length", len(urls)).
+	log.WithField("model", modelName).
+		WithField("urls_length", len(urls)).
 		WithField("url_parts_length", len(urlParts)).
 		WithField("partition_list_size", partitionListSize).
 		WithField("num_url_part", numUrlParts).
@@ -443,7 +444,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			WithField("trace_id", traceIDVal).
 			Error("failed to download span information")
 	}
-	log.WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
+	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
 
 	if publishEvaluation == false {
 		for range outputs {
@@ -469,7 +470,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 			_, err = io.Copy(f, archiver)
 		}
-		log.WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
+		log.WithField("model", modelName).WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
 
 		return nil
 	}
