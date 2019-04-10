@@ -8,6 +8,9 @@ import (
 )
 
 func ParseModelName(model string) (string, string) {
+	if model == "all" {
+		return "all", ""
+	}
 	splt := strings.Split(model, "_")
 	modelName, modelVersion := splt[0:len(splt)-1], splt[len(splt)-1]
 	return strings.Join(modelName, "_"), modelVersion
