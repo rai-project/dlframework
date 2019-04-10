@@ -5,12 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
+
+	machine "github.com/rai-project/machine/info"
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
@@ -20,10 +23,6 @@ import (
 	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	jaeger "github.com/uber/jaeger-client-go"
-	"gopkg.in/mgo.v2/bson"
-
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -37,6 +36,9 @@ import (
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/uuid"
+	"github.com/spf13/cobra"
+	jaeger "github.com/uber/jaeger-client-go"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var (
@@ -44,6 +46,7 @@ var (
 	duplicateInput    int
 	numUrlParts       int
 	numWarmUpUrlParts int
+	hostName, _       = os.Hostname()
 )
 
 var predictUrlsCmd = &cobra.Command{
@@ -62,14 +65,29 @@ var predictUrlsCmd = &cobra.Command{
 		} else {
 			device = "cpu"
 		}
-		dir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
-		os.MkdirAll(dir, os.ModePerm)
+		baseDir := filepath.Join("experiments", hostName, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
+		if !com.IsDir(baseDir) {
+			os.MkdirAll(baseDir, os.ModePerm)
+		}
 		ts := strings.ToLower(tracer.LevelToName(traceLevel))
 		name := "trace_" + ts + ".json"
-		path := filepath.Join(dir, name)
+		path := filepath.Join(baseDir, name)
 		if (publishEvaluation == false) && com.IsFile(path) {
 			log.WithField("path", path).Info("trace file already exists")
 			return nil
+		}
+
+		if useGPU {
+			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+				ioutil.WriteFile(filepath.Join(baseDir, "nvidia_info.json"), bts, 0644)
+			}
+		}
+
+		if machine.Info != nil && machine.Info.Hostname != "" {
+			bts, err := json.Marshal(machine.Info)
+			if err == nil {
+				ioutil.WriteFile(filepath.Join(baseDir, "system_info.json"), bts, 0644)
+			}
 		}
 
 		rootSpan, ctx := tracer.StartSpanFromContext(
