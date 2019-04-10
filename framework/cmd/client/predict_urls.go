@@ -171,7 +171,7 @@ var urlsCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
-		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(), traceIDVal)
+		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(tracerAdress), traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
 		outputfile := frameworkName + "_" + frameworkVersion + "_" + modelName + "_" + modelVersion + "_" + strconv.Itoa(batchSize)

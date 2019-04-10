@@ -4,10 +4,10 @@ import (
 	"net"
 )
 
-func getTracerHostAddress() string {
-	host, _, err := net.SplitHostPort(tracerAddress)
+func getTracerHostAddress(addr string) string {
+	host, _, err := net.SplitHostPort(addr)
 	if err != nil {
-		return tracerAddress
+		return addr
 	}
 	return host
 }

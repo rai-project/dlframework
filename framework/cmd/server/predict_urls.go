@@ -55,7 +55,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	log.WithField("model", model).Info("running predict urls")
+	log.WithField("model", modelName).Info("running predict urls")
 
 	var device string
 	if useGPU {
@@ -434,9 +434,9 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
 	traceIDVal := traceID.String()
 
-	pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(), traceIDVal))
+	pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
 
-	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(), traceIDVal)
+	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
 	resp, err := grequests.Get(query, nil)
 	if err != nil {
 		log.WithError(err).
@@ -497,7 +497,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		}
 
 		if publishPredictions == true {
-			log.WithField("model", model).Info("inserting predictions into inputPredictionsTable")
+			log.WithField("model", modelName).Info("inserting predictions into inputPredictionsTable")
 
 			inputPrediction := evaluation.InputPrediction{
 				ID:            bson.NewObjectId(),
@@ -535,7 +535,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	//databaseInsertProgress.FinishPrint("inserting prediction complete")
 	databaseInsertProgress.Finish()
-	log.WithField("model", model).Info("finised inserting prediction")
+	log.WithField("model", modelName).Info("finised inserting prediction")
 
 	modelAccuracy := evaluation.ModelAccuracy{
 		ID:        bson.NewObjectId(),
@@ -547,7 +547,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		log.WithError(err).Error("failed to publish model accuracy entry")
 	}
 
-	log.WithField("model", model).Info("downloading trace information")
+	log.WithField("model", modelName).Info("downloading trace information")
 
 	var trace evaluation.TraceInformation
 	err = easyjson.UnmarshalFromReader(resp, &trace)
@@ -562,7 +562,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 	performanceTable.Insert(performance)
 
-	log.WithField("model", model).Info("inserted performance information")
+	log.WithField("model", modelName).Info("inserted performance information")
 
 	evaluationEntry.PerformanceID = performance.ID
 	evaluationEntry.ModelAccuracyID = modelAccuracy.ID
