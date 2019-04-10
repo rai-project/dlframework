@@ -57,17 +57,18 @@ var (
 	}
 
 	models = []string{
-		"MobileNet_v1_1.0_224_1.0",
-		"MobileNet_v1_1.0_224_Quant_1.0",
-		"SSD_MobileNet_v1_COCO_1.0",
-		"SSD_ResNet50_FPN_COCO_1.0",
-		"Mask_RCNN_Inception_v2_COCO_1.0",
-		"Mask_RCNN_ResNet50_v2_Atrous_COCO_1.0",
-		"Faster_RCNN_ResNet50_COCO_1.0",
-		"Faster_RCNN_ResNet101_COCO_1.0",
-		"DeepLabv3_PASCAL_VOC_Train_Val_1.0",
-		"DeepLabv3_PASCAL_VOC_Train_Aug_1.0",
-		"SRGAN_1.0",
+		// "MobileNet_v1_1.0_224_1.0",
+		// "MobileNet_v1_1.0_224_Quant_1.0",
+		// "SSD_MobileNet_v1_COCO_1.0",
+		// "SSD_ResNet50_FPN_COCO_1.0",
+		// "Mask_RCNN_Inception_v2_COCO_1.0",
+		// "Mask_RCNN_ResNet50_v2_Atrous_COCO_1.0",
+		// "Faster_RCNN_ResNet50_COCO_1.0",
+		// "Faster_RCNN_ResNet101_COCO_1.0",
+		// "DeepLabv3_PASCAL_VOC_Train_Val_1.0",
+		// "DeepLabv3_PASCAL_VOC_Train_Aug_1.0",
+		// "SRGAN_1.0",
+		"all",
 	}
 
 	batchSizes = []int{
