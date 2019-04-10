@@ -14,10 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/rai-project/archive"
-
-	machine "github.com/rai-project/machine/info"
-
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
@@ -26,6 +22,7 @@ import (
 	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
+	"github.com/rai-project/archive"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
 	dl "github.com/rai-project/dlframework"
@@ -35,6 +32,7 @@ import (
 	common "github.com/rai-project/dlframework/framework/predictor"
 	"github.com/rai-project/dlframework/steps"
 	"github.com/rai-project/evaluation"
+	machine "github.com/rai-project/machine/info"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/pipeline"
 	"github.com/rai-project/tracer"
@@ -64,7 +62,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	} else {
 		device = "cpu"
 	}
-	baseDir := filepath.Join("experiments", hostName, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device)
+	baseDir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
 	if !com.IsDir(baseDir) {
 		os.MkdirAll(baseDir, os.ModePerm)
 	}

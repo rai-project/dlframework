@@ -72,6 +72,11 @@ func Register(framework dlframework.FrameworkManifest, a *assetfs.AssetFS) error
 			return err
 		}
 
+		if model.GetHidden() {
+			log.WithField("name", model.GetName()).Info("skipping regitration of hidden model")
+			continue
+		}
+
 		if err := model.Register(); err != nil {
 			log.WithError(err).
 				WithField("frameworkVersion", frameworkVersion).
