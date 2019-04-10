@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -12,6 +13,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/rai-project/archive"
 
 	machine "github.com/rai-project/machine/info"
 
@@ -66,10 +69,10 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		os.MkdirAll(baseDir, os.ModePerm)
 	}
 	ts := strings.ToLower(tracer.LevelToName(traceLevel))
-	name := "trace_" + ts + ".json"
-	path := filepath.Join(baseDir, name)
-	if (publishEvaluation == false) && com.IsFile(path) {
-		log.WithField("path", path).Info("trace file already exists")
+	tracerFileName := "trace_" + ts + ".json"
+	tracerFilePath := filepath.Join(baseDir, tracerFileName)
+	if (publishEvaluation == false) && com.IsFile(tracerFilePath) {
+		log.WithField("path", tracerFilePath).Info("trace file already exists")
 		return nil
 	}
 
@@ -447,18 +450,27 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if publishEvaluation == false {
 		for range outputs {
 		}
-		f, err := os.Create(path)
-		defer f.Close()
-		if err != nil {
-			return err
-		}
-		n2, err := f.WriteString(resp.String())
-		if err != nil {
-			return err
-		}
-		fmt.Printf("wrote %d bytes\n", n2)
 
-		log.WithField("path", path).Info("publishEvaluation is false, wrote the trace to a local file")
+		err := ioutil.WriteFile(tracerFilePath, resp.Bytes(), 0644)
+		if err != nil {
+			return err
+		}
+
+		archiver, err := archive.Zip(tracerFilePath, archive.BZip2Format())
+		if err != nil {
+			return err
+		}
+
+		archiveFilePath := strings.TrimSuffix(tracerFilePath, ".json") + ".tar.bz2"
+		f, err := os.Create(archiveFilePath)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		_, err = io.Copy(f, archiver)
+
+		log.WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
 
 		return nil
 	}
