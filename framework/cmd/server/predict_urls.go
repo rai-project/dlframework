@@ -454,6 +454,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			return err
 		}
 
+		if false {
 		archiver, err := archive.Zip(tracerFilePath, archive.BZip2Format())
 		if err != nil {
 			return err
@@ -467,7 +468,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		defer f.Close()
 
 		_, err = io.Copy(f, archiver)
-
+		}
 		log.WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
 
 		return nil
