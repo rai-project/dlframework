@@ -429,7 +429,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	inferenceProgress.Finish()
 
 	rootSpan.Finish()
-	tracer.Close()
+	tracer.ResetStd()
 
 	close(outputs)
 
