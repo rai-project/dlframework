@@ -143,8 +143,6 @@ func main() {
 					continue
 				}
 
-				// modelManifests := framework.Models()
-				// pb := dlcmd.NewProgress("download models", len(modelManifests))
 				for _, model := range models {
 					modelName, modelVersion := dlcmd.ParseModelName(model)
 					for _, batchSize := range batchSizes {
@@ -161,9 +159,6 @@ func main() {
 							fmt.Sprintf(" --model_name=%v", modelName) +
 							fmt.Sprintf(" --model_version=%v", modelVersion) +
 							fmt.Sprintf(" --database_name=%v", dl.CleanString(modelName+"_"+modelVersion))
-						if len(os.Args) < 3 {
-							panic("Need to set database_adress, tracer_address and trace_level")
-						}
 						shellCmd = shellCmd + " " + strings.Join(os.Args, " ")
 						args, err := shellwords.Parse(shellCmd)
 						if err != nil {
