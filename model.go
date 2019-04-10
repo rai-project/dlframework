@@ -132,6 +132,14 @@ func (m ModelManifest) FrameworkConstraint() (*semver.Constraints, error) {
 	return semver.NewConstraint(m.GetFramework().GetVersion())
 }
 
+func (m ModelManifest) MustResolveFramework() FrameworkManifest {
+	f, err := m.ResolveFramework()
+	if err != nil {
+		panic(err)
+	}
+	return f
+}
+
 func (m ModelManifest) ResolveFramework() (FrameworkManifest, error) {
 	frameworks, err := Frameworks()
 	if err != nil {
