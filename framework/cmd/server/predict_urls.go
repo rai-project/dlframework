@@ -607,5 +607,5 @@ func init() {
 	predictUrlsCmd.PersistentFlags().IntVar(&duplicateInput, "duplicate_input", defaultDuplicateInput, "duplicate the input urls in urls_file")
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
 	predictUrlsCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 3, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 1, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }

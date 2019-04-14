@@ -25,7 +25,7 @@ var (
 	publishPredictions   bool
 	failOnFirstError     bool
 	traceLevelName       string
-	traceLevel           tracer.Level = tracer.APPLICATION_TRACE
+	traceLevel           tracer.Level = tracer.MODEL_TRACE
 	tracerAddress        string
 	databaseAddress      string
 	databaseName         string
@@ -84,7 +84,7 @@ func init() {
 	predictCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 1, "the batch size to use while performing inference")
 	predictCmd.PersistentFlags().IntVarP(&partitionListSize, "partition_list_size", "p", 0, "the chunk size to partition the input list. By default this is the same as the batch size")
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "use_gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
-	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", false, "whether to trace the preproessing steps. By defatult it is set to true")
+	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", true, "whether to trace the preproessing steps. By defatult it is set to true")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
 	predictCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
 	predictCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
