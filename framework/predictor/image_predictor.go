@@ -19,6 +19,7 @@ import (
 	raiimage "github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	imageTypes "github.com/rai-project/image/types"
+	"github.com/rai-project/utils"
 	"github.com/spf13/cast"
 	yaml "gopkg.in/yaml.v2"
 	"gorgonia.org/tensor"
@@ -526,7 +527,7 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 	return features, nil
 }
 
-func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) iCreateSemanticSegmentFeaturesSlice(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(masks) < 1 {
 		return nil, errors.New("len(masks) < 1")
@@ -544,6 +545,49 @@ func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks
 				feature.SemanticSegmentHeight(int32(targetHeight)),
 				feature.SemanticSegmentWidth(int32(targetWidth)),
 				feature.SemanticSegmentIntMask(flattenInt32Slice(mask)),
+				feature.Probability(1.0),
+			)
+		}
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks0 interface{}, labels []string) ([]dlframework.Features, error) {
+	if masks, ok := masks0.([][][]int64); ok {
+		return p.iCreateSemanticSegmentFeaturesSlice(ctx, masks, labels)
+	}
+
+	masks, ok := masks0.(tensor.Tensor)
+	if !ok {
+		return nil, errors.New("expecting an input masks tensor")
+	}
+
+	batchSize := p.BatchSize()
+	if masks.Size() == 0 {
+		return nil, errors.New("len(masks) < 1")
+	}
+	if masks.Dims() == 3 {
+		return nil, errors.New("rank(masks) != 3")
+	}
+	targetHeight := masks.Shape()[1]
+	targetWidth := masks.Shape()[2]
+	features := make([]dlframework.Features, batchSize)
+	featureLen := 1
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		iMask, err := masks.At(ii)
+		if err != nil {
+			return nil, errors.Wrapf(err, "invalid mask value at (%v)", ii)
+		}
+		mask := utils.FlattenInt32Slice(iMask)
+		for jj := 0; jj < featureLen; jj++ {
+			rprobs[jj] = feature.New(
+				feature.SemanticSegmentType(),
+				feature.SemanticSegmentHeight(int32(targetHeight)),
+				feature.SemanticSegmentWidth(int32(targetWidth)),
+				feature.SemanticSegmentIntMask(mask),
 				feature.Probability(1.0),
 			)
 		}
