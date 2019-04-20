@@ -19,6 +19,7 @@ import (
 	raiimage "github.com/rai-project/image"
 	"github.com/rai-project/image/types"
 	imageTypes "github.com/rai-project/image/types"
+	"github.com/spf13/cast"
 	yaml "gopkg.in/yaml.v2"
 	"gorgonia.org/tensor"
 )
@@ -361,6 +362,20 @@ func (p ImagePredictor) iCreateClassificationFeatures2DSlice(ctx context.Context
 	return features, nil
 }
 
+func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
+
+	batchSize := p.BatchSize()
+	featureLen := len(probabilities) / batchSize
+
+	probs := tensor.New(
+		tensor.Of(tensor.Float32),
+		tensor.WithBacking(probabilities),
+		tensor.WithShape(batchSize, featureLen),
+	)
+
+	return p.CreateClassificationFeatures(ctx, probs, labels)
+}
+
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities0 interface{}, labels []string) ([]dlframework.Features, error) {
 	if slc, ok := probabilities0.([][]float32); ok {
 		return p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
@@ -385,14 +400,15 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 	for ii := 0; ii < batchSize; ii++ {
 		rprobs := make([]*dlframework.Feature, featureLen)
 		for jj := 0; jj < featureLen; jj++ {
-			prob, err := probabilities.At(ii, jj)
+			iprob, err := probabilities.At(ii, jj)
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrapf(err, "invalid probability value at (%v,%v)", ii, jj)
 			}
+			prob := cast.ToFloat32(iprob)
 			rprobs[jj] = feature.New(
 				feature.ClassificationIndex(int32(jj)),
 				feature.ClassificationLabel(labels[jj]),
-				feature.Probability(prob.(float32)),
+				feature.Probability(prob),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))
@@ -402,31 +418,7 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 	return features, nil
 }
 
-func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
-	batchSize := p.BatchSize()
-	if len(probabilities) < 1 {
-		return nil, errors.New("len(probabilities) < 1")
-	}
-	featureLen := len(probabilities) / batchSize
-	features := make([]dlframework.Features, batchSize)
-
-	for ii := 0; ii < batchSize; ii++ {
-		rprobs := make([]*dlframework.Feature, featureLen)
-		for jj := 0; jj < featureLen; jj++ {
-			rprobs[jj] = feature.New(
-				feature.ClassificationIndex(int32(jj)),
-				feature.ClassificationLabel(labels[jj]),
-				feature.Probability(probabilities[ii*featureLen+jj]),
-			)
-		}
-		sort.Sort(dlframework.Features(rprobs))
-		features[ii] = rprobs
-	}
-
-	return features, nil
-}
-
-func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) iCreateBoundingBoxFeaturesSlice(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
@@ -446,6 +438,85 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 				feature.BoundingBoxIndex(int32(classes[ii][jj])),
 				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
 				feature.Probability(probabilities[ii][jj]),
+			)
+		}
+		sort.Sort(dlframework.Features(rprobs))
+		features[ii] = rprobs
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities0 interface{}, classes0 interface{}, boxes0 interface{}, labels []string) ([]dlframework.Features, error) {
+	if slc, ok := probabilities0.([][]float32); ok {
+		return p.iCreateBoundingBoxFeaturesSlice(ctx, slc, classes0.([][]float32), boxes0.([][][]float32), labels)
+	}
+
+	probabilities, ok := probabilities0.(tensor.Tensor)
+	if !ok {
+		return nil, errors.New("expecting an input probabilities tensor")
+	}
+
+	classes, ok := classes0.(tensor.Tensor)
+	if !ok {
+		return nil, errors.New("expecting an input classes tensor")
+	}
+
+	boxes, ok := boxes0.(tensor.Tensor)
+	if !ok {
+		return nil, errors.New("expecting an input boxes tensor")
+	}
+
+	batchSize := p.BatchSize()
+	if probabilities.Size() == 0 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+
+	featureLen := probabilities.Shape()[0]
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		rprobs := make([]*dlframework.Feature, featureLen)
+		for jj := 0; jj < featureLen; jj++ {
+			iclass, err := classes.At(ii, jj)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid class value at (%v,%v)", ii, jj)
+			}
+			iprob, err := probabilities.At(ii, jj)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid probability value at (%v,%v)", ii, jj)
+			}
+			iboxYMin, err := boxes.At(ii, jj, 0)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid box y min value at (%v,%v, 0)", ii, jj)
+			}
+			iboxXMin, err := boxes.At(ii, jj, 1)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid box x min value at (%v,%v, 1)", ii, jj)
+			}
+			iboxYMax, err := boxes.At(ii, jj, 2)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid box y max value at (%v,%v, 2)", ii, jj)
+			}
+			iboxXMax, err := boxes.At(ii, jj, 3)
+			if err != nil {
+				return nil, errors.Wrapf(err, "invalid box x max value at (%v,%v, 3)", ii, jj)
+			}
+			class := cast.ToInt32(iclass)
+			prob := cast.ToFloat32(iprob)
+			boxYMin := cast.ToFloat32(iboxYMin)
+			boxYMax := cast.ToFloat32(iboxYMax)
+			boxXMin := cast.ToFloat32(iboxXMin)
+			boxXMax := cast.ToFloat32(iboxXMax)
+			rprobs[jj] = feature.New(
+				feature.BoundingBoxType(),
+				feature.BoundingBoxXmin(boxXMin),
+				feature.BoundingBoxXmax(boxXMax),
+				feature.BoundingBoxYmin(boxYMin),
+				feature.BoundingBoxYmax(boxYMax),
+				feature.BoundingBoxIndex(class),
+				feature.BoundingBoxLabel(labels[class]),
+				feature.Probability(prob),
 			)
 		}
 		sort.Sort(dlframework.Features(rprobs))
