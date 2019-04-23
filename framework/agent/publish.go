@@ -8,7 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/rai-project/nvidia-smi"
+	cpuinfo "github.com/rai-project/machine/info"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
 
 	"github.com/rai-project/config"
 	dl "github.com/rai-project/dlframework"
@@ -68,6 +69,11 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 				log.WithError(err).Error("failed to get agent's nvidia-smi information")
 				gpuinfo = []byte{}
 			}
+			cpuinfo, err := json.Marshal(cpuinfo.Info)
+			if err != nil {
+				log.WithError(err).Error("failed to get agent's cpu information")
+				gpuinfo = []byte{}
+			}
 			bts, err := marshaler.Marshal(&dl.Agent{
 				Host:         ip,
 				Port:         port,
@@ -75,7 +81,7 @@ func (b *base) PublishInPredictor(host, prefix string) error {
 				Architecture: runtime.GOARCH,
 				Hasgpu:       nvidiasmi.HasGPU,
 				Gpuinfo:      string(gpuinfo),
-				Cpuinfo:      "TODO",
+				Cpuinfo:      string(cpuinfo),
 				Frameworks:   frameworks,
 			})
 			if err != nil {
