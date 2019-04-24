@@ -434,7 +434,9 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
 	traceIDVal := traceID.String()
-
+	if runtime.GOARCH == "ppc64le" {
+		traceIDVal = strconv.FormatUint(traceID.Low, 16)
+	}
 	pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
 
 	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
