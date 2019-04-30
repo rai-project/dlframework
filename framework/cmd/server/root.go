@@ -244,7 +244,7 @@ func SetupFlags(c *cobra.Command) {
 
 	c.AddCommand(predictCmd)
 	c.AddCommand(downloadCmd)
-	c.AddCommand(containerCmd)
+	addContainerCmd(c)
 	c.AddCommand(infoCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
