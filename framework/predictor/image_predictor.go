@@ -73,7 +73,9 @@ func (p ImagePredictor) GetOutputLayerIndex(layer string) (int, error) {
 func (p ImagePredictor) GetInputDimensions() ([]int, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
+
 	typeParameters := modelInputs[0].GetParameters()
+
 	if typeParameters == nil {
 		return nil, errors.New("invalid type parameters")
 	}

@@ -42,6 +42,32 @@ func (model ModelManifest) GetElementType() string {
 	return strings.ToLower(val)
 }
 
+func (model ModelManifest) GetInputDimensions() ([]int, error) {
+	modelInputs := model.GetInputs()
+
+	typeParameters := modelInputs[0].GetParameters()
+
+	if typeParameters == nil {
+		return nil, errors.New("invalid type parameters")
+	}
+	pdims, ok := typeParameters["dimensions"]
+	if !ok {
+		log.Debug("arbitrary input dimensions")
+		return nil, nil
+	}
+	pdimsVal := pdims.GetValue()
+	if pdimsVal == "" {
+		return nil, errors.New("invalid input dimensions")
+	}
+
+	var dims []int
+	if err := yaml.Unmarshal([]byte(pdimsVal), &dims); err != nil {
+		return nil, errors.Errorf("unable to get input dimensions %v as an integer slice", pdimsVal)
+	}
+
+	return dims, nil
+}
+
 func (m *ModelManifest) Modality() (Modality, error) {
 	inputs := m.GetInputs()
 	output := m.GetOutput()
