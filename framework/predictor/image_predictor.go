@@ -25,6 +25,14 @@ import (
 	"gorgonia.org/tensor"
 )
 
+type Method int
+
+const (
+	TopLeft Method = iota
+	Center
+	InvalidCropMethod Method = 9999
+)
+
 type PreprocessOptions struct {
 	ElementType     string
 	MeanImage       []float32
@@ -34,6 +42,8 @@ type PreprocessOptions struct {
 	Scale           float32
 	ColorMode       types.Mode
 	Layout          raiimage.Layout
+	CropMethod      Method
+	CropRatio       float32
 }
 
 type ImagePredictor struct {
@@ -286,6 +296,64 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	}
 }
 
+func (p ImagePredictor) GetCropMethod(defaultMethod Method) Method {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return defaultMethod
+	}
+	pcropMethod, ok := typeParameters["crop_method"]
+	if !ok {
+		return defaultMethod
+	}
+	pcropMethodVal := pcropMethod.GetValue()
+	if pcropMethodVal == "" {
+		return defaultMethod
+	}
+
+	var val string
+	if err := yaml.Unmarshal([]byte(pcropMethodVal), &val); err != nil {
+		log.Errorf("unable to get color_mode %v as a string", pcropMethodVal)
+		return defaultMethod
+	}
+
+	switch val {
+	case "topleft":
+		return TopLeft
+	case "center":
+		return Center
+	default:
+		log.Error("invalid image mode specified " + val)
+		return InvalidCropMethod
+	}
+}
+
+func (p ImagePredictor) GetCropRatio(defaultCropRatio float32) float32 {
+	model := p.Model
+	modelInputs := model.GetInputs()
+	typeParameters := modelInputs[0].GetParameters()
+	if typeParameters == nil {
+		return defaultCropRatio
+	}
+	pCropRatio, ok := typeParameters["crop_ratio"]
+	if !ok {
+		return defaultCropRatio
+	}
+	pCropRatioVal := pCropRatio.GetValue()
+	if pCropRatioVal == "" {
+		return defaultCropRatio
+	}
+
+	var val float32
+	if err := yaml.Unmarshal([]byte(pCropRatioVal), &val); err != nil {
+		log.Errorf("unable to get crop_ratio %v as a float32", pCropRatioVal)
+		return defaultCropRatio
+	}
+
+	return val
+}
+
 func (p ImagePredictor) GetPreprocessOptions() (PreprocessOptions, error) {
 	mean, err := p.GetMeanImage()
 	if err != nil {
@@ -321,6 +389,8 @@ func (p ImagePredictor) GetPreprocessOptions() (PreprocessOptions, error) {
 		KeepAspectRatio: keepAspectRatio,
 		ColorMode:       p.GetColorMode(imageTypes.RGBMode),
 		Layout:          p.GetLayout(raiimage.HWCLayout),
+		CropMethod:      p.GetCropMethod(Center),
+		CropRatio:       p.GetCropRatio(1.0),
 	}
 
 	return preprocOpts, nil
