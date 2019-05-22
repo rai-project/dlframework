@@ -47,7 +47,6 @@ var (
 	duplicateInput    int
 	numUrlParts       int
 	numWarmUpUrlParts int
-	hostName, _       = os.Hostname()
 )
 
 func runPredictUrlsCmd(c *cobra.Command, args []string) error {

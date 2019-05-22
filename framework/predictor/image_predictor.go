@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strconv"
 
+	"github.com/oliamb/cutter"
+
 	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
@@ -25,14 +27,6 @@ import (
 	"gorgonia.org/tensor"
 )
 
-type Method int
-
-const (
-	TopLeft Method = iota
-	Center
-	InvalidCropMethod Method = 9999
-)
-
 type PreprocessOptions struct {
 	ElementType     string
 	MeanImage       []float32
@@ -42,7 +36,7 @@ type PreprocessOptions struct {
 	Scale           float32
 	ColorMode       types.Mode
 	Layout          raiimage.Layout
-	CropMethod      Method
+	CropMethod      cutter.AnchorMode
 	CropRatio       float32
 }
 
@@ -296,7 +290,7 @@ func (p ImagePredictor) GetColorMode(defaultMode types.Mode) types.Mode {
 	}
 }
 
-func (p ImagePredictor) GetCropMethod(defaultMethod Method) Method {
+func (p ImagePredictor) GetCropMethod(defaultMethod cutter.AnchorMode) cutter.AnchorMode {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	typeParameters := modelInputs[0].GetParameters()
@@ -320,12 +314,12 @@ func (p ImagePredictor) GetCropMethod(defaultMethod Method) Method {
 
 	switch val {
 	case "topleft":
-		return TopLeft
+		return cutter.TopLeft
 	case "center":
-		return Center
+		return cutter.Centered
 	default:
 		log.Error("invalid image mode specified " + val)
-		return InvalidCropMethod
+		return cutter.Centered
 	}
 }
 
@@ -389,7 +383,7 @@ func (p ImagePredictor) GetPreprocessOptions() (PreprocessOptions, error) {
 		KeepAspectRatio: keepAspectRatio,
 		ColorMode:       p.GetColorMode(imageTypes.RGBMode),
 		Layout:          p.GetLayout(raiimage.HWCLayout),
-		CropMethod:      p.GetCropMethod(Center),
+		CropMethod:      p.GetCropMethod(cutter.Centered),
 		CropRatio:       p.GetCropRatio(1.0),
 	}
 
