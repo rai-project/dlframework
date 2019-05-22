@@ -295,7 +295,6 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 		opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
 		output := pipeline.New(opts...).
-			Then(steps.NewReadURL()).
 			Then(steps.NewReadImage(preprocessOptions)).
 			Then(steps.NewPreprocessImage(preprocessOptions)).
 			Run(input)
