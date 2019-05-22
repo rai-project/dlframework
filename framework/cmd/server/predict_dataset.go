@@ -162,11 +162,11 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
 		}
 
-    datasetName = fmt.Sprintf("%s_%v", datasetName, width)
-    
-    if centerCrop {
-      datasetName += "_center_crop_875"
-    }
+		datasetName = fmt.Sprintf("%s_%v", datasetName, width)
+
+		if centerCrop {
+			datasetName += "_center_crop_875"
+		}
 	}
 
 	log.WithField("dataset_category", datasetCategory).
@@ -299,7 +299,6 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			Then(steps.NewReadImage(preprocessOptions)).
 			Then(steps.NewPreprocessImage(preprocessOptions)).
 			Run(input)
-		}
 
 		log.WithField("dataset_category", datasetCategory).
 			WithField("dataset_name", datasetName).
@@ -424,15 +423,9 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 	log.WithField("model", modelName).Info("downloading trace information")
 
-	var trace evaluation.TraceInformation
-		err = easyjson.UnmarshalFromReader(resp, &trace)
-	if err != nil {
-		log.WithError(err).Error("failed to decode trace information")
-	}
 	performance := evaluation.Performance{
 		ID:         bson.NewObjectId(),
 		CreatedAt:  time.Now(),
-		Trace:      trace,
 		TraceLevel: traceLevel,
 	}
 	performanceTable.Insert(performance)
