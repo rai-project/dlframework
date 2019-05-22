@@ -38,11 +38,8 @@ var (
 	datasetName        string
 	numFileParts       int
 	numWarmUpFileParts int
-<<<<<<< HEAD
 	hostName, _        = os.Hostname()
-=======
 	centerCrop         bool
->>>>>>> aef4f546636baccd99ff4b17211b74dec0a09643
 )
 
 func runPredictDatasetCmd(c *cobra.Command, args []string) error {
@@ -165,7 +162,11 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			return errors.Errorf("expecting a square image dimensions width = %v, height = %v", width, height)
 		}
 
-		datasetName = fmt.Sprintf("%s_%v", datasetName, width)
+    datasetName = fmt.Sprintf("%s_%v", datasetName, width)
+    
+    if centerCrop {
+      datasetName += "_center_crop_875"
+    }
 	}
 
 	log.WithField("dataset_category", datasetCategory).
@@ -292,24 +293,17 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			}
 		}()
 
-<<<<<<< HEAD
 		opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
 		output := pipeline.New(opts...).
 			Then(steps.NewReadURL()).
 			Then(steps.NewReadImage(preprocessOptions)).
 			Then(steps.NewPreprocessImage(preprocessOptions)).
 			Run(input)
-=======
-			datasetName = fmt.Sprintf("%s_%v", datasetName, width)
-			if centerCrop {
-				datasetName += "_center_crop_875"
-			}
 		}
 
 		log.WithField("dataset_category", datasetCategory).
 			WithField("dataset_name", datasetName).
 			Info("using the specified dataset")
->>>>>>> aef4f546636baccd99ff4b17211b74dec0a09643
 
 		var images []interface{}
 		for out := range output {
