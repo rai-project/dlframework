@@ -38,7 +38,11 @@ var (
 	datasetName        string
 	numFileParts       int
 	numWarmUpFileParts int
+<<<<<<< HEAD
 	hostName, _        = os.Hostname()
+=======
+	centerCrop         bool
+>>>>>>> aef4f546636baccd99ff4b17211b74dec0a09643
 )
 
 func runPredictDatasetCmd(c *cobra.Command, args []string) error {
@@ -288,12 +292,24 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			}
 		}()
 
+<<<<<<< HEAD
 		opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
 		output := pipeline.New(opts...).
 			Then(steps.NewReadURL()).
 			Then(steps.NewReadImage(preprocessOptions)).
 			Then(steps.NewPreprocessImage(preprocessOptions)).
 			Run(input)
+=======
+			datasetName = fmt.Sprintf("%s_%v", datasetName, width)
+			if centerCrop {
+				datasetName += "_center_crop_875"
+			}
+		}
+
+		log.WithField("dataset_category", datasetCategory).
+			WithField("dataset_name", datasetName).
+			Info("using the specified dataset")
+>>>>>>> aef4f546636baccd99ff4b17211b74dec0a09643
 
 		var images []interface{}
 		for out := range output {
@@ -463,5 +479,6 @@ var predictDatasetCmd = &cobra.Command{
 func init() {
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetCategory, "dataset_category", "vision", "the dataset category to use for prediction")
 	predictDatasetCmd.PersistentFlags().StringVar(&datasetName, "dataset_name", "ilsvrc2012_validation", "the name of the dataset to perform the evaluations on. When using `ilsvrc2012_validation`, optimized versions of the dataset are used when the input network takes 224 or 227")
+	predictDatasetCmd.PersistentFlags().BoolVar(&centerCrop, "center_crop", true, "determines whether the dataset used should be center cropped")
 	predictDatasetCmd.PersistentFlags().IntVar(&numFileParts, "num_file_parts", -1, "the number of file parts to process. Setting file parts to a value other than -1 means that only the first num_file_parts * batch_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 }
