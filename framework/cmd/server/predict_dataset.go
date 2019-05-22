@@ -275,6 +275,10 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 		numFileParts = len(fileParts)
 	}
 
+	log.WithField("dataset_category", datasetCategory).
+		WithField("dataset_name", datasetName).
+		Info("using the specified dataset")
+
 	inferenceProgress := dlcmd.NewProgress("inferring", fileCnt)
 
 	for _, part := range fileParts {
@@ -299,10 +303,6 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 			Then(steps.NewReadImage(preprocessOptions)).
 			Then(steps.NewPreprocessImage(preprocessOptions)).
 			Run(input)
-
-		log.WithField("dataset_category", datasetCategory).
-			WithField("dataset_name", datasetName).
-			Info("using the specified dataset")
 
 		var images []interface{}
 		for out := range output {
