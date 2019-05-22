@@ -14,6 +14,7 @@ import (
 
 	"github.com/Unknwon/com"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/k0kubun/pp"
 	"github.com/pkg/errors"
 	"github.com/rai-project/database"
 	mongodb "github.com/rai-project/database/mongodb"
@@ -412,6 +413,10 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 		Top1:      float64(cntTop1) / float64(fileCnt),
 		Top5:      float64(cntTop5) / float64(fileCnt),
 	}
+
+	pp.Println("Top1 = ", float64(cntTop1)/float64(fileCnt))
+	pp.Println("Top5 = ", float64(cntTop5)/float64(fileCnt))
+
 	if err := modelAccuracyTable.Insert(modelAccuracy); err != nil {
 		log.WithError(err).Error("failed to publish model accuracy entry")
 	}
