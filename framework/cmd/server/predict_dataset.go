@@ -425,6 +425,7 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 	log.WithField("model", modelName).Info("downloading trace information")
 
 	var trace evaluation.TraceInformation
+		err = easyjson.UnmarshalFromReader(resp, &trace)
 	if err != nil {
 		log.WithError(err).Error("failed to decode trace information")
 	}
