@@ -277,7 +277,7 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 	inferenceProgress := dlcmd.NewProgress("inferring", fileCnt)
 
-	for _, part := range fileParts {
+	for _, part := range fileParts[:numFileParts] {
 		input := make(chan interface{}, DefaultChannelBuffer)
 		go func() {
 			defer close(input)
