@@ -271,10 +271,6 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 	fileCnt := len(files)
 
-	if numFileParts == -1 {
-		numFileParts = len(fileParts)
-	}
-
 	log.WithField("dataset_category", datasetCategory).
 		WithField("dataset_name", datasetName).
 		Info("using the specified dataset")
