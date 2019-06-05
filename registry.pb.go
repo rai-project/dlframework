@@ -8,12 +8,6 @@ import (
 	compress_gzip "compress/gzip"
 	context "context"
 	fmt "fmt"
-	io "io"
-	io_ioutil "io/ioutil"
-	math "math"
-	reflect "reflect"
-	strings "strings"
-
 	_ "github.com/gogo/protobuf/gogoproto"
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
@@ -22,6 +16,11 @@ import (
 	golang_proto "github.com/golang/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	io "io"
+	io_ioutil "io/ioutil"
+	math "math"
+	reflect "reflect"
+	strings "strings"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

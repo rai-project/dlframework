@@ -41,8 +41,8 @@ func GetPredictor(framework dl.FrameworkManifest) (predictor.Predictor, error) {
 	if err != nil {
 		return nil, err
 	}
-	if len(predictors) != 1 {
-		return nil, errors.Errorf("expecting only one predictor but got %v", len(predictors))
+	if len(predictors) == 0 {
+		return nil, errors.Errorf("no predictor found for framework %v ", framework.GetName())
 	}
 	return predictors[0], nil
 }
