@@ -213,7 +213,7 @@ func computeLatency(qps float64) (trace synthetic_load.Trace, latency time.Durat
 
 var predictWorkloadCmd = &cobra.Command{
 	Use:     "workload",
-	Short:   "Evaluates the workload using the specified model and framework",
+	Short:   "Evaluate the workload using the specified model and framework",
 	Aliases: []string{"work-load"},
 	RunE: func(c *cobra.Command, args []string) error {
 		tr, latency, err := computeLatency(qps)

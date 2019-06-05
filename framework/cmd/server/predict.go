@@ -36,7 +36,7 @@ var (
 
 var predictCmd = &cobra.Command{
 	Use:   "predict",
-	Short: "Predicts using the MLModelScope agent",
+	Short: "Predict using the agent",
 	PersistentPreRunE: func(c *cobra.Command, args []string) error {
 		rootCmd := c.Parent()
 		for rootCmd.HasParent() {

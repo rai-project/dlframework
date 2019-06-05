@@ -449,7 +449,7 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 var predictDatasetCmd = &cobra.Command{
 	Use:     "dataset",
-	Short:   "Evaluates the dataset using the specified model and framework",
+	Short:   "Evaluate the dataset using the specified model and framework",
 	Aliases: []string{"dataset"},
 	RunE: func(c *cobra.Command, args []string) error {
 		if modelName == "all" {

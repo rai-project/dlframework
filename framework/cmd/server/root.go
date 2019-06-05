@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/rai-project/config"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/cmd"
+	evalcmd "github.com/rai-project/evaluation/cmd"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,15 +34,15 @@ type FrameworkRegisterFunction func()
 func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 dlframework.FrameworkManifest) (*cobra.Command, error) {
 	frameworkName := framework0.GetName()
 	rootCmd := &cobra.Command{
-		Use:   frameworkName + "-agent",
-		Short: "Runs the carml " + frameworkName + " agent",
+		Use:   strings.ToLower(frameworkName) + "-agent",
+		Short: "Runs the MLModelScope " + frameworkName + " agent",
 		PersistentPreRunE: func(c *cobra.Command, args []string) error {
 			frameworkRegisterFunc()
 			framework = framework0
-			//dllayer.Framework = framework
 			return nil
 		},
 		RunE: func(c *cobra.Command, args []string) error {
+			fmt.Println("Run '" + strings.ToLower(frameworkName) + "-agent --help' for usage")
 			return nil
 		},
 	}
@@ -68,6 +70,7 @@ func SetupFlags(c *cobra.Command) {
 	c.AddCommand(downloadCmd)
 	addContainerCmd(c)
 	c.AddCommand(infoCmd)
+	c.AddCommand(evalcmd.EvaluationCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
@@ -97,6 +100,5 @@ func initConfig() {
 	shutdown.FirstFn(func() {})
 	shutdown.SecondFn(func() {
 		fmt.Println("🛑  shutting down!!")
-		// tracer.Close()
 	})
 }

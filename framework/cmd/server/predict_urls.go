@@ -583,7 +583,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 var predictUrlsCmd = &cobra.Command{
 	Use:     "urls",
-	Short:   "Evaluates the urls using the specified model and framework",
+	Short:   "Evaluate the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
 		if modelName == "all" {

@@ -10,7 +10,7 @@ import (
 
 var predictQPSCmd = &cobra.Command{
 	Use:     "max-qps",
-	Short:   "Finds the maximun qps of the system using the specified model, framework and workload",
+	Short:   "Find the maximun qps of the system using the specified model, framework and workload",
 	Aliases: []string{"qps", "findmaxqps", "maxqps"},
 	RunE: func(c *cobra.Command, args []string) error {
 		qpsLowerBound := 0.0

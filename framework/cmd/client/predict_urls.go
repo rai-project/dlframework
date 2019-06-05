@@ -24,9 +24,9 @@ import (
 )
 
 var urlsCmd = &cobra.Command{
-	Use:     "urlsCmd",
-	Short:   "urlsCmd",
-	Aliases: []string{"urls", "url"},
+	Use:     "urls",
+	Short:   "Request MLModelScope agents to predict urls",
+	Aliases: []string{"url"},
 	Long:    `urlsCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
