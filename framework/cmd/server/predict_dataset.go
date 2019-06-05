@@ -286,16 +286,50 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 
 	close(outputs)
 
-	if publishToDatabase == false {
-		for range outputs {
-		}
-		log.WithField("model", modelName).Info("publishToDatabase is false")
-		return nil
-	}
-
 	cnt := 0
 	cntTop1 := 0
 	cntTop5 := 0
+
+	if publishToDatabase == false {
+		for out0 := range outputs {
+			if cnt > fileCnt {
+				break
+			}
+			out, ok := out0.(steps.IDer)
+			if !ok {
+				return errors.Errorf("expecting steps.IDer, but got %v", out0)
+			}
+			id := out.GetID()
+			label := partlabels[id]
+
+			features := out.GetData().(dl.Features)
+			if !ok {
+				return errors.Errorf("expecting a dlframework.Features type, but got %v", out.GetData())
+			}
+			features.Sort()
+
+			if features[0].Type == dl.FeatureType_CLASSIFICATION {
+				label = strings.TrimSpace(strings.ToLower(label))
+				if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+					cntTop1++
+				}
+				for _, f := range features[:5] {
+					if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+						cntTop5++
+					}
+				}
+			} else {
+				panic("expecting a Classification type")
+			}
+			cnt++
+		}
+
+		log.WithField("model", modelName).Info("publishToDatabase is false")
+
+		pp.Println(fmt.Sprintf("Top1 = %v,Top5 = %v ", float64(cntTop1)/float64(fileCnt), float64(cntTop5)/float64(fileCnt)))
+
+		return nil
+	}
 
 	// Dummy userID and runID hardcoded
 	// TODO read userID from manifest file
