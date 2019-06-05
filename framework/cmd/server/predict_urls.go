@@ -56,7 +56,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 	log.WithField("model", modelName).Info("running predict urls")
 
-	if publishEvaluation == true {
+	if publishToDatabase == true {
 		opts := []database.Option{}
 		if len(databaseEndpoints) != 0 {
 			opts = append(opts, database.Endpoints(databaseEndpoints))
@@ -393,7 +393,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
 
-	if publishEvaluation == false {
+	if publishToDatabase == false {
 		for range outputs {
 		}
 
@@ -424,7 +424,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		ts := strings.ToLower(tracer.LevelToName(traceLevel))
 		tracerFileName := "trace_" + ts + ".json"
 		tracerFilePath := filepath.Join(baseDir, tracerFileName)
-		if (publishEvaluation == false) && com.IsFile(tracerFilePath) {
+		if (publishToDatabase == false) && com.IsFile(tracerFilePath) {
 			log.WithField("path", tracerFilePath).Info("trace file already exists")
 			return nil
 		}
@@ -449,7 +449,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			_, err = io.Copy(f, archiver)
 		}
 
-		log.WithField("model", modelName).WithField("path", tracerFilePath).Infof("publishEvaluation is false, writing the trace to a local file")
+		log.WithField("model", modelName).WithField("path", tracerFilePath).Infof("publishToDatabase is false, writing the trace to a local file")
 
 		pp.Println(fmt.Sprintf("the trace is at %v locally", tracerFilePath))
 

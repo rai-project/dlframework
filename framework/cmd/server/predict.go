@@ -23,7 +23,7 @@ var (
 	tracePreprocess       bool
 	batchSize             int
 	partitionListSize     int
-	publishEvaluation     bool
+	publishToDatabase     bool
 	publishPredictions    bool
 	failOnFirstError      bool
 	traceLevelName        string
@@ -94,7 +94,7 @@ func init() {
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "use_gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
 	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", true, "whether to trace the preproessing steps. By defatult it is set to true")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
-	predictCmd.PersistentFlags().BoolVar(&publishEvaluation, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
+	predictCmd.PersistentFlags().BoolVar(&publishToDatabase, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
 	predictCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")
 	predictCmd.PersistentFlags().StringVar(&traceLevelName, "trace_level", traceLevel.String(), "the trace level to use while performing evaluations")
 	predictCmd.PersistentFlags().StringVar(&tracerAddress, "tracer_address", "", "the address of the jaeger or the zipking trace server")
@@ -102,7 +102,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
 	predictCmd.PersistentFlags().StringVar(&resultsDir, "results_dir", "results", "the folder path to store the results. By default 'results' is used")
 
-	// predictCmd.AddCommand(predictDatasetCmd)
+	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
 	// predictCmd.AddCommand(predictWorkloadCmd)
 	// predictCmd.AddCommand(predictQPSCmd)
