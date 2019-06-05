@@ -56,68 +56,47 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 	log.WithField("model", modelName).Info("running predict urls")
 
-	var device string
-	if useGPU {
-		device = "gpu"
-	} else {
-		device = "cpu"
-	}
-	baseDir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
-	if !com.IsDir(baseDir) {
-		os.MkdirAll(baseDir, os.ModePerm)
-	}
-	ts := strings.ToLower(tracer.LevelToName(traceLevel))
-	tracerFileName := "trace_" + ts + ".json"
-	tracerFilePath := filepath.Join(baseDir, tracerFileName)
-	if (publishEvaluation == false) && com.IsFile(tracerFilePath) {
-		log.WithField("path", tracerFilePath).Info("trace file already exists")
-		return nil
-	}
-
-	if useGPU {
-		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			ioutil.WriteFile(filepath.Join(baseDir, "nvidia_info.json"), bts, 0644)
+	if publishEvaluation == true {
+		opts := []database.Option{}
+		if len(databaseEndpoints) != 0 {
+			opts = append(opts, database.Endpoints(databaseEndpoints))
 		}
-	}
 
-	if machine.Info != nil && machine.Info.Hostname != "" {
-		bts, err := json.Marshal(machine.Info)
-		if err == nil {
-			ioutil.WriteFile(filepath.Join(baseDir, "system_info.json"), bts, 0644)
+		db, err = mongodb.NewDatabase(databaseName, opts...)
+		if err != nil {
+			return errors.Wrapf(err,
+				"⚠️ failed to create new database %s at %v",
+				databaseName, databaseEndpoints,
+			)
 		}
+		defer db.Close()
+
+		evaluationTable, err = evaluation.NewEvaluationCollection(db)
+		if err != nil {
+			return err
+		}
+		defer evaluationTable.Close()
+
+		modelAccuracyTable, err = evaluation.NewModelAccuracyCollection(db)
+		if err != nil {
+			return err
+		}
+		defer modelAccuracyTable.Close()
+
+		performanceTable, err = evaluation.NewPerformanceCollection(db)
+		if err != nil {
+			return err
+		}
+		defer performanceTable.Close()
+
+		inputPredictionsTable, err = evaluation.NewInputPredictionCollection(db)
+		if err != nil {
+			return err
+		}
+		defer inputPredictionsTable.Close()
+
 	}
 
-	rootSpan, ctx := tracer.StartSpanFromContext(
-		context.Background(),
-		tracer.APPLICATION_TRACE,
-		"evaluation_predict_urls",
-		opentracing.Tags{
-			"framework_name":     framework.Name,
-			"framework_version":  framework.Version,
-			"model_name":         modelName,
-			"model_version":      modelVersion,
-			"use_gpu":            useGPU,
-			"batch_size":         batchSize,
-			"num_warmup_batches": numWarmUpUrlParts,
-		},
-	)
-	if rootSpan == nil {
-		panic("invalid span")
-	}
-
-	opts := []database.Option{}
-	if len(databaseEndpoints) != 0 {
-		opts = append(opts, database.Endpoints(databaseEndpoints))
-	}
-
-	db, err := mongodb.NewDatabase(databaseName, opts...)
-	if err != nil {
-		return errors.Wrapf(err,
-			"⚠️ failed to create new database %s at %v",
-			databaseName, databaseEndpoints,
-		)
-	}
-	defer db.Close()
 	predictors, err := agent.GetPredictors(framework)
 	if err != nil {
 		return errors.Wrapf(err,
@@ -155,7 +134,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	} else {
 		dc = map[string]int32{"CPU": 0}
 	}
-
 	execOpts := &dl.ExecutionOptions{
 		TraceLevel: dl.ExecutionOptions_TraceLevel(
 			dl.ExecutionOptions_TraceLevel_value[traceLevel.String()],
@@ -167,6 +145,25 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		BatchSize:        int32(batchSize),
 		ExecutionOptions: execOpts,
 	}
+
+	rootSpan, ctx := tracer.StartSpanFromContext(
+		context.Background(),
+		tracer.APPLICATION_TRACE,
+		"evaluation_predict_urls",
+		opentracing.Tags{
+			"framework_name":     framework.Name,
+			"framework_version":  framework.Version,
+			"model_name":         modelName,
+			"model_version":      modelVersion,
+			"use_gpu":            useGPU,
+			"batch_size":         batchSize,
+			"num_warmup_batches": numWarmUpUrlParts,
+		},
+	)
+	if rootSpan == nil {
+		panic("invalid span")
+	}
+	rootSpan.SetTag("num_batches", numUrlParts)
 
 	predictor, err := predictorHandle.Load(
 		ctx,
@@ -211,63 +208,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 
 	inputPredictionIds := []bson.ObjectId{}
-
-	hostName, _ := os.Hostname()
-	metadata := map[string]string{}
-	if useGPU {
-		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			metadata["nvidia_smi"] = string(bts)
-			rootSpan.SetTag("nvidia_smi", string(bts))
-		}
-	}
-
-	// Dummy userID and runID hardcoded
-	// TODO read userID from manifest file
-	// calculate runID from table
-	userID := "evaluator"
-	runID := uuid.NewV4()
-
-	evaluationEntry := evaluation.Evaluation{
-		ID:                  bson.NewObjectId(),
-		UserID:              userID,
-		RunID:               runID,
-		CreatedAt:           time.Now(),
-		Framework:           *model.GetFramework(),
-		Model:               *model,
-		DatasetCategory:     "",
-		DatasetName:         "",
-		Public:              false,
-		Hostname:            hostName,
-		UsingGPU:            useGPU,
-		BatchSize:           batchSize,
-		TraceLevel:          traceLevel.String(),
-		MachineArchitecture: runtime.GOARCH,
-		Metadata:            metadata,
-	}
-
-	evaluationTable, err := evaluation.NewEvaluationCollection(db)
-	if err != nil {
-		return err
-	}
-	defer evaluationTable.Close()
-
-	modelAccuracyTable, err := evaluation.NewModelAccuracyCollection(db)
-	if err != nil {
-		return err
-	}
-	defer modelAccuracyTable.Close()
-
-	performanceTable, err := evaluation.NewPerformanceCollection(db)
-	if err != nil {
-		return err
-	}
-	defer performanceTable.Close()
-
-	inputPredictionsTable, err := evaluation.NewInputPredictionCollection(db)
-	if err != nil {
-		return err
-	}
-	defer inputPredictionsTable.Close()
 
 	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
@@ -351,10 +291,16 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		numUrlParts = len(urlParts)
 	}
 
-	rootSpan.SetTag("num_batches", numUrlParts)
+	hostName, _ := os.Hostname()
+	metadata := map[string]string{}
+	if useGPU {
+		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+			metadata["nvidia_smi"] = string(bts)
+			rootSpan.SetTag("nvidia_smi", string(bts))
+		}
+	}
 
 	urlCnt := len(urls)
-
 	inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
 
 	for ii, part := range urlParts[:numUrlParts] {
@@ -436,7 +382,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if runtime.GOARCH == "ppc64le" {
 		traceIDVal = strconv.FormatUint(traceID.Low, 16)
 	}
-	pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
+	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
 
 	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
 	resp, err := grequests.Get(query, nil)
@@ -451,6 +397,37 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		for range outputs {
 		}
 
+		var device string
+		if useGPU {
+			device = "gpu"
+		} else {
+			device = "cpu"
+		}
+		baseDir := filepath.Join(resultsDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
+		if !com.IsDir(baseDir) {
+			os.MkdirAll(baseDir, os.ModePerm)
+		}
+
+		if useGPU {
+			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+				ioutil.WriteFile(filepath.Join(baseDir, "nvidia_info.json"), bts, 0644)
+			}
+		}
+
+		if machine.Info != nil && machine.Info.Hostname != "" {
+			bts, err := json.Marshal(machine.Info)
+			if err == nil {
+				ioutil.WriteFile(filepath.Join(baseDir, "system_info.json"), bts, 0644)
+			}
+		}
+
+		ts := strings.ToLower(tracer.LevelToName(traceLevel))
+		tracerFileName := "trace_" + ts + ".json"
+		tracerFilePath := filepath.Join(baseDir, tracerFileName)
+		if (publishEvaluation == false) && com.IsFile(tracerFilePath) {
+			log.WithField("path", tracerFilePath).Info("trace file already exists")
+			return nil
+		}
 		err := ioutil.WriteFile(tracerFilePath, resp.Bytes(), 0644)
 		if err != nil {
 			return err
@@ -471,7 +448,10 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 			_, err = io.Copy(f, archiver)
 		}
-		log.WithField("model", modelName).WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
+
+		log.WithField("model", modelName).WithField("path", tracerFilePath).Infof("publishEvaluation is false, writing the trace to a local file")
+
+		pp.Println(fmt.Sprintf("the trace is at %v locally", tracerFilePath))
 
 		return nil
 	}
@@ -479,6 +459,30 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	cnt := 0
 	cntTop1 := 0
 	cntTop5 := 0
+
+	// Dummy userID and runID hardcoded
+	// TODO read userID from manifest file
+	// calculate runID from table
+	userID := "evaluator"
+	runID := uuid.NewV4()
+
+	evaluationEntry := evaluation.Evaluation{
+		ID:                  bson.NewObjectId(),
+		UserID:              userID,
+		RunID:               runID,
+		CreatedAt:           time.Now(),
+		Framework:           *model.GetFramework(),
+		Model:               *model,
+		DatasetCategory:     "",
+		DatasetName:         "",
+		Public:              false,
+		Hostname:            hostName,
+		UsingGPU:            useGPU,
+		BatchSize:           batchSize,
+		TraceLevel:          traceLevel.String(),
+		MachineArchitecture: runtime.GOARCH,
+		Metadata:            metadata,
+	}
 
 	databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
 

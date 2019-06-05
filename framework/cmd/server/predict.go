@@ -5,7 +5,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/rai-project/config"
+	"github.com/rai-project/database"
 	"github.com/rai-project/database/mongodb"
+	"github.com/rai-project/evaluation"
 	nvidiasmi "github.com/rai-project/nvidia-smi"
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/tracer/jaeger"
@@ -15,23 +17,29 @@ import (
 )
 
 var (
-	modelName            string
-	modelVersion         string
-	useGPU               bool
-	tracePreprocess      bool
-	batchSize            int
-	partitionListSize    int
-	publishEvaluation    bool
-	publishPredictions   bool
-	failOnFirstError     bool
-	traceLevelName       string
-	traceLevel           tracer.Level = tracer.MODEL_TRACE
-	tracerAddress        string
-	databaseAddress      string
-	databaseName         string
-	databaseEndpoints    []string
-	DefaultChannelBuffer = 100000
-	fixTracerEndpoints   = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
+	modelName             string
+	modelVersion          string
+	useGPU                bool
+	tracePreprocess       bool
+	batchSize             int
+	partitionListSize     int
+	publishEvaluation     bool
+	publishPredictions    bool
+	failOnFirstError      bool
+	traceLevelName        string
+	traceLevel            tracer.Level = tracer.MODEL_TRACE
+	tracerAddress         string
+	databaseAddress       string
+	databaseName          string
+	databaseEndpoints     []string
+	db                    database.Database
+	evaluationTable       *evaluation.EvaluationCollection
+	modelAccuracyTable    *evaluation.ModelAccuracyCollection
+	performanceTable      *evaluation.PerformanceCollection
+	inputPredictionsTable *evaluation.InputPredictionCollection
+	DefaultChannelBuffer  = 100000
+	fixTracerEndpoints    = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
+	resultsDir            string
 )
 
 var predictCmd = &cobra.Command{
@@ -92,9 +100,10 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&tracerAddress, "tracer_address", "", "the address of the jaeger or the zipking trace server")
 	predictCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to. By default the app name in the config `app.name` is used")
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
+	predictCmd.PersistentFlags().StringVar(&resultsDir, "results_dir", "results", "the folder path to store the results. By default 'results' is used")
 
-	predictCmd.AddCommand(predictDatasetCmd)
+	// predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
-	predictCmd.AddCommand(predictWorkloadCmd)
-	predictCmd.AddCommand(predictQPSCmd)
+	// predictCmd.AddCommand(predictWorkloadCmd)
+	// predictCmd.AddCommand(predictQPSCmd)
 }
