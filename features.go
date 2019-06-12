@@ -50,8 +50,12 @@ func (p Features) ProbabilitiesFloat32() []float32 {
 	return pProbs
 }
 
-func (p Features) ProbabilitiesApplySoftmaxFloat32() []float32 {
+func (p Features) ProbabilitiesApplySoftmaxFloat32() Features {
 	newProbs := p.ProbabilitiesSoftmaxFloat32()
+	for ii, np := range newProbs {
+		p[ii].Probability = np
+	}
+	return p
 }
 
 func (p Features) ProbabilitiesSoftmaxFloat32() []float32 {
@@ -71,6 +75,27 @@ func (p Features) ProbabilitiesFloat64() []float64 {
 	pProbs := make([]float64, p.Len())
 	for ii := 0; ii < p.Len(); ii++ {
 		pProbs[ii] = float64(p[ii].Probability)
+	}
+	return pProbs
+}
+
+func (p Features) ProbabilitiesApplySoftmaxFloat64() Features {
+	newProbs := p.ProbabilitiesSoftmaxFloat64()
+	for ii, np := range newProbs {
+		p[ii].Probability = float32(np)
+	}
+	return p
+}
+
+func (p Features) ProbabilitiesSoftmaxFloat64() []float64 {
+	pProbs := make([]float64, p.Len())
+	accum := 0.0
+	for ii := 0; ii < p.Len(); ii++ {
+		pProbs[ii] = math.Exp(float64(p[ii].Probability))
+		accum += pProbs[ii]
+	}
+	for ii, p := range pProbs {
+		pProbs[ii] = p / accum
 	}
 	return pProbs
 }
