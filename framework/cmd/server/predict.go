@@ -39,7 +39,7 @@ var (
 	inputPredictionsTable *evaluation.InputPredictionCollection
 	DefaultChannelBuffer  = 100000
 	fixTracerEndpoints    = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
-	resultsDir            string
+	baseDir               string
 )
 
 var predictCmd = &cobra.Command{
@@ -100,7 +100,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&tracerAddress, "tracer_address", "", "the address of the jaeger or the zipking trace server")
 	predictCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to. By default the app name in the config `app.name` is used")
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
-	predictCmd.PersistentFlags().StringVar(&resultsDir, "results_dir", "results", "the folder path to store the results. By default 'results' is used")
+	predictCmd.PersistentFlags().StringVar(&baseDir, "base_dir", "results", "the folder path to store the results. By default 'results' is used")
 
 	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)

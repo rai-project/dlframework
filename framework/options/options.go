@@ -10,15 +10,16 @@ import (
 )
 
 type Options struct {
-	ctx          context.Context
-	devices      devices
-	batchSize    int
-	featureLimit int
-	traceLevel   tracer.Level
-	graph        []byte
-	weights      []byte
-	intputNodes  []Node
-	outputNodes  []Node
+	ctx           context.Context
+	devices       devices
+	batchSize     int
+	featureLimit  int
+	traceLevel    tracer.Level
+	graph         []byte
+	weights       []byte
+	intputNodes   []Node
+	outputNodes   []Node
+	outputIndexes []int
 }
 
 type Option func(*Options)
@@ -207,6 +208,14 @@ func (o *Options) OutputNodes() []Node {
 
 func (o *Options) SetOutputNodes(ins []Node) {
 	o.outputNodes = ins
+}
+
+func (o *Options) OutputIndexes() []int {
+	return o.outputIndexes
+}
+
+func (o *Options) SetOutputIndexes(outIdxs []int) {
+	o.outputIndexes = outIdxs
 }
 
 func PredictorOptions(p *dl.PredictionOptions) Option {

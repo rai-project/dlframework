@@ -4,6 +4,7 @@ import (
 	"math"
 	"sort"
 
+	"github.com/chewxy/math32"
 	"github.com/pkg/errors"
 )
 
@@ -45,6 +46,23 @@ func (p Features) ProbabilitiesFloat32() []float32 {
 	pProbs := make([]float32, p.Len())
 	for ii := 0; ii < p.Len(); ii++ {
 		pProbs[ii] = p[ii].Probability
+	}
+	return pProbs
+}
+
+func (p Features) ProbabilitiesApplySoftmaxFloat32() []float32 {
+	newProbs := p.ProbabilitiesSoftmaxFloat32()
+}
+
+func (p Features) ProbabilitiesSoftmaxFloat32() []float32 {
+	pProbs := make([]float32, p.Len())
+	accum := float32(0.0)
+	for ii := 0; ii < p.Len(); ii++ {
+		pProbs[ii] = math32.Exp(p[ii].Probability)
+		accum += pProbs[ii]
+	}
+	for ii, p := range pProbs {
+		pProbs[ii] = p / accum
 	}
 	return pProbs
 }

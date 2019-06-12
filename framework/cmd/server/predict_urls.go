@@ -403,43 +403,43 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		} else {
 			device = "cpu"
 		}
-		baseDir := filepath.Join(resultsDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
-		if !com.IsDir(baseDir) {
-			os.MkdirAll(baseDir, os.ModePerm)
+		outputDir := filepath.Join(baseDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
+		if !com.IsDir(outputDir) {
+			os.MkdirAll(outputDir, os.ModePerm)
 		}
 
 		if useGPU {
 			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-				ioutil.WriteFile(filepath.Join(baseDir, "nvidia_info.json"), bts, 0644)
+				ioutil.WriteFile(filepath.Join(outputDir, "nvidia_info.json"), bts, 0644)
 			}
 		}
 
 		if machine.Info != nil && machine.Info.Hostname != "" {
 			bts, err := json.Marshal(machine.Info)
 			if err == nil {
-				ioutil.WriteFile(filepath.Join(baseDir, "system_info.json"), bts, 0644)
+				ioutil.WriteFile(filepath.Join(outputDir, "system_info.json"), bts, 0644)
 			}
 		}
 
 		ts := strings.ToLower(tracer.LevelToName(traceLevel))
-		tracerFileName := "trace_" + ts + ".json"
-		tracerFilePath := filepath.Join(baseDir, tracerFileName)
-		if (publishToDatabase == false) && com.IsFile(tracerFilePath) {
-			log.WithField("path", tracerFilePath).Info("trace file already exists")
+		traceFileName := "trace_" + ts + ".json"
+		tracePath := filepath.Join(outputDir, traceFileName)
+		if (publishToDatabase == false) && com.IsFile(tracePath) {
+			log.WithField("path", tracePath).Info("trace file already exists")
 			return nil
 		}
-		err := ioutil.WriteFile(tracerFilePath, resp.Bytes(), 0644)
+		err := ioutil.WriteFile(tracePath, resp.Bytes(), 0644)
 		if err != nil {
 			return err
 		}
 
 		if false {
-			archiver, err := archive.Zip(tracerFilePath, archive.BZip2Format())
+			archiver, err := archive.Zip(tracePath, archive.BZip2Format())
 			if err != nil {
 				return err
 			}
 
-			archiveFilePath := strings.TrimSuffix(tracerFilePath, ".json") + ".tar.bz2"
+			archiveFilePath := strings.TrimSuffix(tracePath, ".json") + ".tar.bz2"
 			f, err := os.Create(archiveFilePath)
 			if err != nil {
 				return err
@@ -449,9 +449,9 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			_, err = io.Copy(f, archiver)
 		}
 
-		log.WithField("model", modelName).WithField("path", tracerFilePath).Infof("publishToDatabase is false, writing the trace to a local file")
+		log.WithField("model", modelName).WithField("path", tracePath).Infof("publishToDatabase is false, writing the trace to a local file")
 
-		pp.Println(fmt.Sprintf("the trace is at %v locally", tracerFilePath))
+		pp.Println(fmt.Sprintf("the trace is at %v locally", tracePath))
 
 		return nil
 	}

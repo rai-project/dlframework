@@ -35,14 +35,10 @@ func NewRootCommand(frameworkRegisterFunc FrameworkRegisterFunction, framework0 
 	frameworkName := framework0.GetName()
 	rootCmd := &cobra.Command{
 		Use:   strings.ToLower(frameworkName) + "-agent",
-		Short: "Runs the MLModelScope " + frameworkName + " agent",
+		Short: "Run the MLModelScope " + frameworkName + " agent",
 		PersistentPreRunE: func(c *cobra.Command, args []string) error {
 			frameworkRegisterFunc()
 			framework = framework0
-			return nil
-		},
-		RunE: func(c *cobra.Command, args []string) error {
-			fmt.Println("Run '" + strings.ToLower(frameworkName) + "-agent --help' for usage")
 			return nil
 		},
 	}
@@ -71,6 +67,7 @@ func SetupFlags(c *cobra.Command) {
 	addContainerCmd(c)
 	c.AddCommand(infoCmd)
 	c.AddCommand(evalcmd.EvaluationCmd)
+	c.AddCommand(traceCmd)
 
 	c.PersistentFlags().StringVar(&cmd.CfgFile, "config", "", "config file (default is $HOME/.carml_config.yaml)")
 	c.PersistentFlags().BoolVarP(&cmd.IsVerbose, "verbose", "v", false, "Toggle verbose mode.")
