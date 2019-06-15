@@ -85,7 +85,12 @@ func (p Base) GetWeightsUrl() string {
 	if model.GetModel().GetWeightsPath() == "" {
 		return ""
 	}
-	return strings.TrimRight(p.baseURL(model), "/") + "/" + model.GetModel().GetWeightsPath()
+	url := strings.TrimRight(p.baseURL(model), "/")
+	url = strings.TrimSpace(url)
+	if url != "" {
+		url += "/"
+	}
+	return url + model.GetModel().GetWeightsPath()
 }
 
 func (p Base) GetGraphUrl() string {
@@ -97,6 +102,7 @@ func (p Base) GetGraphUrl() string {
 		return ""
 	}
 	url := strings.TrimRight(p.baseURL(model), "/")
+	url = strings.TrimSpace(url)
 	if url != "" {
 		url += "/"
 	}

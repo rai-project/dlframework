@@ -406,46 +406,62 @@ func (p ImagePredictor) GetLabels() ([]string, error) {
 }
 
 func (p ImagePredictor) iCreateClassificationFeatures2DSlice(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
-	batchSize := p.BatchSize()
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
-	featureLen := len(probabilities[0])
+
+	batchSize := p.BatchSize()
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
-		rprobs := make([]*dlframework.Feature, featureLen)
-		for jj := 0; jj < featureLen; jj++ {
-			rprobs[jj] = feature.New(
-				feature.ClassificationIndex(int32(jj)),
-				feature.ClassificationLabel(labels[jj]),
-				feature.Probability(probabilities[ii][jj]),
-			)
-		}
-		sort.Sort(dlframework.Features(rprobs))
-		features[ii] = rprobs
+		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii], labels)
 	}
 
 	return features, nil
 }
 
+func createClassificationFeaturesBatch(ctx context.Context, probabilities []float32, labels []string) dlframework.Features {
+	featureLen := len(probabilities)
+	rprobs := make([]*dlframework.Feature, featureLen)
+	for jj := 0; jj < featureLen; jj++ {
+		rprobs[jj] = feature.New(
+			feature.ClassificationIndex(int32(jj)),
+			feature.ClassificationLabel(labels[jj]),
+			feature.Probability(probabilities[jj]),
+		)
+	}
+	res := dlframework.Features(rprobs)
+	sort.Sort(res)
+
+	return res
+}
+
 func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
+
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
 
 	batchSize := p.BatchSize()
 	featureLen := len(probabilities) / batchSize
 
-	probs := tensor.New(
-		tensor.Of(tensor.Float32),
-		tensor.WithBacking(probabilities),
-		tensor.WithShape(batchSize, featureLen),
-	)
+	features := make([]dlframework.Features, batchSize)
 
-	return p.CreateClassificationFeatures(ctx, probs, labels)
+	for ii := 0; ii < batchSize; ii++ {
+		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], labels)
+	}
+
+	return features, nil
 }
 
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities0 interface{}, labels []string) ([]dlframework.Features, error) {
+
 	if slc, ok := probabilities0.([][]float32); ok {
 		return p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
+	}
+
+	if slc, ok := probabilities0.([]float32); ok {
+		return p.CreateClassificationFeaturesFrom1D(ctx, slc, labels)
 	}
 
 	probabilities, ok := probabilities0.(tensor.Tensor)
@@ -453,36 +469,17 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 		return nil, errors.New("expecting an input tensor")
 	}
 
-	batchSize := p.BatchSize()
+	if probabilities.Shape()[0] != p.BatchSize() {
+		return nil, errors.New("len(batchsize) != expected batch size")
+	}
 	if probabilities.Size() == 0 {
 		return nil, errors.New("len(probabilities) == 0")
 	}
-	if probabilities.Dtype() == tensor.Float32 {
+	if probabilities.Dtype() != tensor.Float32 {
 		return nil, errors.New("invalid data type")
 	}
 
-	featureLen := probabilities.Shape()[0]
-	features := make([]dlframework.Features, batchSize)
-
-	for ii := 0; ii < batchSize; ii++ {
-		rprobs := make([]*dlframework.Feature, featureLen)
-		for jj := 0; jj < featureLen; jj++ {
-			iprob, err := probabilities.At(ii, jj)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid probability value at (%v,%v)", ii, jj)
-			}
-			prob := cast.ToFloat32(iprob)
-			rprobs[jj] = feature.New(
-				feature.ClassificationIndex(int32(jj)),
-				feature.ClassificationLabel(labels[jj]),
-				feature.Probability(prob),
-			)
-		}
-		sort.Sort(dlframework.Features(rprobs))
-		features[ii] = rprobs
-	}
-
-	return features, nil
+	return p.CreateClassificationFeaturesFrom1D(ctx, probabilities.Data().([]float32), labels)
 }
 
 func (p ImagePredictor) iCreateBoundingBoxFeaturesSlice(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
