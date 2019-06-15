@@ -14,6 +14,7 @@ package mlmodelscope.org.dlframework;
 
 import "features.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/duration.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 option (gogoproto.goproto_registration) = true;
@@ -170,6 +171,8 @@ message Predictor {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
+  google.protobuf.Duration duration = 5 
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
 }
 
 message URLsRequest {
@@ -259,6 +262,10 @@ message FeaturesResponse {
   TraceID trace_id = 2 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
   repeated FeatureResponse responses = 3
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
+  google.protobuf.Duration duration_for_inference = 4 
+      [ (gogoproto.moretags) = "yaml:\"duration_for_inference,omitempty\"" ];
+  google.protobuf.Duration duration = 5 
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
 }
 
 message ResetRequest {
@@ -278,6 +285,8 @@ message ResetResponse {
     (gogoproto.embed) = true,
     (gogoproto.moretags) = "yaml:\"predictor,omitempty\""
   ];
+  google.protobuf.Duration duration = 5 
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
 }
 
 service Predict {

@@ -2,6 +2,7 @@ package predictor
 
 import (
 	"io"
+	"time"
 
 	"context"
 
@@ -15,17 +16,17 @@ type Predictor interface {
 	// Gets predictor's Modality
 	Modality() (dlframework.Modality, error)
 	// Downloads model from manifest
-	Download(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) error
+	Download(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (time.Duration, error)
 	// Load model from manifest
-	Load(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (Predictor, error)
+	Load(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (Predictor, time.Duration, error)
 	// Returns the prediction options
 	GetPredictionOptions() (*options.Options, error)
 	// Returns the preprocess options
 	GetPreprocessOptions() (PreprocessOptions, error)
 	// Returns the handle to features
-	Predict(ctx context.Context, data interface{}, opts ...options.Option) error
+	Predict(ctx context.Context, data interface{}, opts ...options.Option) (time.Duration, time.Duration, error)
 	// Returns the features
-	ReadPredictedFeatures(ctx context.Context) ([]dlframework.Features, error)
+	ReadPredictedFeatures(ctx context.Context) ([]dlframework.Features, time.Duration, error)
 	// Clears the internal state of a predictor
 	Reset(ctx context.Context) error
 
