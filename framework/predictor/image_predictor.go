@@ -405,21 +405,6 @@ func (p ImagePredictor) GetLabels() ([]string, error) {
 	return labels, nil
 }
 
-func (p ImagePredictor) iCreateClassificationFeatures2DSlice(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
-	if len(probabilities) < 1 {
-		return nil, errors.New("len(probabilities) < 1")
-	}
-
-	batchSize := p.BatchSize()
-	features := make([]dlframework.Features, batchSize)
-
-	for ii := 0; ii < batchSize; ii++ {
-		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii], labels)
-	}
-
-	return features, nil
-}
-
 func createClassificationFeaturesBatch(ctx context.Context, probabilities []float32, labels []string) dlframework.Features {
 	featureLen := len(probabilities)
 	rprobs := make([]*dlframework.Feature, featureLen)
@@ -437,14 +422,12 @@ func createClassificationFeaturesBatch(ctx context.Context, probabilities []floa
 }
 
 func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, probabilities []float32, labels []string) ([]dlframework.Features, error) {
-
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
 
 	batchSize := p.BatchSize()
 	featureLen := len(probabilities) / batchSize
-
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
@@ -454,10 +437,25 @@ func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, 
 	return features, nil
 }
 
+func (p ImagePredictor) CreateClassificationFeaturesFrom2D(ctx context.Context, probabilities [][]float32, labels []string) ([]dlframework.Features, error) {
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+
+	batchSize := p.BatchSize()
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii], labels)
+	}
+
+	return features, nil
+}
+
 func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probabilities0 interface{}, labels []string) ([]dlframework.Features, error) {
 
 	if slc, ok := probabilities0.([][]float32); ok {
-		return p.iCreateClassificationFeatures2DSlice(ctx, slc, labels)
+		return p.CreateClassificationFeaturesFrom2D(ctx, slc, labels)
 	}
 
 	if slc, ok := probabilities0.([]float32); ok {
@@ -482,30 +480,54 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 	return p.CreateClassificationFeaturesFrom1D(ctx, probabilities.Data().([]float32), labels)
 }
 
-func (p ImagePredictor) iCreateBoundingBoxFeaturesSlice(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
-	batchSize := p.BatchSize()
+func createBoundingBoxFeaturesBatch(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) dlframework.Features {
+
+	featureLen := len(probabilities)
+	rprobs := make([]*dlframework.Feature, featureLen)
+	for jj := 0; jj < featureLen; jj++ {
+		rprobs[jj] = feature.New(
+			feature.BoundingBoxType(),
+			feature.BoundingBoxXmin(boxes[jj][1]),
+			feature.BoundingBoxXmax(boxes[jj][3]),
+			feature.BoundingBoxYmin(boxes[jj][0]),
+			feature.BoundingBoxYmax(boxes[jj][2]),
+			feature.BoundingBoxIndex(int32(classes[jj])),
+			feature.BoundingBoxLabel(labels[int32(classes[jj])]),
+			feature.Probability(probabilities[jj]),
+		)
+	}
+	res := dlframework.Features(rprobs)
+	sort.Sort(res)
+
+	return res
+}
+
+func (p ImagePredictor) CreateBoundingBoxFeaturesFrom1D(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) ([]dlframework.Features, error) {
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
-	featureLen := len(probabilities[0])
+
+	batchSize := p.BatchSize()
+	featureLen := len(probabilities) / batchSize
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
-		rprobs := make([]*dlframework.Feature, featureLen)
-		for jj := 0; jj < featureLen; jj++ {
-			rprobs[jj] = feature.New(
-				feature.BoundingBoxType(),
-				feature.BoundingBoxXmin(boxes[ii][jj][1]),
-				feature.BoundingBoxXmax(boxes[ii][jj][3]),
-				feature.BoundingBoxYmin(boxes[ii][jj][0]),
-				feature.BoundingBoxYmax(boxes[ii][jj][2]),
-				feature.BoundingBoxIndex(int32(classes[ii][jj])),
-				feature.BoundingBoxLabel(labels[int32(classes[ii][jj])]),
-				feature.Probability(probabilities[ii][jj]),
-			)
-		}
-		sort.Sort(dlframework.Features(rprobs))
-		features[ii] = rprobs
+		features[ii] = createBoundingBoxFeaturesBatch(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], classes[ii*featureLen:(ii+1)*featureLen], boxes[ii*featureLen:(ii+1)*featureLen], labels)
+	}
+
+	return features, nil
+}
+
+func (p ImagePredictor) CreateBoundingBoxFeaturesFrom2D(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
+	if len(probabilities) < 1 {
+		return nil, errors.New("len(probabilities) < 1")
+	}
+
+	batchSize := p.BatchSize()
+	features := make([]dlframework.Features, batchSize)
+
+	for ii := 0; ii < batchSize; ii++ {
+		features[ii] = createBoundingBoxFeaturesBatch(ctx, probabilities[ii], classes[ii], boxes[ii], labels)
 	}
 
 	return features, nil
@@ -513,7 +535,11 @@ func (p ImagePredictor) iCreateBoundingBoxFeaturesSlice(ctx context.Context, pro
 
 func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities0 interface{}, classes0 interface{}, boxes0 interface{}, labels []string) ([]dlframework.Features, error) {
 	if slc, ok := probabilities0.([][]float32); ok {
-		return p.iCreateBoundingBoxFeaturesSlice(ctx, slc, classes0.([][]float32), boxes0.([][][]float32), labels)
+		return p.CreateBoundingBoxFeaturesFrom2D(ctx, slc, classes0.([][]float32), boxes0.([][][]float32), labels)
+	}
+
+	if slc, ok := probabilities0.([]float32); ok {
+		return p.CreateBoundingBoxFeaturesFrom1D(ctx, slc, classes0.([]float32), boxes0.([][]float32), labels)
 	}
 
 	probabilities, ok := probabilities0.(tensor.Tensor)
