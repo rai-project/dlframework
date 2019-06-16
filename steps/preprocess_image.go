@@ -98,9 +98,9 @@ func (p *preprocessImage) doRGBImageCHW(in *types.RGBImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[y*width+x] = (float32(r) - mean[0]) / scale
-				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-				out[2*width*height+y*width+x] = (float32(b) - mean[2]) / scale
+				out[y*width+x] = (float32(r) - mean[0]) / scale[0]
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale[1]
+				out[2*width*height+y*width+x] = (float32(b) - mean[2]) / scale[2]
 			}
 		}
 	} else if mode == types.BGRMode {
@@ -109,9 +109,9 @@ func (p *preprocessImage) doRGBImageCHW(in *types.RGBImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[y*width+x] = (float32(b) - mean[2]) / scale
-				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-				out[2*width*height+y*width+x] = (float32(r) - mean[0]) / scale
+				out[y*width+x] = (float32(b) - mean[2]) / scale[2]
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale[1]
+				out[2*width*height+y*width+x] = (float32(r) - mean[0]) / scale[0]
 			}
 		}
 	} else {
@@ -138,9 +138,9 @@ func (p *preprocessImage) doRGBImageHWC(in *types.RGBImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[offset+0] = (float32(r) - mean[0]) / scale
-				out[offset+1] = (float32(g) - mean[1]) / scale
-				out[offset+2] = (float32(b) - mean[2]) / scale
+				out[offset+0] = (float32(r) - mean[0]) / scale[0]
+				out[offset+1] = (float32(g) - mean[1]) / scale[1]
+				out[offset+2] = (float32(b) - mean[2]) / scale[2]
 			}
 		}
 	} else if mode == types.BGRMode {
@@ -149,9 +149,9 @@ func (p *preprocessImage) doRGBImageHWC(in *types.RGBImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[offset+0] = (float32(b) - mean[2]) / scale
-				out[offset+1] = (float32(g) - mean[1]) / scale
-				out[offset+2] = (float32(r) - mean[0]) / scale
+				out[offset+0] = (float32(b) - mean[2]) / scale[2]
+				out[offset+1] = (float32(g) - mean[1]) / scale[1]
+				out[offset+2] = (float32(r) - mean[0]) / scale[0]
 			}
 		}
 	} else {
@@ -178,9 +178,9 @@ func (p *preprocessImage) doBGRImageCHW(in *types.BGRImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[y*width+x] = (float32(b) - mean[0]) / scale
-				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-				out[2*width*height+y*width+x] = (float32(r) - mean[2]) / scale
+				out[y*width+x] = (float32(b) - mean[0]) / scale[0]
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale[1]
+				out[2*width*height+y*width+x] = (float32(r) - mean[2]) / scale[2]
 			}
 		}
 	} else if mode == types.BGRMode {
@@ -189,9 +189,9 @@ func (p *preprocessImage) doBGRImageCHW(in *types.BGRImage) []float32 {
 				offset := y*in.Stride + x*3
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[y*width+x] = (float32(r) - mean[2]) / scale
-				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale
-				out[2*width*height+y*width+x] = (float32(b) - mean[0]) / scale
+				out[y*width+x] = (float32(r) - mean[2]) / scale[2]
+				out[width*height+y*width+x] = (float32(g) - mean[1]) / scale[1]
+				out[2*width*height+y*width+x] = (float32(b) - mean[0]) / scale[0]
 			}
 		}
 	} else {
@@ -218,9 +218,9 @@ func (p *preprocessImage) doBGRImageHWC(in *types.BGRImage) []float32 {
 			for x := 0; x < width; x++ {
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[offset+0] = (float32(b) - mean[0]) / scale
-				out[offset+1] = (float32(g) - mean[1]) / scale
-				out[offset+2] = (float32(r) - mean[2]) / scale
+				out[offset+0] = (float32(b) - mean[0]) / scale[0]
+				out[offset+1] = (float32(g) - mean[1]) / scale[1]
+				out[offset+2] = (float32(r) - mean[2]) / scale[2]
 				offset = offset + 3
 			}
 		}
@@ -230,9 +230,9 @@ func (p *preprocessImage) doBGRImageHWC(in *types.BGRImage) []float32 {
 			for x := 0; x < width; x++ {
 				rgb := in.Pix[offset : offset+3]
 				r, g, b := rgb[0], rgb[1], rgb[2]
-				out[offset+0] = (float32(r) - mean[2]) / scale
-				out[offset+1] = (float32(g) - mean[1]) / scale
-				out[offset+2] = (float32(b) - mean[0]) / scale
+				out[offset+0] = (float32(r) - mean[2]) / scale[2]
+				out[offset+1] = (float32(g) - mean[1]) / scale[1]
+				out[offset+2] = (float32(b) - mean[0]) / scale[0]
 				offset = offset + 3
 			}
 		}

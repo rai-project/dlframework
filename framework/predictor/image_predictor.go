@@ -30,10 +30,10 @@ import (
 type PreprocessOptions struct {
 	ElementType     string
 	MeanImage       []float32
+	Scale           []float32
 	Dims            []int
 	MaxDimension    *int
 	KeepAspectRatio *bool
-	Scale           float32
 	ColorMode       types.Mode
 	Layout          raiimage.Layout
 	CropMethod      cutter.AnchorMode
@@ -142,32 +142,36 @@ func (p ImagePredictor) GetMeanImage() ([]float32, error) {
 	return []float32{val, val, val}, nil
 }
 
-func (p ImagePredictor) GetScale() (float32, error) {
+func (p ImagePredictor) GetScale() ([]float32, error) {
 	model := p.Model
 	modelInputs := model.GetInputs()
 	if len(modelInputs) == 0 {
-		return 1.0, nil
+		return []float32{1.0, 1.0, 1.0}, nil
 	}
 	typeParameters := modelInputs[0].GetParameters()
 	if typeParameters == nil {
-		return 1.0, errors.New("invalid type parameters")
+		return []float32{1.0, 1.0, 1.0}, errors.New("invalid type parameters")
 	}
 	pscale, ok := typeParameters["scale"]
 	if !ok {
-		// log.Debug("no scaling")
-		return 1.0, nil
+		log.Debug("using 1.0,1.0,1.0 as the scale")
+		return []float32{1.0, 1.0, 1.0}, nil
 	}
 	pscaleVal := pscale.GetValue()
 	if pscaleVal == "" {
-		return 1.0, nil
+		return []float32{1.0, 1.0, 1.0}, nil
 	}
 
+	var vals []float32
+	if err := yaml.Unmarshal([]byte(pscaleVal), &vals); err == nil {
+		return vals, nil
+	}
 	var val float32
 	if err := yaml.Unmarshal([]byte(pscaleVal), &val); err != nil {
-		return 1.0, errors.Errorf("unable to get scale %v as a float", pscaleVal)
+		return nil, errors.Errorf("unable to get image scale %v as a float or slice", pscaleVal)
 	}
 
-	return val, nil
+	return []float32{val, val, val}, nil
 }
 
 func (p ImagePredictor) GetMaxDimension() (int, error) {
@@ -616,7 +620,7 @@ func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabili
 	return features, nil
 }
 
-func (p ImagePredictor) iCreateSemanticSegmentFeaturesSlice(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) CreateSemanticSegmentFeaturesFrom2D(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
 	if len(masks) < 1 {
 		return nil, errors.New("len(masks) < 1")
@@ -645,7 +649,12 @@ func (p ImagePredictor) iCreateSemanticSegmentFeaturesSlice(ctx context.Context,
 
 func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks0 interface{}, labels []string) ([]dlframework.Features, error) {
 	if masks, ok := masks0.([][][]int64); ok {
-		return p.iCreateSemanticSegmentFeaturesSlice(ctx, masks, labels)
+		return p.CreateSemanticSegmentFeaturesFrom2D(ctx, masks, labels)
+	}
+
+	if _, ok := masks0.([]float32); ok {
+		pp.Println("return type []float32 currently is not supported for semantic semenation")
+		return nil, nil
 	}
 
 	masks, ok := masks0.(tensor.Tensor)
@@ -746,9 +755,9 @@ func (p ImagePredictor) CreateRawImageFeatures(ctx context.Context, images [][][
 		pixels := make([]float32, width*height*channels)
 		for h := 0; h < height; h++ {
 			for w := 0; w < width; w++ {
-				pixels[(h*width+w)*channels+0] = curr[h][w][0]*scale + mean[0]
-				pixels[(h*width+w)*channels+1] = curr[h][w][1]*scale + mean[1]
-				pixels[(h*width+w)*channels+2] = curr[h][w][2]*scale + mean[2]
+				pixels[(h*width+w)*channels+0] = curr[h][w][0]*scale[0] + mean[0]
+				pixels[(h*width+w)*channels+1] = curr[h][w][1]*scale[1] + mean[1]
+				pixels[(h*width+w)*channels+2] = curr[h][w][2]*scale[2] + mean[2]
 			}
 		}
 		features[ii] = dlframework.Features{
@@ -787,9 +796,9 @@ func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]
 		img := image.NewRGBA(image.Rect(0, 0, width, height))
 		for w := 0; w < width; w++ {
 			for h := 0; h < height; h++ {
-				R := uint8(curr[h][w][0]*scale + mean[0])
-				G := uint8(curr[h][w][1]*scale + mean[1])
-				B := uint8(curr[h][w][2]*scale + mean[2])
+				R := uint8(curr[h][w][0]*scale[0] + mean[0])
+				G := uint8(curr[h][w][1]*scale[1] + mean[1])
+				B := uint8(curr[h][w][2]*scale[2] + mean[2])
 				img.Set(w, h, color.RGBA{R, G, B, 255})
 			}
 		}
