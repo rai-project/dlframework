@@ -4,6 +4,8 @@ import (
 	"math"
 	"sort"
 
+	"github.com/k0kubun/pp"
+
 	"github.com/chewxy/math32"
 	"github.com/pkg/errors"
 )
@@ -64,6 +66,11 @@ func (p Features) ProbabilitiesSoftmaxFloat32() []float32 {
 	for ii := 0; ii < p.Len(); ii++ {
 		pProbs[ii] = math32.Exp(p[ii].Probability)
 		accum += pProbs[ii]
+		if float64(accum) == math.Inf(+1) {
+			pp.Println(ii, p[ii].Probability)
+			break
+		}
+
 	}
 	for ii, p := range pProbs {
 		pProbs[ii] = p / accum

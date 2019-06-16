@@ -409,7 +409,32 @@ func (p ImagePredictor) GetLabels() ([]string, error) {
 	return labels, nil
 }
 
-func createClassificationFeaturesBatch(ctx context.Context, probabilities []float32, labels []string) dlframework.Features {
+func (p ImagePredictor) GetProbabilitiesTransform() string {
+	model := p.Model
+	modelOutput := model.GetOutput()
+	typeParameters := modelOutput.GetParameters()
+	if typeParameters == nil {
+		return ""
+	}
+	pProbTransfrom, ok := typeParameters["probabilities_transform"]
+	if !ok {
+		return ""
+	}
+	pProbTransfromVal := pProbTransfrom.GetValue()
+	if pProbTransfromVal == "" {
+		return ""
+	}
+
+	var val string
+	if err := yaml.Unmarshal([]byte(pProbTransfromVal), &val); err != nil {
+		log.Errorf("unable to get probabilities_transform %v as a string", pProbTransfromVal)
+		return ""
+	}
+
+	return val
+}
+
+func (p ImagePredictor) createClassificationFeaturesBatch(ctx context.Context, probabilities []float32, labels []string) dlframework.Features {
 	featureLen := len(probabilities)
 	rprobs := make([]*dlframework.Feature, featureLen)
 	for jj := 0; jj < featureLen; jj++ {
@@ -419,7 +444,13 @@ func createClassificationFeaturesBatch(ctx context.Context, probabilities []floa
 			feature.Probability(probabilities[jj]),
 		)
 	}
-	res := dlframework.Features(rprobs)
+
+	var res dlframework.Features
+	if p.GetProbabilitiesTransform() == "softmax" {
+		res = dlframework.Features(rprobs).ProbabilitiesApplySoftmaxFloat32()
+	} else {
+		res = dlframework.Features(rprobs)
+	}
 	sort.Sort(res)
 
 	return res
@@ -435,7 +466,7 @@ func (p ImagePredictor) CreateClassificationFeaturesFrom1D(ctx context.Context, 
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
-		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], labels)
+		features[ii] = p.createClassificationFeaturesBatch(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], labels)
 	}
 
 	return features, nil
@@ -450,7 +481,7 @@ func (p ImagePredictor) CreateClassificationFeaturesFrom2D(ctx context.Context, 
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
-		features[ii] = createClassificationFeaturesBatch(ctx, probabilities[ii], labels)
+		features[ii] = p.createClassificationFeaturesBatch(ctx, probabilities[ii], labels)
 	}
 
 	return features, nil
