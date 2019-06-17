@@ -22,9 +22,8 @@ import (
 	"github.com/rai-project/image/types"
 	imageTypes "github.com/rai-project/image/types"
 	"github.com/rai-project/utils"
-	"github.com/spf13/cast"
 	yaml "gopkg.in/yaml.v2"
-	"gorgonia.org/tensor"
+	gotensor "gorgonia.org/tensor"
 )
 
 type PreprocessOptions struct {
@@ -497,29 +496,31 @@ func (p ImagePredictor) CreateClassificationFeatures(ctx context.Context, probab
 		return p.CreateClassificationFeaturesFrom1D(ctx, slc, labels)
 	}
 
-	probabilities, ok := probabilities0.(tensor.Tensor)
+	probabilities, ok := probabilities0.(gotensor.Tensor)
 	if !ok {
 		return nil, errors.New("expecting an input tensor")
 	}
 
-	if probabilities.Shape()[0] != p.BatchSize() {
-		return nil, errors.New("len(batchsize) != expected batch size")
-	}
 	if probabilities.Size() == 0 {
 		return nil, errors.New("len(probabilities) == 0")
 	}
-	if probabilities.Dtype() != tensor.Float32 {
+	if probabilities.Dtype() != gotensor.Float32 {
 		return nil, errors.New("invalid data type")
 	}
 
 	return p.CreateClassificationFeaturesFrom1D(ctx, probabilities.Data().([]float32), labels)
 }
 
-func createBoundingBoxFeaturesBatch(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) dlframework.Features {
-
+func createBoundingBoxFeaturesBatchUnflattened(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) dlframework.Features {
 	featureLen := len(probabilities)
 	rprobs := make([]*dlframework.Feature, featureLen)
 	for jj := 0; jj < featureLen; jj++ {
+		var label string
+		if probabilities[jj] < 0 {
+			label = "none"
+		} else {
+			label = labels[int32(classes[jj])]
+		}
 		rprobs[jj] = feature.New(
 			feature.BoundingBoxType(),
 			feature.BoundingBoxXmin(boxes[jj][1]),
@@ -527,33 +528,55 @@ func createBoundingBoxFeaturesBatch(ctx context.Context, probabilities []float32
 			feature.BoundingBoxYmin(boxes[jj][0]),
 			feature.BoundingBoxYmax(boxes[jj][2]),
 			feature.BoundingBoxIndex(int32(classes[jj])),
-			feature.BoundingBoxLabel(labels[int32(classes[jj])]),
+			feature.BoundingBoxLabel(label),
 			feature.Probability(probabilities[jj]),
 		)
 	}
 	res := dlframework.Features(rprobs)
 	sort.Sort(res)
-
 	return res
 }
 
-func (p ImagePredictor) CreateBoundingBoxFeaturesFrom1D(ctx context.Context, probabilities []float32, classes []float32, boxes [][]float32, labels []string) ([]dlframework.Features, error) {
+func createBoundingBoxFeaturesBatchFlattened(ctx context.Context, probabilities []float32, classes []float32, boxes []float32, labels []string) dlframework.Features {
+	featureLen := len(probabilities)
+	rprobs := make([]*dlframework.Feature, featureLen)
+	for jj := 0; jj < featureLen; jj++ {
+		var label string
+		if probabilities[jj] < 0 {
+			label = "none"
+		} else {
+			label = labels[int32(classes[jj])]
+		}
+		rprobs[jj] = feature.New(
+			feature.BoundingBoxType(),
+			feature.BoundingBoxXmin(boxes[jj*4+1]),
+			feature.BoundingBoxXmax(boxes[jj*4+3]),
+			feature.BoundingBoxYmin(boxes[jj*4+0]),
+			feature.BoundingBoxYmax(boxes[jj*4+2]),
+			feature.BoundingBoxIndex(int32(classes[jj])),
+			feature.BoundingBoxLabel(label),
+			feature.Probability(probabilities[jj]),
+		)
+	}
+	res := dlframework.Features(rprobs)
+	sort.Sort(res)
+	return res
+}
+
+func (p ImagePredictor) CreateBoundingBoxFeaturesFlattened(ctx context.Context, probabilities []float32, classes []float32, boxes []float32, labels []string) ([]dlframework.Features, error) {
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
-
 	batchSize := p.BatchSize()
 	featureLen := len(probabilities) / batchSize
 	features := make([]dlframework.Features, batchSize)
-
 	for ii := 0; ii < batchSize; ii++ {
-		features[ii] = createBoundingBoxFeaturesBatch(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], classes[ii*featureLen:(ii+1)*featureLen], boxes[ii*featureLen:(ii+1)*featureLen], labels)
+		features[ii] = createBoundingBoxFeaturesBatchFlattened(ctx, probabilities[ii*featureLen:(ii+1)*featureLen], classes[ii*featureLen:(ii+1)*featureLen], boxes[ii*featureLen*4:(ii+1)*featureLen*4], labels)
 	}
-
 	return features, nil
 }
 
-func (p ImagePredictor) CreateBoundingBoxFeaturesFrom2D(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
+func (p ImagePredictor) CreateBoundingBoxFeaturesUnflattened(ctx context.Context, probabilities [][]float32, classes [][]float32, boxes [][][]float32, labels []string) ([]dlframework.Features, error) {
 	if len(probabilities) < 1 {
 		return nil, errors.New("len(probabilities) < 1")
 	}
@@ -562,7 +585,7 @@ func (p ImagePredictor) CreateBoundingBoxFeaturesFrom2D(ctx context.Context, pro
 	features := make([]dlframework.Features, batchSize)
 
 	for ii := 0; ii < batchSize; ii++ {
-		features[ii] = createBoundingBoxFeaturesBatch(ctx, probabilities[ii], classes[ii], boxes[ii], labels)
+		features[ii] = createBoundingBoxFeaturesBatchUnflattened(ctx, probabilities[ii], classes[ii], boxes[ii], labels)
 	}
 
 	return features, nil
@@ -570,86 +593,96 @@ func (p ImagePredictor) CreateBoundingBoxFeaturesFrom2D(ctx context.Context, pro
 
 func (p ImagePredictor) CreateBoundingBoxFeatures(ctx context.Context, probabilities0 interface{}, classes0 interface{}, boxes0 interface{}, labels []string) ([]dlframework.Features, error) {
 	if slc, ok := probabilities0.([][]float32); ok {
-		return p.CreateBoundingBoxFeaturesFrom2D(ctx, slc, classes0.([][]float32), boxes0.([][][]float32), labels)
+		return p.CreateBoundingBoxFeaturesUnflattened(ctx, slc, classes0.([][]float32), boxes0.([][][]float32), labels)
 	}
 
 	if slc, ok := probabilities0.([]float32); ok {
-		return p.CreateBoundingBoxFeaturesFrom1D(ctx, slc, classes0.([]float32), boxes0.([][]float32), labels)
+		return p.CreateBoundingBoxFeaturesFlattened(ctx, slc, classes0.([]float32), boxes0.([]float32), labels)
 	}
 
-	probabilities, ok := probabilities0.(tensor.Tensor)
+	probabilities, ok := probabilities0.(gotensor.Tensor)
 	if !ok {
 		return nil, errors.New("expecting an input probabilities tensor")
 	}
 
-	classes, ok := classes0.(tensor.Tensor)
+	classes, ok := classes0.(gotensor.Tensor)
 	if !ok {
 		return nil, errors.New("expecting an input classes tensor")
 	}
 
-	boxes, ok := boxes0.(tensor.Tensor)
+	boxes, ok := boxes0.(gotensor.Tensor)
 	if !ok {
 		return nil, errors.New("expecting an input boxes tensor")
 	}
 
-	batchSize := p.BatchSize()
 	if probabilities.Size() == 0 {
-		return nil, errors.New("len(probabilities) < 1")
+		return nil, errors.New("len(probabilities) == 0")
+	}
+	if probabilities.Dtype() != gotensor.Float32 {
+		return nil, errors.New("invalid data type")
 	}
 
-	featureLen := probabilities.Shape()[0]
-	features := make([]dlframework.Features, batchSize)
-
-	for ii := 0; ii < batchSize; ii++ {
-		rprobs := make([]*dlframework.Feature, featureLen)
-		for jj := 0; jj < featureLen; jj++ {
-			iclass, err := classes.At(ii, jj)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid class value at (%v,%v)", ii, jj)
-			}
-			iprob, err := probabilities.At(ii, jj)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid probability value at (%v,%v)", ii, jj)
-			}
-			iboxYMin, err := boxes.At(ii, jj, 0)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid box y min value at (%v,%v, 0)", ii, jj)
-			}
-			iboxXMin, err := boxes.At(ii, jj, 1)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid box x min value at (%v,%v, 1)", ii, jj)
-			}
-			iboxYMax, err := boxes.At(ii, jj, 2)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid box y max value at (%v,%v, 2)", ii, jj)
-			}
-			iboxXMax, err := boxes.At(ii, jj, 3)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid box x max value at (%v,%v, 3)", ii, jj)
-			}
-			class := cast.ToInt32(iclass)
-			prob := cast.ToFloat32(iprob)
-			boxYMin := cast.ToFloat32(iboxYMin)
-			boxYMax := cast.ToFloat32(iboxYMax)
-			boxXMin := cast.ToFloat32(iboxXMin)
-			boxXMax := cast.ToFloat32(iboxXMax)
-			rprobs[jj] = feature.New(
-				feature.BoundingBoxType(),
-				feature.BoundingBoxXmin(boxXMin),
-				feature.BoundingBoxXmax(boxXMax),
-				feature.BoundingBoxYmin(boxYMin),
-				feature.BoundingBoxYmax(boxYMax),
-				feature.BoundingBoxIndex(class),
-				feature.BoundingBoxLabel(labels[class]),
-				feature.Probability(prob),
-			)
-		}
-		sort.Sort(dlframework.Features(rprobs))
-		features[ii] = rprobs
-	}
-
-	return features, nil
+	return p.CreateBoundingBoxFeaturesFlattened(ctx, probabilities.Data().([]float32), classes.Data().([]float32), boxes.Data().([]float32), labels)
 }
+
+// batchSize := p.BatchSize()
+// if probabilities.Size() == 0 {
+// 	return nil, errors.New("len(probabilities) < 1")
+// }
+
+// featureLen := probabilities.Shape()[0]
+// features := make([]dlframework.Features, batchSize)
+
+// for ii := 0; ii < batchSize; ii++ {
+// 	rprobs := make([]*dlframework.Feature, featureLen)
+// 	for jj := 0; jj < featureLen; jj++ {
+// 		iclass, err := classes.At(ii, jj)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid class value at (%v,%v)", ii, jj)
+// 		}
+// 		iprob, err := probabilities.At(ii, jj)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid probability value at (%v,%v)", ii, jj)
+// 		}
+// 		iboxYMin, err := boxes.At(ii, jj, 0)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid box y min value at (%v,%v, 0)", ii, jj)
+// 		}
+// 		iboxXMin, err := boxes.At(ii, jj, 1)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid box x min value at (%v,%v, 1)", ii, jj)
+// 		}
+// 		iboxYMax, err := boxes.At(ii, jj, 2)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid box y max value at (%v,%v, 2)", ii, jj)
+// 		}
+// 		iboxXMax, err := boxes.At(ii, jj, 3)
+// 		if err != nil {
+// 			return nil, errors.Wrapf(err, "invalid box x max value at (%v,%v, 3)", ii, jj)
+// 		}
+// 		class := cast.ToInt32(iclass)
+// 		prob := cast.ToFloat32(iprob)
+// 		boxYMin := cast.ToFloat32(iboxYMin)
+// 		boxYMax := cast.ToFloat32(iboxYMax)
+// 		boxXMin := cast.ToFloat32(iboxXMin)
+// 		boxXMax := cast.ToFloat32(iboxXMax)
+// 		rprobs[jj] = feature.New(
+// 			feature.BoundingBoxType(),
+// 			feature.BoundingBoxXmin(boxXMin),
+// 			feature.BoundingBoxXmax(boxXMax),
+// 			feature.BoundingBoxYmin(boxYMin),
+// 			feature.BoundingBoxYmax(boxYMax),
+// 			feature.BoundingBoxIndex(class),
+// 			feature.BoundingBoxLabel(labels[class]),
+// 			feature.Probability(prob),
+// 		)
+// 	}
+// 	sort.Sort(dlframework.Features(rprobs))
+// 	features[ii] = rprobs
+// }
+
+// 	return features, nil
+// }
 
 func (p ImagePredictor) CreateSemanticSegmentFeaturesFrom2D(ctx context.Context, masks [][][]int64, labels []string) ([]dlframework.Features, error) {
 	batchSize := p.BatchSize()
@@ -688,7 +721,7 @@ func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks
 		return nil, nil
 	}
 
-	masks, ok := masks0.(tensor.Tensor)
+	masks, ok := masks0.(gotensor.Tensor)
 	if !ok {
 		return nil, errors.New("expecting an input masks tensor")
 	}
