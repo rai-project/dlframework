@@ -169,7 +169,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		ctx,
 		*model,
 		options.PredictorOptions(predOpts),
-		options.DisableFrameworkAutoTuning(false),
+		options.DisableFrameworkAutoTuning(true),
 	)
 	if err != nil {
 		return err
