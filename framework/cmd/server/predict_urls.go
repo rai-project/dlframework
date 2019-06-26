@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -48,6 +49,23 @@ var (
 	numUrlParts       int
 	numWarmUpUrlParts int
 )
+
+func getPublicIP() (string, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		os.Stderr.WriteString("Oops: " + err.Error() + "\n")
+		return "", err
+	}
+
+	for _, a := range addrs {
+		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String(), nil
+			}
+		}
+	}
+	return "", errors.New("cannot find the public ip")
+}
 
 func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	model, err := framework.FindModel(modelName + ":" + modelVersion)
@@ -382,7 +400,8 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if runtime.GOARCH == "ppc64le" {
 		traceIDVal = strconv.FormatUint(traceID.Low, 16)
 	}
-	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
+	// pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
+	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", "54.172.226.29", traceIDVal))
 
 	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
 	resp, err := grequests.Get(query, nil)
