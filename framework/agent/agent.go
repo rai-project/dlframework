@@ -98,7 +98,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		ctx,
 		*model,
 		options.PredictorOptions(opts),
-		// options.DisableFrameworkAutoTuning(true),
+		options.DisableFrameworkAutoTuning(true),
 	)
 	if err != nil {
 		return nil, err
