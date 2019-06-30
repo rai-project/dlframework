@@ -866,6 +866,9 @@ const (
         },
         "agent": {
           "type": "string"
+        },
+        "gpu_metrics": {
+          "type": "string"
         }
       }
     },

@@ -22,6 +22,7 @@ var (
 	useGPU                bool
 	tracePreprocess       bool
 	batchSize             int
+	gpuMetrics            string
 	partitionListSize     int
 	publishToDatabase     bool
 	publishPredictions    bool
@@ -90,7 +91,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&modelName, "model_name", "MobileNet_v1_1.0_224", "the name of the model to use for prediction")
 	predictCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
 	predictCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 1, "the batch size to use while performing inference")
-	predictCmd.PersistentFlags().IntVarP(&partitionListSize, "partition_list_size", "p", 0, "the chunk size to partition the input list. By default this is the same as the batch size")
+	predictCmd.PersistentFlags().StringVar(&gpuMetrics, "gpu_metrics", "", "the gpu metrics to capture. Currently only supports one metricc at a time.")
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "use_gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
 	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", true, "whether to trace the preproessing steps. By defatult it is set to true")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")

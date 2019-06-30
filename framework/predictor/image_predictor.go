@@ -12,9 +12,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/oliamb/cutter"
-
 	"github.com/k0kubun/pp"
+	"github.com/oliamb/cutter"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework"
 	"github.com/rai-project/dlframework/framework/feature"

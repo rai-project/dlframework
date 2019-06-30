@@ -66,6 +66,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		"framework_name":    framework.GetName(),
 		"framework_version": framework.GetVersion(),
 		"batch_size":        opts.BatchSize(),
+		"gpu_metrics":       opts.GPUMetrics(),
 		"feature_limit":     opts.FeatureLimit(),
 		"device":            opts.Devices().String(),
 		"trace_level":       opts.TraceLevel().String(),

@@ -137,6 +137,7 @@ message PredictionOptions {
   ExecutionOptions execution_options = 4
       [ (gogoproto.moretags) = "yaml:\"execution_options,omitempty\"" ];
   string agent = 5 [ (gogoproto.moretags) = "yaml:\"agent,omitempty\"" ];
+  string gpu_metrics = 6 [ (gogoproto.moretags) = "yaml:\"gpu_metrics,omitempty\"" ];
 }
 
 message PredictorOpenRequest {

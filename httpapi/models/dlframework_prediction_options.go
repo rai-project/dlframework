@@ -28,6 +28,9 @@ type DlframeworkPredictionOptions struct {
 	// feature limit
 	FeatureLimit int32 `json:"feature_limit,omitempty"`
 
+	// gpu metrics
+	GpuMetrics string `json:"gpu_metrics,omitempty"`
+
 	// request id
 	RequestID string `json:"request_id,omitempty"`
 }

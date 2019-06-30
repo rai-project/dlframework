@@ -34,6 +34,10 @@ func (b Base) BatchSize() int {
 	return b.Options.BatchSize()
 }
 
+func (b Base) GPUMetrics() string {
+	return b.Options.GPUMetrics()
+}
+
 func (b Base) FeatureLimit() int {
 	return b.Options.FeatureLimit()
 }

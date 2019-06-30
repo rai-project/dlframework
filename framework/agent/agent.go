@@ -253,7 +253,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, err
 	}
 
-	batchSize := int(predictionOptions.BatchSize())
+	batchSize := predictionOptions.BatchSize()
 
 	parts := dl.Partition(outputs, batchSize)
 

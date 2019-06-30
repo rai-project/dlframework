@@ -161,6 +161,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	predOpts := &dl.PredictionOptions{
 		FeatureLimit:     10,
 		BatchSize:        int32(batchSize),
+		GpuMetrics:       gpuMetrics,
 		ExecutionOptions: execOpts,
 	}
 
@@ -173,8 +174,9 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			"framework_version":  framework.Version,
 			"model_name":         modelName,
 			"model_version":      modelVersion,
-			"use_gpu":            useGPU,
 			"batch_size":         batchSize,
+			"use_gpu":            useGPU,
+			"gpu_metrics":        gpuMetrics,
 			"num_warmup_batches": numWarmUpUrlParts,
 		},
 	)
@@ -353,7 +355,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			"evaluate_batch",
 			opentracing.Tags{
 				"batch_index": ii,
-				"batch_size":  batchSize,
 			},
 		)
 
@@ -512,6 +513,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		Hostname:            hostName,
 		UsingGPU:            useGPU,
 		BatchSize:           batchSize,
+		GPUMetrics:          gpuMetrics,
 		TraceLevel:          traceLevel.String(),
 		MachineArchitecture: runtime.GOARCH,
 		Metadata:            metadata,

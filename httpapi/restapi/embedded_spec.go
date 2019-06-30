@@ -1108,6 +1108,9 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "gpu_metrics": {
+          "type": "string"
+        },
         "request_id": {
           "type": "string"
         }
@@ -2431,6 +2434,9 @@ func init() {
         "feature_limit": {
           "type": "integer",
           "format": "int32"
+        },
+        "gpu_metrics": {
+          "type": "string"
         },
         "request_id": {
           "type": "string"
