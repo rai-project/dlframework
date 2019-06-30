@@ -20,7 +20,7 @@ type cropImage struct {
 func NewCropImage(options predictor.PreprocessOptions) pipeline.Step {
 	res := cropImage{
 		base: base{
-			info: "CropImageStep",
+			info: "crop_image_step",
 		},
 		options: options,
 	}

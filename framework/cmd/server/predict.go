@@ -57,7 +57,7 @@ var predictCmd = &cobra.Command{
 		}
 		traceLevel = tracer.LevelFromName(traceLevelName)
 		if databaseName == "" {
-			databaseName = config.App.Name
+			databaseName = config.App.Name + "_" + strings.ToLower(traceLevel.String())
 		}
 		if databaseName != "" {
 			databaseName = strings.Replace(databaseName, ".", "_", -1)

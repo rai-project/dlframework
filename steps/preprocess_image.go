@@ -24,7 +24,7 @@ type preprocessImage struct {
 func NewPreprocessImage(options predictor.PreprocessOptions) pipeline.Step {
 	res := preprocessImage{
 		base: base{
-			info: "PreprocessImageStep",
+			info: "preprocess_image_step",
 		},
 		options: options,
 	}

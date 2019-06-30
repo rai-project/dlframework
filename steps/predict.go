@@ -20,7 +20,7 @@ type predict struct {
 func NewPredict(predictor predictor.Predictor) pipeline.Step {
 	res := predict{
 		base: base{
-			info: "PredictStep",
+			info: "predict_step",
 		},
 	}
 	res.predictor = predictor

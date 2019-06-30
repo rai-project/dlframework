@@ -234,9 +234,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	urlParts := dl.PartitionStringList(urls, partitionListSize)
 
-	oldTraceLevel := tracer.GetLevel()
-	tracer.SetLevel(tracer.NO_TRACE)
-
 	outputs := make(chan interface{}, DefaultChannelBuffer)
 	partlabels := map[string]string{}
 
@@ -250,6 +247,17 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		Info("starting inference on urls")
 
 	if numWarmUpUrlParts != 0 {
+		warmUpSpan, warmUpSpanCtx := tracer.StartSpanFromContext(
+			ctx,
+			tracer.APPLICATION_TRACE,
+			"warm_up",
+			opentracing.Tags{
+				"num_warmup_batches": numWarmUpUrlParts,
+			},
+		)
+
+		tracer.SetLevel(tracer.NO_TRACE)
+
 		for _, part := range urlParts[0:numWarmUpUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -262,7 +270,11 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				}
 			}()
 
-			output := pipeline.New(pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
+			if tracePreprocess == true {
+				opts = append(opts, pipeline.Context(warmUpSpanCtx))
+			}
+			output := pipeline.New(opts...).
 				Then(steps.NewReadURL()).
 				Then(steps.NewReadImage(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
@@ -283,7 +295,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				}
 			}()
 
-			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			output = pipeline.New(pipeline.Context(warmUpSpanCtx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 				Then(steps.NewPredict(predictor)).
 				Run(input)
 
@@ -295,13 +307,15 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				outputs <- o
 			}
 		}
-	}
 
-	close(outputs)
-	for range outputs {
-	}
+		close(outputs)
+		for range outputs {
+		}
 
-	tracer.SetLevel(oldTraceLevel)
+		tracer.SetLevel(traceLevel)
+
+		warmUpSpan.Finish()
+	}
 
 	outputs = make(chan interface{}, DefaultChannelBuffer)
 

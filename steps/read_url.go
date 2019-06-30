@@ -20,7 +20,7 @@ type readURL struct {
 func NewReadURL() pipeline.Step {
 	res := readURL{
 		base: base{
-			info: "ReadURLStep",
+			info: "read_url_step",
 		},
 	}
 	res.doer = res.do

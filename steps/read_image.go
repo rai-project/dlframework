@@ -26,7 +26,7 @@ type readImage struct {
 func NewReadImage(options predictor.PreprocessOptions) pipeline.Step {
 	res := readImage{
 		base: base{
-			info: "ReadImageStep",
+			info: "read_image_step",
 		},
 		options: options,
 	}
