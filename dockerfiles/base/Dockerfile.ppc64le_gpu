@@ -65,7 +65,7 @@ RUN curl -sSL https://cmake.org/files/v3.13/cmake-3.13.0.tar.gz -o cmake.tar.gz 
   && rm cmake.tar.gz
 
 # Install Go
-ENV GIMME_GO_VERSION "1.11"
+ENV GIMME_GO_VERSION "1.12"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 
