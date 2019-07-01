@@ -91,7 +91,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&modelName, "model_name", "MobileNet_v1_1.0_224", "the name of the model to use for prediction")
 	predictCmd.PersistentFlags().StringVar(&modelVersion, "model_version", "1.0", "the version of the model to use for prediction")
 	predictCmd.PersistentFlags().IntVarP(&batchSize, "batch_size", "b", 1, "the batch size to use while performing inference")
-	predictCmd.PersistentFlags().StringVar(&gpuMetrics, "gpu_metrics", "", "the gpu metrics to capture. Currently only supports one metricc at a time.")
+	predictCmd.PersistentFlags().StringVar(&gpuMetrics, "gpu_metrics", "", "the gpu metrics to capture. Currently only metrics from events of the same event group are supported at a time. For example, specify either `flop_count_sp` or `dram_read_bytes,dram_write_bytes` each time.")
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "use_gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
 	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", true, "whether to trace the preproessing steps. By defatult it is set to true")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
