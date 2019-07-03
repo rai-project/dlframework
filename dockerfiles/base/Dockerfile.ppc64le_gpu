@@ -1,4 +1,4 @@
-FROM nvidia/cuda-ppc64le:10.0-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda-ppc64le:10.1-cudnn7-devel-ubuntu18.04
 MAINTAINER Abdul Dakkak <dakkak@illinois.edu>
 
 # Build-time metadata as defined at http://label-schema.org
@@ -65,7 +65,7 @@ RUN curl -sSL https://cmake.org/files/v3.13/cmake-3.13.0.tar.gz -o cmake.tar.gz 
   && rm cmake.tar.gz
 
 # Install Go
-ENV GIMME_GO_VERSION "1.11"
+ENV GIMME_GO_VERSION "1.12"
 ENV GIMME_OS "linux"
 ENV GIMME_ARCH $ARCH
 

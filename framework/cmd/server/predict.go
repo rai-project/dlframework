@@ -17,30 +17,31 @@ import (
 )
 
 var (
-	modelName             string
-	modelVersion          string
-	useGPU                bool
-	tracePreprocess       bool
-	batchSize             int
-	gpuMetrics            string
-	partitionListSize     int
-	publishToDatabase     bool
-	publishPredictions    bool
-	failOnFirstError      bool
-	traceLevelName        string
-	traceLevel            tracer.Level = tracer.MODEL_TRACE
-	tracerAddress         string
-	databaseAddress       string
-	databaseName          string
-	databaseEndpoints     []string
-	db                    database.Database
-	evaluationTable       *evaluation.EvaluationCollection
-	modelAccuracyTable    *evaluation.ModelAccuracyCollection
-	performanceTable      *evaluation.PerformanceCollection
-	inputPredictionsTable *evaluation.InputPredictionCollection
-	DefaultChannelBuffer  = 100000
-	fixTracerEndpoints    = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
-	baseDir               string
+	modelName                  string
+	modelVersion               string
+	useGPU                     bool
+	tracePreprocess            bool
+	disableFrameworkAutoTuning bool
+	batchSize                  int
+	gpuMetrics                 string
+	partitionListSize          int
+	publishToDatabase          bool
+	publishPredictions         bool
+	failOnFirstError           bool
+	traceLevelName             string
+	traceLevel                 tracer.Level = tracer.MODEL_TRACE
+	tracerAddress              string
+	databaseAddress            string
+	databaseName               string
+	databaseEndpoints          []string
+	db                         database.Database
+	evaluationTable            *evaluation.EvaluationCollection
+	modelAccuracyTable         *evaluation.ModelAccuracyCollection
+	performanceTable           *evaluation.PerformanceCollection
+	inputPredictionsTable      *evaluation.InputPredictionCollection
+	DefaultChannelBuffer       = 100000
+	fixTracerEndpoints         = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
+	baseDir                    string
 )
 
 var predictCmd = &cobra.Command{
@@ -94,6 +95,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&gpuMetrics, "gpu_metrics", "", "the gpu metrics to capture. Currently only metrics from events of the same event group are supported at a time. For example, specify either `flop_count_sp` or `dram_read_bytes,dram_write_bytes` each time.")
 	predictCmd.PersistentFlags().BoolVar(&useGPU, "use_gpu", false, "whether to enable the gpu. An error is returned if the gpu is not available")
 	predictCmd.PersistentFlags().BoolVar(&tracePreprocess, "trace_preprocess", true, "whether to trace the preproessing steps. By defatult it is set to true")
+	predictCmd.PersistentFlags().BoolVar(&disableFrameworkAutoTuning, "disable_autotune", false, "whether to disable the framework autotuning. By defatult it is set to false")
 	predictCmd.PersistentFlags().BoolVar(&failOnFirstError, "fail_on_error", false, "turning on causes the process to terminate/exit upon first inference error. This is useful since some inferences will result in an error because they run out of memory")
 	predictCmd.PersistentFlags().BoolVar(&publishToDatabase, "publish", false, "whether to publish the evaluation to database. Turning this off will not publish anything to the database. This is ideal for using carml within profiling tools or performing experiments where the terminal output is sufficient.")
 	predictCmd.PersistentFlags().BoolVar(&publishPredictions, "publish_predictions", false, "whether to publish prediction results to database. This will store all the probability outputs for the evaluation in the database which could be a few gigabytes of data for one dataset")

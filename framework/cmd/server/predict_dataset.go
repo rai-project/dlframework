@@ -141,7 +141,7 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 		ctx,
 		*model,
 		options.PredictorOptions(predOpts),
-		options.DisableFrameworkAutoTuning(false),
+		options.DisableFrameworkAutoTuning(disableFrameworkAutoTuning),
 	)
 	if err != nil {
 		return err
