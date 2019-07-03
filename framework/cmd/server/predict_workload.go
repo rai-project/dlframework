@@ -90,7 +90,7 @@ package server
 // 		*model,
 // 		// options.Context(ctx),
 // 		options.PredictorOptions(predOpts),
-// 		// options.DisableFrameworkAutoTuning(true),
+// 		// options.DisableFrameworkAutoTuning(disableFrameworkAutoTuning),
 // 	)
 // 	if err != nil {
 // 		return
