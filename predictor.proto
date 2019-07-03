@@ -167,7 +167,7 @@ message PredictorCloseRequest {
 
 message PredictorCloseResponse {
   google.protobuf.Duration duration = 1
-      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" , (gogoproto.stdduration) = true];
 }
 
 message Predictor {
@@ -178,7 +178,7 @@ message Predictor {
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
   google.protobuf.Duration duration = 2
-      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" , (gogoproto.stdduration) = true];
 }
 
 message URLsRequest {
@@ -268,9 +268,9 @@ message FeaturesResponse {
   repeated FeatureResponse responses = 3
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
   google.protobuf.Duration duration_for_inference = 4
-      [ (gogoproto.moretags) = "yaml:\"duration_for_inference,omitempty\"" ];
+      [ (gogoproto.moretags) = "yaml:\"duration_for_inference,omitempty\"", (gogoproto.stdduration) = true ];
   google.protobuf.Duration duration = 5
-      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" , (gogoproto.stdduration) = true];
 }
 
 message ResetRequest {

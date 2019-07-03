@@ -8,7 +8,7 @@ package registry
 import (
 	"context"
 	"net/http"
-	"time"
+	time "time"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
