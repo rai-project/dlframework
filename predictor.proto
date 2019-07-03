@@ -15,6 +15,7 @@ package mlmodelscope.org.dlframework;
 import "features.proto";
 import "google/api/annotations.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
 
 option (gogoproto.goproto_registration) = true;
 option (gogoproto.gostring_all) = true;
@@ -164,7 +165,10 @@ message PredictorCloseRequest {
   bool force = 2 [ (gogoproto.moretags) = "yaml:\"force,omitempty\"" ];
 }
 
-message PredictorCloseResponse {}
+message PredictorCloseResponse {
+  google.protobuf.Duration duration = 1
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
+}
 
 message Predictor {
   option (gogoproto.description) = true;
@@ -173,6 +177,8 @@ message Predictor {
     (gogoproto.jsontag) = "id,omitempty",
     (gogoproto.moretags) = "yaml:\"id,omitempty\""
   ];
+  google.protobuf.Duration duration = 2
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
 }
 
 message URLsRequest {
@@ -261,6 +267,10 @@ message FeaturesResponse {
   TraceID trace_id = 2 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
   repeated FeatureResponse responses = 3
       [ (gogoproto.moretags) = "yaml:\"responses,omitempty\"" ];
+  google.protobuf.Duration duration_for_inference = 4
+      [ (gogoproto.moretags) = "yaml:\"duration_for_inference,omitempty\"" ];
+  google.protobuf.Duration duration = 5
+      [ (gogoproto.moretags) = "yaml:\"duration,omitempty\"" ];
 }
 
 message ResetRequest {
@@ -321,12 +331,12 @@ service Predict {
   // URLsStream method receives a stream of urls and runs
   // the predictor on all the urls.
   // The result is a prediction feature stream for each url.
-  rpc URLsStream(URLsRequest) returns (stream FeatureResponse) {
-    option (google.api.http) = {
-      post : "/predict/stream/urls",
-      body : "*"
-    };
-  }
+  // rpc URLsStream(URLsRequest) returns (stream FeatureResponse) {
+  //   option (google.api.http) = {
+  //     post : "/predict/stream/urls",
+  //     body : "*"
+  //   };
+  // }
 
   // Images method receives a list of base64 encoded images and runs
   // the predictor on all the images.
@@ -341,12 +351,12 @@ service Predict {
   // ImagesStream method receives a list base64 encoded images and runs
   // the predictor on all the images.
   // The result is a prediction feature stream for each image.
-  rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
-    option (google.api.http) = {
-      post : "/predict/stream/images",
-      body : "*"
-    };
-  }
+  // rpc ImagesStream(ImagesRequest) returns (stream FeatureResponse) {
+  //   option (google.api.http) = {
+  //     post : "/predict/stream/images",
+  //     body : "*"
+  //   };
+  // }
 
   // // Text method receives a list base64 encoded texts and runs
   // // the predictor on all the texts.
@@ -381,12 +391,12 @@ service Predict {
   // Dataset method receives a single dataset and runs
   // the predictor on all elements of the dataset.
   // The result is a prediction feature stream.
-  rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
-    option (google.api.http) = {
-      post : "/predict/stream/dataset",
-      body : "*"
-    };
-  }
+  // rpc DatasetStream(DatasetRequest) returns (stream FeatureResponse) {
+  //   option (google.api.http) = {
+  //     post : "/predict/stream/dataset",
+  //     body : "*"
+  //   };
+  // }
 
   // Reset method clears the internal cache of the predictors
   rpc Reset(ResetRequest) returns (ResetResponse) {

@@ -36,10 +36,7 @@ func request_Registry_FrameworkManifests_0(ctx context.Context, marshaler runtim
 	var protoReq FrameworkRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Registry_FrameworkManifests_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_FrameworkManifests_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -56,10 +53,7 @@ func request_Registry_FrameworkAgents_0(ctx context.Context, marshaler runtime.M
 	var protoReq FrameworkRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Registry_FrameworkAgents_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_FrameworkAgents_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -76,10 +70,7 @@ func request_Registry_ModelManifests_0(ctx context.Context, marshaler runtime.Ma
 	var protoReq ModelRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Registry_ModelManifests_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_ModelManifests_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -96,10 +87,7 @@ func request_Registry_ModelAgents_0(ctx context.Context, marshaler runtime.Marsh
 	var protoReq ModelRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Registry_ModelAgents_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Registry_ModelAgents_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -230,13 +218,13 @@ func RegisterRegistryHandlerClient(ctx context.Context, mux *runtime.ServeMux, c
 }
 
 var (
-	pattern_Registry_FrameworkManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "manifest"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Registry_FrameworkManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "manifest"}, ""))
 
-	pattern_Registry_FrameworkAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "agent"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Registry_FrameworkAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "frameworks", "agent"}, ""))
 
-	pattern_Registry_ModelManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "manifest"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Registry_ModelManifests_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "manifest"}, ""))
 
-	pattern_Registry_ModelAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "agent"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Registry_ModelAgents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"registry", "models", "agent"}, ""))
 )
 
 var (

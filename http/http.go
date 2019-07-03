@@ -31,7 +31,7 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.PredictCloseHandler = predict.CloseHandlerFunc(predictHandler.Close)
 	api.PredictResetHandler = predict.ResetHandlerFunc(predictHandler.Reset)
 	api.PredictImagesHandler = predict.ImagesHandlerFunc(predictHandler.Images)
-	api.PredictUrlsHandler = predict.UrlsHandlerFunc(predictHandler.URLs)
+	api.PredictURLsHandler = predict.URLsHandlerFunc(predictHandler.URLs)
 	api.PredictDatasetHandler = predict.DatasetHandlerFunc(predictHandler.Dataset)
 
 	api.ServerShutdown = func() {}

@@ -162,87 +162,6 @@ const (
         ]
       }
     },
-    "/predict/stream/dataset": {
-      "post": {
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
-        "operationId": "DatasetStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/x-stream-definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkDatasetRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
-    "/predict/stream/images": {
-      "post": {
-        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
-        "operationId": "ImagesStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/x-stream-definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkImagesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
-    "/predict/stream/urls": {
-      "post": {
-        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
-        "operationId": "URLsStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/x-stream-definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkURLsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
     "/predict/urls": {
       "post": {
         "summary": "URLs method receives a list of urls and runs\nthe predictor on all the urls.\nThe result is a list of predicted features for all the urls.",
@@ -720,6 +639,12 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkFeatureResponse"
           }
+        },
+        "duration_for_inference": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
         }
       }
     },
@@ -878,6 +803,9 @@ const (
       "properties": {
         "id": {
           "type": "string"
+        },
+        "duration": {
+          "type": "string"
         }
       }
     },
@@ -894,7 +822,12 @@ const (
       }
     },
     "dlframeworkPredictorCloseResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string"
+        }
+      }
     },
     "dlframeworkPredictorOpenRequest": {
       "type": "object",
@@ -1062,43 +995,6 @@ const (
         },
         "options": {
           "$ref": "#/definitions/dlframeworkPredictionOptions"
-        }
-      }
-    },
-    "protobufAny": {
-      "type": "object",
-      "properties": {
-        "type_url": {
-          "type": "string"
-        },
-        "value": {
-          "type": "string",
-          "format": "byte"
-        }
-      }
-    },
-    "runtimeStreamError": {
-      "type": "object",
-      "properties": {
-        "grpc_code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "http_code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
-          "type": "string"
-        },
-        "http_status": {
-          "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufAny"
-          }
         }
       }
     },
@@ -1372,20 +1268,6 @@ const (
           "type": "string"
         }
       }
-    }
-  },
-  "x-stream-definitions": {
-    "dlframeworkFeatureResponse": {
-      "type": "object",
-      "properties": {
-        "result": {
-          "$ref": "#/definitions/dlframeworkFeatureResponse"
-        },
-        "error": {
-          "$ref": "#/definitions/runtimeStreamError"
-        }
-      },
-      "title": "Stream result of dlframeworkFeatureResponse"
     }
   },
   "host": "carml.org",
