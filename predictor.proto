@@ -92,12 +92,13 @@ message TraceID {
 message ExecutionOptions {
   enum TraceLevel {
     NO_TRACE = 0;
-    APPLICATION_TRACE = 1; // pipelines within carml
-    MODEL_TRACE = 2;       // pipelines within model
-    FRAMEWORK_TRACE = 3;   // layers within framework
-    LIBRARY_TRACE = 4;     // cudnn, ...
-    HARDWARE_TRACE = 5;    // perf, papi, cupti, ...
-    FULL_TRACE = 6;        // includes all of the above
+    APPLICATION_TRACE = 1;    // pipelines within carml
+    MODEL_TRACE = 2;          // pipelines within model
+    FRAMEWORK_TRACE = 3;      // layers within framework
+    ML_LIBRARY_TRACE = 4;     // cudnn, ...
+    SYSTEM_LIBRARY_TRACE = 5; // cupti
+    HARDWARE_TRACE = 6;       // perf, papi, ...
+    FULL_TRACE = 7;           // includes all of the above
   }
   TraceID trace_id = 1 [ (gogoproto.moretags) = "yaml:\"trace_id,omitempty\"" ];
   TraceLevel trace_level = 2
@@ -137,7 +138,8 @@ message PredictionOptions {
   ExecutionOptions execution_options = 4
       [ (gogoproto.moretags) = "yaml:\"execution_options,omitempty\"" ];
   string agent = 5 [ (gogoproto.moretags) = "yaml:\"agent,omitempty\"" ];
-  string gpu_metrics = 6 [ (gogoproto.moretags) = "yaml:\"gpu_metrics,omitempty\"" ];
+  string gpu_metrics = 6
+      [ (gogoproto.moretags) = "yaml:\"gpu_metrics,omitempty\"" ];
 }
 
 message PredictorOpenRequest {
@@ -207,8 +209,7 @@ message TextRequest {
   Predictor predictor = 1
       [ (gogoproto.moretags) = "yaml:\"predictor,omitempty\"" ];
   // A list of Base64 encoded texts
-  repeated Text texts = 2
-      [ (gogoproto.moretags) = "yaml:\"texts,omitempty\"" ];
+  repeated Text texts = 2 [ (gogoproto.moretags) = "yaml:\"texts,omitempty\"" ];
   PredictionOptions options = 3
       [ (gogoproto.moretags) = "yaml:\"options,omitempty\"" ];
 }
