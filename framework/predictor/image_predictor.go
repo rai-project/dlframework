@@ -434,6 +434,7 @@ func (p ImagePredictor) GetProbabilitiesTransform() string {
 
 func (p ImagePredictor) createClassificationFeaturesBatch(ctx context.Context, probabilities []float32, labels []string) dlframework.Features {
 	featureLen := len(probabilities)
+
 	rprobs := make([]*dlframework.Feature, featureLen)
 	for jj := 0; jj < featureLen; jj++ {
 		rprobs[jj] = feature.New(
