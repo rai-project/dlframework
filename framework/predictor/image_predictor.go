@@ -743,7 +743,7 @@ func (p ImagePredictor) CreateSemanticSegmentFeatures(ctx context.Context, masks
 		if err != nil {
 			return nil, errors.Wrapf(err, "invalid mask value at (%v)", ii)
 		}
-		mask := utils.FlattenInt32Slice(iMask)
+		mask := flattenInt32Slice(iMask)
 		for jj := 0; jj < featureLen; jj++ {
 			rprobs[jj] = feature.New(
 				feature.SemanticSegmentType(),
