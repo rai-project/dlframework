@@ -41,9 +41,9 @@ generate: generate-proto generate-swagger generate-go
 
 generate-swagger: clean-httpapi ## Generates Go Swagger code
 	mkdir -p httpapi
-	swagger generate server -f dlframework.swagger.json -t httpapi -A dlframework
-	swagger generate client -f dlframework.swagger.json -t httpapi -A dlframework
-	swagger generate support -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate server --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate client --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate support --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
 	gofmt -s -w httpapi
 
 generate-go:

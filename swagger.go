@@ -335,6 +335,11 @@ const (
     },
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
         "responses": {
@@ -345,16 +350,7 @@ const (
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
+        "parameters": [],
         "tags": [
           "Authentication"
         ]
@@ -382,6 +378,65 @@ const (
             }
           }
         ],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/userinfo": {
+      "get": {
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        },
+        "parameters": [],
         "tags": [
           "Authentication"
         ]
@@ -1219,17 +1274,6 @@ const (
         }
       }
     },
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
@@ -1249,9 +1293,54 @@ const (
         }
       }
     },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkSignup": {
       "type": "object",
       "properties": {
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -1268,6 +1357,34 @@ const (
           "type": "string"
         }
       }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "host": "carml.org",
@@ -1294,6 +1411,11 @@ const (
   "paths": {
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
         "responses": {
@@ -1304,16 +1426,7 @@ const (
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
+        "parameters": [],
         "tags": ["Authentication"]
       }
     },
@@ -1341,20 +1454,62 @@ const (
         ],
         "tags": ["Authentication"]
       }
+        },
+    "/auth/userinfo": {
+      "get": {
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
     }
   },
   "definitions": {
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
@@ -1374,9 +1529,54 @@ const (
         }
       }
     },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkSignup": {
       "type": "object",
       "properties": {
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -1393,6 +1593,34 @@ const (
           "type": "string"
         }
       }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "host": "carml.org",
