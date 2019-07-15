@@ -5,9 +5,12 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations"
+	"github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+
+	"github.com/volatiletech/authboss/remember"
 )
 
 func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
@@ -18,8 +21,17 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.BasicAuthAuth = func(user string, pass string) (*models.User, error) {
+		return &models.User{
+			Username: user,
+			Password: pass,
+		}, nil
+	}
+
 	api.AuthenticationLoginHandler = authentication.LoginHandlerFunc(LoginHandler)
 	api.AuthenticationSignupHandler = authentication.SignupHandlerFunc(SignupHandler)
+	api.AuthenticationUserInfoHandler = authentication.UserInfoHandlerFunc(UserInfoHandler)
+	api.AuthenticationLogoutHandler = authentication.LogoutHandlerFunc(LogoutHandler)
 
 	api.RegistryFrameworkAgentsHandler = registry.FrameworkAgentsHandlerFunc(RegistryFrameworkAgentsHandler)
 	api.RegistryFrameworkManifestsHandler = registry.FrameworkManifestsHandlerFunc(RegistryFrameworkManifestsHandler)
@@ -35,6 +47,7 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 	api.PredictDatasetHandler = predict.DatasetHandlerFunc(predictHandler.Dataset)
 
 	api.ServerShutdown = func() {}
+	setupAuthboss()
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
@@ -42,6 +55,9 @@ func ConfigureAPI(api *operations.DlframeworkAPI) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
+	handler = ab.LoadClientStateMiddleware(handler)
+	handler = remember.Middleware(ab)(handler)
+	handler = dataInjector(handler)
 	return handler
 }
 
