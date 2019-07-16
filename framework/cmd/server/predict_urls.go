@@ -569,7 +569,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				}
 			}
 		} else {
-			panic("expecting a Classification type")
+			log.WithField("model", modelName).Info("model is not of classification type, skip accuracy count")
 		}
 		cnt++
 	}
