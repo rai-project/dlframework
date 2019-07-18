@@ -235,7 +235,7 @@ func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder 
 	}
 
 	var resp webmodels.DlframeworkPredictorCloseResponse
-	return predict.NewCloseOK().WithPayload(resp)
+	return predict.NewCloseOK().WithPayload(&resp)
 }
 
 func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder {

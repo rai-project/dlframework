@@ -12,18 +12,18 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-// NewLoginParams creates a new LoginParams object
+// NewLogoutParams creates a new LogoutParams object
 // no default values defined in spec.
-func NewLoginParams() LoginParams {
+func NewLogoutParams() LogoutParams {
 
-	return LoginParams{}
+	return LogoutParams{}
 }
 
-// LoginParams contains all the bound params for the login operation
+// LogoutParams contains all the bound params for the logout operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters Login
-type LoginParams struct {
+// swagger:parameters Logout
+type LogoutParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
@@ -32,8 +32,8 @@ type LoginParams struct {
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls.
 //
-// To ensure default values, the struct must have been initialized with NewLoginParams() beforehand.
-func (o *LoginParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+// To ensure default values, the struct must have been initialized with NewLogoutParams() beforehand.
+func (o *LogoutParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 
 	o.HTTPRequest = r

@@ -22,6 +22,8 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // NewDlframeworkAPI creates a new Dlframework instance
@@ -56,8 +58,11 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		PredictImagesHandler: predict.ImagesHandlerFunc(func(params predict.ImagesParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictImages has not yet been implemented")
 		}),
-		AuthenticationLoginHandler: authentication.LoginHandlerFunc(func(params authentication.LoginParams) middleware.Responder {
+		AuthenticationLoginHandler: authentication.LoginHandlerFunc(func(params authentication.LoginParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation AuthenticationLogin has not yet been implemented")
+		}),
+		AuthenticationLogoutHandler: authentication.LogoutHandlerFunc(func(params authentication.LogoutParams) middleware.Responder {
+			return middleware.NotImplemented("operation AuthenticationLogout has not yet been implemented")
 		}),
 		RegistryModelAgentsHandler: registry.ModelAgentsHandlerFunc(func(params registry.ModelAgentsParams) middleware.Responder {
 			return middleware.NotImplemented("operation RegistryModelAgents has not yet been implemented")
@@ -77,6 +82,20 @@ func NewDlframeworkAPI(spec *loads.Document) *DlframeworkAPI {
 		PredictURLsHandler: predict.URLsHandlerFunc(func(params predict.URLsParams) middleware.Responder {
 			return middleware.NotImplemented("operation PredictURLs has not yet been implemented")
 		}),
+		AuthenticationUpdateHandler: authentication.UpdateHandlerFunc(func(params authentication.UpdateParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation AuthenticationUpdate has not yet been implemented")
+		}),
+		AuthenticationUserInfoHandler: authentication.UserInfoHandlerFunc(func(params authentication.UserInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation AuthenticationUserInfo has not yet been implemented")
+		}),
+
+		// Applies when the Authorization header is set with the Basic scheme
+		BasicAuthAuth: func(user string, pass string) (*models.User, error) {
+			return nil, errors.NotImplemented("basic auth  (basicAuth) has not yet been implemented")
+		},
+
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -108,6 +127,13 @@ type DlframeworkAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// BasicAuthAuth registers a function that takes username and password and returns a principal
+	// it performs authentication with basic auth
+	BasicAuthAuth func(string, string) (*models.User, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
+
 	// PredictCloseHandler sets the operation handler for the close operation
 	PredictCloseHandler predict.CloseHandler
 	// PredictDatasetHandler sets the operation handler for the dataset operation
@@ -120,6 +146,8 @@ type DlframeworkAPI struct {
 	PredictImagesHandler predict.ImagesHandler
 	// AuthenticationLoginHandler sets the operation handler for the login operation
 	AuthenticationLoginHandler authentication.LoginHandler
+	// AuthenticationLogoutHandler sets the operation handler for the logout operation
+	AuthenticationLogoutHandler authentication.LogoutHandler
 	// RegistryModelAgentsHandler sets the operation handler for the model agents operation
 	RegistryModelAgentsHandler registry.ModelAgentsHandler
 	// RegistryModelManifestsHandler sets the operation handler for the model manifests operation
@@ -132,6 +160,10 @@ type DlframeworkAPI struct {
 	AuthenticationSignupHandler authentication.SignupHandler
 	// PredictURLsHandler sets the operation handler for the u r ls operation
 	PredictURLsHandler predict.URLsHandler
+	// AuthenticationUpdateHandler sets the operation handler for the update operation
+	AuthenticationUpdateHandler authentication.UpdateHandler
+	// AuthenticationUserInfoHandler sets the operation handler for the user info operation
+	AuthenticationUserInfoHandler authentication.UserInfoHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -195,6 +227,10 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.BasicAuthAuth == nil {
+		unregistered = append(unregistered, "BasicAuthAuth")
+	}
+
 	if o.PredictCloseHandler == nil {
 		unregistered = append(unregistered, "predict.CloseHandler")
 	}
@@ -217,6 +253,10 @@ func (o *DlframeworkAPI) Validate() error {
 
 	if o.AuthenticationLoginHandler == nil {
 		unregistered = append(unregistered, "authentication.LoginHandler")
+	}
+
+	if o.AuthenticationLogoutHandler == nil {
+		unregistered = append(unregistered, "authentication.LogoutHandler")
 	}
 
 	if o.RegistryModelAgentsHandler == nil {
@@ -243,6 +283,14 @@ func (o *DlframeworkAPI) Validate() error {
 		unregistered = append(unregistered, "predict.URLsHandler")
 	}
 
+	if o.AuthenticationUpdateHandler == nil {
+		unregistered = append(unregistered, "authentication.UpdateHandler")
+	}
+
+	if o.AuthenticationUserInfoHandler == nil {
+		unregistered = append(unregistered, "authentication.UserInfoHandler")
+	}
+
 	if len(unregistered) > 0 {
 		return fmt.Errorf("missing registration: %s", strings.Join(unregistered, ", "))
 	}
@@ -258,14 +306,26 @@ func (o *DlframeworkAPI) ServeErrorFor(operationID string) func(http.ResponseWri
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *DlframeworkAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name, scheme := range schemes {
+		switch name {
+
+		case "basicAuth":
+			_ = scheme
+			result[name] = o.BasicAuthenticator(func(username, password string) (interface{}, error) {
+				return o.BasicAuthAuth(username, password)
+			})
+
+		}
+	}
+	return result
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *DlframeworkAPI) Authorizer() runtime.Authorizer {
 
-	return nil
+	return o.APIAuthorizer
 
 }
 
@@ -371,6 +431,11 @@ func (o *DlframeworkAPI) initHandlerCache() {
 	}
 	o.handlers["POST"]["/auth/login"] = authentication.NewLogin(o.context, o.AuthenticationLoginHandler)
 
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/auth/logout"] = authentication.NewLogout(o.context, o.AuthenticationLogoutHandler)
+
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -400,6 +465,16 @@ func (o *DlframeworkAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/predict/urls"] = predict.NewURLs(o.context, o.PredictURLsHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/auth/update"] = authentication.NewUpdate(o.context, o.AuthenticationUpdateHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/auth/userinfo"] = authentication.NewUserInfo(o.context, o.AuthenticationUserInfoHandler)
 
 }
 

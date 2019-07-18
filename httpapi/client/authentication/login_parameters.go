@@ -15,14 +15,12 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
 // NewLoginParams creates a new LoginParams object
 // with the default values initialized.
 func NewLoginParams() *LoginParams {
-	var ()
+
 	return &LoginParams{
 
 		timeout: cr.DefaultTimeout,
@@ -32,7 +30,7 @@ func NewLoginParams() *LoginParams {
 // NewLoginParamsWithTimeout creates a new LoginParams object
 // with the default values initialized, and the ability to set a timeout on a request
 func NewLoginParamsWithTimeout(timeout time.Duration) *LoginParams {
-	var ()
+
 	return &LoginParams{
 
 		timeout: timeout,
@@ -42,7 +40,7 @@ func NewLoginParamsWithTimeout(timeout time.Duration) *LoginParams {
 // NewLoginParamsWithContext creates a new LoginParams object
 // with the default values initialized, and the ability to set a context for a request
 func NewLoginParamsWithContext(ctx context.Context) *LoginParams {
-	var ()
+
 	return &LoginParams{
 
 		Context: ctx,
@@ -52,7 +50,7 @@ func NewLoginParamsWithContext(ctx context.Context) *LoginParams {
 // NewLoginParamsWithHTTPClient creates a new LoginParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewLoginParamsWithHTTPClient(client *http.Client) *LoginParams {
-	var ()
+
 	return &LoginParams{
 		HTTPClient: client,
 	}
@@ -62,10 +60,6 @@ func NewLoginParamsWithHTTPClient(client *http.Client) *LoginParams {
 for the login operation typically these are written to a http.Request
 */
 type LoginParams struct {
-
-	/*Body*/
-	Body *models.DlframeworkLogin
-
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -104,17 +98,6 @@ func (o *LoginParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBody adds the body to the login params
-func (o *LoginParams) WithBody(body *models.DlframeworkLogin) *LoginParams {
-	o.SetBody(body)
-	return o
-}
-
-// SetBody adds the body to the login params
-func (o *LoginParams) SetBody(body *models.DlframeworkLogin) {
-	o.Body = body
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -122,12 +105,6 @@ func (o *LoginParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registr
 		return err
 	}
 	var res []error
-
-	if o.Body != nil {
-		if err := r.SetBodyParam(o.Body); err != nil {
-			return err
-		}
-	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)

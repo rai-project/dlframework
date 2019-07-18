@@ -11,9 +11,21 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DlframeworkLogin dlframework login
-// swagger:model dlframeworkLogin
-type DlframeworkLogin struct {
+// User user
+// swagger:model user
+type User struct {
+
+	// affiliation
+	Affiliation string `json:"affiliation,omitempty"`
+
+	// email
+	Email string `json:"email,omitempty"`
+
+	// first name
+	FirstName string `json:"first_name,omitempty"`
+
+	// last name
+	LastName string `json:"last_name,omitempty"`
 
 	// password
 	Password string `json:"password,omitempty"`
@@ -22,13 +34,13 @@ type DlframeworkLogin struct {
 	Username string `json:"username,omitempty"`
 }
 
-// Validate validates this dlframework login
-func (m *DlframeworkLogin) Validate(formats strfmt.Registry) error {
+// Validate validates this user
+func (m *User) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *DlframeworkLogin) MarshalBinary() ([]byte, error) {
+func (m *User) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -36,8 +48,8 @@ func (m *DlframeworkLogin) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DlframeworkLogin) UnmarshalBinary(b []byte) error {
-	var res DlframeworkLogin
+func (m *User) UnmarshalBinary(b []byte) error {
+	var res User
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
