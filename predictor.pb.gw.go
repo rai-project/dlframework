@@ -292,17 +292,17 @@ func RegisterPredictHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 }
 
 var (
-	pattern_Predict_Open_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "open"}, ""))
+	pattern_Predict_Open_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "open"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Predict_Close_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "close"}, ""))
+	pattern_Predict_Close_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "close"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Predict_URLs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "urls"}, ""))
+	pattern_Predict_URLs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "urls"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Predict_Images_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "images"}, ""))
+	pattern_Predict_Images_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "images"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Predict_Dataset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "dataset"}, ""))
+	pattern_Predict_Dataset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "dataset"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Predict_Reset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "reset"}, ""))
+	pattern_Predict_Reset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"predict", "reset"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

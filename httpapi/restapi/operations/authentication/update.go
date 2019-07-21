@@ -13,40 +13,40 @@ import (
 	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
-// LoginHandlerFunc turns a function with the right signature into a login handler
-type LoginHandlerFunc func(LoginParams, *models.User) middleware.Responder
+// UpdateHandlerFunc turns a function with the right signature into a update handler
+type UpdateHandlerFunc func(UpdateParams, *models.User) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn LoginHandlerFunc) Handle(params LoginParams, principal *models.User) middleware.Responder {
+func (fn UpdateHandlerFunc) Handle(params UpdateParams, principal *models.User) middleware.Responder {
 	return fn(params, principal)
 }
 
-// LoginHandler interface for that can handle valid login params
-type LoginHandler interface {
-	Handle(LoginParams, *models.User) middleware.Responder
+// UpdateHandler interface for that can handle valid update params
+type UpdateHandler interface {
+	Handle(UpdateParams, *models.User) middleware.Responder
 }
 
-// NewLogin creates a new http.Handler for the login operation
-func NewLogin(ctx *middleware.Context, handler LoginHandler) *Login {
-	return &Login{Context: ctx, Handler: handler}
+// NewUpdate creates a new http.Handler for the update operation
+func NewUpdate(ctx *middleware.Context, handler UpdateHandler) *Update {
+	return &Update{Context: ctx, Handler: handler}
 }
 
-/*Login swagger:route POST /auth/login Authentication login
+/*Update swagger:route POST /auth/update Authentication update
 
-Login to MLModelScope platform
+Update User Info on MLModelScope platform
 
 */
-type Login struct {
+type Update struct {
 	Context *middleware.Context
-	Handler LoginHandler
+	Handler UpdateHandler
 }
 
-func (o *Login) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *Update) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewLoginParams()
+	var Params = NewUpdateParams()
 
 	uprinc, aCtx, err := o.Context.Authorize(r, route)
 	if err != nil {

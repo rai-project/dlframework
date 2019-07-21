@@ -14,9 +14,11 @@ import (
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/predict"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/registry"
+
+	models "github.com/rai-project/dlframework/httpapi/models"
 )
 
-//go:generate swagger generate server --target ../../httpapi --name Dlframework --spec ../../dlframework.swagger.json
+//go:generate swagger generate server --target ../../httpapi --name Dlframework --spec ../../dlframework.swagger.json --principal models.User
 
 func configureFlags(api *operations.DlframeworkAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -36,6 +38,16 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Applies when the Authorization header is set with the Basic scheme
+	api.BasicAuthAuth = func(user string, pass string) (*models.User, error) {
+		return nil, errors.NotImplemented("basic auth  (basicAuth) has not yet been implemented")
+	}
+
+	// Set your custom authorizer if needed. Default one is security.Authorized()
+	// Expected interface runtime.Authorizer
+	//
+	// Example:
+	// api.APIAuthorizer = security.Authorized()
 	if api.PredictCloseHandler == nil {
 		api.PredictCloseHandler = predict.CloseHandlerFunc(func(params predict.CloseParams) middleware.Responder {
 			return middleware.NotImplemented("operation predict.Close has not yet been implemented")
@@ -62,8 +74,13 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 		})
 	}
 	if api.AuthenticationLoginHandler == nil {
-		api.AuthenticationLoginHandler = authentication.LoginHandlerFunc(func(params authentication.LoginParams) middleware.Responder {
+		api.AuthenticationLoginHandler = authentication.LoginHandlerFunc(func(params authentication.LoginParams, principal *models.User) middleware.Responder {
 			return middleware.NotImplemented("operation authentication.Login has not yet been implemented")
+		})
+	}
+	if api.AuthenticationLogoutHandler == nil {
+		api.AuthenticationLogoutHandler = authentication.LogoutHandlerFunc(func(params authentication.LogoutParams) middleware.Responder {
+			return middleware.NotImplemented("operation authentication.Logout has not yet been implemented")
 		})
 	}
 	if api.RegistryModelAgentsHandler == nil {
@@ -94,6 +111,16 @@ func configureAPI(api *operations.DlframeworkAPI) http.Handler {
 	if api.PredictURLsHandler == nil {
 		api.PredictURLsHandler = predict.URLsHandlerFunc(func(params predict.URLsParams) middleware.Responder {
 			return middleware.NotImplemented("operation predict.URLs has not yet been implemented")
+		})
+	}
+	if api.AuthenticationUpdateHandler == nil {
+		api.AuthenticationUpdateHandler = authentication.UpdateHandlerFunc(func(params authentication.UpdateParams, principal *models.User) middleware.Responder {
+			return middleware.NotImplemented("operation authentication.Update has not yet been implemented")
+		})
+	}
+	if api.AuthenticationUserInfoHandler == nil {
+		api.AuthenticationUserInfoHandler = authentication.UserInfoHandlerFunc(func(params authentication.UserInfoParams) middleware.Responder {
+			return middleware.NotImplemented("operation authentication.UserInfo has not yet been implemented")
 		})
 	}
 
