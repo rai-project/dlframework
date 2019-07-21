@@ -3,6 +3,9 @@ package steps
 import (
 	"context"
 
+	machine "github.com/rai-project/machine/info"
+	nvidiasmi "github.com/rai-project/nvidia-smi"
+
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/dlframework/framework/options"
@@ -58,7 +61,7 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		errors.New("there is no parent span in the context for the predict step")
 	}
 
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), opentracing.Tags{
+	predictTags := opentracing.Tags{
 		"trace_source":      "steps",
 		"step_name":         "predict",
 		"model_name":        model.GetName(),
@@ -66,12 +69,32 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 		"framework_name":    framework.GetName(),
 		"framework_version": framework.GetVersion(),
 		"batch_size":        opts.BatchSize(),
-		"gpu_metrics":       opts.GPUMetrics(),
 		"feature_limit":     opts.FeatureLimit(),
 		"device":            opts.Devices().String(),
 		"trace_level":       opts.TraceLevel().String(),
 		"uses_gpu":          opts.UsesGPU(),
-	})
+	}
+	predictTags["kernel_os"] = machine.Info.KernelOS
+	predictTags["os_name"] = machine.Info.OSName
+	if opts.GPUMetrics() != "" {
+		predictTags["gpu_metrics"] = opts.GPUMetrics()
+	}
+	if opts.UsesGPU {
+		deivceId := opts.Devices()[0].ID()
+		if deivceId > len(nvidiasmi.Info.GPUS) {
+			log.WithField("device_id", deviceId).WithField("num_gpus", len(nvidiasmi.Info.GPU)).Error("unexpected number of gpus")
+		} else {
+			gpuInfo := nvidiasmi.Info.GPUS[deviceId]
+			predictTags["gpu_driver_version"] = nvidiasmi.DriverVersion
+			predictTags["gpu_id"] = gpuInfo.ID
+			predictTags["gpu_pci_bus"] = gpuInfo.PciBus
+			predictTags["gpu_product_name"] = gpuInfo.ProductName
+			predictTags["gpu_product_brand"] = gpuInfo.ProductBrand
+			predictTags["gpu_persistence_mode"] = gpuInfo.PersistenceMode
+		}
+	}
+
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, p.Info(), predictTags)
 	defer span.Finish()
 
 	err = p.predictor.Predict(ctx, data, options.WithOptions(opts))
