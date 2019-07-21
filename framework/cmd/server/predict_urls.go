@@ -432,10 +432,13 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		}
 
 		var device string
+		var gpuDeviceIdx int
 		if useGPU {
 			device = "gpu"
+			gpuDeviceIdx = 0
 		} else {
 			device = "cpu"
+			gpuDeviceIdx = -1
 		}
 		outputDir := filepath.Join(baseDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
 		if !com.IsDir(outputDir) {
@@ -517,8 +520,15 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		TraceLevel:          traceLevel.String(),
 		MachineArchitecture: runtime.GOARCH,
 		MachineInformation:  machine.Info,
-		GPUInformation:      nvidiasmi.Info,
 		Metadata:            metadata,
+	}
+	if nvidiasmi.Info != nil {
+
+		evaluationEntry.GPUDriverVersion = &nvidiasmi.Info.DriverVersion
+		if useGPU {
+			evaluationEntry.GPUDevice = &gpuDeviceIdx
+			evaluationEntry.GPUInformation = &nvidiasmi.Info.GPUS[gpuDeviceIdx]
+		}
 	}
 
 	databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
