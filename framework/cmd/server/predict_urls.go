@@ -516,6 +516,8 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		GPUMetrics:          gpuMetrics,
 		TraceLevel:          traceLevel.String(),
 		MachineArchitecture: runtime.GOARCH,
+		MachineInformation:  machine.Info,
+		GPUInformation:      nvidiasmi.Info,
 		Metadata:            metadata,
 	}
 

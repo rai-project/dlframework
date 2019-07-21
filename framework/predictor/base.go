@@ -58,6 +58,10 @@ func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManif
 	if !ok {
 		return "", errors.New("expecting a type parameter")
 	}
+	if pdims == nil {
+		return "", nil
+	}
+
 	pdimsVal := pdims.Value
 	if pdimsVal == "" {
 		return "", errors.New("invalid type parameter")
