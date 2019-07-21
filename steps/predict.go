@@ -79,13 +79,13 @@ func (p predict) do(ctx context.Context, in0 interface{}, pipelineOpts *pipeline
 	if opts.GPUMetrics() != "" {
 		predictTags["gpu_metrics"] = opts.GPUMetrics()
 	}
-	if opts.UsesGPU {
-		deivceId := opts.Devices()[0].ID()
-		if deivceId > len(nvidiasmi.Info.GPUS) {
-			log.WithField("device_id", deviceId).WithField("num_gpus", len(nvidiasmi.Info.GPU)).Error("unexpected number of gpus")
+	if opts.UsesGPU() {
+		deviceId := opts.Devices()[0].ID()
+		if deviceId > len(nvidiasmi.Info.GPUS) {
+			log.WithField("device_id", deviceId).WithField("num_gpus", len(nvidiasmi.Info.GPUS)).Error("unexpected number of gpus")
 		} else {
 			gpuInfo := nvidiasmi.Info.GPUS[deviceId]
-			predictTags["gpu_driver_version"] = nvidiasmi.DriverVersion
+			predictTags["gpu_driver_version"] = nvidiasmi.Info.DriverVersion
 			predictTags["gpu_id"] = gpuInfo.ID
 			predictTags["gpu_pci_bus"] = gpuInfo.PciBus
 			predictTags["gpu_product_name"] = gpuInfo.ProductName

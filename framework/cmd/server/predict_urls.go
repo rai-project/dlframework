@@ -427,19 +427,20 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
 
+	var device string
+	var gpuDeviceIdx int
+	if useGPU {
+		device = "gpu"
+		gpuDeviceIdx = 0
+	} else {
+		device = "cpu"
+		gpuDeviceIdx = -1
+	}
+
 	if publishToDatabase == false {
 		for range outputs {
 		}
 
-		var device string
-		var gpuDeviceIdx int
-		if useGPU {
-			device = "gpu"
-			gpuDeviceIdx = 0
-		} else {
-			device = "cpu"
-			gpuDeviceIdx = -1
-		}
 		outputDir := filepath.Join(baseDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
 		if !com.IsDir(outputDir) {
 			os.MkdirAll(outputDir, os.ModePerm)
