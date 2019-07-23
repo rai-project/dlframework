@@ -48,6 +48,7 @@ var (
 	duplicateInput    int
 	numUrlParts       int
 	numWarmUpUrlParts int
+	gpuDeviceId       int
 )
 
 func getPublicIP() (string, error) {
@@ -428,13 +429,11 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
 
 	var device string
-	var gpuDeviceIdx int
 	if useGPU {
 		device = "gpu"
-		gpuDeviceIdx = 0
 	} else {
 		device = "cpu"
-		gpuDeviceIdx = -1
+		gpuDeviceId = -1
 	}
 
 	if publishToDatabase == false {
@@ -523,12 +522,12 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		MachineInformation:  machine.Info,
 		Metadata:            metadata,
 	}
-	if nvidiasmi.Info != nil {
 
+	if nvidiasmi.Info != nil {
 		evaluationEntry.GPUDriverVersion = &nvidiasmi.Info.DriverVersion
 		if useGPU {
-			evaluationEntry.GPUDevice = &gpuDeviceIdx
-			evaluationEntry.GPUInformation = &nvidiasmi.Info.GPUS[gpuDeviceIdx]
+			evaluationEntry.GPUDevice = &gpuDeviceId
+			evaluationEntry.GPUInformation = &nvidiasmi.Info.GPUS[gpuDeviceId]
 		}
 	}
 
@@ -661,4 +660,5 @@ func init() {
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
 	predictUrlsCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
 	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 1, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	predictUrlsCmd.PersistentFlags().IntVar(&gpuDeviceId, "gpu_device_id", 0, "gpu device id to pass into nvidia-smi. Defatuls to 0.")
 }
