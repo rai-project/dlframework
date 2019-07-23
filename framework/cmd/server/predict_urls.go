@@ -20,7 +20,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
-	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/archive"
@@ -603,7 +602,8 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	log.WithField("model", modelName).Info("downloading trace information")
 
 	var trace evaluation.TraceInformation
-	err = easyjson.UnmarshalFromReader(resp, &trace)
+	jsonDecoder := json.NewDecoder(resp)
+	err = jsonDecoder.Decode(&trace)
 	if err != nil {
 		log.WithError(err).Error("failed to decode trace information")
 	}
