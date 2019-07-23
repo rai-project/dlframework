@@ -149,6 +149,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			return errors.New("not gpu found")
 		}
 		dc = map[string]int32{"GPU": 0}
+		log.WithField("gpu = ", nvidiasmi.Info.GPUS[gpuDeviceId].ProductName).Info("Running evalaution on GPU")
 	} else {
 		dc = map[string]int32{"CPU": 0}
 	}
