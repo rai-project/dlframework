@@ -433,7 +433,14 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 		CreatedAt:  time.Now(),
 		TraceLevel: traceLevel,
 	}
-	performanceTable.Insert(performance)
+	if err := performanceTable.Insert(performance); err != nil {
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le.Error("failed to publish performance entry")
+	}
 
 	log.WithField("model", modelName).Info("inserted performance information")
 
@@ -442,7 +449,12 @@ func runPredictDatasetCmd(c *cobra.Command, args []string) error {
 	evaluationEntry.InputPredictionIDs = inputPredictionIds
 
 	if err := evaluationTable.Insert(evaluationEntry); err != nil {
-		log.WithError(err).Error("failed to publish evaluation entry")
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le.Error("failed to publish evaluation entry")
 	}
 
 	log.WithField("model", model.MustCanonicalName()).

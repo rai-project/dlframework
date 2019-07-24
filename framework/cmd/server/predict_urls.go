@@ -89,29 +89,29 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		}
 		defer db.Close()
 
-		evaluationTable, err = evaluation.NewEvaluationCollection(db)
-		if err != nil {
-			return err
-		}
-		defer evaluationTable.Close()
-
 		modelAccuracyTable, err = evaluation.NewModelAccuracyCollection(db)
 		if err != nil {
 			return err
 		}
 		defer modelAccuracyTable.Close()
 
-		performanceTable, err = evaluation.NewPerformanceCollection(db)
-		if err != nil {
-			return err
-		}
-		defer performanceTable.Close()
-
 		inputPredictionsTable, err = evaluation.NewInputPredictionCollection(db)
 		if err != nil {
 			return err
 		}
 		defer inputPredictionsTable.Close()
+
+		evaluationTable, err = evaluation.NewEvaluationCollection(db)
+		if err != nil {
+			return err
+		}
+		defer evaluationTable.Close()
+
+		performanceTable, err = evaluation.NewPerformanceCollection(db)
+		if err != nil {
+			return err
+		}
+		defer performanceTable.Close()
 
 	}
 
@@ -608,13 +608,27 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if err != nil {
 		log.WithError(err).Error("failed to decode trace information")
 	}
-	performance := evaluation.Performance{
+
+	performance := &evaluation.Performance{
 		ID:         bson.NewObjectId(),
 		CreatedAt:  time.Now(),
-		Trace:      trace,
+		Trace:      &trace,
 		TraceLevel: traceLevel,
 	}
-	performanceTable.Insert(performance)
+
+	if err = performance.CompressTrace(); err != nil {
+		log.WithError(err).Error("failed to compress trace information")
+	}
+
+	if err := performanceTable.Insert(performance); err != nil {
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le = le.WithField("num_traces", len(trace.Spans()))
+		le.Error("failed to publish performance entry")
+	}
 
 	log.WithField("model", modelName).Info("inserted performance information")
 
@@ -623,7 +637,12 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	evaluationEntry.InputPredictionIDs = inputPredictionIds
 
 	if err := evaluationTable.Insert(evaluationEntry); err != nil {
-		log.WithError(err).Error("failed to publish evaluation entry")
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le.Error("failed to publish evaluation entry")
 	}
 
 	log.WithField("model", model.MustCanonicalName()).
