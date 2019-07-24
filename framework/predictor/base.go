@@ -54,21 +54,20 @@ func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManif
 	if typeParameters == nil {
 		return "", errors.New("invalid type parameters")
 	}
-	pdims, ok := typeParameters[name]
+	param, ok := typeParameters[name]
 	if !ok {
-		return "", errors.New("expecting a type parameter")
+		return "", errors.New("invalid parameter name")
 	}
-	if pdims == nil {
+	if param == nil {
 		return "", nil
 	}
-
-	pdimsVal := pdims.Value
-	if pdimsVal == "" {
-		return "", errors.New("invalid type parameter")
+	paramVal := param.Value
+	if paramVal == "" {
+		return "", nil
 	}
 	var ret string
-	if err := yaml.Unmarshal([]byte(pdimsVal), &ret); err != nil {
-		return "", errors.Errorf("unable to get the type parameter %v as a string", pdimsVal)
+	if err := yaml.Unmarshal([]byte(paramVal), &ret); err != nil {
+		return "", errors.Errorf("unable to get the type parameter %v as a string", paramVal)
 	}
 	return ret, nil
 }
