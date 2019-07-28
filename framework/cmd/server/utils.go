@@ -3,9 +3,11 @@ package server
 import (
 	"net"
 	"strings"
+
+	externalip "github.com/glendc/go-external-ip"
 )
 
-func getTracerHostAddress(addr string) string {
+func getTracerServerAddress(addr string) string {
 	trimPrefix := func(s string) string {
 		s = strings.TrimSpace(s)
 		if strings.HasPrefix(s, "http://") {
@@ -20,5 +22,14 @@ func getTracerHostAddress(addr string) string {
 	if err != nil {
 		return trimPrefix(addr)
 	}
-	return trimPrefix(host)
+	host = trimPrefix(host)
+	if host == "localhost" {
+		consensus := externalip.DefaultConsensus(nil, nil)
+		ip, err := consensus.ExternalIP()
+		if err != nil {
+			return ""
+		}
+		return ip.String()
+	}
+	return host
 }

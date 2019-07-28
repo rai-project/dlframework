@@ -74,12 +74,12 @@ var predictCmd = &cobra.Command{
 			databaseEndpoints = []string{databaseAddress}
 		}
 		if tracerAddress != "" {
-			tracerHost := getTracerHostAddress(tracerAddress)
-			jaeger.Config.Endpoints = fixTracerEndpoints([]string{tracerHost})
-			zipkin.Config.Endpoints = fixTracerEndpoints([]string{tracerHost})
+			tracerServerAddr := getTracerServerAddress(tracerAddress)
+			jaeger.Config.Endpoints = fixTracerEndpoints([]string{tracerServerAddr})
+			zipkin.Config.Endpoints = fixTracerEndpoints([]string{tracerServerAddr})
 			tracer.ResetStd()
 		} else {
-			tracerAddress = getTracerHostAddress(jaeger.Config.Endpoints[0])
+			tracerAddress = getTracerServerAddress(jaeger.Config.Endpoints[0])
 		}
 		if useGPU && !nvidiasmi.HasGPU {
 			return errors.New("unable to find gpu on the system")

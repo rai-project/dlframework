@@ -416,17 +416,9 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	if runtime.GOARCH == "ppc64le" {
 		traceIDVal = strconv.FormatUint(traceID.Low, 16)
 	}
-	// pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
-	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", "54.172.226.29", traceIDVal))
-
-	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
-	resp, err := grequests.Get(query, nil)
-	if err != nil {
-		log.WithError(err).
-			WithField("trace_id", traceIDVal).
-			Error("failed to download span information")
-	}
-	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
+	tracerServerAddr := getTracerServerAddress(tracerAddress)
+	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", tracerServerAddr, traceIDVal))
+	traceURL := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", tracerServerAddr, traceIDVal)
 
 	var device string
 	if useGPU {
@@ -465,7 +457,16 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			log.WithField("path", tracePath).Info("trace file already exists")
 			return nil
 		}
-		err := ioutil.WriteFile(tracePath, resp.Bytes(), 0644)
+
+		resp, err := grequests.Get(traceURL, nil)
+		if err != nil {
+			log.WithError(err).
+				WithField("trace_id", traceIDVal).
+				Error("failed to download span information")
+		}
+		log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("traceURL", traceURL).Info("downloaded trace information")
+
+		err = ioutil.WriteFile(tracePath, resp.Bytes(), 0644)
 		if err != nil {
 			return err
 		}
@@ -531,8 +532,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		}
 	}
 
-	databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
-
 	for out0 := range outputs {
 		if cnt > urlCnt {
 			break
@@ -566,8 +565,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 		}
 
-		databaseInsertProgress.Increment()
-
 		features.Sort()
 
 		if features[0].Type == dl.FeatureType_CLASSIFICATION {
@@ -586,8 +583,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		cnt++
 	}
 
-	//databaseInsertProgress.FinishPrint("inserting prediction complete")
-	databaseInsertProgress.Finish()
 	log.WithField("model", modelName).Info("finised inserting prediction")
 
 	modelAccuracy := evaluation.ModelAccuracy{
@@ -602,18 +597,19 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	log.WithField("model", modelName).Info("downloading trace information")
 
-	var trace evaluation.TraceInformation
-	jsonDecoder := json.NewDecoder(resp)
-	err = jsonDecoder.Decode(&trace)
-	if err != nil {
-		log.WithError(err).Error("failed to decode trace information")
-	}
+	// var trace evaluation.TraceInformation
+	// jsonDecoder := json.NewDecoder(resp)
+	// err = jsonDecoder.Decode(&trace)
+	// if err != nil {
+	// 	log.WithError(err).Error("failed to decode trace information")
+	// }
 
 	performance := &evaluation.Performance{
 		ID:         bson.NewObjectId(),
 		CreatedAt:  time.Now(),
-		Trace:      &trace,
+		Trace:      nil,
 		TraceLevel: traceLevel,
+		TraceURL:   traceURL,
 	}
 
 	if err = performance.CompressTrace(); err != nil {
@@ -626,7 +622,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		if cause != err {
 			le = log.WithField("cause", cause.Error())
 		}
-		le = le.WithField("num_traces", len(trace.Spans()))
 		le.Error("failed to publish performance entry")
 	}
 
