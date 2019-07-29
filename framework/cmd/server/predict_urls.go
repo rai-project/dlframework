@@ -17,7 +17,6 @@ import (
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -327,6 +326,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	}
 
 	hostName, _ := os.Hostname()
+	hostIP := getHostIP()
 	metadata := map[string]string{}
 	if useGPU {
 		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
@@ -515,6 +515,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		DatasetName:         "",
 		Public:              false,
 		Hostname:            hostName,
+		HostIP:              hostIP,
 		UsingGPU:            useGPU,
 		BatchSize:           batchSize,
 		GPUMetrics:          gpuMetrics,
@@ -640,9 +641,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		le.Error("failed to publish evaluation entry")
 	}
 
-	log.WithField("model", model.MustCanonicalName()).
-		WithField("accuracy", spew.Sprint(modelAccuracy)).
-		Info("inserted evaluation information")
+	log.WithField("model", modelName).Info("inserted evaluation information")
 
 	return nil
 }

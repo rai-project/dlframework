@@ -24,12 +24,16 @@ func getTracerServerAddress(addr string) string {
 	}
 	host = trimPrefix(host)
 	if host == "localhost" {
-		consensus := externalip.DefaultConsensus(nil, nil)
-		ip, err := consensus.ExternalIP()
-		if err != nil {
-			return ""
-		}
-		return ip.String()
+		return getHostIP()
 	}
 	return host
+}
+
+func getHostIP() string {
+	consensus := externalip.DefaultConsensus(nil, nil)
+	ip, err := consensus.ExternalIP()
+	if err != nil {
+		return ""
+	}
+	return ip.String()
 }
