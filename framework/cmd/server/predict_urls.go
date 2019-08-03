@@ -568,19 +568,19 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 		features.Sort()
 
-		if features[0].Type == dl.FeatureType_CLASSIFICATION {
-			label = strings.TrimSpace(strings.ToLower(label))
-			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-				cntTop1++
-			}
-			for _, f := range features[:5] {
-				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-					cntTop5++
-				}
-			}
-		} else {
-			log.WithField("model", modelName).Info("model is not of classification type, skip accuracy count")
-		}
+		// if features[0].Type == dl.FeatureType_CLASSIFICATION {
+		// 	label = strings.TrimSpace(strings.ToLower(label))
+		// 	if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+		// 		cntTop1++
+		// 	}
+		// 	for _, f := range features[:5] {
+		// 		if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+		// 			cntTop5++
+		// 		}
+		// 	}
+		// } else {
+		// 	log.WithField("model", modelName).Info("model is not of classification type, skip accuracy count")
+		// }
 		cnt++
 	}
 
