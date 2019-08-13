@@ -73,7 +73,7 @@ func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManif
 }
 
 func (p Base) GetPreprocessOptions() (PreprocessOptions, error) {
-	return PreprocessOptions{}, errors.New("invalid preprocessor options")
+	return PreprocessOptions{}, nil
 }
 
 func (p Base) baseURL(model dlframework.ModelManifest) string {
@@ -116,16 +116,6 @@ func (p Base) GetGraphUrl() string {
 	return url + model.GetModel().GetGraphPath()
 }
 
-func (p Base) GetFeaturesUrl() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_url"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
-}
-
 func (p Base) GetWeightsChecksum() string {
 	model := p.Model
 	return model.GetModel().GetWeightsChecksum()
@@ -134,16 +124,6 @@ func (p Base) GetWeightsChecksum() string {
 func (p Base) GetGraphChecksum() string {
 	model := p.Model
 	return model.GetModel().GetGraphChecksum()
-}
-
-func (p Base) GetFeaturesChecksum() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_checksum"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
 }
 
 func (p Base) GetWeightsPath() string {
@@ -165,15 +145,4 @@ func (p Base) GetGraphPath() string {
 		return ""
 	}
 	return filepath.Join(p.WorkDir, graphPath)
-}
-
-func (p Base) GetFeaturesPath() string {
-	model := p.Model
-	return filepath.Join(p.WorkDir, model.GetName()+".features")
-}
-
-func (p Base) GetFeatureType() dlframework.FeatureType {
-	model := p.Model
-	ty := strings.ToUpper(model.GetOutput().GetType())
-	return dlframework.FeatureType(dlframework.FeatureType_value[ty])
 }
