@@ -42,6 +42,7 @@ var (
 	DefaultChannelBuffer       = 100000
 	fixTracerEndpoints         = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
 	baseDir                    string
+	gpuDeviceId                int
 )
 
 var predictCmd = &cobra.Command{
@@ -104,9 +105,11 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&databaseName, "database_name", "", "the name of the database to publish the evaluation results to. By default the app name in the config `app.name` is used")
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
 	predictCmd.PersistentFlags().StringVar(&baseDir, "base_dir", "results", "the folder path to store the results. By default 'results' is used")
+	predictCmd.PersistentFlags().IntVar(&gpuDeviceId, "gpu_device_id", 0, "gpu device id to pass into nvidia-smi. Defatuls to 0.")
 
 	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
+	predictCmd.AddCommand(predictRawCmd)
 	// predictCmd.AddCommand(predictWorkloadCmd)
 	// predictCmd.AddCommand(predictQPSCmd)
 }
