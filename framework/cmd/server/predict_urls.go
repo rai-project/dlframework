@@ -66,6 +66,14 @@ func getPublicIP() (string, error) {
 }
 
 func runPredictUrlsCmd(c *cobra.Command, args []string) error {
+	if timeoutOptionSet {
+		go func() {
+			time.Sleep(15 * time.Minute)
+			fmt.Println("timeout")
+			os.Exit(-1)
+		}()
+	}
+
 	model, err := framework.FindModel(modelName + ":" + modelVersion)
 	if err != nil {
 		return err

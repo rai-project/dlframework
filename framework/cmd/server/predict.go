@@ -43,6 +43,7 @@ var (
 	fixTracerEndpoints         = tracerutils.FixEndpoints("http://", "9411", "/api/v1/spans")
 	baseDir                    string
 	gpuDeviceId                int
+	timeoutOptionSet           bool
 )
 
 var predictCmd = &cobra.Command{
@@ -106,6 +107,7 @@ func init() {
 	predictCmd.PersistentFlags().StringVar(&databaseAddress, "database_address", "", "the address of the mongo database to store the results. By default the address in the config `database.endpoints` is used")
 	predictCmd.PersistentFlags().StringVar(&baseDir, "base_dir", "results", "the folder path to store the results. By default 'results' is used")
 	predictCmd.PersistentFlags().IntVar(&gpuDeviceId, "gpu_device_id", 0, "gpu device id to pass into nvidia-smi. Defatuls to 0.")
+	predictCmd.PersistentFlags().BoolVar(&timeoutOptionSet, "time_out", true, "kill the agent after an amount of time. Defaults to be false.")
 
 	predictCmd.AddCommand(predictDatasetCmd)
 	predictCmd.AddCommand(predictUrlsCmd)
