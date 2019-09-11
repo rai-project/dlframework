@@ -883,6 +883,23 @@ func (p ImagePredictor) CreateImageFeatures(ctx context.Context, images [][][][]
 	return features, nil
 }
 
+// CreateCaptioningFeatures ...
+func (p ImagePredictor) CreateCaptioningFeatures(ctx context.Context, sentences []string, probabilities []float64) ([]dlframework.Features, error) {
+	numSentences := len(sentences)
+	if numSentences < 1 {
+		return nil, errors.New("len(sentences) < 1")
+	}
+	features := make([]dlframework.Features, numSentences)
+	for i := 0; i < numSentences; i++ {
+		features[i] = dlframework.Features{feature.New(
+			feature.TextType(),
+			feature.Text(&dlframework.Text{Data: []byte(sentences[i])}),
+			feature.Probability(float32(probabilities[i])),
+		)}
+	}
+	return features, nil
+}
+
 func (p ImagePredictor) Reset(ctx context.Context) error {
 	return nil
 }
