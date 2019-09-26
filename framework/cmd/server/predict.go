@@ -4,6 +4,8 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/rai-project/config"
 	"github.com/rai-project/database"
 	"github.com/rai-project/database/mongodb"
@@ -12,8 +14,6 @@ import (
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/tracer/jaeger"
 	tracerutils "github.com/rai-project/tracer/utils"
-	"github.com/rai-project/tracer/zipkin"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -78,7 +78,6 @@ var predictCmd = &cobra.Command{
 		if tracerAddress != "" {
 			tracerServerAddr := getTracerServerAddress(tracerAddress)
 			jaeger.Config.Endpoints = fixTracerEndpoints([]string{tracerServerAddr})
-			zipkin.Config.Endpoints = fixTracerEndpoints([]string{tracerServerAddr})
 			tracer.ResetStd()
 		} else {
 			tracerAddress = getTracerServerAddress(jaeger.Config.Endpoints[0])
