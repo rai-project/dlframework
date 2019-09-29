@@ -63,19 +63,19 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 
 	switch elementType {
 	case "float32":
-		if(p.options.Layout == image.HWCLayout) {
+		if p.options.Layout == image.HWCLayout {
 			outTensor := tensor.New(
 				tensor.WithShape(p.height, p.width, 3),
 				tensor.WithBacking(floats),
 			)
 			return outTensor
-		}else if(p.options.Layout == image.CHWLayout) {
+		} else if p.options.Layout == image.CHWLayout {
 			outTensor := tensor.New(
 				tensor.WithShape(3, p.height, p.width),
 				tensor.WithBacking(floats),
 			)
 			return outTensor
-		}else {
+		} else {
 			errors.Errorf("expecting HWC or CHW as layout field, but got %v", p.options.Layout)
 		}
 	case "uint8":
@@ -83,19 +83,19 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 		for ii, f := range floats {
 			uint8s[ii] = uint8(f)
 		}
-		if(p.options.Layout == image.HWCLayout) {
+		if p.options.Layout == image.HWCLayout {
 			outTensor := tensor.New(
 				tensor.WithShape(p.height, p.width, 3),
 				tensor.WithBacking(uint8s),
 			)
 			return outTensor
-		}else if(p.options.Layout == image.CHWLayout) {
+		} else if p.options.Layout == image.CHWLayout {
 			outTensor := tensor.New(
 				tensor.WithShape(3, p.height, p.width),
 				tensor.WithBacking(uint8s),
 			)
 			return outTensor
-		}else {
+		} else {
 			errors.Errorf("expecting HWC or CHW as layout fields, but got %v", p.options.Layout)
 		}
 	}
