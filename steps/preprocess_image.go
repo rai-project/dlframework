@@ -46,11 +46,13 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 	case *types.RGBImage:
 		if p.options.Layout == image.CHWLayout {
 			floats = p.doRGBImageCHW(in)
+			break
 		}
 		floats = p.doRGBImageHWC(in)
 	case *types.BGRImage:
 		if p.options.Layout == image.CHWLayout {
 			floats = p.doBGRImageCHW(in)
+			break
 		}
 		floats = p.doBGRImageHWC(in)
 	default:
@@ -61,21 +63,41 @@ func (p *preprocessImage) do(ctx context.Context, in0 interface{}, pipelineOptio
 
 	switch elementType {
 	case "float32":
-		outTensor := tensor.New(
-			tensor.WithShape(p.height, p.width, 3),
-			tensor.WithBacking(floats),
-		)
-		return outTensor
+		if(p.options.Layout == image.HWCLayout) {
+			outTensor := tensor.New(
+				tensor.WithShape(p.height, p.width, 3),
+				tensor.WithBacking(floats),
+			)
+			return outTensor
+		}else if(p.options.Layout == image.CHWLayout) {
+			outTensor := tensor.New(
+				tensor.WithShape(3, p.height, p.width),
+				tensor.WithBacking(floats),
+			)
+			return outTensor
+		}else {
+			errors.Errorf("expecting HWC or CHW as layout field, but got %v", p.options.Layout)
+		}
 	case "uint8":
 		uint8s := make([]uint8, len(floats))
 		for ii, f := range floats {
 			uint8s[ii] = uint8(f)
 		}
-		outTensor := tensor.New(
-			tensor.WithShape(p.height, p.width, 3),
-			tensor.WithBacking(uint8s),
-		)
-		return outTensor
+		if(p.options.Layout == image.HWCLayout) {
+			outTensor := tensor.New(
+				tensor.WithShape(p.height, p.width, 3),
+				tensor.WithBacking(uint8s),
+			)
+			return outTensor
+		}else if(p.options.Layout == image.CHWLayout) {
+			outTensor := tensor.New(
+				tensor.WithShape(3, p.height, p.width),
+				tensor.WithBacking(uint8s),
+			)
+			return outTensor
+		}else {
+			errors.Errorf("expecting HWC or CHW as layout fields, but got %v", p.options.Layout)
+		}
 	}
 
 	return errors.Errorf("unsupported element type %v", elementType)
