@@ -8,10 +8,8 @@ import (
 )
 
 var collectCmd = &cobra.Command{
-	Use:     "collectCmd",
-	Short:   "collectCmd",
-	Aliases: []string{"collect"},
-	Long:    `collectCmd`,
+	Use:   "collect",
+	Short: "collect the ",
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 3 {
 			return errors.New("urlsfile, batch size upperbound and output dir need to be provided")

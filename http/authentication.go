@@ -1,94 +1,64 @@
 package http
 
 import (
+	"io/ioutil"
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/pkg/errors"
+	"github.com/rai-project/dlframework/httpapi/models"
 	"github.com/rai-project/dlframework/httpapi/restapi/operations/authentication"
-	"github.com/rai-project/passlib"
+	auth "github.com/volatiletech/authboss/auth"
+	register "github.com/volatiletech/authboss/register"
+	logout "github.com/volatiletech/authboss/logout"
 )
 
-// dummy for MongoDB User Database
-type userRecord struct {
-	firstname   string
-	lastname    string
-	username    string
-	password    string
-	affiliation string
-}
+func LoginHandler(params authentication.LoginParams, principal *models.User) middleware.Responder {
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+		a := &auth.Auth{ab}
+		req := params.HTTPRequest
+		requestByte, _ := json.Marshal(principal)
+		req.Body = ioutil.NopCloser(bytes.NewReader(requestByte))
 
-var userTable = map[string]*userRecord{}
-
-func CheckPassword(username string, password string) bool {
-
-	hash := userTable[username].password
-
-	newHash, err := passlib.Verify(password, hash)
-	if err != nil {
-		// incorrect password, malformed hash, etc.
-		// either way, reject
-		return false
-	}
-
-	// The context has decided, as per its policy, that
-	// the hash which was used to validate the password
-	// should be changed. It has upgraded the hash using
-	// the verified password.
-	if newHash != "" {
-		userTable[username].password = newHash
-	}
-
-	return true
-
-}
-
-func LoginHandler(params authentication.LoginParams) middleware.Responder {
-
-	username := params.Body.Username
-	password := params.Body.Password
-
-	if val, ok := userTable[username]; ok {
-		if CheckPassword(val.username, password) == false {
-			return NewError("Login", errors.New("Incorrect credentials"))
-		}
-	} else {
-		return NewError("Login", errors.New("Not signed up!"))
-	}
-
-	return authentication.NewLoginOK()
-
-}
-
-func GenerateHash(password string) string {
-
-	hash, err := passlib.Hash(password)
-	if err != nil {
-		// couldn't hash password for some reason
-		return "xxx"
-	}
-
-	return hash
+		a.LoginPost(rw, req)
+	})
 
 }
 
 func SignupHandler(params authentication.SignupParams) middleware.Responder {
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+		r := &register.Register{ab}
+		req := params.HTTPRequest
+		requestByte, _ := json.Marshal(params.Body)
+		req.Body = ioutil.NopCloser(bytes.NewReader(requestByte))
+		r.Post(rw, req)
+	})
+}
 
-	firstName := params.Body.FirstName
-	lastName := params.Body.LastName
-	username := params.Body.Username
-	password := params.Body.Password
-	affiliation := params.Body.Affiliation
-
-	if len(firstName) == 0 || len(lastName) == 0 || len(username) == 0 || len(password) == 0 || len(affiliation) == 0 {
-		return NewError("Signup", errors.New("Incomplete Information"))
+func UserInfoHandler(params authentication.UserInfoParams) middleware.Responder {
+	userInter, err := ab.LoadCurrentUser(&params.HTTPRequest)
+	if userInter == nil || err != nil {
+		return authentication.NewUserInfoOK().
+		WithPayload(&models.DlframeworkUserInfoResponse{
+			Outcome: "fail",
+		})
+	} else {
+		return authentication.NewUserInfoOK().
+		WithPayload(&models.DlframeworkUserInfoResponse{
+			Outcome: "success",
+			Username: userInter.(*User).Username,
+			Email: userInter.(*User).Email,
+			FirstName: userInter.(*User).FirstName,
+			LastName: userInter.(*User).LastName,
+		})
 	}
+}
 
-	encryption := GenerateHash(password)
-	if encryption == "xxx" {
-		return NewError("Signup", errors.New("Could not generate password"))
-	}
-
-	userTable[username] = &userRecord{firstname: firstName, lastname: lastName, username: username, password: encryption, affiliation: affiliation}
-
-	return authentication.NewSignupOK()
-
+func LogoutHandler(params authentication.LogoutParams) middleware.Responder {
+	return middleware.ResponderFunc(func(rw http.ResponseWriter, p runtime.Producer){
+		l := &logout.Logout{ab}
+		req := params.HTTPRequest
+		l.Logout(rw, req)
+	})
 }

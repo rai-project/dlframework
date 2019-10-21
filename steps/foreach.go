@@ -22,7 +22,7 @@ func NewForEach(f func(in interface{}) interface{}) pipeline.Step {
 }
 
 func (p forEach) Info() string {
-	return "ForEach"
+	return "for_each"
 }
 
 func (p forEach) do(ctx context.Context, in0 interface{}, opts *pipeline.Options) interface{} {

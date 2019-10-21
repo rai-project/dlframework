@@ -235,7 +235,7 @@ func (p *PredictHandler) Close(params predict.CloseParams) middleware.Responder 
 	}
 
 	var resp webmodels.DlframeworkPredictorCloseResponse
-	return predict.NewCloseOK().WithPayload(resp)
+	return predict.NewCloseOK().WithPayload(&resp)
 }
 
 func (p *PredictHandler) Reset(params predict.ResetParams) middleware.Responder {
@@ -509,7 +509,7 @@ func (p *PredictHandler) Images(params predict.ImagesParams) middleware.Responde
 		})
 }
 
-func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
+func (p *PredictHandler) URLs(params predict.URLsParams) middleware.Responder {
 	predictor := params.Body.Predictor
 	if predictor == nil {
 		return NewError("Predict/URLs", errors.New("invalid nil predictor"))
@@ -547,7 +547,7 @@ func (p *PredictHandler) URLs(params predict.UrlsParams) middleware.Responder {
 
 	resps := toDlframeworkFeaturesResponse(ret.Responses)
 
-	return predict.NewUrlsOK().
+	return predict.NewURLsOK().
 		WithPayload(&webmodels.DlframeworkFeaturesResponse{
 			ID:        predictorID,
 			TraceID:   toDlframeworkTraceID(ret.TraceId),

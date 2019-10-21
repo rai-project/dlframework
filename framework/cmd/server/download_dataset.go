@@ -26,7 +26,6 @@ func datasetDownload(ctx context.Context, datasetCategory, datasetName string) e
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -41,6 +40,7 @@ func datasetDownloadAll(ctx context.Context) error {
 			log.WithError(err).Errorf("failed to download %v", dataset)
 			return err
 		}
+		log.Infof("downloaded dataset %v", dataset)
 	}
 
 	return nil
@@ -51,18 +51,18 @@ var downloadDatasetCmd = &cobra.Command{
 	Short: "Download MLModelScope datasets",
 	RunE: func(c *cobra.Command, args []string) error {
 		ctx := context.Background()
-
 		if downloadAll == true {
 			err := datasetDownloadAll(ctx)
 			if err != nil {
 				return err
 			}
 		}
-
+		log.Infof("start to download dataset %v - %v", downloadDatasetCategory, downloadDatasetName)
 		err := datasetDownload(ctx, downloadDatasetCategory, downloadDatasetName)
 		if err != nil {
 			return err
 		}
+		log.Infof("downloaded dataset %v - %v", downloadDatasetCategory, downloadDatasetName)
 
 		return nil
 	},

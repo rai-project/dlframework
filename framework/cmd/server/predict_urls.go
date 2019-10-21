@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -16,10 +17,8 @@ import (
 
 	sourcepath "github.com/GeertJohan/go-sourcepath"
 	"github.com/Unknwon/com"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/k0kubun/pp"
 	"github.com/levigross/grequests"
-	"github.com/mailru/easyjson"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/rai-project/archive"
@@ -47,78 +46,81 @@ var (
 	duplicateInput    int
 	numUrlParts       int
 	numWarmUpUrlParts int
-	hostName, _       = os.Hostname()
 )
 
+func getPublicIP() (string, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		os.Stderr.WriteString("Oops: " + err.Error() + "\n")
+		return "", err
+	}
+
+	for _, a := range addrs {
+		if ipnet, ok := a.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String(), nil
+			}
+		}
+	}
+	return "", errors.New("cannot find the public ip")
+}
+
 func runPredictUrlsCmd(c *cobra.Command, args []string) error {
+	if timeoutOptionSet {
+		go func() {
+			time.Sleep(15 * time.Minute)
+			fmt.Println("timeout")
+			os.Exit(-1)
+		}()
+	}
+
 	model, err := framework.FindModel(modelName + ":" + modelVersion)
 	if err != nil {
 		return err
 	}
 	log.WithField("model", modelName).Info("running predict urls")
 
-	var device string
-	if useGPU {
-		device = "gpu"
-	} else {
-		device = "cpu"
-	}
-	baseDir := filepath.Join("experiments", framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
-	if !com.IsDir(baseDir) {
-		os.MkdirAll(baseDir, os.ModePerm)
-	}
-	ts := strings.ToLower(tracer.LevelToName(traceLevel))
-	tracerFileName := "trace_" + ts + ".json"
-	tracerFilePath := filepath.Join(baseDir, tracerFileName)
-	if (publishEvaluation == false) && com.IsFile(tracerFilePath) {
-		log.WithField("path", tracerFilePath).Info("trace file already exists")
-		return nil
-	}
-
-	if useGPU {
-		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			ioutil.WriteFile(filepath.Join(baseDir, "nvidia_info.json"), bts, 0644)
+	if publishToDatabase == true {
+		opts := []database.Option{}
+		if len(databaseEndpoints) != 0 {
+			opts = append(opts, database.Endpoints(databaseEndpoints))
 		}
-	}
 
-	if machine.Info != nil && machine.Info.Hostname != "" {
-		bts, err := json.Marshal(machine.Info)
-		if err == nil {
-			ioutil.WriteFile(filepath.Join(baseDir, "system_info.json"), bts, 0644)
+		db, err = mongodb.NewDatabase(databaseName, opts...)
+		if err != nil {
+			return errors.Wrapf(err,
+				"⚠️ failed to create new database %s at %v",
+				databaseName, databaseEndpoints,
+			)
 		}
+		defer db.Close()
+
+		modelAccuracyTable, err = evaluation.NewModelAccuracyCollection(db)
+		if err != nil {
+			return err
+		}
+		defer modelAccuracyTable.Close()
+
+		inputPredictionsTable, err = evaluation.NewInputPredictionCollection(db)
+		if err != nil {
+			return err
+		}
+		defer inputPredictionsTable.Close()
+
+		evaluationTable, err = evaluation.NewEvaluationCollection(db)
+		if err != nil {
+			return err
+		}
+		defer evaluationTable.Close()
+
+		performanceTable, err = evaluation.NewPerformanceCollection(db)
+		if err != nil {
+			return err
+		}
+		defer performanceTable.Close()
+
 	}
 
-	rootSpan, ctx := tracer.StartSpanFromContext(
-		context.Background(),
-		tracer.APPLICATION_TRACE,
-		"evaluation_predict_urls",
-		opentracing.Tags{
-			"framework_name":     framework.Name,
-			"framework_version":  framework.Version,
-			"model_name":         modelName,
-			"model_version":      modelVersion,
-			"use_gpu":            useGPU,
-			"batch_size":         batchSize,
-			"num_warmup_batches": numWarmUpUrlParts,
-		},
-	)
-	if rootSpan == nil {
-		panic("invalid span")
-	}
-
-	opts := []database.Option{}
-	if len(databaseEndpoints) != 0 {
-		opts = append(opts, database.Endpoints(databaseEndpoints))
-	}
-
-	db, err := mongodb.NewDatabase(databaseName, opts...)
-	if err != nil {
-		return errors.Wrapf(err,
-			"⚠️ failed to create new database %s at %v",
-			databaseName, databaseEndpoints,
-		)
-	}
-	defer db.Close()
 	predictors, err := agent.GetPredictors(framework)
 	if err != nil {
 		return errors.Wrapf(err,
@@ -153,10 +155,10 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			return errors.New("not gpu found")
 		}
 		dc = map[string]int32{"GPU": 0}
+		log.WithField("gpu = ", nvidiasmi.Info.GPUS[gpuDeviceId].ProductName).Info("Running evalaution on GPU")
 	} else {
 		dc = map[string]int32{"CPU": 0}
 	}
-
 	execOpts := &dl.ExecutionOptions{
 		TraceLevel: dl.ExecutionOptions_TraceLevel(
 			dl.ExecutionOptions_TraceLevel_value[traceLevel.String()],
@@ -166,14 +168,35 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	predOpts := &dl.PredictionOptions{
 		FeatureLimit:     10,
 		BatchSize:        int32(batchSize),
+		GpuMetrics:       gpuMetrics,
 		ExecutionOptions: execOpts,
 	}
+
+	rootSpan, ctx := tracer.StartSpanFromContext(
+		context.Background(),
+		tracer.APPLICATION_TRACE,
+		"evaluation_predict_urls",
+		opentracing.Tags{
+			"framework_name":     framework.Name,
+			"framework_version":  framework.Version,
+			"model_name":         modelName,
+			"model_version":      modelVersion,
+			"batch_size":         batchSize,
+			"use_gpu":            useGPU,
+			"gpu_metrics":        gpuMetrics,
+			"num_warmup_batches": numWarmUpUrlParts,
+		},
+	)
+	if rootSpan == nil {
+		panic("invalid span")
+	}
+	rootSpan.SetTag("num_batches", numUrlParts)
 
 	predictor, err := predictorHandle.Load(
 		ctx,
 		*model,
 		options.PredictorOptions(predOpts),
-		options.DisableFrameworkAutoTuning(false),
+		options.DisableFrameworkAutoTuning(disableFrameworkAutoTuning),
 	)
 	if err != nil {
 		return err
@@ -213,72 +236,12 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	inputPredictionIds := []bson.ObjectId{}
 
-	hostName, _ := os.Hostname()
-	metadata := map[string]string{}
-	if useGPU {
-		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
-			metadata["nvidia_smi"] = string(bts)
-			rootSpan.SetTag("nvidia_smi", string(bts))
-		}
-	}
-
-	// Dummy userID and runID hardcoded
-	// TODO read userID from manifest file
-	// calculate runID from table
-	userID := "evaluator"
-	runID := uuid.NewV4()
-
-	evaluationEntry := evaluation.Evaluation{
-		ID:                  bson.NewObjectId(),
-		UserID:              userID,
-		RunID:               runID,
-		CreatedAt:           time.Now(),
-		Framework:           *model.GetFramework(),
-		Model:               *model,
-		DatasetCategory:     "",
-		DatasetName:         "",
-		Public:              false,
-		Hostname:            hostName,
-		UsingGPU:            useGPU,
-		BatchSize:           batchSize,
-		TraceLevel:          traceLevel.String(),
-		MachineArchitecture: runtime.GOARCH,
-		Metadata:            metadata,
-	}
-
-	evaluationTable, err := evaluation.NewEvaluationCollection(db)
-	if err != nil {
-		return err
-	}
-	defer evaluationTable.Close()
-
-	modelAccuracyTable, err := evaluation.NewModelAccuracyCollection(db)
-	if err != nil {
-		return err
-	}
-	defer modelAccuracyTable.Close()
-
-	performanceTable, err := evaluation.NewPerformanceCollection(db)
-	if err != nil {
-		return err
-	}
-	defer performanceTable.Close()
-
-	inputPredictionsTable, err := evaluation.NewInputPredictionCollection(db)
-	if err != nil {
-		return err
-	}
-	defer inputPredictionsTable.Close()
-
 	preprocessOptions, err := predictor.GetPreprocessOptions()
 	if err != nil {
 		return err
 	}
 
 	urlParts := dl.PartitionStringList(urls, partitionListSize)
-
-	oldTraceLevel := tracer.GetLevel()
-	tracer.SetLevel(tracer.NO_TRACE)
 
 	outputs := make(chan interface{}, DefaultChannelBuffer)
 	partlabels := map[string]string{}
@@ -293,6 +256,17 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		Info("starting inference on urls")
 
 	if numWarmUpUrlParts != 0 {
+		warmUpSpan, warmUpSpanCtx := tracer.StartSpanFromContext(
+			ctx,
+			tracer.APPLICATION_TRACE,
+			"warm_up",
+			opentracing.Tags{
+				"num_warmup_batches": numWarmUpUrlParts,
+			},
+		)
+
+		tracer.SetLevel(tracer.NO_TRACE)
+
 		for _, part := range urlParts[0:numWarmUpUrlParts] {
 			input := make(chan interface{}, DefaultChannelBuffer)
 			go func() {
@@ -305,7 +279,11 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				}
 			}()
 
-			output := pipeline.New(pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			opts := []pipeline.Option{pipeline.ChannelBuffer(DefaultChannelBuffer)}
+			if tracePreprocess == true {
+				opts = append(opts, pipeline.Context(warmUpSpanCtx))
+			}
+			output := pipeline.New(opts...).
 				Then(steps.NewReadURL()).
 				Then(steps.NewReadImage(preprocessOptions)).
 				Then(steps.NewPreprocessImage(preprocessOptions)).
@@ -326,7 +304,7 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				}
 			}()
 
-			output = pipeline.New(pipeline.Context(ctx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
+			output = pipeline.New(pipeline.Context(warmUpSpanCtx), pipeline.ChannelBuffer(DefaultChannelBuffer)).
 				Then(steps.NewPredict(predictor)).
 				Run(input)
 
@@ -338,13 +316,15 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 				outputs <- o
 			}
 		}
-	}
 
-	close(outputs)
-	for range outputs {
-	}
+		close(outputs)
+		for range outputs {
+		}
 
-	tracer.SetLevel(oldTraceLevel)
+		tracer.SetLevel(traceLevel)
+
+		warmUpSpan.Finish()
+	}
 
 	outputs = make(chan interface{}, DefaultChannelBuffer)
 
@@ -352,10 +332,17 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 		numUrlParts = len(urlParts)
 	}
 
-	rootSpan.SetTag("num_batches", numUrlParts)
+	hostName, _ := os.Hostname()
+	hostIP := getHostIP()
+	metadata := map[string]string{}
+	if useGPU {
+		if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+			metadata["nvidia_smi"] = string(bts)
+			rootSpan.SetTag("nvidia_smi", string(bts))
+		}
+	}
 
 	urlCnt := len(urls)
-
 	inferenceProgress := dlcmd.NewProgress("inferring", urlCnt)
 
 	for ii, part := range urlParts[:numUrlParts] {
@@ -376,7 +363,6 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			"evaluate_batch",
 			opentracing.Tags{
 				"batch_index": ii,
-				"batch_size":  batchSize,
 			},
 		)
 
@@ -434,34 +420,71 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	traceID := rootSpan.Context().(jaeger.SpanContext).TraceID()
 	traceIDVal := traceID.String()
-
-	pp.Println(fmt.Sprintf("http://%s:16686/trace/%v", getTracerHostAddress(tracerAddress), traceIDVal))
-
-	query := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", getTracerHostAddress(tracerAddress), traceIDVal)
-	resp, err := grequests.Get(query, nil)
-	if err != nil {
-		log.WithError(err).
-			WithField("trace_id", traceIDVal).
-			Error("failed to download span information")
+	if runtime.GOARCH == "ppc64le" {
+		traceIDVal = strconv.FormatUint(traceID.Low, 16)
 	}
-	log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("query", query).Info("downloaded trace information")
+	tracerServerAddr := getTracerServerAddress(tracerAddress)
+	pp.Println(fmt.Sprintf("the trace is at http://%s:16686/trace/%v", tracerServerAddr, traceIDVal))
+	traceURL := fmt.Sprintf("http://%s:16686/api/traces/%v?raw=true", tracerServerAddr, traceIDVal)
 
-	if publishEvaluation == false {
+	var device string
+	if useGPU {
+		device = "gpu"
+	} else {
+		device = "cpu"
+		gpuDeviceId = -1
+	}
+
+	if publishToDatabase == false {
 		for range outputs {
 		}
 
-		err := ioutil.WriteFile(tracerFilePath, resp.Bytes(), 0644)
+		outputDir := filepath.Join(baseDir, framework.Name, framework.Version, model.Name, model.Version, strconv.Itoa(batchSize), device, hostName)
+		if !com.IsDir(outputDir) {
+			os.MkdirAll(outputDir, os.ModePerm)
+		}
+
+		if useGPU {
+			if bts, err := json.Marshal(nvidiasmi.Info); err == nil {
+				ioutil.WriteFile(filepath.Join(outputDir, "nvidia_info.json"), bts, 0644)
+			}
+		}
+
+		if machine.Info != nil && machine.Info.Hostname != "" {
+			bts, err := json.Marshal(machine.Info)
+			if err == nil {
+				ioutil.WriteFile(filepath.Join(outputDir, "system_info.json"), bts, 0644)
+			}
+		}
+
+		ts := strings.ToLower(tracer.LevelToName(traceLevel))
+		traceFileName := "trace_" + ts + ".json"
+		tracePath := filepath.Join(outputDir, traceFileName)
+		if (publishToDatabase == false) && com.IsFile(tracePath) {
+			log.WithField("path", tracePath).Info("trace file already exists")
+			return nil
+		}
+
+		resp, err := grequests.Get(traceURL, nil)
+		if err != nil {
+			log.WithError(err).
+				WithField("trace_id", traceIDVal).
+				Error("failed to download span information")
+		}
+		log.WithField("model", modelName).WithField("trace_id", traceIDVal).WithField("traceURL", traceURL).Info("downloaded trace information")
+
+		err = ioutil.WriteFile(tracePath, resp.Bytes(), 0644)
 		if err != nil {
 			return err
 		}
 
 		if false {
-			archiver, err := archive.Zip(tracerFilePath, archive.BZip2Format())
+			archiver, err := archive.Zip(tracePath, archive.BZip2Format())
 			if err != nil {
 				return err
 			}
 
-			archiveFilePath := strings.TrimSuffix(tracerFilePath, ".json") + ".tar.bz2"
+			archiveFilePath := strings.TrimSuffix(tracePath, ".json") + ".tar.bz2"
 			f, err := os.Create(archiveFilePath)
 			if err != nil {
 				return err
@@ -470,7 +493,10 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 			_, err = io.Copy(f, archiver)
 		}
-		log.WithField("model", modelName).WithField("path", tracerFilePath).Info("publishEvaluation is false, wrote the trace to a local file")
+
+		log.WithField("model", modelName).WithField("path", tracePath).Infof("publishToDatabase is false, writing the trace to a local file")
+
+		pp.Println(fmt.Sprintf("the trace is at %v locally", tracePath))
 
 		return nil
 	}
@@ -479,7 +505,40 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	cntTop1 := 0
 	cntTop5 := 0
 
-	databaseInsertProgress := dlcmd.NewProgress("inserting prediction", batchSize)
+	// Dummy userID and runID hardcoded
+	// TODO read userID from manifest file
+	// calculate runID from table
+	userID := "evaluator"
+	runID := uuid.NewV4()
+
+	evaluationEntry := evaluation.Evaluation{
+		ID:                  bson.NewObjectId(),
+		UserID:              userID,
+		RunID:               runID,
+		CreatedAt:           time.Now(),
+		Framework:           *model.GetFramework(),
+		Model:               *model,
+		DatasetCategory:     "",
+		DatasetName:         "",
+		Public:              false,
+		Hostname:            hostName,
+		HostIP:              hostIP,
+		UsingGPU:            useGPU,
+		BatchSize:           batchSize,
+		GPUMetrics:          gpuMetrics,
+		TraceLevel:          traceLevel.String(),
+		MachineArchitecture: runtime.GOARCH,
+		MachineInformation:  machine.Info,
+		Metadata:            metadata,
+	}
+
+	if nvidiasmi.Info != nil {
+		evaluationEntry.GPUDriverVersion = &nvidiasmi.Info.DriverVersion
+		if useGPU {
+			evaluationEntry.GPUDevice = &gpuDeviceId
+			evaluationEntry.GPUInformation = &nvidiasmi.Info.GPUS[gpuDeviceId]
+		}
+	}
 
 	for out0 := range outputs {
 		if cnt > urlCnt {
@@ -514,28 +573,24 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 			inputPredictionIds = append(inputPredictionIds, inputPrediction.ID)
 		}
 
-		databaseInsertProgress.Increment()
-
 		features.Sort()
 
-		if features[0].Type == dl.FeatureType_CLASSIFICATION {
-			label = strings.TrimSpace(strings.ToLower(label))
-			if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-				cntTop1++
-			}
-			for _, f := range features[:5] {
-				if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
-					cntTop5++
-				}
-			}
-		} else {
-			panic("expecting a Classification type")
-		}
+		// if features[0].Type == dl.FeatureType_CLASSIFICATION {
+		// 	label = strings.TrimSpace(strings.ToLower(label))
+		// 	if strings.TrimSpace(strings.ToLower(features[0].Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+		// 		cntTop1++
+		// 	}
+		// 	for _, f := range features[:5] {
+		// 		if strings.TrimSpace(strings.ToLower(f.Feature.(*dl.Feature_Classification).Classification.GetLabel())) == label {
+		// 			cntTop5++
+		// 		}
+		// 	}
+		// } else {
+		// 	log.WithField("model", modelName).Info("model is not of classification type, skip accuracy count")
+		// }
 		cnt++
 	}
 
-	//databaseInsertProgress.FinishPrint("inserting prediction complete")
-	databaseInsertProgress.Finish()
 	log.WithField("model", modelName).Info("finised inserting prediction")
 
 	modelAccuracy := evaluation.ModelAccuracy{
@@ -550,18 +605,33 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 
 	log.WithField("model", modelName).Info("downloading trace information")
 
-	var trace evaluation.TraceInformation
-	err = easyjson.UnmarshalFromReader(resp, &trace)
-	if err != nil {
-		log.WithError(err).Error("failed to decode trace information")
-	}
-	performance := evaluation.Performance{
+	// var trace evaluation.TraceInformation
+	// jsonDecoder := json.NewDecoder(resp)
+	// err = jsonDecoder.Decode(&trace)
+	// if err != nil {
+	// 	log.WithError(err).Error("failed to decode trace information")
+	// }
+
+	performance := &evaluation.Performance{
 		ID:         bson.NewObjectId(),
 		CreatedAt:  time.Now(),
-		Trace:      trace,
+		Trace:      nil,
 		TraceLevel: traceLevel,
+		TraceURL:   traceURL,
 	}
-	performanceTable.Insert(performance)
+
+	if err = performance.CompressTrace(); err != nil {
+		log.WithError(err).Error("failed to compress trace information")
+	}
+
+	if err := performanceTable.Insert(performance); err != nil {
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le.Error("failed to publish performance entry")
+	}
 
 	log.WithField("model", modelName).Info("inserted performance information")
 
@@ -570,19 +640,22 @@ func runPredictUrlsCmd(c *cobra.Command, args []string) error {
 	evaluationEntry.InputPredictionIDs = inputPredictionIds
 
 	if err := evaluationTable.Insert(evaluationEntry); err != nil {
-		log.WithError(err).Error("failed to publish evaluation entry")
+		le := log.WithError(err)
+		cause := errors.Cause(err)
+		if cause != err {
+			le = log.WithField("cause", cause.Error())
+		}
+		le.Error("failed to publish evaluation entry")
 	}
 
-	log.WithField("model", model.MustCanonicalName()).
-		WithField("accuracy", spew.Sprint(modelAccuracy)).
-		Info("inserted evaluation information")
+	log.WithField("model", modelName).Info("inserted evaluation information")
 
 	return nil
 }
 
 var predictUrlsCmd = &cobra.Command{
 	Use:     "urls",
-	Short:   "Evaluates the urls using the specified model and framework",
+	Short:   "Evaluate the urls using the specified model and framework",
 	Aliases: []string{"url"},
 	RunE: func(c *cobra.Command, args []string) error {
 		if modelName == "all" {
@@ -607,5 +680,5 @@ func init() {
 	predictUrlsCmd.PersistentFlags().IntVar(&duplicateInput, "duplicate_input", defaultDuplicateInput, "duplicate the input urls in urls_file")
 	predictUrlsCmd.PersistentFlags().StringVar(&urlsFilePath, "urls_file_path", defaultURLsPath, "the path of the file containing the urls to perform the evaluations on.")
 	predictUrlsCmd.PersistentFlags().IntVar(&numUrlParts, "num_url_parts", -1, "the number of url parts to process. Setting url parts to a value other than -1 means that only the first num_url_parts * partition_list_size images are infered from the dataset. This is useful while performing performance evaluations, where only a few hundred evaluation samples are useful")
-	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 3, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
+	predictUrlsCmd.PersistentFlags().IntVar(&numWarmUpUrlParts, "num_warmup_url_parts", 1, "the number of url parts to process during the warmup period. This is ignored if num_file_parts=-1")
 }

@@ -20,7 +20,7 @@ type preprocessImageTensor struct {
 func NewPreprocessImageTensor(options predictor.PreprocessOptions) pipeline.Step {
 	res := preprocessImageTensor{
 		base: base{
-			info: "preprocessImageTensor",
+			info: "preprocess_image_tensor_step",
 		},
 		options: options,
 	}

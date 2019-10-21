@@ -11,7 +11,7 @@ import (
 )
 
 func downloadModels(ctx context.Context) error {
-	predictorFramework, err := agent.GetPredictor(framework)
+	predictor, err := agent.GetPredictor(framework)
 	if err != nil {
 		return errors.Wrapf(err,
 			"⚠️ failed to get predictor for %s. make sure you have "+
@@ -26,10 +26,11 @@ func downloadModels(ctx context.Context) error {
 	for _, model := range models {
 		model := model // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
-			err := predictorFramework.Download(ctx, model)
+			err := predictor.Download(ctx, model) // Download function is the same for all the predictors
 			if err != nil {
 				return errors.Wrapf(err, "failed to download %s model", model.MustCanonicalName())
 			}
+			log.Infof("downloaded model %v", model.MustCanonicalName())
 			pb.Increment()
 			return nil
 		})

@@ -162,87 +162,6 @@ const (
         ]
       }
     },
-    "/predict/stream/dataset": {
-      "post": {
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
-        "operationId": "DatasetStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkDatasetRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
-    "/predict/stream/images": {
-      "post": {
-        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
-        "operationId": "ImagesStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkImagesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
-    "/predict/stream/urls": {
-      "post": {
-        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
-        "operationId": "URLsStream",
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkURLsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Predict"
-        ]
-      }
-    },
     "/predict/urls": {
       "post": {
         "summary": "URLs method receives a list of urls and runs\nthe predictor on all the urls.\nThe result is a list of predicted features for all the urls.",
@@ -416,6 +335,11 @@ const (
     },
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
         "responses": {
@@ -426,16 +350,7 @@ const (
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
+        "parameters": [],
         "tags": [
           "Authentication"
         ]
@@ -467,6 +382,65 @@ const (
           "Authentication"
         ]
       }
+    },
+    "/auth/userinfo": {
+      "get": {
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": [
+          "Authentication"
+        ]
+      }
     }
   },
   "definitions": {
@@ -488,7 +462,8 @@ const (
         "APPLICATION_TRACE",
         "MODEL_TRACE",
         "FRAMEWORK_TRACE",
-        "LIBRARY_TRACE",
+        "ML_LIBRARY_TRACE",
+        "SYSTEM_LIBRARY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ],
@@ -719,6 +694,12 @@ const (
           "items": {
             "$ref": "#/definitions/dlframeworkFeatureResponse"
           }
+        },
+        "duration_for_inference": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
         }
       }
     },
@@ -866,6 +847,9 @@ const (
         },
         "agent": {
           "type": "string"
+        },
+        "gpu_metrics": {
+          "type": "string"
         }
       }
     },
@@ -873,6 +857,9 @@ const (
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        },
+        "duration": {
           "type": "string"
         }
       }
@@ -890,7 +877,12 @@ const (
       }
     },
     "dlframeworkPredictorCloseResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string"
+        }
+      }
     },
     "dlframeworkPredictorOpenRequest": {
       "type": "object",
@@ -1282,17 +1274,6 @@ const (
         }
       }
     },
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
@@ -1312,9 +1293,54 @@ const (
         }
       }
     },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkSignup": {
       "type": "object",
       "properties": {
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -1331,6 +1357,34 @@ const (
           "type": "string"
         }
       }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "host": "carml.org",
@@ -1357,6 +1411,11 @@ const (
   "paths": {
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
         "responses": {
@@ -1367,16 +1426,7 @@ const (
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
+        "parameters": [],
         "tags": ["Authentication"]
       }
     },
@@ -1404,20 +1454,62 @@ const (
         ],
         "tags": ["Authentication"]
       }
+        },
+    "/auth/userinfo": {
+      "get": {
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        },
+        "parameters": [],
+        "tags": ["Authentication"]
+      }
     }
   },
   "definitions": {
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
@@ -1437,9 +1529,54 @@ const (
         }
       }
     },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
     "dlframeworkSignup": {
       "type": "object",
       "properties": {
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -1456,6 +1593,34 @@ const (
           "type": "string"
         }
       }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "host": "carml.org",

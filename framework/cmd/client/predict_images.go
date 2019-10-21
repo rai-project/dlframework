@@ -16,10 +16,9 @@ import (
 )
 
 var imagesCmd = &cobra.Command{
-	Use:     "imagesCmd",
-	Short:   "imagesCmd",
-	Aliases: []string{"images", "image"},
-	Long:    `imagesCmd`,
+	Use:     "images",
+	Short:   "Request MLModelScope agents to predict images",
+	Aliases: []string{"image"},
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return errors.New("images dir path needs to be provided")

@@ -4,6 +4,9 @@ import (
 	"math"
 	"sort"
 
+	"github.com/k0kubun/pp"
+
+	"github.com/chewxy/math32"
 	"github.com/pkg/errors"
 )
 
@@ -49,10 +52,57 @@ func (p Features) ProbabilitiesFloat32() []float32 {
 	return pProbs
 }
 
+func (p Features) ProbabilitiesApplySoftmaxFloat32() Features {
+	newProbs := p.ProbabilitiesSoftmaxFloat32()
+	for ii, np := range newProbs {
+		p[ii].Probability = np
+	}
+	return p
+}
+
+func (p Features) ProbabilitiesSoftmaxFloat32() []float32 {
+	pProbs := make([]float32, p.Len())
+	accum := float32(0.0)
+	for ii := 0; ii < p.Len(); ii++ {
+		pProbs[ii] = math32.Exp(p[ii].Probability)
+		accum += pProbs[ii]
+		if float64(accum) == math.Inf(+1) {
+			pp.Println(ii, p[ii].Probability)
+			break
+		}
+
+	}
+	for ii, p := range pProbs {
+		pProbs[ii] = p / accum
+	}
+	return pProbs
+}
+
 func (p Features) ProbabilitiesFloat64() []float64 {
 	pProbs := make([]float64, p.Len())
 	for ii := 0; ii < p.Len(); ii++ {
 		pProbs[ii] = float64(p[ii].Probability)
+	}
+	return pProbs
+}
+
+func (p Features) ProbabilitiesApplySoftmaxFloat64() Features {
+	newProbs := p.ProbabilitiesSoftmaxFloat64()
+	for ii, np := range newProbs {
+		p[ii].Probability = float32(np)
+	}
+	return p
+}
+
+func (p Features) ProbabilitiesSoftmaxFloat64() []float64 {
+	pProbs := make([]float64, p.Len())
+	accum := 0.0
+	for ii := 0; ii < p.Len(); ii++ {
+		pProbs[ii] = math.Exp(float64(p[ii].Probability))
+		accum += pProbs[ii]
+	}
+	for ii, p := range pProbs {
+		pProbs[ii] = p / accum
 	}
 	return pProbs
 }

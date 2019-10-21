@@ -38,7 +38,7 @@ func (o *FrameworkAgentsURL) SetBasePath(bp string) {
 
 // Build a url path and query string
 func (o *FrameworkAgentsURL) Build() (*url.URL, error) {
-	var result url.URL
+	var _result url.URL
 
 	var _path = "/registry/frameworks/agent"
 
@@ -46,29 +46,29 @@ func (o *FrameworkAgentsURL) Build() (*url.URL, error) {
 	if _basePath == "" {
 		_basePath = "/api"
 	}
-	result.Path = golangswaggerpaths.Join(_basePath, _path)
+	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
 
-	var frameworkName string
+	var frameworkNameQ string
 	if o.FrameworkName != nil {
-		frameworkName = *o.FrameworkName
+		frameworkNameQ = *o.FrameworkName
 	}
-	if frameworkName != "" {
-		qs.Set("framework_name", frameworkName)
+	if frameworkNameQ != "" {
+		qs.Set("framework_name", frameworkNameQ)
 	}
 
-	var frameworkVersion string
+	var frameworkVersionQ string
 	if o.FrameworkVersion != nil {
-		frameworkVersion = *o.FrameworkVersion
+		frameworkVersionQ = *o.FrameworkVersion
 	}
-	if frameworkVersion != "" {
-		qs.Set("framework_version", frameworkVersion)
+	if frameworkVersionQ != "" {
+		qs.Set("framework_version", frameworkVersionQ)
 	}
 
-	result.RawQuery = qs.Encode()
+	_result.RawQuery = qs.Encode()
 
-	return &result, nil
+	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error

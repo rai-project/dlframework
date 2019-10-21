@@ -10,6 +10,7 @@ import (
 	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
 	proto "github.com/gogo/protobuf/proto"
 	golang_proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/duration"
 	go_parser "go/parser"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	math "math"

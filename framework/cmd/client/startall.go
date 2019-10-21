@@ -20,9 +20,9 @@ var (
 
 var startallCmd = &cobra.Command{
 	Use:     "startall",
-	Short:   "starts the " + strings.Join(agents, " ") + " agents",
+	Short:   "start the " + strings.Join(agents, " ") + " agents",
 	Aliases: []string{"startall", "start"},
-	Long:    `starts all the MLModelScope agents`,
+	Long:    `start all the MLModelScope agents`,
 	RunE: func(c *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
 		quitAll := make(chan struct{})

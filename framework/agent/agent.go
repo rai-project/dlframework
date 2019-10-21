@@ -98,7 +98,7 @@ func (p *Agent) Open(ctx context.Context, req *dl.PredictorOpenRequest) (*dl.Pre
 		ctx,
 		*model,
 		options.PredictorOptions(opts),
-		// options.DisableFrameworkAutoTuning(true),
+		options.DisableFrameworkAutoTuning(true),
 	)
 	if err != nil {
 		return nil, err
@@ -253,7 +253,7 @@ func (p *Agent) urls(ctx context.Context, req *dl.URLsRequest) (<-chan interface
 		return nil, err
 	}
 
-	batchSize := int(predictionOptions.BatchSize())
+	batchSize := predictionOptions.BatchSize()
 
 	parts := dl.Partition(outputs, batchSize)
 
@@ -287,19 +287,19 @@ func (p *Agent) URLs(ctx context.Context, req *dl.URLsRequest) (*dl.FeaturesResp
 // URLsStream method receives a stream of urls and runs
 // the predictor on all the urls.
 // The result is a prediction feature stream for each url.
-func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
-	ctx := svr.Context()
-	output, err := p.urls(ctx, req)
-	if err != nil {
-		return err
-	}
+// func (p *Agent) URLsStream(req *dl.URLsRequest, svr dl.Predict_URLsStreamServer) error {
+// 	ctx := svr.Context()
+// 	output, err := p.urls(ctx, req)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	for o := range output {
-		svr.Send(o.(*dl.FeatureResponse))
-	}
+// 	for o := range output {
+// 		svr.Send(o.(*dl.FeatureResponse))
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 func (p *Agent) images(ctx context.Context, req *dl.ImagesRequest) (<-chan interface{}, error) {
 	if req.GetPredictor() == nil {
@@ -377,19 +377,19 @@ func (p *Agent) Images(ctx context.Context, req *dl.ImagesRequest) (*dl.Features
 // Image method receives a list base64 encoded images and runs
 // the predictor on all the images.
 // The result is a prediction feature stream for each image.
-func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamServer) error {
-	ctx := svr.Context()
-	output, err := p.images(ctx, req)
-	if err != nil {
-		return err
-	}
+// func (p *Agent) ImagesStream(req *dl.ImagesRequest, svr dl.Predict_ImagesStreamServer) error {
+// 	ctx := svr.Context()
+// 	output, err := p.images(ctx, req)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	for o := range output {
-		svr.Send(o.(*dl.FeatureResponse))
-	}
+// 	for o := range output {
+// 		svr.Send(o.(*dl.FeatureResponse))
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
@@ -471,18 +471,18 @@ func (p *Agent) Dataset(ctx context.Context, req *dl.DatasetRequest) (*dl.Featur
 // Dataset method receives a single dataset and runs
 // the predictor on all elements of the dataset.
 // The result is a prediction feature stream.
-func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStreamServer) error {
-	ctx := svr.Context()
-	output, err := p.dataset(ctx, req)
-	if err != nil {
-		return err
-	}
-	for o := range output {
-		svr.Send(o.(*dl.FeatureResponse))
-	}
+// func (p *Agent) DatasetStream(req *dl.DatasetRequest, svr dl.Predict_DatasetStreamServer) error {
+// 	ctx := svr.Context()
+// 	output, err := p.dataset(ctx, req)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	for o := range output {
+// 		svr.Send(o.(*dl.FeatureResponse))
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // Clear method clears the internal cache of the predictors
 func (p *Agent) Reset(ctx context.Context, req *dl.ResetRequest) (*dl.ResetResponse, error) {

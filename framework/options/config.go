@@ -8,6 +8,7 @@ import (
 
 type optionsConfig struct {
 	BatchSize           int    `json:"batch_size" config:"predictor.batch_size"`
+	GPUMetrics          string `json:"gpu_metrics" config:"predictor.gpu_metrics"`
 	FeatureLimit        int    `json:"feature_limit" config:"predictor.batch_size"`
 	DefaultDeviceString string `json:"default_device" config:"predictor.default_device"`
 	DefaultDevice       device `json:"-" config:"-"`
@@ -36,6 +37,9 @@ func (a *optionsConfig) Read() {
 	}
 	if a.FeatureLimit == 0 {
 		a.FeatureLimit = DefaultFeatureLimit
+	}
+	if a.GPUMetrics == "" {
+		a.GPUMetrics = DefaultGPUMetrics
 	}
 	if a.DefaultDeviceString == "" {
 		a.DefaultDevice = DefaultDevice

@@ -6,6 +6,8 @@ package predict
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -48,8 +50,14 @@ func (a *Client) Close(params *CloseParams) (*CloseOK, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.(*CloseOK), nil
-
+	success, ok := result.(*CloseOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for Close: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -76,36 +84,14 @@ func (a *Client) Dataset(params *DatasetParams) (*DatasetOK, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.(*DatasetOK), nil
-
-}
-
-/*
-DatasetStream datasets method receives a single dataset and runs the predictor on all elements of the dataset the result is a prediction feature stream
-*/
-func (a *Client) DatasetStream(params *DatasetStreamParams) (*DatasetStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewDatasetStreamParams()
+	success, ok := result.(*DatasetOK)
+	if ok {
+		return success, nil
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "DatasetStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/dataset",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &DatasetStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*DatasetStreamOK), nil
-
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for Dataset: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -132,36 +118,14 @@ func (a *Client) Images(params *ImagesParams) (*ImagesOK, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ImagesOK), nil
-
-}
-
-/*
-ImagesStream images stream method receives a list base64 encoded images and runs the predictor on all the images the result is a prediction feature stream for each image
-*/
-func (a *Client) ImagesStream(params *ImagesStreamParams) (*ImagesStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewImagesStreamParams()
+	success, ok := result.(*ImagesOK)
+	if ok {
+		return success, nil
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "ImagesStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/images",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &ImagesStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*ImagesStreamOK), nil
-
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for Images: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -188,8 +152,14 @@ func (a *Client) Open(params *OpenParams) (*OpenOK, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.(*OpenOK), nil
-
+	success, ok := result.(*OpenOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for Open: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -216,17 +186,23 @@ func (a *Client) Reset(params *ResetParams) (*ResetOK, error) {
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ResetOK), nil
-
+	success, ok := result.(*ResetOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for Reset: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
-Urls urls method receives a list of urls and runs the predictor on all the urls the result is a list of predicted features for all the urls
+URLs us r ls method receives a list of urls and runs the predictor on all the urls the result is a list of predicted features for all the urls
 */
-func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
+func (a *Client) URLs(params *URLsParams) (*URLsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewUrlsParams()
+		params = NewURLsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
@@ -237,43 +213,21 @@ func (a *Client) Urls(params *UrlsParams) (*UrlsOK, error) {
 		ConsumesMediaTypes: []string{"application/json"},
 		Schemes:            []string{"http", "https"},
 		Params:             params,
-		Reader:             &UrlsReader{formats: a.formats},
+		Reader:             &URLsReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
 	})
 	if err != nil {
 		return nil, err
 	}
-	return result.(*UrlsOK), nil
-
-}
-
-/*
-UrlsStream urls stream method receives a stream of urls and runs the predictor on all the urls the result is a prediction feature stream for each url
-*/
-func (a *Client) UrlsStream(params *UrlsStreamParams) (*UrlsStreamOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewUrlsStreamParams()
+	success, ok := result.(*URLsOK)
+	if ok {
+		return success, nil
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "URLsStream",
-		Method:             "POST",
-		PathPattern:        "/predict/stream/urls",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http", "https"},
-		Params:             params,
-		Reader:             &UrlsStreamReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return result.(*UrlsStreamOK), nil
-
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for URLs: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 // SetTransport changes the transport on the client

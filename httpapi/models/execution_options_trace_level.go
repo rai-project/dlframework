@@ -32,8 +32,11 @@ const (
 	// ExecutionOptionsTraceLevelFRAMEWORKTRACE captures enum value "FRAMEWORK_TRACE"
 	ExecutionOptionsTraceLevelFRAMEWORKTRACE ExecutionOptionsTraceLevel = "FRAMEWORK_TRACE"
 
-	// ExecutionOptionsTraceLevelLIBRARYTRACE captures enum value "LIBRARY_TRACE"
-	ExecutionOptionsTraceLevelLIBRARYTRACE ExecutionOptionsTraceLevel = "LIBRARY_TRACE"
+	// ExecutionOptionsTraceLevelMLLIBRARYTRACE captures enum value "ML_LIBRARY_TRACE"
+	ExecutionOptionsTraceLevelMLLIBRARYTRACE ExecutionOptionsTraceLevel = "ML_LIBRARY_TRACE"
+
+	// ExecutionOptionsTraceLevelSYSTEMLIBRARYTRACE captures enum value "SYSTEM_LIBRARY_TRACE"
+	ExecutionOptionsTraceLevelSYSTEMLIBRARYTRACE ExecutionOptionsTraceLevel = "SYSTEM_LIBRARY_TRACE"
 
 	// ExecutionOptionsTraceLevelHARDWARETRACE captures enum value "HARDWARE_TRACE"
 	ExecutionOptionsTraceLevelHARDWARETRACE ExecutionOptionsTraceLevel = "HARDWARE_TRACE"
@@ -47,7 +50,7 @@ var executionOptionsTraceLevelEnum []interface{}
 
 func init() {
 	var res []ExecutionOptionsTraceLevel
-	if err := json.Unmarshal([]byte(`["NO_TRACE","APPLICATION_TRACE","MODEL_TRACE","FRAMEWORK_TRACE","LIBRARY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["NO_TRACE","APPLICATION_TRACE","MODEL_TRACE","FRAMEWORK_TRACE","ML_LIBRARY_TRACE","SYSTEM_LIBRARY_TRACE","HARDWARE_TRACE","FULL_TRACE"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {

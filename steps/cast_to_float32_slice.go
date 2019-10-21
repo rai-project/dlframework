@@ -15,7 +15,7 @@ type castToFloat32Slice struct {
 func NewCastToFloat32Slice() pipeline.Step {
 	p := castToFloat32Slice{
 		base: base{
-			info: "CastToFloat32Slice",
+			info: "cast_to_float32_slice_step",
 		},
 	}
 	p.doer = p.do

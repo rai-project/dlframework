@@ -15,7 +15,7 @@ type spread struct {
 func NewSpread() pipeline.Step {
 	step := spread{
 		base: base{
-			info:         "Spread",
+			info:         "spread",
 			spreadOutput: true,
 		},
 	}

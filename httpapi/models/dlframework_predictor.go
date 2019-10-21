@@ -15,6 +15,9 @@ import (
 // swagger:model dlframeworkPredictor
 type DlframeworkPredictor struct {
 
+	// duration
+	Duration string `json:"duration,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
 }

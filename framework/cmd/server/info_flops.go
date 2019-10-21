@@ -17,7 +17,7 @@ var infoMLArcCmd = &cobra.Command{
 		"all",
 		"mlarc-web",
 	},
-	Short: "Get mlarc information from MLModelScope",
+	Short: "Get mlarc information",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dllayer.FlopsInfoCmd.SetArgs(os.Args[2:])
 		evalcmd.EvaluationCmd.SetArgs(append([]string{"all"}, os.Args[2:]...))

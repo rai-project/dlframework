@@ -24,7 +24,6 @@ type CloseReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *CloseReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-
 	case 200:
 		result := NewCloseOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -47,7 +46,7 @@ func NewCloseOK() *CloseOK {
 A successful response.
 */
 type CloseOK struct {
-	Payload models.DlframeworkPredictorCloseResponse
+	Payload *models.DlframeworkPredictorCloseResponse
 }
 
 func (o *CloseOK) Error() string {
@@ -56,8 +55,10 @@ func (o *CloseOK) Error() string {
 
 func (o *CloseOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	o.Payload = new(models.DlframeworkPredictorCloseResponse)
+
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
 		return err
 	}
 

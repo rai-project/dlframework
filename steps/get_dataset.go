@@ -20,7 +20,7 @@ func NewGetDataset(dataset dldataset.Dataset) pipeline.Step {
 	res := getDataset{
 		dataset: dataset,
 		base: base{
-			info: "GetDatasetStep",
+			info: "get_dataset_step",
 		},
 	}
 	res.doer = res.do

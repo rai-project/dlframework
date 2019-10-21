@@ -100,7 +100,7 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "github.com/gogo/protobuf"
-  version = "1.1.1"
+  version = "1.2.1"
 
 [[constraint]]
   branch = "master"
@@ -122,9 +122,9 @@ ignored = ["github.com/rai-project/dllayer"]
   branch = "master"
   name = "github.com/junegunn/go-shellwords"
 
-[[constraint]]
+[[override]]
   name = "github.com/k0kubun/pp"
-  version = "2.3.0"
+  version = "3.0.1"
 
 [[constraint]]
   name = "github.com/klauspost/shutdown2"
@@ -132,7 +132,7 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "github.com/labstack/echo"
-  version = "3.3.5"
+  version = "4.1.6"
 
 [[constraint]]
   name = "github.com/levigross/grequests"
@@ -148,11 +148,11 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "github.com/opentracing/opentracing-go"
-  version = "1.0.2"
+  version = "1.1.0"
 
 [[constraint]]
   name = "github.com/pkg/errors"
-  version = "0.8.0"
+  version = "0.8.1"
 
 [[constraint]]
   branch = "master"
@@ -256,7 +256,7 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
-  version = "1.4.1"
+  version = "1.4.2"
 
 [[constraint]]
   name = "github.com/spf13/cast"
@@ -276,7 +276,7 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "github.com/uber/jaeger-client-go"
-  version = "2.14.0"
+  version = "2.16.0"
 
 [[constraint]]
   branch = "master"
@@ -296,7 +296,7 @@ ignored = ["github.com/rai-project/dllayer"]
 
 [[constraint]]
   name = "google.golang.org/grpc"
-  version = "1.13.0"
+  version = "1.21.1"
 
 [[constraint]]
   branch = "v2"

@@ -6,6 +6,8 @@ package registry
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -48,8 +50,14 @@ func (a *Client) FrameworkAgents(params *FrameworkAgentsParams) (*FrameworkAgent
 	if err != nil {
 		return nil, err
 	}
-	return result.(*FrameworkAgentsOK), nil
-
+	success, ok := result.(*FrameworkAgentsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for FrameworkAgents: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -76,8 +84,14 @@ func (a *Client) FrameworkManifests(params *FrameworkManifestsParams) (*Framewor
 	if err != nil {
 		return nil, err
 	}
-	return result.(*FrameworkManifestsOK), nil
-
+	success, ok := result.(*FrameworkManifestsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for FrameworkManifests: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -104,8 +118,14 @@ func (a *Client) ModelAgents(params *ModelAgentsParams) (*ModelAgentsOK, error) 
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ModelAgentsOK), nil
-
+	success, ok := result.(*ModelAgentsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for ModelAgents: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*
@@ -132,8 +152,14 @@ func (a *Client) ModelManifests(params *ModelManifestsParams) (*ModelManifestsOK
 	if err != nil {
 		return nil, err
 	}
-	return result.(*ModelManifestsOK), nil
-
+	success, ok := result.(*ModelManifestsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for ModelManifests: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 // SetTransport changes the transport on the client

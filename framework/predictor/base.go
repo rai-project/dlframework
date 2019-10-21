@@ -34,6 +34,10 @@ func (b Base) BatchSize() int {
 	return b.Options.BatchSize()
 }
 
+func (b Base) GPUMetrics() string {
+	return b.Options.GPUMetrics()
+}
+
 func (b Base) FeatureLimit() int {
 	return b.Options.FeatureLimit()
 }
@@ -50,23 +54,26 @@ func (p Base) GetTypeParameter(typeParameters map[string]*dlframework.ModelManif
 	if typeParameters == nil {
 		return "", errors.New("invalid type parameters")
 	}
-	pdims, ok := typeParameters[name]
+	param, ok := typeParameters[name]
 	if !ok {
-		return "", errors.New("expecting a type parameter")
+		return "", errors.New("invalid parameter name")
 	}
-	pdimsVal := pdims.Value
-	if pdimsVal == "" {
-		return "", errors.New("invalid type parameter")
+	if param == nil {
+		return "", nil
+	}
+	paramVal := param.Value
+	if paramVal == "" {
+		return "", nil
 	}
 	var ret string
-	if err := yaml.Unmarshal([]byte(pdimsVal), &ret); err != nil {
-		return "", errors.Errorf("unable to get the type parameter %v as a string", pdimsVal)
+	if err := yaml.Unmarshal([]byte(paramVal), &ret); err != nil {
+		return "", errors.Errorf("unable to get the type parameter %v as a string", paramVal)
 	}
 	return ret, nil
 }
 
 func (p Base) GetPreprocessOptions() (PreprocessOptions, error) {
-	return PreprocessOptions{}, errors.New("invalid preprocessor options")
+	return PreprocessOptions{}, nil
 }
 
 func (p Base) baseURL(model dlframework.ModelManifest) string {
@@ -85,7 +92,12 @@ func (p Base) GetWeightsUrl() string {
 	if model.GetModel().GetWeightsPath() == "" {
 		return ""
 	}
-	return strings.TrimRight(p.baseURL(model), "/") + "/" + model.GetModel().GetWeightsPath()
+	url := strings.TrimRight(p.baseURL(model), "/")
+	url = strings.TrimSpace(url)
+	if url != "" {
+		url += "/"
+	}
+	return url + model.GetModel().GetWeightsPath()
 }
 
 func (p Base) GetGraphUrl() string {
@@ -97,20 +109,11 @@ func (p Base) GetGraphUrl() string {
 		return ""
 	}
 	url := strings.TrimRight(p.baseURL(model), "/")
+	url = strings.TrimSpace(url)
 	if url != "" {
 		url += "/"
 	}
 	return url + model.GetModel().GetGraphPath()
-}
-
-func (p Base) GetFeaturesUrl() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_url"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
 }
 
 func (p Base) GetWeightsChecksum() string {
@@ -121,16 +124,6 @@ func (p Base) GetWeightsChecksum() string {
 func (p Base) GetGraphChecksum() string {
 	model := p.Model
 	return model.GetModel().GetGraphChecksum()
-}
-
-func (p Base) GetFeaturesChecksum() string {
-	model := p.Model
-	params := model.GetOutput().GetParameters()
-	pfeats, ok := params["features_checksum"]
-	if !ok {
-		return ""
-	}
-	return pfeats.Value
 }
 
 func (p Base) GetWeightsPath() string {
@@ -152,15 +145,4 @@ func (p Base) GetGraphPath() string {
 		return ""
 	}
 	return filepath.Join(p.WorkDir, graphPath)
-}
-
-func (p Base) GetFeaturesPath() string {
-	model := p.Model
-	return filepath.Join(p.WorkDir, model.GetName()+".features")
-}
-
-func (p Base) GetFeatureType() dlframework.FeatureType {
-	model := p.Model
-	ty := strings.ToUpper(model.GetOutput().GetType())
-	return dlframework.FeatureType(dlframework.FeatureType_value[ty])
 }

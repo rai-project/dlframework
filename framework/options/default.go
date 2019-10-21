@@ -6,6 +6,7 @@ import nvidiasmi "github.com/rai-project/nvidia-smi"
 var (
 	DefaultBatchSize    int = 1
 	DefaultFeatureLimit int = 10
+	DefaultGPUMetrics   string
 	DefaultDevice       device
 )
 

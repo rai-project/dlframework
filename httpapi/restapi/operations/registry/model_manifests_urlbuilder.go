@@ -40,7 +40,7 @@ func (o *ModelManifestsURL) SetBasePath(bp string) {
 
 // Build a url path and query string
 func (o *ModelManifestsURL) Build() (*url.URL, error) {
-	var result url.URL
+	var _result url.URL
 
 	var _path = "/registry/models/manifest"
 
@@ -48,45 +48,45 @@ func (o *ModelManifestsURL) Build() (*url.URL, error) {
 	if _basePath == "" {
 		_basePath = "/api"
 	}
-	result.Path = golangswaggerpaths.Join(_basePath, _path)
+	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
 
-	var frameworkName string
+	var frameworkNameQ string
 	if o.FrameworkName != nil {
-		frameworkName = *o.FrameworkName
+		frameworkNameQ = *o.FrameworkName
 	}
-	if frameworkName != "" {
-		qs.Set("framework_name", frameworkName)
+	if frameworkNameQ != "" {
+		qs.Set("framework_name", frameworkNameQ)
 	}
 
-	var frameworkVersion string
+	var frameworkVersionQ string
 	if o.FrameworkVersion != nil {
-		frameworkVersion = *o.FrameworkVersion
+		frameworkVersionQ = *o.FrameworkVersion
 	}
-	if frameworkVersion != "" {
-		qs.Set("framework_version", frameworkVersion)
+	if frameworkVersionQ != "" {
+		qs.Set("framework_version", frameworkVersionQ)
 	}
 
-	var modelName string
+	var modelNameQ string
 	if o.ModelName != nil {
-		modelName = *o.ModelName
+		modelNameQ = *o.ModelName
 	}
-	if modelName != "" {
-		qs.Set("model_name", modelName)
+	if modelNameQ != "" {
+		qs.Set("model_name", modelNameQ)
 	}
 
-	var modelVersion string
+	var modelVersionQ string
 	if o.ModelVersion != nil {
-		modelVersion = *o.ModelVersion
+		modelVersionQ = *o.ModelVersion
 	}
-	if modelVersion != "" {
-		qs.Set("model_version", modelVersion)
+	if modelVersionQ != "" {
+		qs.Set("model_version", modelVersionQ)
 	}
 
-	result.RawQuery = qs.Encode()
+	_result.RawQuery = qs.Encode()
 
-	return &result, nil
+	return &_result, nil
 }
 
 // Must is a helper function to panic when the url builder returns an error

@@ -24,9 +24,9 @@ import (
 )
 
 var urlsCmd = &cobra.Command{
-	Use:     "urlsCmd",
-	Short:   "urlsCmd",
-	Aliases: []string{"urls", "url"},
+	Use:     "urls",
+	Short:   "Request MLModelScope agents to predict urls",
+	Aliases: []string{"url"},
 	Long:    `urlsCmd`,
 	RunE: func(c *cobra.Command, args []string) error {
 		if len(args) < 1 {
@@ -171,7 +171,7 @@ var urlsCmd = &cobra.Command{
 		traceID := span.Context().(jaeger.SpanContext).TraceID()
 		traceIDVal := strconv.FormatUint(traceID.Low, 16)
 		tracer.Close()
-		query := fmt.Sprintf("http://%s:16686/api/traces/%v", getTracerHostAddress(tracerAdress), traceIDVal)
+		query := fmt.Sprintf("http://%s:16686/api/traces/%v", tracerServerAddr, traceIDVal)
 		resp, err := grequests.Get(query, nil)
 
 		outputfile := frameworkName + "_" + frameworkVersion + "_" + modelName + "_" + modelVersion + "_" + strconv.Itoa(batchSize)

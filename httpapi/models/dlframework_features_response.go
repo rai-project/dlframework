@@ -18,6 +18,12 @@ import (
 // swagger:model dlframeworkFeaturesResponse
 type DlframeworkFeaturesResponse struct {
 
+	// duration
+	Duration string `json:"duration,omitempty"`
+
+	// duration for inference
+	DurationForInference string `json:"duration_for_inference,omitempty"`
+
 	// id
 	ID string `json:"id,omitempty"`
 

@@ -30,10 +30,10 @@ generate-proto: ## Generates Go, GRPC Gateway and Swagger code
 	protoc -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --grpc-gateway_out=logtostderr=true:. registry.proto predictor.proto features.proto
 	protoc -I. -I$(GOPATH)/src -I$(GOPATH)/src/github.com/golang/protobuf/proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --swagger_out=logtostderr=true:. registry.proto predictor.proto features.proto
 	jq -s '.[0] * .[1]' predictor.swagger.json registry.swagger.json features.swagger.json> dlframework.swagger.json
-	rm -fr predictor.swagger.json registry.swagger.json features.swagger.json
 	mv dlframework.swagger.json dlframework.swagger.json.tmp
 	jq -s '.[0] * .[1]' dlframework.swagger.json.tmp swagger_info.json > dlframework.swagger.json
 	rm -fr dlframework.swagger.json.tmp
+	rm -fr predictor.swagger.json registry.swagger.json features.swagger.json
 	go run scripts/includetext.go
 	gofmt -s -w *pb.go *pb.gw.go *pb_test.go swagger.go
 
@@ -41,9 +41,9 @@ generate: generate-proto generate-swagger generate-go
 
 generate-swagger: clean-httpapi ## Generates Go Swagger code
 	mkdir -p httpapi
-	swagger generate server -f dlframework.swagger.json -t httpapi -A dlframework
-	swagger generate client -f dlframework.swagger.json -t httpapi -A dlframework
-	swagger generate support -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate server --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate client --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
+	swagger generate support --principal models.User -f dlframework.swagger.json -t httpapi -A dlframework
 	gofmt -s -w httpapi
 
 generate-go:

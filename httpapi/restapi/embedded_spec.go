@@ -47,25 +47,36 @@ func init() {
   "paths": {
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "tags": [
           "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
             }
           }
         }
@@ -92,6 +103,43 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/userinfo": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
             }
           }
         }
@@ -227,87 +275,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/dataset": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
-        "operationId": "DatasetStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkDatasetRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/images": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
-        "operationId": "ImagesStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkImagesRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/urls": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
-        "operationId": "URLsStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkURLsRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
           }
         }
@@ -493,7 +460,8 @@ func init() {
         "APPLICATION_TRACE",
         "MODEL_TRACE",
         "FRAMEWORK_TRACE",
-        "LIBRARY_TRACE",
+        "ML_LIBRARY_TRACE",
+        "SYSTEM_LIBRARY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ]
@@ -805,6 +773,12 @@ func init() {
     "dlframeworkFeaturesResponse": {
       "type": "object",
       "properties": {
+        "duration": {
+          "type": "string"
+        },
+        "duration_for_inference": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -972,21 +946,21 @@ func init() {
         }
       }
     },
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "password": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
         "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         }
       }
@@ -1108,6 +1082,9 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "gpu_metrics": {
+          "type": "string"
+        },
         "request_id": {
           "type": "string"
         }
@@ -1116,6 +1093,9 @@ func init() {
     "dlframeworkPredictor": {
       "type": "object",
       "properties": {
+        "duration": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         }
@@ -1134,7 +1114,12 @@ func init() {
       }
     },
     "dlframeworkPredictorCloseResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string"
+        }
+      }
     },
     "dlframeworkPredictorOpenRequest": {
       "type": "object",
@@ -1277,6 +1262,9 @@ func init() {
         "affiliation": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -1335,6 +1323,65 @@ func init() {
           }
         }
       }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "externalDocs": {
@@ -1371,25 +1418,36 @@ func init() {
   "paths": {
     "/auth/login": {
       "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
         "tags": [
           "Authentication"
         ],
         "summary": "Login to MLModelScope platform",
         "operationId": "Login",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkLogin"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkLoginResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout from MLModelScope platform",
+        "operationId": "Logout",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkLogoutResponse"
             }
           }
         }
@@ -1416,6 +1474,43 @@ func init() {
           "200": {
             "schema": {
               "$ref": "#/definitions/dlframeworkSignupResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/update": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Update User Info on MLModelScope platform",
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUpdateResponse"
+            }
+          }
+        }
+      }
+    },
+    "/auth/userinfo": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get User's information",
+        "operationId": "UserInfo",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/dlframeworkUserInfoResponse"
             }
           }
         }
@@ -1551,87 +1646,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/dlframeworkResetResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/dataset": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "Dataset method receives a single dataset and runs\nthe predictor on all elements of the dataset.\nThe result is a prediction feature stream.",
-        "operationId": "DatasetStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkDatasetRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/images": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "ImagesStream method receives a list base64 encoded images and runs\nthe predictor on all the images.\nThe result is a prediction feature stream for each image.",
-        "operationId": "ImagesStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkImagesRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
-            }
-          }
-        }
-      }
-    },
-    "/predict/stream/urls": {
-      "post": {
-        "tags": [
-          "Predict"
-        ],
-        "summary": "URLsStream method receives a stream of urls and runs\nthe predictor on all the urls.\nThe result is a prediction feature stream for each url.",
-        "operationId": "URLsStream",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/dlframeworkURLsRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.(streaming responses)",
-            "schema": {
-              "$ref": "#/definitions/dlframeworkFeatureResponse"
             }
           }
         }
@@ -1817,7 +1831,8 @@ func init() {
         "APPLICATION_TRACE",
         "MODEL_TRACE",
         "FRAMEWORK_TRACE",
-        "LIBRARY_TRACE",
+        "ML_LIBRARY_TRACE",
+        "SYSTEM_LIBRARY_TRACE",
         "HARDWARE_TRACE",
         "FULL_TRACE"
       ]
@@ -2129,6 +2144,12 @@ func init() {
     "dlframeworkFeaturesResponse": {
       "type": "object",
       "properties": {
+        "duration": {
+          "type": "string"
+        },
+        "duration_for_inference": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -2296,21 +2317,21 @@ func init() {
         }
       }
     },
-    "dlframeworkLogin": {
-      "type": "object",
-      "properties": {
-        "password": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        }
-      }
-    },
     "dlframeworkLoginResponse": {
       "type": "object",
       "properties": {
         "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
           "type": "string"
         }
       }
@@ -2432,6 +2453,9 @@ func init() {
           "type": "integer",
           "format": "int32"
         },
+        "gpu_metrics": {
+          "type": "string"
+        },
         "request_id": {
           "type": "string"
         }
@@ -2440,6 +2464,9 @@ func init() {
     "dlframeworkPredictor": {
       "type": "object",
       "properties": {
+        "duration": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         }
@@ -2458,7 +2485,12 @@ func init() {
       }
     },
     "dlframeworkPredictorCloseResponse": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "string"
+        }
+      }
     },
     "dlframeworkPredictorOpenRequest": {
       "type": "object",
@@ -2601,6 +2633,9 @@ func init() {
         "affiliation": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        },
         "first_name": {
           "type": "string"
         },
@@ -2659,6 +2694,65 @@ func init() {
           }
         }
       }
+    },
+    "dlframeworkUpdateResponse": {
+      "type": "object",
+      "properties": {
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "dlframeworkUserInfoResponse": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    },
+    "user": {
+      "type": "object",
+      "properties": {
+        "affiliation": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
     }
   },
   "externalDocs": {

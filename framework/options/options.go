@@ -10,15 +10,17 @@ import (
 )
 
 type Options struct {
-	ctx          context.Context
-	devices      devices
-	batchSize    int
-	featureLimit int
-	traceLevel   tracer.Level
-	graph        []byte
-	weights      []byte
-	intputNodes  []Node
-	outputNodes  []Node
+	ctx           context.Context
+	devices       devices
+	batchSize     int
+	gpuMetrics    string
+	featureLimit  int
+	traceLevel    tracer.Level
+	graph         []byte
+	weights       []byte
+	intputNodes   []Node
+	outputNodes   []Node
+	outputIndexes []int
 }
 
 type Option func(*Options)
@@ -84,6 +86,20 @@ func (o *Options) BatchSize() int {
 
 func (o *Options) SetBatchSize(n int) {
 	o.batchSize = n
+}
+
+func GPUMetrics(m string) Option {
+	return func(o *Options) {
+		o.gpuMetrics = m
+	}
+}
+
+func (o *Options) GPUMetrics() string {
+	return o.gpuMetrics
+}
+
+func (o *Options) SetGPUMetrics(m string) {
+	o.gpuMetrics = m
 }
 
 func FeatureLimit(num int) Option {
@@ -209,6 +225,14 @@ func (o *Options) SetOutputNodes(ins []Node) {
 	o.outputNodes = ins
 }
 
+func (o *Options) OutputIndexes() []int {
+	return o.outputIndexes
+}
+
+func (o *Options) SetOutputIndexes(outIdxs []int) {
+	o.outputIndexes = outIdxs
+}
+
 func PredictorOptions(p *dl.PredictionOptions) Option {
 	return func(o *Options) {
 		for k, v := range p.GetExecutionOptions().GetDeviceCount() {
@@ -220,6 +244,7 @@ func PredictorOptions(p *dl.PredictionOptions) Option {
 			}
 		}
 		o.batchSize = int(p.BatchSize)
+		o.gpuMetrics = p.GpuMetrics
 		o.featureLimit = int(p.FeatureLimit)
 		o.traceLevel = tracer.LevelFromName(p.GetExecutionOptions().GetTraceLevel().String())
 	}
