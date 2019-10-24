@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/k0kubun/pp"
 	"github.com/oliamb/cutter"
@@ -889,4 +890,35 @@ func (p ImagePredictor) Reset(ctx context.Context) error {
 
 func (p ImagePredictor) Close() error {
 	return nil
+}
+
+func (p Base) GetFeaturesUrl() string {
+	model := p.Model
+	params := model.GetOutput().GetParameters()
+	pfeats, ok := params["features_url"]
+	if !ok {
+		return ""
+	}
+	return pfeats.Value
+}
+
+func (p ImagePredictor) GetFeaturesPath() string {
+	model := p.Model
+	return filepath.Join(p.WorkDir, model.GetName()+".features")
+}
+
+func (p ImagePredictor) GetFeatureType() dlframework.FeatureType {
+	model := p.Model
+	ty := strings.ToUpper(model.GetOutput().GetType())
+	return dlframework.FeatureType(dlframework.FeatureType_value[ty])
+}
+
+func (p ImagePredictor) GetFeaturesChecksum() string {
+	model := p.Model
+	params := model.GetOutput().GetParameters()
+	pfeats, ok := params["features_checksum"]
+	if !ok {
+		return ""
+	}
+	return pfeats.Value
 }
