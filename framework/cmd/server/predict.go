@@ -14,7 +14,6 @@ import (
 	"github.com/rai-project/tracer"
 	"github.com/rai-project/tracer/jaeger"
 	tracerutils "github.com/rai-project/tracer/utils"
-	"github.com/spf13/cobra"
 )
 
 var (

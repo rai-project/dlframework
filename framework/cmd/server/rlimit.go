@@ -35,7 +35,7 @@ func setMaxFileRLimit() error {
 func init() {
 	config.AfterInit(func() {
 		if err := setMaxFileRLimit(); err != nil {
-			log.WithField(err).Info("cannot set maximum file limit")
+			log.WithField("rlimit", err).Info("cannot set maximum file limit")
 		}
 	})
 }
