@@ -68,8 +68,8 @@ func Register(framework dlframework.FrameworkManifest, a *assetfs.AssetFS) error
 		if !check {
 			log.WithField("frameworkVersion", frameworkVersion).
 				WithField("model_framework_constraint", model.GetFramework().GetVersion()).
-				Error("failed to satisfy framework constraints")
-			return err
+				Warning("failed to satisfy framework constraints")
+			continue
 		}
 
 		if model.GetHidden() {
